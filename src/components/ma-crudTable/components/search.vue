@@ -1,0 +1,183 @@
+<template>
+  <a-spin :loading="searchLoading" tip="加载数据中..." class="mt-5 mb-5" v-if="isShowSearch">
+    <a-form :model="searchForm" layout="inline" class="grid grid-cols-4" :label-align="props.searchLabelAlign" ref="search">
+      <template v-for="(item, index) in props.columns" :key="index">
+        <a-form-item
+          :field="item.dataIndex"
+          :label="item.title"
+          :required="item.required"
+          v-if="item.search"
+          :label-col-style="{ width: item.searchLabelWidth || props.searchLabelWidth }"
+        >
+          <a-select
+            v-if="['select', 'radio', 'checkbox'].includes(item.formType)"
+            v-model="searchForm[item.dataIndex]"
+            :virtual-list-props="{ height:200 }"
+            :placeholder="`请输入${item.title}`"
+            allow-clear
+            allow-search
+            :options="formDictData[item.dataIndex]"
+            @change="handlerCascader($event, item)"
+          />
+
+          <component
+            v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
+            :is="getComponent(item)"
+            v-model="searchForm[item.dataIndex]"
+            :placeholder="`请输入${item.title}`"
+            :format="item.format || ''"
+            allow-clear
+            style="width: 100%;"
+          />
+
+          <component
+            v-else
+            :is="getComponent(item)"
+            v-model="searchForm[item.dataIndex]"
+            :placeholder="`请输入${item.title}`"
+            allow-clear
+            :virtual-list-props="{ height:200 }"
+          />
+        </a-form-item>
+      </template>
+    </a-form>
+    <div class="text-center mt-5">
+      <a-space size="medium">
+        <a-button type="primary" @click="handlerSearch"><icon-search /> 提交</a-button>
+        <a-button @click="reset"><icon-delete /> 清空</a-button>
+        <slot name="buttons" />
+      </a-space>
+    </div>
+  </a-spin>
+</template>
+
+<script setup>
+import { ref, reactive, onMounted, watch } from 'vue'
+import { request } from '@/utils/request'
+import axios from 'axios'
+import { isArray } from '@vue/shared'
+import { Message } from '@arco-design/web-vue'
+
+const searchLoading = ref(true)
+const formDictData = ref({})
+const isShowSearch = ref(false)
+const search = ref(null)
+
+let searchForm = reactive({})
+
+const emits = defineEmits(['search'])
+
+onMounted(() => {
+  init()
+})
+
+watch(() => props.columns, () => {
+  init()
+})
+
+const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
+
+const init = async () => {
+  const allowRequestFormType = ['radio', 'checkbox', 'select']
+  if (props.columns.length > 0) {
+    props.columns.map(async item => {
+      if (item.search && ! isShowSearch.value) isShowSearch.value = true
+      if (item.dataIndex && item.search) {
+        searchForm[item.dataIndex] = item.defaultValue || undefined
+      }
+
+      if (allowRequestFormType.includes(item.formType) && item.dict) {
+        if (item.dict.url) {
+          let response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.data || {})
+          if (response.data) {
+            formDictData.value[item.dataIndex] = response.data.map(dicItem => {
+              return {
+                'label': dicItem[ (item.dict.props && item.dict.props.label) || 'code'  ],
+                'value': dicItem[ (item.dict.props && item.dict.props.value) || 'value' ]
+              } 
+            })
+          }
+        } else if (item.dict.data && isArray(item.dict.data) && item.dict.data.length > 0) {
+          formDictData.value[item.dataIndex] = item.dict.data.map(dicItem => {
+            return {
+              'label': dicItem[ (item.dict.props && item.dict.props.label) || 'code'  ],
+              'value': dicItem[ (item.dict.props && item.dict.props.value) || 'value' ]
+            } 
+          })
+        }
+      }
+    })
+  }
+  searchLoading.value = false
+}
+
+const getComponent = (item => {
+  if (! item.formType) {
+    return `a-input`
+  }
+  if (['input', 'password', 'textarea'].includes(item.formType)) {
+    return 'a-input'
+  } else if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time']) {
+    return `a-${item.formType}-picker`
+  } else {
+    return `a-input`
+  }
+})
+
+const handlerSearch = () => {
+  emits('search', searchForm)
+}
+
+const reset = () => {
+  search.value.resetFields()
+  emits('search', searchForm)
+}
+
+// 处理联动
+const handlerCascader = (val, column) => {
+  if (column.cascaderItem && isArray(column.cascaderItem) && column.cascaderItem.length > 0 && val) {
+    searchLoading.value = true
+    column.cascaderItem.map(async name => {
+      const dict = props.columns.filter(col => col.dataIndex === name)[0].dict
+      let response
+      if (dict && dict.url.indexOf('{{key}}') > 0) {
+        response = await requestDict(dict.url.replace('{{key}}', val), dict.method || 'GET', dict.params || {}, dict.data || {})
+      } else {
+        let temp = { key: val }
+        const params = Object.assign(dict.params || {}, temp)
+        const data   = Object.assign(dict.data || {}, temp)
+        response = await requestDict(dict.url, dict.method || 'GET', params || {}, data || {})
+      }
+      // 原始数据格式的
+      if (response.data && response.data.data && response.status === 200) {
+        formDictData.value[name] = response.data.data
+      } else {
+        Message.error('字典联动请求失败：' + name)
+        console.error(response)
+      }
+
+      if (response.data && response.code === 200) {
+        formDictData.value[name] = response.data.map(dicItem => {
+          return {
+            'label': dicItem[ (dict.props && dict.props.label) || 'code'  ],
+            'value': dicItem[ (dict.props && dict.props.value) || 'value' ]
+          } 
+        })
+      }
+    })
+    searchLoading.value = false
+  }
+}
+
+const props = defineProps({
+  columns: { type: Array },
+  searchLabelWidth: { type: String, default: () => 'auto' },
+  searchLabelAlign: { type: String, default: () => 'right' }
+})
+</script>
+
+<style scoped lang="scss">
+:deep(.arco-form-item-label-required-symbol svg) {
+  vertical-align: baseline !important;
+}
+</style>

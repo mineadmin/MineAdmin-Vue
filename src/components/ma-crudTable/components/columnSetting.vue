@@ -1,0 +1,165 @@
+<template>
+  <a-drawer :visible="visible" unmountOnClose :footer="false" :width="900" @cancel="onCancel" >
+
+    <template #title>设置</template>
+
+    <a-alert>表格总宽度是配合固定列使用，默认100%，支持px</a-alert>
+    <a-input @change="changeTableWidth" v-model="tableWidth" placeholder="设置表格总宽度" class="mt-1" />
+
+    <a-space class="mt-3">
+      <span>表格大小：</span>
+      <a-radio-group type="button" v-model="crud.size">
+        <a-radio value="mini">迷你</a-radio>
+        <a-radio value="small">小</a-radio>
+        <a-radio value="medium">中</a-radio>
+        <a-radio value="large">大</a-radio>
+      </a-radio-group>
+      <span class="ml-3">表格边框：</span>
+      <a-radio-group type="button" v-model="bordered" @change="changeBordered">
+        <a-radio value="hide">不显示外边框</a-radio>
+        <a-radio value="show">全部显示</a-radio>
+        <a-radio value="row">不显示行</a-radio>
+        <a-radio value="column">不显示列</a-radio>
+      </a-radio-group>
+      <a-checkbox v-model="crud.stripe" class="ml-3">斑马纹</a-checkbox>
+    </a-space>
+
+    <a-alert type="warning" class="mt-2">排序：本页是指当前页排序；服务器是指后台排序，需要 <a-tag>@sorterChange</a-tag> 事件来实现</a-alert>
+    <a-table
+      :data="data"
+      :pagination="false"
+      :bordered="{ wrapper: true }"
+      :draggable="{ type: 'handle', width: 40 }"
+      @change="onTableChange"
+      stripe
+      class="mt-3"
+    >
+      <template #columns>
+        <a-table-column title="列名称" data-index="title" align="center">
+          <template #cell="{ record }">{{ record.title }}</template>
+        </a-table-column>
+        <a-table-column title="宽度" data-index="width" align="center">
+          <template #cell="{ record }">
+              <a-input-number
+                v-if="record.dataIndex !== '__index'"
+                style="width: 150px;"
+                placeholder="列宽度"
+                v-model="record.width"
+                mode="button"
+                @change="changeColumn($event, 'width', record.dataIndex)"
+              />
+              <span v-else> / </span>
+          </template>
+        </a-table-column>
+        <a-table-column title="隐藏" data-index="hide" align="center">
+          <template #cell="{ record }"><a-checkbox v-model="record.hide" @change="changeColumn($event, 'hide', record.dataIndex)" /></template>
+        </a-table-column>
+        <a-table-column title="固定" data-index="fixed" align="center">
+          <template #cell="{ record }">
+            <a-space v-if="record.dataIndex !== '__index'">
+              <a-radio v-model="record.fixed" value="" @change="changeColumn($event, 'fixed', record.dataIndex)">无</a-radio>
+              <a-radio v-model="record.fixed" value="left" @change="changeColumn($event, 'fixed', record.dataIndex)">左</a-radio>
+              <a-radio v-model="record.fixed" value="right" @change="changeColumn($event, 'fixed', record.dataIndex)">右</a-radio>
+            </a-space>
+            <span v-else> / </span>
+          </template>
+        </a-table-column>
+        <a-table-column title="排序" data-index="order" align="center">
+          <template #cell="{ record }">
+            <a-space v-if="record.dataIndex !== '__index'" >
+              <a-radio v-model="record.__order" value="" @change="changeColumn($event, 'order', record.dataIndex)">无</a-radio>
+              <a-radio v-model="record.__order" value="page" @change="changeColumn($event, 'order', record.dataIndex)">本页</a-radio>
+              <a-radio v-model="record.__order" value="serve" @change="changeColumn($event, 'order', record.dataIndex)">服务器</a-radio>
+            </a-space>
+            <span v-else> / </span>
+          </template>
+        </a-table-column>
+      </template>
+    </a-table>
+  </a-drawer>
+</template>
+
+<script setup>
+import { ref, watch } from 'vue'
+
+const props = defineProps({
+  modelValue: Array,
+  crud: Object
+})
+
+const visible = ref(false)
+const data = ref([])
+const crud = ref([])
+const sourceScroll = ref({})
+const tableWidth = ref('100%')
+const bordered = ref('show')
+
+const emits = defineEmits(['update:modelValue', 'update:crud'])
+
+watch(
+  () => data.value,
+  (val) => {
+    emits('update:modelValue', val)
+  }
+)
+
+watch(
+  () => crud.value,
+  (val) => {
+    emits('update:crud', val)
+  }
+)
+
+const open = () => {
+  visible.value = true
+  data.value = props.modelValue
+  crud.value = props.crud
+  sourceScroll.value = Object.assign(crud.value.scroll, {})
+}
+
+const onCancel = () => {
+  visible.value = false
+}
+
+const changeColumn = (ev, type, name) => {
+  let index
+  data.value.map((item, idx) => { if (item.dataIndex === name) index = idx })
+  switch (type) {
+    case 'order':
+      if (ev === 'page') {
+        data.value[index].sortable = { sortDirections: ['ascend', 'descend'], sorter: false }
+      } else if (ev === 'serve') {
+        data.value[index].sortable = { sortDirections: ['ascend', 'descend'], sorter: true }
+      } else {
+        data.value[index].sortable = undefined
+      }
+      break
+  }
+}
+
+const changeTableWidth = (val) => {
+  tableWidth.value = val
+  crud.value.scroll.x = val
+}
+
+const changeBordered = (v) => {
+  if (v === 'hide') {
+    crud.value.bordered = { wrapper: false, cell: false }
+  }
+  if (v === 'show') {
+    crud.value.bordered = { wrapper: true, cell: true }
+  }
+  if (v === 'row') {
+    crud.value.bordered = { wrapper: false, cell: true }
+  }
+  if (v === 'column') {
+    crud.value.bordered = { wrapper: true, cell: false }
+  }
+}
+
+const onTableChange = (_data) => {
+  data.value = _data
+}
+
+defineExpose({ open })
+</script>

@@ -1,0 +1,35 @@
+{
+  "name": "desktop",
+  "version": "0.1.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite serve --mode development",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "@arco-design/web-vue": "^2.29.1",
+    "autoprefixer": "^10.4.0",
+    "axios": "^0.27.2",
+    "crypto-js": "^4.1.1",
+    "dayjs": "^1.11.2",
+    "echarts": "^5.3.2",
+    "nprogress": "^0.2.0",
+    "lodash": "^4.17.21",
+    "pinia": "^2.0.11",
+    "postcss-import": "^14.0.2",
+    "qs": "^6.10.3",
+    "sortablejs": "^1.15.0",
+    "tailwindcss": "^3.0.24",
+    "vue": "3.2.36",
+    "vue-clipboard3": "^1.0.1",
+    "vue-echarts": "^6.0.2",
+    "vue-router": "4.0.14"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.9.3",
+    "sass": "1.37.5",
+    "sass-loader": "10.1.1",
+    "vite": "^2.6.4"
+  }
+}

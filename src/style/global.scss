@@ -1,0 +1,134 @@
+@import 'dark.scss';
+
+html, body {
+  height: 100%;
+}
+
+.layout, .layout-columns-left-panel, .layout-columns-right-panel {
+  height: 100%;
+}
+
+.layout-columns-left-panel {
+  .sider { padding: 0 5px; }
+
+  .layout-menu {
+    position: relative; z-index: 3; overflow: hidden;
+  }
+}
+
+.layout-columns-right-panel {
+  width: 100%; background-color: var(--color-neutral-2);
+  .layout-header {
+    background-color: var(--color-bg-2);
+    width: 100%; box-shadow: 1px 1px 2px var(--color-neutral-2);
+  }
+}
+
+.layout-banner-header {
+  height: 52px; border-bottom:1px solid var(--color-border-1);
+  background-color: var(--color-bg-2);
+  .logo {
+    width: 220px; padding-bottom: 1px;
+  }
+
+  .banner-menus li {
+    cursor: pointer; padding: 0px 15px; height: 40px;
+    margin-left: 5px; border-radius: 4px; color: var(--color-neutral-10); fill: var(--color-neutral-10);
+
+    .icon {
+      width: 1.1em; height: 1.1em; display: inline;
+    }
+  }
+
+  .banner-menus li:hover {
+    background-color: var(--color-neutral-2);
+  }
+  .banner-menus li.active {
+    background-color: rgb(var(--primary-4)); color: var(--color-white);
+    fill: var(--color-white);
+  }
+}
+
+.layout-classic-sider { box-shadow: none; }
+.layout-classic-header {
+  .layout-classic-header-container {
+    background-color: var(--color-bg-2); height: 50px;
+  }
+}
+
+.ma-menu .arco-menu-inner::-webkit-scrollbar, .backend-setting .arco-drawer-body::-webkit-scrollbar { 
+  width: 4px; /*高宽分别对应横竖滚动条的尺寸*/
+  height:0px;
+}
+
+.ma-menu .arco-menu-inner::-webkit-scrollbar-thumb, .backend-setting .arco-drawer-body::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: var(--color-text-4)
+}
+.ma-menu .arco-menu-inner::-webkit-scrollbar-thumb:hover, .backend-setting .arco-drawer-body::-webkit-scrollbar-thumb:hover {
+  border-radius: 10px;
+  background: var(--color-text-3)
+}
+.ma-menu .arco-menu-inner::-webkit-scrollbar-track, .backend-setting .arco-drawer-body::-webkit-scrollbar-track {
+  border-radius: 0;
+  background: var(--color-text-5)
+}
+
+.tags {
+  border-top:1px solid var(--color-border-1);
+  border-bottom:1px solid var(--color-border-1);
+  background-color: var(--color-bg-2);
+  height: 35px; position: relative;
+  padding: 0 5px 0 1px;
+  a {
+    background: var(--color-fill-3); color: var(--color-text-2); font-size:13px;
+    height: 27px; line-height: 27px; padding: 0 8px; border-radius: 4px;
+    cursor: pointer; transition: all 0.2s; margin-left: 4px;
+
+    .tag-icon { transition: all 0.2s; color: var(--color-text-2); }
+
+    .tag-icon:hover {
+      color: rgb(var(--primary-4)); background-color: var(--color-bg-2);
+      border-radius: 4px;
+    }
+  }
+
+  a:hover {
+    background: rgb(var(--primary-1));
+  }
+
+  a.active{
+    background: rgb(var(--primary-6)); color: var(--color-white);
+    .tag-icon { color: var(--color-white);}
+    .tag-icon:hover { color: rgb(var(--primary-4)); background-color: var(--color-bg-2);}
+  }
+}
+
+.work-area {
+  background-color: var(--color-neutral-2);
+}
+
+.button-menu {
+  position: fixed; bottom: 30px; left: 20px;
+  .button-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--color-white);
+    font-size: 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.1s;
+    :deep(.icon) {
+      margin-left: 1px !important;
+    }
+  }
+  .button-trigger:nth-child(1) {
+    background-color: var(--color-primary-light-4);
+  }
+  .button-trigger:nth-child(1).button-trigger-active {
+    background-color: rgb(var(--primary-6));
+  }
+}

@@ -1,0 +1,132 @@
+<script setup>
+  import { reactive, ref } from 'vue'
+  import verifyCode from '@cps/ma-verifyCode/index.vue'
+  import { Message } from '@arco-design/web-vue'
+  import { useUserStore } from '@/store'
+  import { useRouter, useRoute } from 'vue-router'
+
+  const router = useRouter()
+  const route  = useRoute()
+
+  const Verify = ref(null)
+
+  const loading = ref(false)
+  const form = reactive({ username: 'superAdmin', password: 'admin123', code: '' })
+
+  const userStore = useUserStore()
+
+  const redirect = route.query.redirect ? route.query.redirect : '/'
+
+  const handleSubmit = async ({ values, errors }) => {
+    if (loading.value) {
+      return
+    }
+    loading.value = true
+    if (Verify.value.checkResult(form.code) && (! errors)) {
+      const result = await userStore.login(form)
+      if (! result) {
+        loading.value = false
+        return
+      }
+      router.push(redirect)
+    }
+    loading.value = false
+  }
+
+</script>
+<template>
+  <div class="login-container">
+    <div class="w-full md:w-1/2 mx-auto flex justify-between h-full items-center">
+      <div class="w-6/12 mx-auto left-panel rounded-l pl-5 pr-5 hidden md:block bg-blue-50">
+        <div class="logo"><img src="/logo.svg" width="45"><span>MineAdmin</span></div>
+        <div class="slogan flex justify-between text-gray-500"><span>高性能 / 精致 / 优雅</span><span>基于Hyperf + Vue3开发</span></div>
+      </div>
+
+      <div class="md:w-6/12 w-11/12 rounded-r mx-auto pl-5 pr-5 pb-10 bg-white">
+        <h2 class="mt-10 text-3xl pb-0 mb-10">登录</h2>
+        <a-form :model="form" @submit="handleSubmit">
+          <a-form-item field="username" :hide-label="true" :rules="[{ required: true, message:'请输入账户' }]">
+            <a-input v-model="form.username" class="w-full" size="large" placeholder="账户" allow-clear>
+              <template #prefix><icon-user /></template>
+            </a-input>
+          </a-form-item>
+
+          <a-form-item field="password" :hide-label="true" :rules="[{ required: true, message: '请输入密码' }]">
+            <a-input-password v-model="form.password" placeholder="密码" size="large" allow-clear>
+              <template #prefix><icon-lock /></template>
+            </a-input-password>
+          </a-form-item>
+
+          <a-form-item field="code" :hide-label="true" :rules="[{ required: true, match: /^[a-zA-Z0-9]{4}$/, message:'请输入正确的验证码' }]">
+            <a-input v-model="form.code" placeholder="请输入验证码" size="large" allow-clear>
+              <template #prefix><icon-safe /></template>
+              <template #append>
+                <verify-code ref="Verify" />
+              </template>
+            </a-input>
+          </a-form-item>
+
+          <a-form-item :hide-label="true" class="mt-5">
+            <a-button html-type="submit" type="primary" long size="large" :loading="loading">登录</a-button>
+          </a-form-item>
+
+          <a-divider orientation="center">其他登录方式</a-divider>
+          <div class="flex w-3/4 pt-2 mx-auto items-stretch justify-around">
+            <a-avatar class="other-login wechat"><icon-wechat /></a-avatar>
+            <a-avatar class="other-login alipay"><icon-alipay-circle /></a-avatar>
+            <a-avatar class="other-login qq"><icon-qq /></a-avatar>
+            <a-avatar class="other-login weibo"><icon-weibo /></a-avatar>
+          </div>
+        </a-form>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped lang="scss">
+.login-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-image: url(@/assets/BingWallpaper.jpg);
+  background-size: cover;
+
+  .left-panel {
+    height: 491px;
+    background-image: url(@/assets/login_picture.svg);
+    background-repeat: no-repeat;
+    background-position: center 60px;
+    background-size:contain;
+  }
+
+  .logo {
+    display: flex; margin-top: 20px; color: #333;
+    span {
+      font-size: 28px; margin-left: 15px;
+      color: rgb(var(--primary-6));
+    }
+  }
+  .slogan {
+    font-size: 16px; line-height: 50px;
+  }
+
+  :deep(.arco-input-append) {
+    padding: 0 !important;
+  }
+
+  .other-login{
+    cursor: pointer;
+  }
+
+  .qq:hover, .alipay:hover {
+    background: #165DFF;
+  }
+  .wechat:hover {
+    background: #0f9c02;
+  }
+
+  .weibo:hover {
+    background: #f3ce2b;
+  }
+}
+</style>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MineAdmin</title>
+</head>
+
+<body>
+  <noscript>
+    <strong>你的浏览器未开启javascript支持，请开启后刷新页面访问！</strong>
+  </noscript>
+  <div id="app">
+    <div class="app-loading">
+      <div class="app-loading__logo"><img src="/logo.svg" /></div>
+      <div class="app-loading-text">
+        <span class="app-loading-preloader">M</span>
+        <span class="app-loading-preloader">i</span>
+        <span class="app-loading-preloader">n</span>
+        <span class="app-loading-preloader">e</span>
+        <span class="app-loading-preloader">A</span>
+        <span class="app-loading-preloader">d</span>
+        <span class="app-loading-preloader">m</span>
+        <span class="app-loading-preloader">i</span>
+        <span class="app-loading-preloader">n</span>
+        <div class="app-loading-viewtext-container">
+          <span class="app-loading-viewtext">M</span>
+          <span class="app-loading-viewtext">i</span>
+          <span class="app-loading-viewtext">n</span>
+          <span class="app-loading-viewtext">e</span>
+          <span class="app-loading-viewtext">A</span>
+          <span class="app-loading-viewtext">d</span>
+          <span class="app-loading-viewtext">m</span>
+          <span class="app-loading-viewtext">i</span>
+          <span class="app-loading-viewtext">n</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <style>
+    html, body, #app{
+      height: 100%; overflow: hidden;
+      transition-property: filter;
+      transition-duration: 1s;
+    }
+    .app-loading {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      right: 0px;
+      bottom: 0px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .app-loading__logo {
+      width: 78px; padding-left: 5px; margin-top: -5%;
+    }
+
+    .app-loading-text {
+      position: relative;
+      margin-top: 1rem;
+    }
+
+    .app-loading-preloader,
+    .app-loading-viewtext {
+      font-size: 3.5rem;
+      color: #ddd;
+      font-weight: bold;
+    }
+
+    .app-loading-viewtext-container {
+      display: flex;
+      flex-direction: row;
+      position: absolute;
+      letter-spacing: 4.3px;
+      top: -5px;
+    }
+
+    .app-loading-viewtext {
+      color: #333;
+      animation: loader 4s infinite;
+      transform: rotateY(-90deg);
+    }
+
+    .app-loading-viewtext-container span:nth-child(1) {
+      animation-delay: 0.2s;
+    }
+    .app-loading-viewtext-container span:nth-child(2) {
+      animation-delay: 0.4s;
+    }
+    .app-loading-viewtext-container span:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+    .app-loading-viewtext-container span:nth-child(4) {
+      animation-delay: 0.8s;
+    }
+    .app-loading-viewtext-container span:nth-child(5) {
+      animation-delay: 1s;
+    }
+    .app-loading-viewtext-container span:nth-child(6) {
+      animation-delay: 1.2s;
+    }
+    .app-loading-viewtext-container span:nth-child(7) {
+      animation-delay: 1.4s;
+    }
+    .app-loading-viewtext-container span:nth-child(8) {
+      animation-delay: 1.6s;
+    }
+    .app-loading-viewtext-container span:nth-child(9) {
+      animation-delay: 1.8s;
+    }
+
+    @keyframes loader {
+
+      0%,
+      75%,
+      100% {
+        opacity: 0;
+        transform: rotateY(-90deg);
+      }
+
+      25%,
+      50% {
+        opacity: 1;
+        transform: rotateY(0deg);
+      }
+    }
+  </style>
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
