@@ -4,7 +4,7 @@
   import { useAppStore } from './store'
   const zhCN = ref(lang)
   const appStore = useAppStore()
-  const linkcss = h('link', { rel: 'stylesheet', href: `/skins/${appStore.theme || 'mine'}/index.css` })
+  const linkcss = h('link', { rel: 'stylesheet', href: `/skins/${appStore.skin || 'mine'}/index.css` })
 </script>
 
 <template>

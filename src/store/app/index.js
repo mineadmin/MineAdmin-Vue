@@ -4,7 +4,7 @@ let defaultSetting = {
   menuCollapse: false,
   menuWidth: 200,
   layout: 'classic',
-  theme: 'mine',
+  skin: 'mine',
   language: 'zh_CN'
 }
 
@@ -17,7 +17,7 @@ if (! tool.data.get('setting')) {
   defaultSetting = tool.data.get('setting')
 }
 
-document.body.setAttribute('arco-theme', defaultSetting.theme)
+document.body.setAttribute('arco-theme', defaultSetting.mode)
 
 const useAppStore = defineStore('app', {
   state: () => ({ ...defaultSetting }),

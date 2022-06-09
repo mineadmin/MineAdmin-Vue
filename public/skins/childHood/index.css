@@ -1,5 +1,5 @@
 .main-container {
-    background-image: url('https://d2.pub/d2-admin/preview/image/theme/star/bg.jpg') !important;
+    background-image: url('./background.jpg') !important;
     background-size: cover;
 }
 .layout-classic-header .layout-classic-header-container,
