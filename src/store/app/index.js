@@ -68,6 +68,12 @@ const useAppStore = defineStore('app', {
       this.language = language
       defaultSetting.language = this.language
       tool.data.set('setting', defaultSetting)
+    },
+
+    useSkin(name) {
+      this.skin = name
+      defaultSetting.skin = this.skin
+      tool.data.set('setting', defaultSetting)
     }
   },
 })
