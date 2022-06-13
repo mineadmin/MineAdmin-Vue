@@ -10,3 +10,11 @@
   const appStore  = useAppStore()
 
 </script>
+
+<style scoped lang="scss">
+[mine-skin="mine"] {
+  .tags a {
+    margin-left: 4px; margin-right: 0;
+  }
+}
+</style>

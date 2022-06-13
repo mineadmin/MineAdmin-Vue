@@ -32,7 +32,7 @@
   })
 </script>
 
-<style scoped>
+<style>
 .logo { height: 51px; border-bottom: 1px solid var(--color-border-1); }
 :deep(.arco-menu-inner){
   overflow-x: hidden !important

@@ -51,7 +51,7 @@
   }
 </script>
 
-<style scoped>
+<style>
 .icon {
   width: 1em; height: 1em; fill: var(--color-text-3);
 }

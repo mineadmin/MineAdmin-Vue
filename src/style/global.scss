@@ -83,7 +83,7 @@ html, body {
   a {
     background: var(--color-fill-3); color: var(--color-text-2); font-size:13px;
     height: 27px; line-height: 27px; padding: 0 8px; border-radius: 4px;
-    cursor: pointer; transition: all 0.2s; margin-left: 4px;
+    cursor: pointer; transition: all 0.2s; margin-right: 4px;
 
     .tag-icon { transition: all 0.2s; color: var(--color-text-2); }
 
