@@ -86,12 +86,6 @@
 .parent-menu.active {
   background: rgb(var(--primary-6)); color: #fff;
 }
-.menu-title {
-  height: 51px; padding-left: 10px; font-weight: bold;
-  background-color: var(--color-bg-2);
-  border-bottom:1px solid var(--color-border-1);
-}
-
 :deep(.arco-menu-vertical .arco-menu-inner) {
   padding: 4px;
 }
