@@ -18,6 +18,7 @@ if (! tool.data.get('setting')) {
 }
 
 document.body.setAttribute('arco-theme', defaultSetting.mode)
+document.body.setAttribute('mine-skin', defaultSetting.skin)
 
 const useAppStore = defineStore('app', {
   state: () => ({ ...defaultSetting }),
@@ -73,6 +74,7 @@ const useAppStore = defineStore('app', {
     useSkin(name) {
       this.skin = name
       defaultSetting.skin = this.skin
+      document.body.setAttribute('mine-skin', this.skin)
       tool.data.set('setting', defaultSetting)
     }
   },

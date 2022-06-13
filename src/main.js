@@ -11,6 +11,7 @@ import store from './store'
 import '@arco-design/web-vue/dist/arco.css'
 import './style/global.scss'
 import './style/index.css'
+import './style/skin.scss'
 
 import * as maIcons from '@/assets/ma-icons'
 
