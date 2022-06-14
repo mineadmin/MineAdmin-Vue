@@ -75,7 +75,7 @@
   }
 </script>
 
-<style scoped>
+<style>
 .parent-menu-container {
   width: 62px;
 }

@@ -90,6 +90,10 @@
     color: #fff;
   }
 
+  .layout-banner-header .banner-menus li.active {
+    background: rgb(var(--primary-6));
+  }
+
   .work-area {
     background-color: rgba(255, 255, 255, 0.85);
     border-radius: 4px;
@@ -102,7 +106,7 @@
       height: 51px; padding-left: 10px; font-weight: bold;
       color: #fff;
       background-color: rgba(255, 255, 255, 0);
-      border-bottom:1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: none;
     }
   }
 
@@ -116,8 +120,9 @@
     }
   }
 
-  
-
+  .layout-columns-left-panel .sider {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
 }
 
 [mine-skin="city"][arco-theme="dark"] {

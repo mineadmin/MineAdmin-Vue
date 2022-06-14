@@ -66,7 +66,7 @@
 
   defineExpose({ loadChildMenu, title, actives, menus })
 </script>
-<style scoped>
+<style>
 :deep(.arco-menu-vertical .arco-menu-inner) {
   padding: 0;
 }
