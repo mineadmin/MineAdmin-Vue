@@ -13,7 +13,7 @@
             v-if="['select', 'radio', 'checkbox'].includes(item.formType)"
             v-model="searchForm[item.dataIndex]"
             :virtual-list-props="{ height:200 }"
-            :placeholder="`请输入${item.title}`"
+            :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`"
             allow-clear
             allow-search
             :options="formDictData[item.dataIndex]"
@@ -24,7 +24,7 @@
             v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
             :is="getComponent(item)"
             v-model="searchForm[item.dataIndex]"
-            :placeholder="`请输入${item.title}`"
+            :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`"
             :format="item.format || ''"
             allow-clear
             style="width: 100%;"
@@ -34,7 +34,7 @@
             v-else
             :is="getComponent(item)"
             v-model="searchForm[item.dataIndex]"
-            :placeholder="`请输入${item.title}`"
+            :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请输入${item.title}`"
             allow-clear
             :virtual-list-props="{ height:200 }"
           />

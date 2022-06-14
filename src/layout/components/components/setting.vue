@@ -22,7 +22,7 @@
     <template #title>后台配置</template>
     <a-form :model="form" :auto-label-width="true">
       <a-form-item label="当前皮肤" help="设置后台皮肤">
-        经典白 
+        {{ currentSkin }} 
         <a-button type="primary" status="success" size="mini" class="ml-2" @click="skin.open()">换肤</a-button>
       </a-form-item>
       <a-form-item label="后台布局" help="设置后台显示方式">
@@ -60,6 +60,7 @@
 import { ref, reactive, watch } from 'vue'
 import { useAppStore, useUserStore } from '@/store'
 import Skin from './skin.vue'
+import skins from '@/config/skins'
 
 const userStore = useUserStore()
 const appStore  = useAppStore()
@@ -67,6 +68,7 @@ const appStore  = useAppStore()
 const skin = ref(null)
 const visible = ref(false)
 const okLoading = ref(false)
+const currentSkin = ref('')
 const form = reactive({
   mode: appStore.mode === 'dark',
   tag: appStore.tag,
@@ -74,6 +76,16 @@ const form = reactive({
   menuWidth: appStore.menuWidth,
   layout: appStore.layout,
   language: appStore.language
+})
+
+skins.map(item => {
+  if (item.name === appStore.skin) currentSkin.value = item.title
+})
+
+watch(() => appStore.skin, v => {
+  skins.map(item => {
+    if (item.name === v) currentSkin.value = item.title
+  })
 })
 
 const open = () => visible.value = true
