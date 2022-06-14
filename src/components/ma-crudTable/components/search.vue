@@ -22,7 +22,7 @@
             v-if="['select', 'radio', 'checkbox'].includes(item.formType)"
             v-model="searchForm[item.dataIndex]"
             :virtual-list-props="{ height:200 }"
-            :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`"
+            :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请输入${item.title}`"
             allow-clear
             allow-search
             :options="formDictData[item.dataIndex]"
@@ -33,7 +33,7 @@
             v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
             :is="getComponent(item)"
             v-model="searchForm[item.dataIndex]"
-            :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`"
+            :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请输入${item.title}`"
             :format="item.format || ''"
             allow-clear
             style="width: 100%;"
@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch } from 'vue'
+import { ref, reactive, onMounted, watch, nextTick } from 'vue'
 import { request } from '@/utils/request'
 import axios from 'axios'
 import { isArray } from '@vue/shared'
@@ -183,6 +183,15 @@ const props = defineProps({
   searchLabelWidth: { type: String, default: () => 'auto' },
   searchLabelAlign: { type: String, default: () => 'right' }
 })
+
+const dictTrans = (dataIndex, value) => {
+  if (! formDictData.value[dataIndex]) {
+    return value
+  }
+  return formDictData.value[dataIndex].filter(item => item.value === value)[0].label
+}
+
+defineExpose({ dictTrans })
 </script>
 
 <style scoped lang="scss">

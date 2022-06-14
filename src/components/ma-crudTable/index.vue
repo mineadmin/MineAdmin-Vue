@@ -15,6 +15,7 @@
       :search-label-align="settingProps.crud.searchLabelAlign"
       @search="searchHandler"
       id="__search-panel"
+      ref="searchRef"
     >
       <template #buttons>
         <slot name="buttons"></slot>
@@ -61,7 +62,11 @@
           >
             <template #cell="{ record, column, rowIndex }">
               <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }">
-              {{ row.dataIndex === '__index' ? getIndex(rowIndex): record[row.dataIndex] }}
+                <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
+                <template v-if="row.dict && row.dict.translation">
+                  {{ searchRef.dictTrans(row.dataIndex, record[row.dataIndex]) }}
+                </template>
+                <template v-else>{{ record[row.dataIndex] }}</template>
               </slot>
             </template>
             <template #summary-cell="{ column,record,rowIndex }">
@@ -104,6 +109,7 @@ const total = ref(0)
 const requestParams = ref({})
 const columns = ref([])
 const showSearch = ref(true)
+const searchRef = ref(null)
 
 const tableData = ref([])
 const cs = ref(null)
@@ -114,7 +120,7 @@ const defaultCrud = ref({
   // 是否显示边框
   bordered: { wrapper: true, cell: true },
   // 子节点为空隐藏节点按钮
-  hideExpandButtonOnEmpty: false,
+  hideExpandButtonOnEmpty: true,
   // 默认展开所有行
   expandAllRows: false,
   // 斑马线
