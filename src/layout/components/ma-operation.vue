@@ -10,29 +10,36 @@
         </a-button>
       </a-tooltip>
 
-      <a-tooltip content="锁屏">
+      <!-- <a-tooltip content="锁屏">
         <a-button :shape="'circle'" class="hidden lg:inline">
           <template #icon>
             <icon-lock />
           </template>
         </a-button>
-      </a-tooltip>
+      </a-tooltip> -->
 
       <a-tooltip :content="'全屏'">
-        <a-button :shape="'circle'" class="hidden lg:inline">
+        <a-button :shape="'circle'" class="hidden lg:inline" @click="screen">
           <template #icon>
-            <icon-fullscreen />
+            <icon-fullscreen-exit v-if="isFullScreen" />
+            <icon-fullscreen v-else />
           </template>
         </a-button>
       </a-tooltip>
 
-      <a-tooltip content="消息通知">
+      <a-trigger trigger="click">
         <a-button :shape="'circle'">
           <template #icon>
-            <icon-notification />
+            <a-badge :count="5" dot :dotStyle="{ width: '5px', height: '5px',}">
+              <icon-notification />
+            </a-badge>
           </template>
         </a-button>
-      </a-tooltip>
+
+        <template #content>
+          <message-notification />
+        </template>
+      </a-trigger>
 
       <a-tooltip content="页面设置">
         <a-button :shape="'circle'" @click="setting.open()" class="hidden lg:inline">
@@ -66,14 +73,21 @@
 <script setup>
   import { ref } from 'vue'
   import { useAppStore, useUserStore } from '@/store'
-
+  import tool from '@/utils/tool'
   import Setting from './components/setting.vue'
+  import messageNotification from './components/message-notification.vue'
 
   const userStore = useUserStore()
   const appStore  = useAppStore()
   const setting = ref(null)
+  const isFullScreen = ref(false)
 
   const handleSelect = () => {}
+
+  const screen = () => {
+    tool.screen(document.documentElement)
+    isFullScreen.value = !isFullScreen.value
+  }
   
 </script>
 <style scoped>

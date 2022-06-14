@@ -42,7 +42,7 @@
         <a-switch type="line" v-model="form.mode" @change="handleSettingMode" />
       </a-form-item>
       <a-form-item label="多标签模式" help="是否启用多标签方式">
-        <a-switch type="line" v-model="form.tagMode" @change="handleSettingTag" />
+        <a-switch type="line" v-model="form.tag" @change="handleSettingTag" />
       </a-form-item>
       <a-form-item label="菜单折叠" help="系统左侧菜单是否折叠起来">
         <a-switch type="line" v-model="form.menuCollapse" @change="handleMenuCollapse" />

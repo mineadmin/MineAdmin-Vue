@@ -62,20 +62,32 @@ html, body {
   }
 }
 
-.ma-menu .arco-menu-inner::-webkit-scrollbar, .backend-setting .arco-drawer-body::-webkit-scrollbar { 
+.ma-menu .arco-menu-inner::-webkit-scrollbar,
+.backend-setting .arco-drawer-body::-webkit-scrollbar,
+.arco-list::-webkit-scrollbar
+{ 
   width: 4px; /*高宽分别对应横竖滚动条的尺寸*/
   height:0px;
 }
 
-.ma-menu .arco-menu-inner::-webkit-scrollbar-thumb, .backend-setting .arco-drawer-body::-webkit-scrollbar-thumb {
+.ma-menu .arco-menu-inner::-webkit-scrollbar-thumb,
+.backend-setting .arco-drawer-body::-webkit-scrollbar-thumb,
+.arco-list::-webkit-scrollbar-thumb
+{
   border-radius: 10px;
   background: var(--color-text-4)
 }
-.ma-menu .arco-menu-inner::-webkit-scrollbar-thumb:hover, .backend-setting .arco-drawer-body::-webkit-scrollbar-thumb:hover {
+.ma-menu .arco-menu-inner::-webkit-scrollbar-thumb:hover,
+.backend-setting .arco-drawer-body::-webkit-scrollbar-thumb:hover,
+.arco-list::-webkit-scrollbar-thumb:hover
+{
   border-radius: 10px;
   background: var(--color-text-3)
 }
-.ma-menu .arco-menu-inner::-webkit-scrollbar-track, .backend-setting .arco-drawer-body::-webkit-scrollbar-track {
+.ma-menu .arco-menu-inner::-webkit-scrollbar-track,
+.backend-setting .arco-drawer-body::-webkit-scrollbar-track,
+.arco-list::-webkit-scrollbar-track
+{
   border-radius: 0;
   background: var(--color-text-5)
 }
