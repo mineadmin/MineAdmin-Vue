@@ -9,7 +9,7 @@
 -->
 
 <template>
-  <a-layout-content>
+  <a-layout-content class="sys-menus">
     <template v-for="menu in modelValue" :key="menu.id">
       <template v-if="!menu.meta.hidden">
         <a-menu-item
@@ -52,8 +52,8 @@
 </script>
 
 <style>
-.icon {
-  width: 1em; height: 1em;
+.sys-menus .icon {
+  width: 1em; height: 1em; fill: var(--color-text-1);
 }
 .arco-menu-selected .icon {
   fill: rgb(var(--primary-6));
