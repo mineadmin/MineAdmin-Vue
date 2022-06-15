@@ -1,12 +1,3 @@
-<!--
- - MineAdmin is committed to providing solutions for quickly building web applications
- - Please view the LICENSE file that was distributed with this source code,
- - For the full copyright and license information.
- - Thank you very much for using MineAdmin.
- -
- - @Author X.Mo<root@imoi.cn>
- - @Link   https://gitee.com/xmo/mineadmin-vue
--->
 <template>
   <a-layout-content class="flex flex-col">
     <search
@@ -63,6 +54,28 @@
             <template #cell="{ record, column, rowIndex }">
               <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }">
                 <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
+                <template v-if="row.dataIndex === '__operation'">
+                  <a-space>
+                    <a-button
+                      v-if="defaultCrud.seeOperation"
+                      size="mini"
+                      type="primary"
+                      :status="defaultCrud.seeStatus"
+                    >{{ defaultCrud.seeText }}</a-button>
+                    <a-button
+                      v-if="defaultCrud.editOperation"
+                      size="mini"
+                      type="primary"
+                      :status="defaultCrud.editStatus"
+                    >{{ defaultCrud.editText }}</a-button>
+                    <a-button
+                      v-if="defaultCrud.deleteOperation"
+                      size="mini"
+                      type="primary"
+                      :status="defaultCrud.deleteStatus"
+                    >{{ defaultCrud.deleteText }}</a-button>
+                  </a-space>
+                </template>
                 <template v-if="row.dict && row.dict.translation">
                   {{ searchRef.dictTrans(row.dataIndex, record[row.dataIndex]) }}
                 </template>
@@ -153,6 +166,24 @@ const defaultCrud = ref({
   operationColumn: false,
   // 操作列名称
   operationColumnText: '操作',
+  // 操作列删除按钮
+  deleteOperation: false,
+  // 删除按钮状态
+  deleteStatus: 'danger',
+  // 删除按钮文案
+  deleteText: '删除',
+  // 操作列编辑按钮
+  editOperation: false,
+  // 编辑按钮状态
+  editStatus: 'warning',
+  // 编辑按钮文案
+  editText: '编辑',
+  // 操作列查看按钮
+  seeOperation: false,
+  // 查看按钮状态
+  seeStatus: 'normal',
+  // 查看按钮文案
+  seeText: '查看',
 })
 
 watch(() => settingProps.pageSizeOption, (val) => {
@@ -229,8 +260,10 @@ const refresh = async () => {
 }
 
 const searchHandler = (formData) => {
-  if (settingProps.crud.requestParamsLabel) {
+  if (settingProps.crud.requestParamsLabel && requestParams.value[settingProps.crud.requestParamsLabel]) {
     requestParams.value[settingProps.crud.requestParamsLabel] = Object.assign(requestParams.value[settingProps.crud.requestParamsLabel], formData)
+  } else if (settingProps.crud.requestParamsLabel) {
+    requestParams.value[settingProps.crud.requestParamsLabel] = Object.assign({}, formData)
   } else {
     requestParams.value = Object.assign(requestParams.value, formData)
   }

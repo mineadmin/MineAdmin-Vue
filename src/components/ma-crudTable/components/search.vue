@@ -1,12 +1,3 @@
-<!--
- - MineAdmin is committed to providing solutions for quickly building web applications
- - Please view the LICENSE file that was distributed with this source code,
- - For the full copyright and license information.
- - Thank you very much for using MineAdmin.
- -
- - @Author X.Mo<root@imoi.cn>
- - @Link   https://gitee.com/xmo/mineadmin-vue
--->
 <template>
   <a-spin :loading="searchLoading" tip="加载数据中..." class="mt-5 mb-5" v-if="isShowSearch">
     <a-form :model="searchForm" layout="inline" class="grid grid-cols-4" :label-align="props.searchLabelAlign" ref="search">
@@ -61,9 +52,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch, nextTick } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue'
 import { request } from '@/utils/request'
-import axios from 'axios'
 import { isArray } from '@vue/shared'
 import { Message } from '@arco-design/web-vue'
 
