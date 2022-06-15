@@ -47,7 +47,7 @@
         <template v-for="(row, index) in columns" :key="index">
           <a-table-column
             :title="row.title" :data-index="row.dataIndex" :width="row.width"
-            :ellipsis="true" :tooltip="true" :align="row.align || 'center'" :fixed="row.dataIndex === '__index' ? 'left' : row.fixed"
+            :ellipsis="true" :tooltip="row.dataIndex === '__operation' ? false : true" :align="row.align || 'center'" :fixed="row.dataIndex === '__index' ? 'left' : row.fixed"
             :sortable="row.sortable"
             v-if="! row.hide"
           >
@@ -59,21 +59,21 @@
                     <a-button
                       v-if="defaultCrud.seeOperation"
                       size="mini"
-                      type="primary"
+                      type="text"
                       :status="defaultCrud.seeStatus"
-                    >{{ defaultCrud.seeText }}</a-button>
+                    ><icon-eye /> {{ defaultCrud.seeText }}</a-button>
                     <a-button
                       v-if="defaultCrud.editOperation"
                       size="mini"
-                      type="primary"
+                      type="text"
                       :status="defaultCrud.editStatus"
-                    >{{ defaultCrud.editText }}</a-button>
+                    ><icon-edit /> {{ defaultCrud.editText }}</a-button>
                     <a-button
                       v-if="defaultCrud.deleteOperation"
                       size="mini"
-                      type="primary"
+                      type="text"
                       :status="defaultCrud.deleteStatus"
-                    >{{ defaultCrud.deleteText }}</a-button>
+                    ><icon-delete /> {{ defaultCrud.deleteText }}</a-button>
                   </a-space>
                 </template>
                 <template v-if="row.dict && row.dict.translation">
@@ -164,6 +164,8 @@ const defaultCrud = ref({
   resizable: true,
   // 是否显示操作列
   operationColumn: false,
+  // 操作列宽度
+  operationWidth: '180',
   // 操作列名称
   operationColumnText: '操作',
   // 操作列删除按钮
@@ -181,7 +183,7 @@ const defaultCrud = ref({
   // 操作列查看按钮
   seeOperation: false,
   // 查看按钮状态
-  seeStatus: 'normal',
+  seeStatus: 'success',
   // 查看按钮文案
   seeText: '查看',
 })
@@ -201,7 +203,7 @@ const requestData = async () => {
     columns.value.unshift({ title: defaultCrud.value.indexLabel, dataIndex: '__index', width: 70 })
   }
   if (defaultCrud.value.operationColumn && columns.value.length > 0 && columns.value[columns.value.length - 1].dataIndex !== '__operation') {
-    columns.value.push({ title: defaultCrud.value.operationColumnText, dataIndex: '__operation' })
+    columns.value.push({ title: defaultCrud.value.operationColumnText, dataIndex: '__operation', width: defaultCrud.value.operationWidth })
   }
   showSearch.value = true
   initRequestParams()
