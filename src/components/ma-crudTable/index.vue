@@ -52,30 +52,31 @@
             v-if="! row.hide"
           >
             <template #cell="{ record, column, rowIndex }">
-              <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }">
+              <template v-if="row.dataIndex === '__operation'">
+                <a-space>
+                  <a-button
+                    v-if="defaultCrud.seeOperation"
+                    size="mini"
+                    type="text"
+                    :status="defaultCrud.seeStatus"
+                  ><icon-eye /> {{ defaultCrud.seeText }}</a-button>
+                  <a-button
+                    v-if="defaultCrud.editOperation"
+                    size="mini"
+                    type="text"
+                    :status="defaultCrud.editStatus"
+                  ><icon-edit /> {{ defaultCrud.editText }}</a-button>
+                  <a-button
+                    v-if="defaultCrud.deleteOperation"
+                    size="mini"
+                    type="text"
+                    :status="defaultCrud.deleteStatus"
+                  ><icon-delete /> {{ defaultCrud.deleteText }}</a-button>
+                  <slot name="operationExtend" v-bind="{ record, column, rowIndex }"></slot>
+                </a-space>
+              </template>
+              <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else >
                 <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
-                <template v-if="row.dataIndex === '__operation'">
-                  <a-space>
-                    <a-button
-                      v-if="defaultCrud.seeOperation"
-                      size="mini"
-                      type="text"
-                      :status="defaultCrud.seeStatus"
-                    ><icon-eye /> {{ defaultCrud.seeText }}</a-button>
-                    <a-button
-                      v-if="defaultCrud.editOperation"
-                      size="mini"
-                      type="text"
-                      :status="defaultCrud.editStatus"
-                    ><icon-edit /> {{ defaultCrud.editText }}</a-button>
-                    <a-button
-                      v-if="defaultCrud.deleteOperation"
-                      size="mini"
-                      type="text"
-                      :status="defaultCrud.deleteStatus"
-                    ><icon-delete /> {{ defaultCrud.deleteText }}</a-button>
-                  </a-space>
-                </template>
                 <template v-if="row.dict && row.dict.translation">
                   {{ searchRef.dictTrans(row.dataIndex, record[row.dataIndex]) }}
                 </template>
