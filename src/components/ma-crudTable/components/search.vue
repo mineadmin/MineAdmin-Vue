@@ -1,30 +1,58 @@
 <template>
   <a-spin :loading="searchLoading" tip="加载数据中..." class="mt-5 mb-5" v-if="isShowSearch">
-    <a-form :model="searchForm" layout="inline" class="grid grid-cols-4" :label-align="props.searchLabelAlign" ref="search">
+    <a-form :model="searchForm" layout="inline" class="grid grid-cols-1 lg:grid-cols-4" :label-align="props.searchLabelAlign" ref="search">
       <template v-for="(item, index) in props.columns" :key="index">
         <a-form-item
           :field="item.dataIndex"
           :label="item.title"
-          :required="item.required"
           v-if="item.search"
           :label-col-style="{ width: item.searchLabelWidth || props.searchLabelWidth }"
         >
           <a-select
-            v-if="['select', 'radio', 'checkbox'].includes(item.formType)"
+            v-if="['select', 'radio', 'checkbox', 'transfer'].includes(item.formType)"
             v-model="searchForm[item.dataIndex]"
             :virtual-list-props="{ height:200 }"
-            :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请输入${item.title}`"
+            :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`"
             allow-clear
             allow-search
             :options="formDictData[item.dataIndex]"
+            :multiple="item.multiple || ['transfer', 'checkbox'].includes(item.formType)"
             @change="handlerCascader($event, item)"
+          />
+
+          <a-cascader
+            v-else-if="item.formType === 'cascader'"
+            v-model="form[item.dataIndex]"
+            :placeholder="item.placeholder || `请选择${item.title}`"
+            allow-clear
+            allow-search
+            :disabled="item.disabled"
+            :readonly="item.readonly"
+            :expand-trigger="item.trigger || 'click'"
+            :options="formDictData[item.dataIndex]"
+            :multiple="item.multiple"
+          />
+
+          <a-tree-select
+            v-else-if="item.formType === 'treeSelect'"
+            v-model="form[item.dataIndex]"
+            :treeProps="{ virtualListProps: { height: 240 } }"
+            :placeholder="item.placeholder || `请选择${item.title}`"
+            :disabled="item.disabled"
+            :readonly="item.readonly"
+            allow-clear
+            allow-search
+            label-in-value
+            :tree-checkable="item.multiple"
+            :multiple="item.multiple"
+            :data="formDictData[item.dataIndex]"
           />
 
           <component
             v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
             :is="getComponent(item)"
             v-model="searchForm[item.dataIndex]"
-            :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请输入${item.title}`"
+            :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`"
             :format="item.format || ''"
             allow-clear
             style="width: 100%;"
@@ -36,7 +64,6 @@
             v-model="searchForm[item.dataIndex]"
             :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请输入${item.title}`"
             allow-clear
-            :virtual-list-props="{ height:200 }"
           />
         </a-form-item>
       </template>
@@ -77,7 +104,8 @@ watch(() => props.columns, () => {
 const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
 
 const init = async () => {
-  const allowRequestFormType = ['radio', 'checkbox', 'select']
+  const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'cascader']
+  const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
   if (props.columns.length > 0) {
     props.columns.map(async item => {
       if (item.search && ! isShowSearch.value) isShowSearch.value = true
@@ -89,20 +117,28 @@ const init = async () => {
         if (item.dict.url) {
           let response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.data || {})
           if (response.data) {
-            formDictData.value[item.dataIndex] = response.data.map(dicItem => {
+            if (allowCoverFormType.includes(item.formType)) {
+              formDictData.value[item.dataIndex] = response.data.map(dicItem => {
+                return {
+                  'label': dicItem[ (item.dict.props && item.dict.props.label) || 'code'  ],
+                  'value': dicItem[ (item.dict.props && item.dict.props.value) || 'value' ]
+                } 
+              })
+            } else {
+              formDictData.value[item.dataIndex] = response.data
+            }
+          }
+        } else if (item.dict.data && isArray(item.dict.data) && item.dict.data.length > 0) {
+          if (allowCoverFormType.includes(item.formType)) {
+            formDictData.value[item.dataIndex] = item.dict.data.map(dicItem => {
               return {
                 'label': dicItem[ (item.dict.props && item.dict.props.label) || 'code'  ],
                 'value': dicItem[ (item.dict.props && item.dict.props.value) || 'value' ]
               } 
             })
+          } else {
+            formDictData.value[item.dataIndex] = item.dict.data
           }
-        } else if (item.dict.data && isArray(item.dict.data) && item.dict.data.length > 0) {
-          formDictData.value[item.dataIndex] = item.dict.data.map(dicItem => {
-            return {
-              'label': dicItem[ (item.dict.props && item.dict.props.label) || 'code'  ],
-              'value': dicItem[ (item.dict.props && item.dict.props.value) || 'value' ]
-            } 
-          })
         }
       }
     })
@@ -116,7 +152,7 @@ const getComponent = (item => {
   }
   if (['input', 'password', 'textarea'].includes(item.formType)) {
     return 'a-input'
-  } else if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time']) {
+  } else if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)) {
     return `a-${item.formType}-picker`
   } else {
     return `a-input`

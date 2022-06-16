@@ -15,7 +15,7 @@
     <div class="opartion-tools flex justify-between mb-3">
       <a-space>
         <!-- 新增 -->
-        <a-button type="primary" v-if="defaultCrud.addBtn"><icon-plus /> {{ defaultCrud.addText }}</a-button>
+        <a-button type="primary" v-if="defaultCrud.addBtn" @click="addAction"><icon-plus /> {{ defaultCrud.addText }}</a-button>
         <a-button type="primary" status="success" v-if="defaultCrud.importBtn"><icon-upload /> {{ defaultCrud.importText }}</a-button>
         <a-button type="primary" status="danger" v-if="defaultCrud.exportBtn"><icon-download /> {{ defaultCrud.exportText }}</a-button>
         <slot name="operation"></slot>
@@ -104,6 +104,9 @@
     </div>
 
     <column-setting ref="cs" v-model="columns" v-model:crud="defaultCrud" />
+
+    <data-view-page ref="dvp" v-model="columns" :setting="defaultCrud.viewLayoutSetting" />
+
   </a-layout-content>
 </template>
 
@@ -113,6 +116,7 @@ import { isFunction } from '@vue/shared'
 import { ref, watch, nextTick } from 'vue'
 
 import search from './components/search.vue'
+import dataViewPage from './components/data.vue'
 import columnSetting from './components/columnSetting.vue'
 
 const loading = ref(true)
@@ -126,6 +130,7 @@ const searchRef = ref(null)
 
 const tableData = ref([])
 const cs = ref(null)
+const dvp = ref(null)
 
 const defaultCrud = ref({
   // 设置选择列
@@ -140,6 +145,19 @@ const defaultCrud = ref({
   stripe: true,
   // 表格大小
   size: 'large',
+  // 新增和编辑显示设置
+  viewLayoutSetting: {
+    // 显示方式支持模态框和抽屉: modal drawer
+    viewType: 'modal',
+    // 显示宽度 
+    width: 600,
+    // 是否全屏，只有modal有效    
+    isFull: false,
+    // 表单设置一行多少列，会自适应
+    cols: 1,
+    // 标签对齐方式
+    labelAlign: 'right'
+  },
   // 是否有新增按钮
   addBtn: false,
   // 新增按钮文案
@@ -165,7 +183,7 @@ const defaultCrud = ref({
   // 是否显示操作列
   operationColumn: false,
   // 操作列宽度
-  operationWidth: '180',
+  operationWidth: 180,
   // 操作列名称
   operationColumnText: '操作',
   // 操作列删除按钮
@@ -299,6 +317,10 @@ const getIndex = (rowIndex) => {
   } else {
     return requestParams.value[config.request.page] * requestParams.value[config.request.pageSize] + rowIndex
   }
+}
+
+const addAction = () => {
+  dvp.value.add()
 }
 
 const settingProps = defineProps({
