@@ -53,7 +53,7 @@
 
 <style>
 .sys-menus .icon {
-  width: 1em; height: 1em; fill: var(--color-text-1);
+  width: 1em; height: 1em; 
 }
 .arco-menu-selected .icon {
   fill: rgb(var(--primary-6));
