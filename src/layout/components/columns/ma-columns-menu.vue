@@ -30,7 +30,7 @@
     <div class="menu-title flex items-center" v-show="! appStore.menuCollapse">{{ title }}</div>
     <a-layout-sider
       :style="
-        `width: ${appStore.menuCollapse ? '45px' : appStore.menuWidth + 'px'};
+        `width: ${appStore.menuCollapse ? '50px' : appStore.menuWidth + 'px'};
         height: ${appStore.menuCollapse ? '100%' : 'calc(100% - 51px)'};`"
       >
       <ma-menu ref="MaMenu" :class="appStore.menuCollapse ? 'ml-0.5' : ''" />

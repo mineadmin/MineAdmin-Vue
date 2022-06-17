@@ -10,7 +10,7 @@
 <template>
   <a-layout-sider
     class="layout-classic-sider h-full flex flex-col hidden lg:block"
-    :style="`width: ${appStore.menuCollapse ? '55px' : appStore.menuWidth + 'px'};`"
+    :style="`width: ${appStore.menuCollapse ? '48px' : appStore.menuWidth + 'px'};`"
   >
     <div class="flex justify-center logo">
       <a-avatar class="mt-1" :size="40"><img src="/logo.svg" class="bg-white" /></a-avatar>
@@ -43,10 +43,4 @@
 
 <style>
 .logo { height: 51px; border-bottom: 1px solid var(--color-border-1); }
-:deep(.arco-menu-inner){
-  overflow-x: hidden !important
-}
-:deep(.arco-layout-sider-children) {
-  overflow-x: hidden;
-}
 </style>

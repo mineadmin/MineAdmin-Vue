@@ -31,7 +31,7 @@
     </a-layout-header>
     <a-layout class="flex h-full justify-between">
       <a-layout-sider
-        :style="`width: ${appStore.menuCollapse ? '45px' : appStore.menuWidth + 'px'};`"
+        :style="`width: ${appStore.menuCollapse ? '48px' : appStore.menuWidth + 'px'};`"
         class="hidden lg:flex"
       >
         <ma-menu ref="MaMenu" :class="appStore.menuCollapse ? 'ml-0.5' : ''" />
@@ -83,5 +83,8 @@
 <style scoped>
 .tags {
   margin-top: -1px;
+}
+:deep(.arco-menu-collapse-button) {
+  right: 10px;
 }
 </style>

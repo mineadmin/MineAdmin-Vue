@@ -4,7 +4,7 @@
     :style="{ width: appStore.menuWidth + 'px', height: props.height }"
     breakpoint="md"
     :accordion="true"
-    :collapsed-width="40"
+    :collapsed-width="45"
     show-collapse-button
     :selected-keys="actives"
     :collapsed="appStore.menuCollapse"
@@ -66,7 +66,7 @@
 
   defineExpose({ loadChildMenu, title, actives, menus })
 </script>
-<style>
+<style scoped>
 :deep(.arco-menu-vertical .arco-menu-inner) {
   padding: 0;
 }

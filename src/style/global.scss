@@ -3,6 +3,9 @@
 html, body {
   height: 100%;
 }
+.arco-layout-sider-children {
+  overflow-x: hidden;
+}
 
 .layout, .layout-columns-left-panel, .layout-columns-right-panel {
   height: 100%;
