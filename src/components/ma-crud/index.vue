@@ -135,7 +135,7 @@
 </template>
 
 <script setup>
-import config from '@/config/crudTable'
+import config from '@/config/crud'
 import { isFunction } from '@vue/shared'
 import { ref, watch, nextTick } from 'vue'
 

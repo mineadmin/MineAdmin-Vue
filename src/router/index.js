@@ -55,8 +55,8 @@ router.afterEach((to, from) => {
   NProgress.done()
 })
 
-router.onError((error) => {
-  // console.log(error)
+router.onError(error => {
+  console.log(error)
   NProgress.done();
 });
 
