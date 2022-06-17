@@ -1,14 +1,13 @@
-import { useUserStore } from '@/store'
+import role from './role'
 
-const checkAuth = (el, binding) => {
+const checkRole = (el, binding) => {
   const { value } = binding
-  const userStore = useUserStore()
 
   if (Array.isArray(value)) {
     if (value.length > 0) {
       let isHas = false
       value.map(item => {
-        isHas = userStore.permission.includes(item)
+        isHas = role(item)
       })
 
       if (!isHas && el.parentNode) {
@@ -16,15 +15,15 @@ const checkAuth = (el, binding) => {
       }
     }
   } else {
-    throw new Error(`need permission! Like v-auth="['admin','user']"`)
+    throw new Error(`need role! Like v-role="['seo', 'cfo']"`)
   }
 }
 
 export default {
   mounted(el, binding) {
-    checkAuth(el, binding)
+    checkRole(el, binding)
   },
   updated(el, binding) {
-    checkAuth(el, binding)
+    checkRole(el, binding)
   },
 };

@@ -2,20 +2,22 @@
   <component
     :is="componentName"
     v-model:visible="dataVisible"
-    @ok="save" @cancel="close"
+    :on-before-ok="submit" @cancel="close"
     ok-text="保存"
     cancel-text="关闭"
     draggable
-    :width="props.setting.width || 600"
-    :fullscreen="props.setting.isFull || false"
+    :width="setting.width || 600"
+    :fullscreen="setting.isFull || false"
     unmount-on-close
   >
     <template #title>{{ actionTitle }}</template>
-    <a-spin :loading="dataLoading" tip="加载数据中..." class="w-full">
+    <a-spin :loading="dataLoading" tip="加载中..." class="w-full">
       <a-form
+        ref="crudForm"
         :model="form"
-        :class="`grid grid-cols-1 lg:grid-cols-${props.setting.cols || 1}`"
-        :label-align="props.setting.labelAlign || 'right'"
+        :class="`grid grid-cols-1 lg:grid-cols-${setting.cols || 1}`"
+        :label-align="setting.labelAlign || 'right'"
+        @submit="submit"
       >
         <template v-for="(item, index) in columns" :key="index">
           <a-form-item
@@ -24,6 +26,7 @@
             :field="item.dataIndex"
             label-col-flex="auto"
             :label-col-style="{ width: item.labelWidth || '100px' }"
+            :rules="item.rules || []"
           >
             <a-select
               v-if="item.formType === 'select'"
@@ -147,7 +150,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, reactive } from 'vue'
 import { request } from '@/utils/request'
 import { isArray } from '@vue/shared'
 import { Message } from '@arco-design/web-vue'
@@ -157,21 +160,46 @@ const columns = ref([])
 const currentAction = ref('')
 const dataVisible = ref(false)
 const form = ref({})
+const crudForm = ref(null)
 const actionTitle = ref('')
 
 const dataLoading = ref(true)
 const formDictData = ref({})
 
+const emit = defineEmits(['success', 'error'])
+
 const props = defineProps({
   modelValue: Array,
-  setting: { type: Object, default: { viewType: 'modal', width: '500' }}
+  crud: { type: Object, default: { viewType: 'modal', width: '500' }}
 })
 
-const save = () => {}
+const setting = reactive( props.crud.viewLayoutSetting )
+
+const submit = (done) => {
+  crudForm.value.validate()
+  .then(async result => {
+    if (result) {
+      done(false)
+      return
+    }
+    const response = currentAction === 'add' ? await props.crud.add.api(form.value) : await props.crud.edit.api(form.value)
+    if ( response.code === 200 ) {
+      Message.success(response.message || `${actionTitle.value}成功！`)
+      emit('success', response)
+      done()
+    } else {dd
+      Message.error(response.message || `${actionTitle.value}失败！`)
+      emit('error', response)
+      done(false)
+    }
+  })
+  .catch()
+  //.finally( done(false) )
+}
 
 const open = () => {
   nextTick()
-  componentName.value = props.setting.viewType === 'modal' ? 'a-modal' : 'a-drawer'
+  componentName.value = setting.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
   dataVisible.value = true
   columns.value = props.modelValue
   init()
@@ -189,9 +217,10 @@ const add = () => {
   open()
 }
 
-const update = (data) => {
+const edit = (data) => {
   actionTitle.value = '编辑'
   currentAction.value = 'edit'
+  for (let i in data) form.value[i] = data[i]
   open()
 }
 
@@ -202,7 +231,10 @@ const init = () => {
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
   if (columns.value.length > 0) {
     columns.value.map(async item => {
-      form.value[item.dataIndex] = undefined
+      if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
+      if (currentAction.value === 'add') {
+        form.value[item.dataIndex] = undefined
+      }
 
       if (allowRequestFormType.includes(item.formType) && item.dict) {
         if (item.dict.url) {
@@ -295,5 +327,5 @@ const getComponent = (item) => {
   }
 }
 
-defineExpose({ add, update })
+defineExpose({ add, edit })
 </script>

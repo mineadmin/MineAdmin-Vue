@@ -1,14 +1,13 @@
-import { useUserStore } from '@/store'
+import auth from './auth'
 
 const checkAuth = (el, binding) => {
   const { value } = binding
-  const userStore = useUserStore()
 
   if (Array.isArray(value)) {
     if (value.length > 0) {
       let isHas = false
       value.map(item => {
-        isHas = userStore.permission.includes(item)
+        isHas = auth(item)
       })
 
       if (!isHas && el.parentNode) {

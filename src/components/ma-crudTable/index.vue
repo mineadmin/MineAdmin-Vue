@@ -14,10 +14,27 @@
     </search>
     <div class="opartion-tools flex justify-between mb-3">
       <a-space>
-        <!-- 新增 -->
-        <a-button type="primary" v-if="defaultCrud.addBtn" @click="addAction"><icon-plus /> {{ defaultCrud.addText }}</a-button>
-        <a-button type="primary" status="success" v-if="defaultCrud.importBtn"><icon-upload /> {{ defaultCrud.importText }}</a-button>
-        <a-button type="primary" status="danger" v-if="defaultCrud.exportBtn"><icon-download /> {{ defaultCrud.exportText }}</a-button>
+        <a-button
+          type="primary"
+          v-if="defaultCrud.add.show"
+          v-auth="defaultCrud.add.auth || []"
+          v-role="defaultCrud.add.role || []"
+          @click="addAction"
+        ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
+        <a-button
+          type="primary"
+          status="success"
+          v-auth="defaultCrud.import.auth || []"
+          v-role="defaultCrud.import.role || []"
+          v-if="defaultCrud.import.show"
+        ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
+        <a-button
+          type="primary"
+          status="danger"
+          v-auth="defaultCrud.export.auth || []"
+          v-role="defaultCrud.export.role || []"
+          v-if="defaultCrud.export.show"
+        ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
         <slot name="operation"></slot>
       </a-space>
       <a-space>
@@ -55,23 +72,24 @@
               <template v-if="row.dataIndex === '__operation'">
                 <a-space>
                   <a-button
-                    v-if="defaultCrud.seeOperation"
-                    size="mini"
-                    type="text"
-                    :status="defaultCrud.seeStatus"
-                  ><icon-eye /> {{ defaultCrud.seeText }}</a-button>
+                    v-if="defaultCrud.see.show"
+                    size="mini" type="text" status="success"
+                    v-auth="defaultCrud.see.auth || []"
+                    v-role="defaultCrud.see.role || []"
+                  ><icon-eye /> {{ defaultCrud.see.text || '查看' }}</a-button>
                   <a-button
-                    v-if="defaultCrud.editOperation"
-                    size="mini"
-                    type="text"
-                    :status="defaultCrud.editStatus"
-                  ><icon-edit /> {{ defaultCrud.editText }}</a-button>
+                    v-if="defaultCrud.edit.show"
+                    size="mini" type="text" status="warning"
+                    v-auth="defaultCrud.edit.auth || []"
+                    v-role="defaultCrud.edit.role || []"
+                    @click="editAction(record)"
+                  ><icon-edit /> {{ defaultCrud.edit.text || '编辑' }}</a-button>
                   <a-button
-                    v-if="defaultCrud.deleteOperation"
-                    size="mini"
-                    type="text"
-                    :status="defaultCrud.deleteStatus"
-                  ><icon-delete /> {{ defaultCrud.deleteText }}</a-button>
+                    v-if="defaultCrud.delete.show"
+                    size="mini" type="text" status="danger"
+                    v-auth="defaultCrud.delete.auth || []"
+                    v-role="defaultCrud.delete.role || []"
+                  ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-button>
                   <slot name="operationExtend" v-bind="{ record, column, rowIndex }"></slot>
                 </a-space>
               </template>
@@ -106,7 +124,12 @@
 
     <column-setting ref="cs" v-model="columns" v-model:crud="defaultCrud" />
 
-    <data-view-page ref="dvp" v-model="columns" :setting="defaultCrud.viewLayoutSetting" />
+    <data-view-page
+      ref="dvp"
+      v-model="columns"
+      v-model:crud="defaultCrud"
+      @success="requestSuccess"
+    />
 
   </a-layout-content>
 </template>
@@ -144,6 +167,8 @@ const defaultCrud = ref({
   expandAllRows: false,
   // 斑马线
   stripe: true,
+  // 新增、编辑、删除完成后是否刷新表格
+  dataCompleteRefresh: true,
   // 表格大小
   size: 'large',
   // 新增和编辑显示设置
@@ -159,18 +184,76 @@ const defaultCrud = ref({
     // 标签对齐方式
     labelAlign: 'right'
   },
-  // 是否有新增按钮
-  addBtn: false,
-  // 新增按钮文案
-  addText: '新增',
-  // 是否有导入按钮
-  importBtn: false,
-  // 导入按钮文案
-  importText: '导入',
-  // 是否有导出按钮
-  exportBtn: false,
-  // 导出按钮文案
-  exportText: '导出',
+  add: {
+    // 新增api
+    api: undefined,
+    // 显示新增按钮的权限
+    auth: [],
+    // 显示新增按钮的角色
+    role: [],
+    // 按钮文案
+    text: '新增',
+    // 是否显示
+    show: false,
+  },
+  edit: {
+    // 编辑api
+    api: undefined,
+    // 显示编辑按钮的权限
+    auth: [],
+    // 显示编辑按钮的角色
+    role: [],
+    // 按钮文案
+    text: '编辑',
+    // 是否显示
+    show: false,
+  },
+  delete: {
+    // 删除api
+    api: undefined,
+    // 显示删除按钮的权限
+    auth: [],
+    // 显示删除按钮的角色
+    role: [],
+    // 按钮文案
+    text: '删除',
+    // 是否显示
+    show: false,
+  },
+  see: {
+    // 显示查看按钮的权限
+    auth: [],
+    // 显示查看按钮的角色
+    role: [],
+    // 按钮文案
+    text: '查看',
+    // 是否显示
+    show: false,
+  },
+  import: {
+    // 导入api
+    api: undefined,
+    // 显示导入按钮的权限
+    auth: [],
+    // 显示导入按钮的角色
+    role: [],
+    // 按钮文案
+    text: '导入',
+    // 是否显示
+    show: false,
+  },
+  export: {
+    // 导出url
+    url: undefined,
+    // 显示导出按钮的权限
+    auth: [],
+    // 显示导出按钮的角色
+    role: [],
+    // 按钮文案
+    text: '导出',
+    // 是否显示
+    show: false,
+  },
   // 是否显示索引列
   showIndex: true,
   // 索引列名称
@@ -187,24 +270,6 @@ const defaultCrud = ref({
   operationWidth: 180,
   // 操作列名称
   operationColumnText: '操作',
-  // 操作列删除按钮
-  deleteOperation: false,
-  // 删除按钮状态
-  deleteStatus: 'danger',
-  // 删除按钮文案
-  deleteText: '删除',
-  // 操作列编辑按钮
-  editOperation: false,
-  // 编辑按钮状态
-  editStatus: 'warning',
-  // 编辑按钮文案
-  editText: '编辑',
-  // 操作列查看按钮
-  seeOperation: false,
-  // 查看按钮状态
-  seeStatus: 'success',
-  // 查看按钮文案
-  seeText: '查看',
 })
 
 watch(() => settingProps.pageSizeOption, (val) => {
@@ -288,6 +353,7 @@ const searchHandler = (formData) => {
   } else {
     requestParams.value = Object.assign(requestParams.value, formData)
   }
+
   refresh()
 }
 
@@ -312,6 +378,10 @@ const tableSetting = () => {
   cs.value.open()
 }
 
+const requestSuccess = response => {
+  defaultCrud.value.dataCompleteRefresh && refresh()
+}
+
 const getIndex = (rowIndex) => {
   if (requestParams.value[config.request.page] == 1) {
     return rowIndex + 1
@@ -320,9 +390,9 @@ const getIndex = (rowIndex) => {
   }
 }
 
-const addAction = () => {
-  dvp.value.add()
-}
+const addAction = () => dvp.value.add()
+
+const editAction = (record) => dvp.value.edit(record)
 
 const settingProps = defineProps({
 
