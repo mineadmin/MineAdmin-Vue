@@ -1,7 +1,7 @@
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { BarChart, LineChart, PieChart, RadarChart } from 'echarts/charts'
-import MaCrudTable from './ma-crudtable/index.vue'
+import MaCrud from './ma-crud/index.vue'
 import {
   GridComponent,
   TooltipComponent,
@@ -27,6 +27,6 @@ use([
 export default {
   install(Vue) {
     Vue.component('MaChart', MaChart)
-    Vue.component('MaCrudTable', MaCrudTable)
+    Vue.component('MaCrud', MaCrud)
   }
 }

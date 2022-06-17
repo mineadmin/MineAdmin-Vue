@@ -1,11 +1,11 @@
-import auth from '@/directives/auth/auth'
-import role from '@/directives/role/role'
+import checkAuth from '@/directives/auth/auth'
+import checkAuth from '@/directives/role/role'
 
 // 检查权限函数
-export const checkAuth = name => auth(name)
+export const auth = name => checkAuth(name)
 
 // 检查角色函数
-export const checkRole = name => role(name)
+export const role = name => checkRole(name)
 
 // 防抖
 export const debouce = function (callback, delay) {
