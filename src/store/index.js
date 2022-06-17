@@ -1,7 +1,7 @@
 import { createPinia } from 'pinia'
-import useUserStore from './user'
-import useAppStore from './app'
-import useTagStore from './tag'
+import useUserStore from './modules/user'
+import useAppStore from './modules/app'
+import useTagStore from './modules/tag'
 
 const pinia = createPinia()
 
