@@ -81,7 +81,7 @@ const useUserStore = defineStore('user', {
     },
 
     async logout() {
-      await userLogout()
+      await loginApi.logout()
       this.clearToken()
       this.resetUserInfo()
     }
