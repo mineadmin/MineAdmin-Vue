@@ -10,6 +10,10 @@
 
 <template>
   <a-layout-content class="work-area relative">
-    工作区
+    {{ $t('user.name') }}
   </a-layout-content>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+</script>

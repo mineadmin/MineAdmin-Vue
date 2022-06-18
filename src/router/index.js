@@ -1,4 +1,3 @@
-import { onMounted } from 'vue'
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/store'
 import NProgress from 'nprogress'
