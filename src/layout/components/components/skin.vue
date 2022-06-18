@@ -9,7 +9,7 @@
 -->
 <template>
   <a-modal v-model:visible="visible" width="600px" @cancel="close" :footer="false">
-    <template #title>换肤</template>
+    <template #title>{{ $t('sys.changeSkin') }}</template>
     <div class="flex flex-col">
       <a-card
         v-for="(item, index) in skinList"
@@ -18,12 +18,14 @@
         :body-style="{ width: '100%', display: 'flex', justifyContent: 'space-between', padding: '10px' }"
       >
         <a-row class="w-full flex items-center">
+          <a-col :span="3" class="flex flex-col text-center">
+            <div class="leading-6">{{ $t(`skin.${item.name}`) }}</div>
+          </a-col>
           <a-col :span="6" class="flex flex-col text-center">
             <a-image :src="item.thumb" class="rounded border" />
-            <div class="leading-6">{{ item.title }}</div>
           </a-col>
-          <a-col :span="15" class="flex items-center pl-3">
-            {{ item.desc }}
+          <a-col :span="12" class="flex items-center pl-3 pr-3">
+            {{ $t(`skin.${item.name}Desc`) }}
           </a-col>
           <a-col :span="3" class="flex items-center justify-end">
             <a-button
@@ -31,7 +33,7 @@
               :disabled="appStore.skin === item.name"
               @click="useSkin(item.name)"
             >
-              {{ appStore.skin === item.name ? '已激活' : '使用' }}
+              {{ appStore.skin === item.name ? $t('skin.activated') : $t('skin.use') }}
             </a-button>
           </a-col>
         </a-row>

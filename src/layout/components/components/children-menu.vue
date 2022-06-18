@@ -20,13 +20,13 @@
           <template #icon v-if="menu.meta.icon">
             <component :is="menu.meta.icon" :class="menu.meta.icon.indexOf('ma') > 0 ? 'icon' : ''" />
           </template>
-          {{ menu.meta.title }}
+          {{ $t(`menus.${menu.name}`) }}
         </a-menu-item>
         <a-sub-menu v-else :key="menu.name">
           <template #icon v-if="menu.meta.icon">
             <component :is="menu.meta.icon" :class="menu.meta.icon.indexOf('ma') > 0 ? 'icon' : ''" />
           </template>
-          <template #title @click="routerPush(menu.path)">{{ menu.meta.title }}</template>
+          <template #title @click="routerPush(menu.path)">{{ $t(`menus.${menu.name}`) }}</template>
           <template v-if="menu.children">
             <children-menu v-model="menu.children" />
           </template>

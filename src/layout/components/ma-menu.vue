@@ -18,12 +18,14 @@
 <script setup>
   import { ref, watch, onMounted } from 'vue'
   import { useRouter, useRoute } from 'vue-router'
+  import { useI18n } from 'vue-i18n'
 
   import childrenMenu from './components/children-menu.vue'
   
   import { useAppStore, useUserStore } from '@/store'
   const router = useRouter()
   const route  = useRoute()
+  const { t } = useI18n()
 
   const appStore = useAppStore()
   const userStore = useUserStore()
@@ -53,7 +55,7 @@
   const loadChildMenu = (obj, bigIndex = 0, routerIndex = 0) => {
     if (obj.children && obj.children.length > 0) {
       menus.value = obj.children
-      title.value = obj.meta.title
+      title.value = t('menus.' + obj.name)
     }
   }
 

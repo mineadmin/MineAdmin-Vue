@@ -21,7 +21,10 @@
           @click="loadMenu(bigMenu, index)"
         >
           <component v-if="bigMenu.meta.icon" :is="bigMenu.meta.icon" class="text-xl mt-1" />
-          <span class="mt-0.5">{{ bigMenu.meta.title }}</span>
+          <span
+            class="mt-0.5"
+            :style="appStore.language === 'en' ? 'font-size: 10px' : ''"
+          >{{ $t(`menus.${bigMenu.name}`).replace(' ', '') }}</span>
         </li>
       </template>
     </ul>

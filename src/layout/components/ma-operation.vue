@@ -2,7 +2,7 @@
   <div class="mr-2 flex justify-end lg:justify-between w-full lg:w-auto">
     <a-space class="mr-0 lg:mr-5" size="medium">
 
-      <a-tooltip content="搜索">
+      <a-tooltip :content="$t('sys.search')">
         <a-button :shape="'circle'" class="hidden lg:inline">
           <template #icon>
             <icon-search />
@@ -18,7 +18,7 @@
         </a-button>
       </a-tooltip> -->
 
-      <a-tooltip :content="'全屏'">
+      <a-tooltip :content="isFullScreen ? $t('sys.closeFullScreen') : $t('sys.fullScreen')">
         <a-button :shape="'circle'" class="hidden lg:inline" @click="screen">
           <template #icon>
             <icon-fullscreen-exit v-if="isFullScreen" />
@@ -41,7 +41,7 @@
         </template>
       </a-trigger>
 
-      <a-tooltip content="页面设置">
+      <a-tooltip :content="$t('sys.pageSetting')">
         <a-button :shape="'circle'" @click="setting.open()" class="hidden lg:inline">
           <template #icon>
             <icon-settings />
@@ -59,16 +59,16 @@
       </a-avatar>
 
       <template #content>
-        <a-doption value="userCenter"><icon-user /> 个人中心</a-doption>
-        <a-doption value="clearCache"><icon-delete /> 清除缓存</a-doption>
+        <a-doption value="userCenter"><icon-user /> {{ $t('sys.userCenter') }}</a-doption>
+        <a-doption value="clearCache"><icon-delete /> {{ $t('sys.clearCache') }}</a-doption>
         <a-divider style="margin: 5px 0" />
-        <a-doption value="logout"><icon-poweroff /> 退出系统</a-doption>
+        <a-doption value="logout"><icon-poweroff /> {{ $t('sys.logout') }}</a-doption>
       </template>
     </a-dropdown>
 
     <a-modal v-model:visible="showLogoutModal" @ok="handleLogout" @cancel="handleLogoutCancel">
-      <template #title>退出提示</template>
-      <div>确定要退出登录吗？</div>
+      <template #title>{{ $t('sys.logoutAlert') }}</template>
+      <div>{{ $t('sys.logoutMessage') }}</div>
     </a-modal>
 
     <Setting ref="setting" />

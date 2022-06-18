@@ -13,41 +13,43 @@
     class="backend-setting"
     :visible="visible"
     @ok="save"
-    width="280px"
-    ok-text="保存到后台"
+    width="350px"
+    :ok-text="$t('sys.saveToBackend')"
     :ok-loading="okLoading"
     @cancel="close"
     unmountOnClose
   >
-    <template #title>后台配置</template>
+    <template #title>{{ $t('sys.backendSettingTitle') }}</template>
     <a-form :model="form" :auto-label-width="true">
-      <a-form-item label="当前皮肤" help="设置后台皮肤">
+      <a-form-item :label="$t('sys.skin')" :help="$t('sys.skinHelp')">
         {{ currentSkin }} 
-        <a-button type="primary" status="success" size="mini" class="ml-2" @click="skin.open()">换肤</a-button>
+        <a-button type="primary" status="success" size="mini" class="ml-2" @click="skin.open()">
+          {{ $t('sys.changeSkin')}}
+        </a-button>
       </a-form-item>
-      <a-form-item label="后台布局" help="设置后台显示方式">
+      <a-form-item :label="$t('sys.layout')" :help="$t('sys.layoutHelp')">
         <a-select v-model="form.layout" size="mini" @change="handleLayout">
-          <a-option value="classic">经典</a-option>
-          <a-option value="columns">分栏</a-option>
-          <a-option value="banner">通栏</a-option>
+          <a-option value="classic">{{ $t('sys.layout.classic') }}</a-option>
+          <a-option value="columns">{{ $t('sys.layout.columns') }}</a-option>
+          <a-option value="banner">{{ $t('sys.layout.banner') }}</a-option>
         </a-select>
       </a-form-item>
-      <a-form-item label="语言" help="设置页面语言和请求后台语言">
+      <a-form-item :label="$t('sys.language')" :help="$t('sys.languageHelp')">
         <a-select v-model="form.language" size="mini" @change="handleLanguage">
-          <a-option value="zh_CN">中文</a-option>
-          <a-option value="en">英文</a-option>
+          <a-option value="zh_CN">{{ $t('sys.chinese') }}</a-option>
+          <a-option value="en">{{ $t('sys.english') }}</a-option>
         </a-select>
       </a-form-item>
-      <a-form-item label="暗黑模式" help="设置页面显示模式">
+      <a-form-item :label="$t('sys.dark')" :help="$t('sys.darkHelp')">
         <a-switch type="line" v-model="form.mode" @change="handleSettingMode" />
       </a-form-item>
-      <a-form-item label="多标签模式" help="是否启用多标签方式">
+      <a-form-item :label="$t('sys.tag')" :help="$t('sys.tagHelp')">
         <a-switch type="line" v-model="form.tag" @change="handleSettingTag" />
       </a-form-item>
-      <a-form-item label="菜单折叠" help="系统左侧菜单是否折叠起来">
+      <a-form-item :label="$t('sys.menuFold')" :help="$t('sys.menuFoldHelp')">
         <a-switch type="line" v-model="form.menuCollapse" @change="handleMenuCollapse" />
       </a-form-item>
-      <a-form-item label="菜单宽度" help="设置左侧菜单的显示宽度">
+      <a-form-item :label="$t('sys.menuWidth')" :help="$t('sys.menuWidthHelp')">
         <a-input-number size="mini" v-model="form.menuWidth" mode="button" @change="handleMenuWidth" />
       </a-form-item>
     </a-form>
@@ -61,9 +63,11 @@ import { ref, reactive, watch } from 'vue'
 import { useAppStore, useUserStore } from '@/store'
 import Skin from './skin.vue'
 import skins from '@/config/skins'
+import { useI18n } from 'vue-i18n'
 
 const userStore = useUserStore()
 const appStore  = useAppStore()
+const { t } = useI18n()
 
 const skin = ref(null)
 const visible = ref(false)
@@ -79,12 +83,12 @@ const form = reactive({
 })
 
 skins.map(item => {
-  if (item.name === appStore.skin) currentSkin.value = item.title
+  if (item.name === appStore.skin) currentSkin.value = t('skin.' + item.name)
 })
 
 watch(() => appStore.skin, v => {
   skins.map(item => {
-    if (item.name === v) currentSkin.value = item.title
+    if (item.name === v) currentSkin.value = t('skin.' + item.name)
   })
 })
 
