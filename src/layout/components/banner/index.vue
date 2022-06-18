@@ -16,11 +16,13 @@
       </div>
       <div class="flex justify-between w-full layout-banner">
         <a-menu
+          ref="MaMenu"
           mode="horizontal"
           class="layout-banner-menu hidden lg:flex"
           :popup-max-height="360"
+          :selected-keys="actives"
         >
-          <children-menu v-model="MaMenu" />
+          <children-menu v-model="userStore.routers" />
         </a-menu>
         <ma-operation />
       </div>
@@ -35,13 +37,12 @@
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue'
+  import { ref, watch, onMounted } from 'vue'
   import { useAppStore, useUserStore } from '@/store'
-  import { useRoute, useRouter } from 'vue-router'
+  import { useRoute } from 'vue-router'
   import maOperation from '../ma-operation.vue'
   import maWorkerArea from '../ma-workerArea.vue'
   import maTags from '../ma-tags.vue'
-  // import maMenu from '../ma-menu.vue'
   import childrenMenu from '../components/children-menu.vue'
 
   const route = useRoute()
@@ -49,12 +50,24 @@
   const MaMenu = ref(null)
   const userStore = useUserStore()
   const appStore = useAppStore()
+  const actives = ref([])
 
   onMounted(() => {
-    setTimeout(() => {
-      MaMenu.value = userStore.routers
-    }, 50)
+    userStore.routers.map( item => {
+      if (item.children && item.children.length > 0) {
+        item.children.filter( r => {
+          if (r.name === route.name) {
+            actives.value = [ r.name ]
+          }
+        })
+      }
+    })
   })
+
+  watch(() => route, v => {
+    actives.value = [ v.name ]
+    console.log(v)
+  }, { deep: true })
 </script>
 
 <style scoped lang="scss">
