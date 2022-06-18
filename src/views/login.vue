@@ -52,22 +52,54 @@
       </div>
 
       <div class="md:w-6/12 w-11/12 rounded-r mx-auto pl-5 pr-5 pb-10 bg-white">
-        <h2 class="mt-10 text-3xl pb-0 mb-10">登录</h2>
+        <h2 class="mt-10 text-3xl pb-0 mb-10">{{ $t('sys.login.title') }}</h2>
         <a-form :model="form" @submit="handleSubmit">
-          <a-form-item field="username" :hide-label="true" :rules="[{ required: true, message:'请输入账户' }]">
-            <a-input v-model="form.username" class="w-full" size="large" placeholder="账户" allow-clear>
+          <a-form-item
+            field="username"
+            :hide-label="true"
+            :rules="[{ required: true, message: $t('sys.login.usernameNotice') }]"
+          >
+            <a-input
+              v-model="form.username"
+              class="w-full"
+              size="large"
+              :placeholder="$t('sys.login.username')"
+              allow-clear
+            >
               <template #prefix><icon-user /></template>
             </a-input>
           </a-form-item>
 
-          <a-form-item field="password" :hide-label="true" :rules="[{ required: true, message: '请输入密码' }]">
-            <a-input-password v-model="form.password" placeholder="密码" size="large" allow-clear>
+          <a-form-item
+            field="password"
+            :hide-label="true"
+            :rules="[{ required: true, message: $t('sys.login.passwordNotice') }]"
+          >
+            <a-input-password
+              v-model="form.password"
+              :placeholder="$t('sys.login.password')"
+              size="large"
+              allow-clear
+            >
               <template #prefix><icon-lock /></template>
             </a-input-password>
           </a-form-item>
 
-          <a-form-item field="code" :hide-label="true" :rules="[{ required: true, match: /^[a-zA-Z0-9]{4}$/, message:'请输入正确的验证码' }]">
-            <a-input v-model="form.code" placeholder="请输入验证码" size="large" allow-clear>
+          <a-form-item
+            field="code"
+            :hide-label="true"
+            :rules="[{
+              required: true,
+              match: /^[a-zA-Z0-9]{4}$/,
+              message: $t('sys.login.verifyCodeNotice')
+            }]"
+          >
+            <a-input
+              v-model="form.code"
+              :placeholder="$t('sys.login.verifyCode')"
+              size="large"
+              allow-clear
+            >
               <template #prefix><icon-safe /></template>
               <template #append>
                 <verify-code ref="Verify" />
@@ -76,10 +108,12 @@
           </a-form-item>
 
           <a-form-item :hide-label="true" class="mt-5">
-            <a-button html-type="submit" type="primary" long size="large" :loading="loading">登录</a-button>
+            <a-button html-type="submit" type="primary" long size="large" :loading="loading">
+              {{ $t('sys.login.loginBtn') }}
+            </a-button>
           </a-form-item>
 
-          <a-divider orientation="center">其他登录方式</a-divider>
+          <a-divider orientation="center">{{ $t('sys.login.otherLoginType') }}</a-divider>
           <div class="flex w-3/4 pt-2 mx-auto items-stretch justify-around">
             <a-avatar class="other-login wechat"><icon-wechat /></a-avatar>
             <a-avatar class="other-login alipay"><icon-alipay-circle /></a-avatar>

@@ -32,4 +32,27 @@ export default {
   logout: '退出系统',
   logoutAlert: '退出提示',
   logoutMessage: '确定要退出登录吗？',
+  operationMessage: {
+    message: '消息',
+    notification: '通知',
+    todo: '待办',
+  },
+  goHome: '回到首页',
+  notFoundPage: '啊哦，访问的页面被火星人劫走了...',
+  login: {
+    title: '登录',
+    username: '账户',
+    usernameNotice: '请输入账户',
+    password: '密码',
+    passwordNotice: '请输入密码',
+    verifyCode: '请输入验证码',
+    verifyCodeNotice: '请输入正确的验证码',
+    loginBtn: '登录',
+    otherLoginType: '其他登录方式'
+  },
+  verifyCode: {
+    switch: '点击切换验证码',
+    error: '验证码错误',
+    notice: '请输入验证码'
+  },
 }

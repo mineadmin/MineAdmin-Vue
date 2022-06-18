@@ -32,4 +32,27 @@ export default {
   logout: 'Logout System',
   logoutAlert: 'Exit prompt',
   logoutMessage: 'Are you sure you want to sign out?',
+  operationMessage: {
+    message: 'Message',
+    notification: 'Notification',
+    todo: 'Todo',
+  },
+  goHome: 'Go Home',
+  notFoundPage: 'Exit tip Ah oh, the page visited was hijacked by the Martians...',
+  login: {
+    title: 'Login System',
+    username: 'Username',
+    usernameNotice: 'Please enter the username',
+    password: 'Passoword',
+    passwordNotice: 'Please enter the password',
+    verifyCode: 'Please enter the verification code',
+    verifyCodeNotice: 'Please enter the correct verification code',
+    loginBtn: 'Login in',
+    otherLoginType: 'Other ways to sign in'
+  },
+  verifyCode: {
+    switch: 'Click Toggle verification code',
+    error: 'The verification code is incorrect',
+    notice: 'Please enter the verification code'
+  },
 }

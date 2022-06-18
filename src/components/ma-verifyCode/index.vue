@@ -10,6 +10,9 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { Message } from '@arco-design/web-vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const codeText = ref('')
 const verfiyCanvas = ref(null)
 const canvasSetting = reactive({
@@ -21,12 +24,12 @@ const canvasSetting = reactive({
 
 const checkResult = (verifyCode) => {
   if (! verifyCode || verifyCode.length === 0) {
-    Message.error('请输入验证码')
+    Message.error(t('sys.verifyCode.notice'))
     return false
   }
 
   if (verifyCode.toLowerCase() !== codeText.value.toLowerCase()) {
-    Message.error('验证码错误')
+    Message.error(t('sys.verifyCode.error'))
     generateCode()
     return false
   } else {
@@ -96,8 +99,13 @@ defineExpose({ checkResult, refresh })
 </script>
 
 <template>
-  <a-tooltip content="点击切换验证码">
-    <canvas ref="verfiyCanvas" class="canvas" :width="canvasSetting.width" :height="canvasSetting.height" @click="refresh" />
+  <a-tooltip :content="t('sys.verifyCode.switch')">
+    <canvas
+      ref="verfiyCanvas"
+      class="canvas"
+      :width="canvasSetting.width"
+      :height="canvasSetting.height" @click="refresh"
+    />
   </a-tooltip>
 </template>
 

@@ -12,9 +12,9 @@
   <div class="page max-7xl mx-auto text-center">
     <div class="bg mx-auto">
       <img src="@/assets/404.svg" />
-      <div class="mt-2">啊哦，访问的页面被火星人劫走了...</div>
+      <div class="mt-2">{{ $t('sys.notFoundPage') }}</div>
     </div>
-    <div class="mt-5"><a-button type="primary" @click="$router.push('/')">返回首页</a-button></div>
+    <div class="mt-5"><a-button type="primary" @click="$router.push('/')">{{ $t('sys.goHome') }}</a-button></div>
   </div>
 </template>
 
