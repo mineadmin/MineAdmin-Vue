@@ -8,7 +8,7 @@ export default {
   'demo': 'Component Demo',
 
   // 权限
-  'permission': 'Permissions',
+  'permission': 'Permission',
   'system:user': 'User Manage',
   'system:role': 'Role Manage',
   'system:dept': 'Department Manage',
