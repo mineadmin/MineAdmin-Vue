@@ -5,6 +5,11 @@
     color: var(--color-text-1);
   }
 
+  .arco-trigger-menu .arco-trigger-menu-has-icon .arco-trigger-menu-icon,
+  .sys-menus .arco-menu-icon .icon {
+    fill: var(--color-text-2);
+  }
+
   .arco-menu-light .arco-menu-item.arco-menu-selected .arco-icon {
     color: rgb(var(--primary-6));
   }

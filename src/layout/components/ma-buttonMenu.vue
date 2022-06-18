@@ -11,7 +11,7 @@
         <icon-menu v-else />
       </div>
       <template #content>
-        <a-menu mode="popButton" showCollapseButton>
+        <a-menu mode="popButton" showCollapseButton :popup-max-height="360">
           <children-menu v-model="userStore.routers" />
         </a-menu>
       </template>

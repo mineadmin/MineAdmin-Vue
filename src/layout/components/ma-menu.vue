@@ -9,6 +9,7 @@
     :selected-keys="actives"
     :collapsed="appStore.menuCollapse"
     @collapse="onCollapse"
+    :popup-max-height="360"
   >
     <children-menu v-model="menus" />
   </a-menu>
