@@ -55,4 +55,9 @@ export default {
     error: 'The verification code is incorrect',
     notice: 'Please enter the verification code'
   },
+  tags: {
+    refresh: 'Refresh',
+    closeTag: 'Close curretn tag',
+    closeOtherTag: 'Close other tag',
+  }
 }

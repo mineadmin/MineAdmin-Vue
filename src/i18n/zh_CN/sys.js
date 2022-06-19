@@ -55,4 +55,9 @@ export default {
     error: '验证码错误',
     notice: '请输入验证码'
   },
+  tags: {
+    refresh: '刷新',
+    closeTag: '关闭当前标签',
+    closeOtherTag: '关闭其他标签',
+  }
 }

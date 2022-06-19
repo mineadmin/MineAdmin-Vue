@@ -16,13 +16,15 @@
       v-if="contextMenuVisible"
       :style="{ left: left + 'px', top: top + 'px' }"
     >
-      <li
-        @click="contextMenuRefreshTag"
-        :class="contextMenuItem.affix ? 'disabled' : ''"
-      ><icon-refresh /> 刷新</li>
+      <li @click="contextMenuRefreshTag"><icon-refresh /> {{ $t('sys.tags.refresh') }}</li>
       <a-divider />
-      <li @click="contextMenuCloseTag"><icon-close-circle /> 关闭当前标签</li>
-      <li @click="contextMenuCloseOtherTag"><icon-close-circle-fill /> 关闭其他标签</li>
+      <li
+        @click="contextMenuCloseTag"
+        :class="contextMenuItem.affix ? 'disabled' : ''"
+      >
+        <icon-close-circle /> {{ $t('sys.tags.closeTag') }}
+      </li>
+      <li @click="contextMenuCloseOtherTag"><icon-close-circle-fill /> {{ $t('sys.tags.closeOtherTag') }}</li>
     </ul>
   </div>
 </template>
@@ -114,7 +116,6 @@
 
   const contextMenuCloseOtherTag = () => {
     const currentTag = contextMenuItem.value
-    //判断是否当前路由，否的话跳转
     if (route.name != currentTag.name) {
       router.push({ name: currentTag.path, query: currentTag.query || {} })
     }
@@ -136,7 +137,6 @@
 
   const scrollHandler = event => {
     const detail = event.wheelDelta || event.detail;
-    //火狐上滚键值-3 下滚键值3，其他内核上滚键值120 下滚键值-120
     const moveForwardStep = 1;
     const moveBackStep = -1;
     let step = 0;
