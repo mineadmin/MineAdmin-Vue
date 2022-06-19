@@ -11,7 +11,7 @@ const defaultRoutePath = '/'
 const whiteRoute = ['login']
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes
 })
 
