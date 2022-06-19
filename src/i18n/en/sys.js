@@ -1,6 +1,6 @@
 export default {
   pageSetting: 'Page Setting',
-  chinese: 'Chinese',
+  chinese: '简体中文',
   english: 'English',
   search: 'Search',
   fullScreen: 'Full Screen',

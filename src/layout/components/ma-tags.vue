@@ -149,10 +149,11 @@
   }
   
   onMounted(() => {
-    Sortable.create(tags.value, { draggable: 'a', animation: 300 })
-
-    tags.value.addEventListener("mousewheel", scrollHandler, false) ||
-    tags.value.addEventListener("DOMMouseScroll", scrollHandler, false);
+    if (tags.value) {
+      Sortable.create(tags.value, { draggable: 'a', animation: 300 })
+      tags.value.addEventListener("mousewheel", scrollHandler, false) ||
+      tags.value.addEventListener("DOMMouseScroll", scrollHandler, false)
+    }
   })
 </script>
 
