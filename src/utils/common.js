@@ -1,5 +1,5 @@
 import checkAuth from '@/directives/auth/auth'
-import checkAuth from '@/directives/role/role'
+import checkRole from '@/directives/role/role'
 
 // 检查权限函数
 export const auth = name => checkAuth(name)
