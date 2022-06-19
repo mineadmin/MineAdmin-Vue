@@ -27,7 +27,7 @@
           {{ $t('sys.changeSkin')}}
         </a-button>
       </a-form-item>
-      <a-form-item :label="$t('sys.layout')" :help="$t('sys.layoutHelp')">
+      <a-form-item :label="$t('sys.layouts')" :help="$t('sys.layoutsHelp')">
         <a-select v-model="form.layout" size="mini" @change="handleLayout">
           <a-option value="classic">{{ $t('sys.layout.classic') }}</a-option>
           <a-option value="columns">{{ $t('sys.layout.columns') }}</a-option>
