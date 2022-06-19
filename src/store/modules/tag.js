@@ -26,10 +26,12 @@ const useTagStore = defineStore('tag', {
     removeTag(tag) {
       let index = 0
       this.tags.map((item, idx) => {
-        if ( item.name === tag.name ) {
-          if (idx > 0) {
+        if ( item.name === tag.name && ! item.affix ) {
+          if (this.tags[(idx + 1)]) {
+            index = idx
+          } else if ( idx > 0) {
             index = idx - 1
-          } 
+          }
           this.tags.splice(idx, 1)
         }
       })
@@ -60,6 +62,7 @@ const useTagStore = defineStore('tag', {
 
     clearTags() {
       this.tags = defaultTag
+      tool.local.set('tags', defaultTag)
     },
   },
 })
