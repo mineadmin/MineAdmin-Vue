@@ -42,11 +42,12 @@
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, watch } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import maMenu from '../ma-menu.vue'
 
   import { useAppStore, useUserStore } from '@/store'
+import router from '../../../router';
   const route = useRoute()
 
   const MaMenu = ref(null)
@@ -58,19 +59,27 @@
   const classStyle = ref('flex flex-col parent-menu items-center rounded mt-1 text-gray-200 hover:bg-gray-700 hover:text-white dark:hover:text-gray-50 dark:hover:bg-blackgray-1')
 
   onMounted(() => {
-    setTimeout(() => {
-      userStore.routers.map((item, index) => {
-        if (item.children && item.children.length > 0) {
-          item.children.filter( (r, idx) => {
-            if (r.name === route.name) loadMenu(userStore.routers[index], index, idx)
-          })
-        }
-      })
-    }, 50)
+    initMenu()
   })
 
-  const loadMenu = (bigMenu, index, idx = 0) => {
-    MaMenu.value.loadChildMenu(bigMenu, index, idx)
+  watch(() => route, v => {
+    initMenu()
+  }, { deep: true })
+
+  const initMenu = () => {
+    let current
+    if (route.matched[1].meta.breadcrumb) {
+      current = route.matched[1].meta.breadcrumb[0].name
+    } else {
+      current = route.matched[1].name
+    }
+    userStore.routers.map((item, index) => {
+      if (item.name == current) loadMenu(item, index)
+    })
+  }
+
+  const loadMenu = (bigMenu, index) => {
+    MaMenu.value.loadChildMenu(bigMenu)
     title.value = MaMenu.value.title
     document.querySelectorAll('.parent-menu').forEach( (item, id) => {
       index !== id ? item.classList.remove('active') : item.classList.add('active')

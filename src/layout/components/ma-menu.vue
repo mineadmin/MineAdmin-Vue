@@ -3,13 +3,15 @@
     class="ma-menu"
     :style="{ width: appStore.menuWidth + 'px', height: props.height }"
     breakpoint="md"
+    v-model:open-keys="openKeys"
+    v-model:selected-keys="actives"
     :accordion="true"
     :collapsed-width="45"
     show-collapse-button
-    :selected-keys="actives"
     :collapsed="appStore.menuCollapse"
     @collapse="onCollapse"
     :popup-max-height="360"
+    auto-scroll-into-view
   >
     <children-menu v-model="menus" />
   </a-menu>
@@ -36,26 +38,35 @@
   const title = ref('')
 
   onMounted(() => {
-    userStore.routers.map( item => {
-      if (item.children && item.children.length > 0) {
-        item.children.filter( r => {
-          if (r.name === route.name) {
-            openKeys.value = [ item.name ]
-            actives.value = [ r.name ]
-          }
-        })
-      }
-    })
+    actives.value = [ route.name ]
+    findTopMenuName()
   })
 
   watch(() => route, v => {
     actives.value = [ v.name ]
+    findTopMenuName()
   }, { deep: true })
 
-  const loadChildMenu = (obj, bigIndex = 0, routerIndex = 0) => {
+  const loadChildMenu = (obj) => {
     if (obj.children && obj.children.length > 0) {
       menus.value = obj.children
       title.value = t('menus.' + obj.name)
+    }
+  }
+
+  const findTopMenuName = () => {
+    if (! route.matched[1].meta.breadcrumb) {
+      openKeys.value = []
+      route.matched.map((item, index) => {
+        if (route.matched[0].name === 'layout' && index !== 0) {
+          openKeys.value.push(item.name)
+        }
+      })
+    } else {
+      openKeys.value = []
+      route.matched[1].meta.breadcrumb.map(item => {
+        openKeys.value.push(item.name)
+      })
     }
   }
 
@@ -67,7 +78,7 @@
     height: { type: String, default: '100%' }
   })
 
-  defineExpose({ loadChildMenu, title, actives, menus })
+  defineExpose({ loadChildMenu, title, actives, menus, openKeys, findTopMenuName })
 </script>
 <style scoped>
 :deep(.arco-menu-vertical .arco-menu-inner) {

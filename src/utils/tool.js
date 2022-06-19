@@ -18,7 +18,7 @@ const tool = {}
 /**
  * LocalStorage
  */
-tool.data = {
+tool.local = {
   set(table, settings) {
     let _set = JSON.stringify(settings)
     return localStorage.setItem(table, _set);
@@ -62,6 +62,48 @@ tool.session = {
   },
   clear() {
     return sessionStorage.clear();
+  }
+}
+
+/**
+ * CookieStorage
+ */
+tool.cookie = {
+  set(name, value, config = {}) {
+    var cfg = {
+      expires: null,
+      path: null,
+      domain: null,
+      secure: false,
+      httpOnly: false,
+      ...config
+    }
+    var cookieStr = `${name}=${escape(value)}`
+    if (cfg.expires) {
+      var exp = new Date()
+      exp.setTime(exp.getTime() + parseInt(cfg.expires) * 1000)
+      cookieStr += `;expires=${exp.toGMTString()}`
+    }
+    if (cfg.path) {
+      cookieStr += `;path=${cfg.path}`
+    }
+    if (cfg.domain) {
+      cookieStr += `;domain=${cfg.domain}`
+    }
+    document.cookie = cookieStr
+  },
+  get(name) {
+    var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"))
+    if (arr != null) {
+      return unescape(arr[2])
+    } else {
+      return null
+    }
+  },
+  remove(name) {
+    var exp = new Date()
+    exp.setTime(exp.getTime() - 1)
+    document.cookie = `${name}=;expires=${exp.toGMTString()}`
   }
 }
 
@@ -194,7 +236,7 @@ tool.download = (res, downName = '') => {
   const blob = new Blob([res.data], { type: res.headers['content-type'].replace(';charset=utf8', '') })
 
   let fileName
-  if (! downName) {
+  if (!downName) {
     const patt = new RegExp('filename=([^;]+\\.[^.;]+);*');
     const contentDisposition = decodeURI(res.headers['content-disposition'])
     const result = patt.exec(contentDisposition)
@@ -241,7 +283,7 @@ tool.httpBuild = (data, isPrefix = false) => {
  * 获取token
  */
 tool.getToken = () => {
-  return tool.data.get('token')
+  return tool.local.get('token')
 }
 /**
  * 转Unix时间戳

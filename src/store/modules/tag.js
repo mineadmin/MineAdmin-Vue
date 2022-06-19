@@ -1,55 +1,65 @@
 import { defineStore } from 'pinia'
+import tool from '@/utils/tool'
 
+const defaultTag = [ { name: 'dashboard', title: '仪表盘', path: '/dashboard', affix: true } ]
 const useTagStore = defineStore('tag', {
   state: () => ({
-    tags:  [ { path: '/dashboard', title: '仪表盘', affix: true } ]
+    tags: (! tool.local.get('tags') || tool.local.get('tags').length === 0 ) ? defaultTag : tool.local.get('tags')
   }),
 
   getters: {
-    tagCurrentSetting(state) {
+    currentTag(state) {
       return { ...state }
     },
   },
 
   actions: {
-    updateSettings(partial) {
-      this.$patch(partial);
-    },
 
-    addTag(tagRoute) {
-      const target = this.tags.find(item => item.path === tagRoute.path)
-      if (!target && tagRoute.title) {
-        this.tags.push(tagRoute)
+    addTag(tag) {
+      const target = this.tags.find( item => item.name === tag.name )
+      if (! target && tag.name ) {
+        this.tags.push(tag)
       }
+      this.updateTagsToLocal()
     },
 
-    removeTag(tagRoute) {
-      this.tags.map((item, index) => {
-        if (item.path === tagRoute.path) {
-          this.tags.splice(index, 1)
+    removeTag(tag) {
+      let index = 0
+      this.tags.map((item, idx) => {
+        if ( item.name === tag.name ) {
+          if (idx > 0) {
+            index = idx - 1
+          } 
+          this.tags.splice(idx, 1)
         }
       })
+      this.updateTagsToLocal()
+      return this.tags[index]
     },
 
-    updateTag(tagRoute) {
+    updateTag(tag) {
       this.tags.map(item => {
-        if (item.path == route.path) {
-          item = Object.assign(item, tagRoute)
+        if (item.name == tag.name) {
+          item = Object.assign(item, tag)
+        }
+      })
+      this.updateTagsToLocal()
+    },
+
+    updateTagTitle(tag, title) {
+      state.viewTags.map(item => {
+        if (item.name == tag.name) {
+          item.customeTitle = title
         }
       })
     },
 
-    updateTagTitle(title = '') {
-      const nowFullPath = location.hash.substring(1)
-      state.viewTags.map(item => {
-        if (item.path == nowFullPath) {
-          item.title = title
-        }
-      })
+    updateTagsToLocal() {
+      tool.local.set('tags', this.tags)
     },
 
     clearTags() {
-      this.tags = [ { path: '/dashboard', title: '仪表盘', affix: true } ]
+      this.tags = defaultTag
     },
   },
 })

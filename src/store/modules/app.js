@@ -11,10 +11,10 @@ let defaultSetting = {
 import { defineStore } from 'pinia'
 import tool from '@/utils/tool'
 
-if (! tool.data.get('setting')) {
-  tool.data.set('setting', defaultSetting)
+if (! tool.local.get('setting')) {
+  tool.local.set('setting', defaultSetting)
 } else {
-  defaultSetting = tool.data.get('setting')
+  defaultSetting = tool.local.get('setting')
 }
 
 document.body.setAttribute('arco-theme', defaultSetting.mode)
@@ -38,37 +38,37 @@ const useAppStore = defineStore('app', {
       this.mode = dark
       document.body.setAttribute('arco-theme', this.mode)
       defaultSetting.mode = this.mode
-      tool.data.set('setting', defaultSetting)
+      tool.local.set('setting', defaultSetting)
     },
 
     toggleMenu(status) {
       this.menuCollapse = status
       defaultSetting.menuCollapse = this.menuCollapse
-      tool.data.set('setting', defaultSetting)
+      tool.local.set('setting', defaultSetting)
     },
 
     toggleTag(status) {
       this.tag = status
       defaultSetting.tag = this.tag
-      tool.data.set('setting', defaultSetting)
+      tool.local.set('setting', defaultSetting)
     },
 
     changeMenuWidth(width) {
       this.menuWidth = width
       defaultSetting.menuWidth = this.menuWidth
-      tool.data.set('setting', defaultSetting)
+      tool.local.set('setting', defaultSetting)
     },
 
     changeLayout(layout) {
       this.layout = layout
       defaultSetting.layout = this.layout
-      tool.data.set('setting', defaultSetting)
+      tool.local.set('setting', defaultSetting)
     },
 
     changeLanguage(language) {
       this.language = language
       defaultSetting.language = this.language
-      tool.data.set('setting', defaultSetting)
+      tool.local.set('setting', defaultSetting)
       window.location.reload()
     },
 
@@ -76,7 +76,7 @@ const useAppStore = defineStore('app', {
       this.skin = name
       defaultSetting.skin = this.skin
       document.body.setAttribute('mine-skin', this.skin)
-      tool.data.set('setting', defaultSetting)
+      tool.local.set('setting', defaultSetting)
     }
   },
 })

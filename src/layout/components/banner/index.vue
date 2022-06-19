@@ -27,7 +27,7 @@
         <ma-operation />
       </div>
     </a-layout-header>
-    <a-layout class="flex h-full justify-between">
+    <a-layout class="flex h-full justify-between layout-banner-content">
       <a-layout class="flex flex-col">
         <ma-tags class="hidden lg:flex" />
         <ma-worker-area />
@@ -53,20 +53,11 @@
   const actives = ref([])
 
   onMounted(() => {
-    userStore.routers.map( item => {
-      if (item.children && item.children.length > 0) {
-        item.children.filter( r => {
-          if (r.name === route.name) {
-            actives.value = [ r.name ]
-          }
-        })
-      }
-    })
+    actives.value = [ route.name ]
   })
 
   watch(() => route, v => {
     actives.value = [ v.name ]
-    console.log(v)
   }, { deep: true })
 </script>
 

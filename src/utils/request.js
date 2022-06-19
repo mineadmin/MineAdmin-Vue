@@ -55,7 +55,7 @@ function createService () {
             break
           case 401:
             err('登录状态已过期，需要重新登录')
-            tool.data.clear()
+            tool.local.clear()
             window.location.href = '/'
             break
           case 403:
@@ -84,7 +84,7 @@ function stringify (data) {
  */
 function createRequest (service) {
   return function (config) {
-    const token = tool.data.get(import.meta.env.VITE_TOKEN_PREFIX)
+    const token = tool.local.get(import.meta.env.VITE_TOKEN_PREFIX)
     const configDefault = {
       headers: {
         Authorization: "Bearer " + token,

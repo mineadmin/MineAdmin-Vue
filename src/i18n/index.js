@@ -1,7 +1,7 @@
 import { createI18n } from 'vue-i18n'
 import tool from '@/utils/tool'
 
-const setting = tool.data.get('setting')
+const setting = tool.local.get('setting')
 
 const getLanguage = () => {
   const loadFile = () => {

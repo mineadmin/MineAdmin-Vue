@@ -20,7 +20,7 @@ router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
   let toTitle = to.meta.title ? to.meta.title : to.name
   document.title = `${toTitle} - ${title}`
-  const token = tool.data.get(import.meta.env.VITE_TOKEN_PREFIX)
+  const token = tool.local.get(import.meta.env.VITE_TOKEN_PREFIX)
   
   // 登录状态下
   if (token) {

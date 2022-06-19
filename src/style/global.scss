@@ -37,7 +37,7 @@ html, body {
   height: 52px; border-bottom:1px solid var(--color-border-1);
   background-color: var(--color-bg-2);
   .logo {
-    width: 220px; padding-bottom: 1px;
+    width: 220px; padding-bottom: 1px; border-bottom: 0;
   }
 
   .banner-menus li {
@@ -55,6 +55,11 @@ html, body {
   .banner-menus li.active {
     background-color: rgb(var(--primary-4)); color: var(--color-white);
     fill: var(--color-white);
+  }
+}
+.layout-banner-content {
+  .tags {
+    border-top: 0;
   }
 }
 
@@ -100,9 +105,11 @@ html, body {
   border-bottom:1px solid var(--color-border-1);
   background-color: var(--color-bg-2);
   height: 35px; position: relative;
-  padding: 0 5px 0 1px;
+  padding: 0 5px 0 1px; display: flex;
+  overflow: hidden;
   a {
     background: var(--color-fill-3); color: var(--color-text-2); font-size:13px;
+    margin-top: 3px; position: relative; flex-shrink: 0;
     height: 27px; line-height: 27px; padding: 0 8px; border-radius: 4px;
     cursor: pointer; transition: all 0.2s; margin-right: 4px;
 
