@@ -17,12 +17,12 @@
       :style="{ left: left + 'px', top: top + 'px' }"
     >
       <li
-        
+        @click="contextMenuRefreshTag"
         :class="contextMenuItem.affix ? 'disabled' : ''"
       ><icon-refresh /> 刷新</li>
       <a-divider />
-      <li @click="contextMenuCloseTag()"><icon-close-circle /> 关闭当前标签</li>
-      <li @click="contextMenuCloseOtherTag()"><icon-close-circle-fill /> 关闭其他标签</li>
+      <li @click="contextMenuCloseTag"><icon-close-circle /> 关闭当前标签</li>
+      <li @click="contextMenuCloseOtherTag"><icon-close-circle-fill /> 关闭其他标签</li>
     </ul>
   </div>
 </template>
@@ -96,6 +96,11 @@
   }
 
   const closeContextMenu = () => {
+    contextMenuItem.value = null
+    contextMenuVisible.value = false
+  }
+
+  const contextMenuRefreshTag = () => {
     contextMenuItem.value = null
     contextMenuVisible.value = false
   }
