@@ -1,12 +1,3 @@
-<!--
- - MineAdmin is committed to providing solutions for quickly building web applications
- - Please view the LICENSE file that was distributed with this source code,
- - For the full copyright and license information.
- - Thank you very much for using MineAdmin.
- -
- - @Author X.Mo<root@imoi.cn>
- - @Link   https://gitee.com/xmo/mineadmin-vue
--->
 <template>
   <a-layout-content class="flex flex-col">
     <search
@@ -93,12 +84,15 @@
                     v-role="defaultCrud.edit.role || []"
                     @click="editAction(record)"
                   ><icon-edit /> {{ defaultCrud.edit.text || '编辑' }}</a-button>
-                  <a-button
-                    v-if="defaultCrud.delete.show"
-                    size="mini" type="text" status="danger"
-                    v-auth="defaultCrud.delete.auth || []"
-                    v-role="defaultCrud.delete.role || []"
-                  ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-button>
+
+                  <a-popconfirm content="确定要删除数据吗?" position="bottom" @ok="deleteAction(record)">
+                    <a-button
+                      v-if="defaultCrud.delete.show"
+                      size="mini" type="text" status="danger"
+                      v-auth="defaultCrud.delete.auth || []"
+                      v-role="defaultCrud.delete.role || []"
+                    ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-button>
+                  </a-popconfirm>
                   <slot name="operationExtend" v-bind="{ record, column, rowIndex }"></slot>
                 </a-space>
               </template>
@@ -131,10 +125,14 @@
       />
     </div>
 
-    <column-setting ref="cs" v-model="columns" v-model:crud="defaultCrud" />
+    <ma-setting
+      ref="mas"
+      v-model="columns"
+      v-model:crud="defaultCrud"
+    />
 
-    <data-view-page
-      ref="dvp"
+    <ma-form
+      ref="maf"
       v-model="columns"
       v-model:crud="defaultCrud"
       @success="requestSuccess"
@@ -144,13 +142,14 @@
 </template>
 
 <script setup>
-import config from '@/config/crud'
+import config from '@/config/crudTable'
 import { isFunction } from '@vue/shared'
 import { ref, watch, nextTick } from 'vue'
 
 import search from './components/search.vue'
-import dataViewPage from './components/data.vue'
-import columnSetting from './components/columnSetting.vue'
+import maForm from './components/form.vue'
+import maSetting from './components/setting.vue'
+import { Message } from '@arco-design/web-vue'
 
 const loading = ref(true)
 const openPagination = ref(false)
@@ -162,14 +161,18 @@ const showSearch = ref(true)
 const searchRef = ref(null)
 
 const tableData = ref([])
-const cs = ref(null)
-const dvp = ref(null)
+const mas = ref(null)
+const maf = ref(null)
 
 const defaultCrud = ref({
+  // 主键名称
+  pk: 'id',
   // 设置选择列
   rowSelection: undefined,
   // 是否显示边框
   bordered: { wrapper: true, cell: true },
+  // 是否开启拖拽排序
+  dragSort: false,
   // 子节点为空隐藏节点按钮
   hideExpandButtonOnEmpty: true,
   // 默认展开所有行
@@ -208,6 +211,8 @@ const defaultCrud = ref({
   edit: {
     // 编辑api
     api: undefined,
+    // 主键参数是否附加到url后面,
+    attachUrl: false,
     // 显示编辑按钮的权限
     auth: [],
     // 显示编辑按钮的角色
@@ -220,6 +225,8 @@ const defaultCrud = ref({
   delete: {
     // 删除api
     api: undefined,
+    // 主键参数是否附加到url后面,
+    attachUrl: false,
     // 显示删除按钮的权限
     auth: [],
     // 显示删除按钮的角色
@@ -384,7 +391,7 @@ const toggleSearch = () => {
 }
 
 const tableSetting = () => {
-  cs.value.open()
+  mas.value.open()
 }
 
 const requestSuccess = response => {
@@ -399,9 +406,20 @@ const getIndex = (rowIndex) => {
   }
 }
 
-const addAction = () => dvp.value.add()
+const addAction = () => maf.value.add()
 
-const editAction = (record) => dvp.value.edit(record)
+const editAction = (record) => maf.value.edit(record)
+
+const deleteAction = async (record) => {
+  const deleted = defaultCrud.value.delete
+  const pk = defaultCrud.value.pk
+  const data = deleted.attachUrl ? record[pk] : { [pk]: record[pk] }
+  const response = await deleted.api(data)
+  response.code === 200 
+  ? Message.success(response.message || `删除成功！`)
+  : Message.error(response.message || `删除失败！`)
+  refresh()
+}
 
 const settingProps = defineProps({
 

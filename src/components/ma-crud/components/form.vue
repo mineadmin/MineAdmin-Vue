@@ -1,12 +1,3 @@
-<!--
- - MineAdmin is committed to providing solutions for quickly building web applications
- - Please view the LICENSE file that was distributed with this source code,
- - For the full copyright and license information.
- - Thank you very much for using MineAdmin.
- -
- - @Author X.Mo<root@imoi.cn>
- - @Link   https://gitee.com/xmo/mineadmin-vue
--->
 <template>
   <component
     :is="componentName"
@@ -191,12 +182,12 @@ const submit = (done) => {
       done(false)
       return
     }
-    const response = currentAction === 'add' ? await props.crud.add.api(form.value) : await props.crud.edit.api(form.value)
+    const response = currentAction.value === 'add' ? await props.crud.add.api(form.value) : await props.crud.edit.api(form.value)
     if ( response.code === 200 ) {
       Message.success(response.message || `${actionTitle.value}成功！`)
       emit('success', response)
       done()
-    } else {dd
+    } else {
       Message.error(response.message || `${actionTitle.value}失败！`)
       emit('error', response)
       done(false)
