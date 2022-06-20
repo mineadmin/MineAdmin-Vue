@@ -7,17 +7,14 @@
  - @Author X.Mo<root@imoi.cn>
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
-
 <template>
   <a-layout-content class="work-area relative p-2">
-    <router-view>
-      <template #default="{ Component, route}">
-        <transition name="fade" mode="out-in">
-          <keep-alive :include="keepStore.keepAlives">
-            <component :is="Component" :key="route.fullPath" v-if="keepStore.display" />
-          </keep-alive>
-        </transition>
-      </template>
+    <router-view v-slot="{ Component, route }">
+      <transition name="fade" mode="out-in">
+        <keep-alive :include="keepStore.keepAlives">
+          <component :is="Component" :key="route.name" v-if="keepStore.display" />
+        </keep-alive>
+      </transition>
     </router-view>
   </a-layout-content>
 </template>
@@ -30,7 +27,7 @@ const keepStore = useKeepAliveStore()
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.1s ease;
 }
 
 .fade-enter-from,
