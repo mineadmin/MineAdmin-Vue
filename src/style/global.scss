@@ -162,6 +162,12 @@ html, body {
 
 .work-area {
   background-color: var(--color-neutral-2);
+  color: var(--color-text-2);
+  .content-block-title { color: var(--color-text-1); font-size: 1.3em; }
+
+  .ma-content-block {
+    background-color: var(--color-bg-2);
+  }
 }
 
 .button-menu {

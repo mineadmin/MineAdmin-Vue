@@ -8,7 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <a-layout-content class="work-area relative p-2">
+  <a-layout-content class="work-area relative p-3">
     <router-view v-slot="{ Component, route }">
       <transition name="fade" mode="out-in">
         <keep-alive :include="keepStore.keepAlives">
