@@ -8,7 +8,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@arco-design/web-vue": "^2.30.1",
+    "@arco-design/web-vue": "^2.31.0",
     "autoprefixer": "^10.4.0",
     "axios": "^0.27.2",
     "crypto-js": "^4.1.1",
