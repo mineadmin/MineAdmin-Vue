@@ -1,3 +1,12 @@
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <a-layout-content class="flex flex-col">
     <search
@@ -142,7 +151,7 @@
 </template>
 
 <script setup>
-import config from '@/config/crudTable'
+import config from '@/config/crud'
 import { isFunction } from '@vue/shared'
 import { ref, watch, nextTick } from 'vue'
 

@@ -9,10 +9,32 @@
 -->
 
 <template>
-  <a-layout-content class="work-area relative">
+  <a-layout-content class="work-area relative p-2">
+    <router-view>
+      <template #default="{ Component, route}">
+        <transition name="fade" mode="out-in">
+          <keep-alive :include="keepStore.keepAlives">
+            <component :is="Component" :key="route.fullPath" v-if="keepStore.display" />
+          </keep-alive>
+        </transition>
+      </template>
+    </router-view>
   </a-layout-content>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { useKeepAliveStore } from '@/store'
+const keepStore = useKeepAliveStore()
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

@@ -31,7 +31,7 @@
 
 <script setup>
   import { ref, watch, onMounted, nextTick } from 'vue'
-  import { useAppStore, useTagStore } from '@/store'
+  import { useAppStore, useTagStore, useKeepAliveStore } from '@/store'
   import { useRoute, useRouter } from 'vue-router'
 
   import Sortable from "sortablejs"
@@ -40,6 +40,7 @@
   const router = useRouter()
   const appStore  = useAppStore()
   const tagStore  = useTagStore()
+  const keepStore = useKeepAliveStore()
   const tags = ref(null)
   
   const contextMenuVisible = ref(false)
@@ -103,8 +104,21 @@
   }
 
   const contextMenuRefreshTag = () => {
-    contextMenuItem.value = null
+    const tag = contextMenuItem.value
     contextMenuVisible.value = false
+
+    if (route.name != tag.name) {
+      router.push({ name: tag.name, query: tag.query || {} })
+    }
+    
+    setTimeout(() => {
+      keepStore.removeKeepAlive(tag.name)
+      keepStore.hidden()
+      nextTick(() => {
+        keepStore.addKeepAlive(tag.name)
+        keepStore.display()
+      })
+    }, 0)
   }
 
   const contextMenuCloseTag = () => {
