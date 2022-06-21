@@ -27,7 +27,7 @@
       </a-card>
       <a-card
         style="height: 65px;"
-        class="rounded-sm mt-3 lg:ml-2.5"
+        class="rounded-sm mt-3 lg:ml-2"
         :body-style="{ padding: 0, height: '65px' }"
         :bordered="false"
         hoverable
@@ -51,7 +51,7 @@
       </a-card>
       <a-card
         style="height: 65px;"
-        class="rounded-sm mt-3 lg:ml-2.5"
+        class="rounded-sm mt-3 lg:ml-2"
         :body-style="{ padding: 0, height: '65px' }"
         :bordered="false"
         hoverable
@@ -75,7 +75,7 @@
       </a-card>
       <a-card
         style="height: 65px;"
-        class="rounded-sm mt-3 lg:ml-2.5"
+        class="rounded-sm mt-3 lg:ml-2"
         :body-style="{ padding: 0, height: '65px' }"
         :bordered="false"
         hoverable
@@ -105,5 +105,7 @@
 .en-title {
   width: 75px; color: #fff; text-align: center;
   line-height: 65px; font-weight: bold; font-size: 1.3em;
+
+  border-radius: 2px 0 0 2px;
 }
 </style>

@@ -72,7 +72,8 @@ html, body {
 
 .ma-menu .arco-menu-inner::-webkit-scrollbar,
 .backend-setting .arco-drawer-body::-webkit-scrollbar,
-.arco-list::-webkit-scrollbar
+.arco-list::-webkit-scrollbar,
+.customer-scrollbar::-webkit-scrollbar
 { 
   width: 6px; /*高宽分别对应横竖滚动条的尺寸*/
   height:0px;
@@ -166,10 +167,11 @@ html, body {
 .work-area {
   background-color: var(--color-neutral-2);
   color: var(--color-text-2);
+  height: 100%; overflow-y: auto;
   .content-block-title { color: var(--color-text-1); font-size: 1.3em; }
 
   .ma-content-block {
-    background-color: var(--color-bg-2);
+    background-color: var(--color-bg-2); border-radius: 2px;
   }
 }
 
