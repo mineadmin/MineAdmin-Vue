@@ -9,7 +9,7 @@
 -->
 <template>
   <a-layout-content class="flex flex-col">
-    <search
+    <ma-search
       :columns="settingProps.columns"
       :search-label-width="settingProps.crud.searchLabelWidth"
       :search-label-align="settingProps.crud.searchLabelAlign"
@@ -20,30 +20,26 @@
       <template #buttons>
         <slot name="buttons"></slot>
       </template>
-    </search>
+    </ma-search>
     <div class="opartion-tools flex justify-between mb-3">
       <a-space>
-        <a-button
-          type="primary"
+        <a-link
           v-if="defaultCrud.add.show"
           v-auth="defaultCrud.add.auth || []"
           v-role="defaultCrud.add.role || []"
           @click="addAction"
-        ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
-        <a-button
-          type="primary"
-          status="success"
+        ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-link>
+        <a-link
           v-auth="defaultCrud.import.auth || []"
           v-role="defaultCrud.import.role || []"
           v-if="defaultCrud.import.show"
-        ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
-        <a-button
-          type="primary"
-          status="danger"
+          @click="importAction"
+        ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-link>
+        <a-link
           v-auth="defaultCrud.export.auth || []"
           v-role="defaultCrud.export.role || []"
           v-if="defaultCrud.export.show"
-        ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
+        ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-link>
         <slot name="operation"></slot>
       </a-space>
       <a-space>
@@ -73,7 +69,7 @@
         <template v-for="(row, index) in columns" :key="index">
           <a-table-column
             :title="row.title" :data-index="row.dataIndex" :width="row.width"
-            :ellipsis="true" :tooltip="row.dataIndex === '__operation' ? false : true" :align="row.align || 'center'" :fixed="row.dataIndex === '__index' ? 'left' : row.fixed"
+            :ellipsis="true" :tooltip="row.dataIndex === '__operation' ? false : true" :align="row.align || 'left'" :fixed="row.fixed"
             :sortable="row.sortable"
             v-if="! row.hide"
           >
@@ -147,6 +143,11 @@
       @success="requestSuccess"
     />
 
+    <ma-import
+      ref="mai"
+      v-model="defaultCrud.import"
+    />
+
   </a-layout-content>
 </template>
 
@@ -155,9 +156,10 @@ import config from '@/config/crud'
 import { isFunction } from '@vue/shared'
 import { ref, watch, nextTick } from 'vue'
 
-import search from './components/search.vue'
+import maSearch from './components/search.vue'
 import maForm from './components/form.vue'
 import maSetting from './components/setting.vue'
+import maImport from './components/import.vue'
 import { Message } from '@arco-design/web-vue'
 
 const loading = ref(true)
@@ -172,6 +174,7 @@ const searchRef = ref(null)
 const tableData = ref([])
 const mas = ref(null)
 const maf = ref(null)
+const mai = ref(null)
 
 const defaultCrud = ref({
   // 主键名称
@@ -179,7 +182,7 @@ const defaultCrud = ref({
   // 设置选择列
   rowSelection: undefined,
   // 是否显示边框
-  bordered: { wrapper: true, cell: true },
+  bordered: { wrapper: true, cell: false },
   // 是否开启拖拽排序
   dragSort: false,
   // 子节点为空隐藏节点按钮
@@ -309,10 +312,10 @@ const requestData = async () => {
   defaultCrud.value = Object.assign(defaultCrud.value, settingProps.crud)
   columns.value = Object.assign(settingProps.columns, {})
   if (defaultCrud.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {
-    columns.value.unshift({ title: defaultCrud.value.indexLabel, dataIndex: '__index', width: 70 })
+    columns.value.unshift({ title: defaultCrud.value.indexLabel, dataIndex: '__index', width: 70, fixed: 'left' })
   }
   if (defaultCrud.value.operationColumn && columns.value.length > 0 && columns.value[columns.value.length - 1].dataIndex !== '__operation') {
-    columns.value.push({ title: defaultCrud.value.operationColumnText, dataIndex: '__operation', width: defaultCrud.value.operationWidth })
+    columns.value.push({ title: defaultCrud.value.operationColumnText, dataIndex: '__operation', width: defaultCrud.value.operationWidth, align: 'center', fixed: 'right' })
   }
   showSearch.value = true
   initRequestParams()
@@ -345,7 +348,7 @@ const requestHandle = async () => {
       tableData.value = response
     }
   } else {
-    console.error(`CrudTable Error：crud.api not is Function.`)
+    console.error(`ma-crud error：crud.api not is Function.`)
   }
 
   isFunction(settingProps.crud.after) && settingProps.crud.after(tableData.value)
@@ -365,7 +368,6 @@ const refresh = async () => {
     }
     loading.value = false
   } else if (isFunction(settingProps.crud.api)) {
-    // 请求处理
     await requestHandle()
   }
 }
@@ -416,6 +418,8 @@ const getIndex = (rowIndex) => {
 }
 
 const addAction = () => maf.value.add()
+
+const importAction = () => mai.value.open()
 
 const editAction = (record) => maf.value.edit(record)
 

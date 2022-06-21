@@ -37,7 +37,7 @@
     <a-table
       :data="data"
       :pagination="false"
-      :bordered="{ wrapper: true }"
+      :bordered="{ wrapper: true, cell: false }"
       :draggable="{ type: 'handle', width: 40 }"
       @change="onTableChange"
       stripe
@@ -101,7 +101,7 @@ const data = ref([])
 const crud = ref([])
 const sourceScroll = ref({})
 const tableWidth = ref('100%')
-const bordered = ref('show')
+const bordered = ref('column')
 
 const emits = defineEmits(['update:modelValue', 'update:crud'])
 
