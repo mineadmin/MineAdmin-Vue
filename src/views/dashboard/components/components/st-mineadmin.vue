@@ -3,10 +3,6 @@
     <div class="flex">
       MineAdmin 相关
     </div>
-    <div class="flex w-10/12 justify-center mx-auto mt-3">
-      <img src="https://gitee.com/xmo/MineAdmin/badge/star.svg?theme=dark" />
-      <img class="ml-10" src="https://gitee.com/xmo/MineAdmin/badge/fork.svg?theme=dark" />
-    </div>
     <div class="block lg:grid lg:grid-cols-2 lg:gap-1 mt-3">
       <a-card class="rounded-sm text-center" :body-style="{ padding: 0 }" :bordered="false">
         <a-button type="outline" class="w-4/5">官方网站</a-button>
