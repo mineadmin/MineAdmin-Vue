@@ -39,6 +39,7 @@
           v-auth="defaultCrud.export.auth || []"
           v-role="defaultCrud.export.role || []"
           v-if="defaultCrud.export.show"
+          @click="exportAction"
         ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-link>
         <slot name="operation"></slot>
       </a-space>
@@ -161,6 +162,8 @@ import maForm from './components/form.vue'
 import maSetting from './components/setting.vue'
 import maImport from './components/import.vue'
 import { Message } from '@arco-design/web-vue'
+import { request } from '@/utils/request'
+import tool from '@/utils/tool'
 
 const loading = ref(true)
 const openPagination = ref(false)
@@ -259,8 +262,10 @@ const defaultCrud = ref({
     show: false,
   },
   import: {
-    // 导入api
-    api: undefined,
+    // 导入url
+    url: undefined,
+    // 下载模板地址
+    templateUrl: undefined,
     // 显示导入按钮的权限
     auth: [],
     // 显示导入按钮的角色
@@ -420,6 +425,17 @@ const getIndex = (rowIndex) => {
 const addAction = () => maf.value.add()
 
 const importAction = () => mai.value.open()
+
+const exportAction = () => {
+  const download = (url) => request({ url, method: 'get', timeout: 30 * 100 })
+
+  download(defaultCrud.export.url).then(res => {
+    tool.download(res)
+    Message.success('导出成功')
+  }).catch(e => {
+    Message.error('导出失败')
+  })
+}
 
 const editAction = (record) => maf.value.edit(record)
 
