@@ -106,7 +106,6 @@
   const contextMenuRefreshTag = () => {
     const tag = contextMenuItem.value
     contextMenuVisible.value = false
-
     if (route.name != tag.name) {
       router.push({ name: tag.name, query: tag.query || {} })
     }

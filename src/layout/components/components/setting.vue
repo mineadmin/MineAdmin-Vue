@@ -40,7 +40,7 @@
           <a-option value="en">{{ $t('sys.english') }}</a-option>
         </a-select>
       </a-form-item>
-      <a-form-item :label="$t('sys.dark')" :help="$t('sys.darkHelp')">
+      <a-form-item :label="$t('sys.dark')" :help="$t('sys.darkHelp')" v-if="currentSkin === 'Mine'">
         <a-switch type="line" v-model="form.mode" @change="handleSettingMode" />
       </a-form-item>
       <a-form-item :label="$t('sys.tag')" :help="$t('sys.tagHelp')">

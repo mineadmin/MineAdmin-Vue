@@ -117,6 +117,14 @@
   .layout-columns-left-panel .sider {
     background-color: #20262e;
   }
+
+
+  .tags a{
+    border-radius: 0; 
+  }
+  .tags a.active {
+    background-color: #555;
+  }
 }
 
 .sys-menus .arco-trigger-popup .icon {

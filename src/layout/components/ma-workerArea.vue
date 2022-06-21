@@ -12,7 +12,7 @@
     <router-view v-slot="{ Component, route }">
       <transition name="fade" mode="out-in">
         <keep-alive :include="keepStore.keepAlives">
-          <component :is="Component" :key="route.name" v-if="keepStore.display" />
+          <component :is="Component" :key="route.name" v-if="keepStore.show" />
         </keep-alive>
       </transition>
     </router-view>

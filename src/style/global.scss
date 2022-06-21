@@ -80,21 +80,24 @@ html, body {
 
 .ma-menu .arco-menu-inner::-webkit-scrollbar-thumb,
 .backend-setting .arco-drawer-body::-webkit-scrollbar-thumb,
-.arco-list::-webkit-scrollbar-thumb
+.arco-list::-webkit-scrollbar-thumb,
+.customer-scrollbar::-webkit-scrollbar-thumb
 {
   border-radius: 10px;
   background: var(--color-text-4)
 }
 .ma-menu .arco-menu-inner::-webkit-scrollbar-thumb:hover,
 .backend-setting .arco-drawer-body::-webkit-scrollbar-thumb:hover,
-.arco-list::-webkit-scrollbar-thumb:hover
+.arco-list::-webkit-scrollbar-thumb:hover,
+.customer-scrollbar::-webkit-scrollbar-thumb:hover
 {
   border-radius: 10px;
   background: var(--color-text-3)
 }
 .ma-menu .arco-menu-inner::-webkit-scrollbar-track,
 .backend-setting .arco-drawer-body::-webkit-scrollbar-track,
-.arco-list::-webkit-scrollbar-track
+.arco-list::-webkit-scrollbar-track,
+.customer-scrollbar::-webkit-scrollbar-track
 {
   border-radius: 0;
   background: var(--color-text-5)
