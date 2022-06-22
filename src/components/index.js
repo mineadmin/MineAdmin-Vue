@@ -1,7 +1,6 @@
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { BarChart, LineChart, PieChart, RadarChart } from 'echarts/charts'
-import MaCrud from './ma-crud/index.vue'
 import {
   GridComponent,
   TooltipComponent,
@@ -9,7 +8,10 @@ import {
   DataZoomComponent,
   GraphicComponent,
 } from 'echarts/components'
+
+import MaCrud from './ma-crud/index.vue'
 import MaChart from './ma-charts/index.vue'
+import MaUpload from './ma-upload/index.vue'
 
 use([
   CanvasRenderer,
@@ -28,5 +30,6 @@ export default {
   install(Vue) {
     Vue.component('MaChart', MaChart)
     Vue.component('MaCrud', MaCrud)
+    Vue.component('MaUpload', MaUpload)
   }
 }

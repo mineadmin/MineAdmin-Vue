@@ -8,7 +8,10 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  user page
+  <div class="ma-content-block p-5">
+    <ma-upload>
+    </ma-upload>
+  </div>
 </template>
 
 <script setup>
