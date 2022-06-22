@@ -13,7 +13,7 @@
       <ma-columns-menu />
     </div>
 
-    <div class="layout-columns-right-panel">
+    <div class="layout-columns-right-panel flex flex-col">
 
       <ma-columns-header />
       <ma-worker-area />
