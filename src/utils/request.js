@@ -4,7 +4,6 @@ import tool from '@/utils/tool'
 import { get, isEmpty } from 'lodash'
 import qs from 'qs'
 import { h } from 'vue'
-import { IconFaceFrownFill } from '@arco-design/web-vue/es/icon'
 
 function createService () {
   // 创建一个 axios 实例
@@ -85,9 +84,11 @@ function stringify (data) {
 function createRequest (service) {
   return function (config) {
     const token = tool.local.get(import.meta.env.VITE_TOKEN_PREFIX)
+    const setting = tool.local.get('setting')
     const configDefault = {
       headers: {
         Authorization: "Bearer " + token,
+        'Accept-Language': setting.language || 'zh_CN',
         'Content-Type': get(config, 'headers.Content-Type', 'application/json;charset=UTF-8')
       },
 

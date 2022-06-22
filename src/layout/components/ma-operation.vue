@@ -84,7 +84,11 @@
   import Setting from './components/setting.vue'
   import messageNotification from './components/message-notification.vue'
   import { useRouter } from 'vue-router'
+  import { success } from '@/utils/common'
+  import { useI18n } from 'vue-i18n'
+  import commonApi from '@/api/common'
 
+  const { t } = useI18n()
   const userStore = useUserStore()
   const appStore  = useAppStore()
   const setting = ref(null)
@@ -92,12 +96,13 @@
   const isFullScreen = ref(false)
   const showLogoutModal = ref(false)
 
-  const handleSelect = (name) => {
+  const handleSelect = async (name) => {
     if (name === 'userCenter') {
-
+      router.push({ name: 'userCenter'})
     }
     if (name === 'clearCache') {
-
+      const res = await commonApi.clearAllCache()
+      res.success && success(t('sys.noticeTitle'), res.message)
     }
     if (name === 'logout') {
       showLogoutModal.value = true

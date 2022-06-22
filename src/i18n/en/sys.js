@@ -59,5 +59,6 @@ export default {
     refresh: 'Refresh',
     closeTag: 'Close curretn tag',
     closeOtherTag: 'Close other tag',
-  }
+  },
+  noticeTitle: 'System Prompted',
 }

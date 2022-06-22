@@ -12,7 +12,7 @@
         </a-avatar>
         <div class="pl-3 mt-2">
           <div class="content-block-title">
-            {{ userStore.user.nickname || userStore.username }}，欢迎回来！
+            {{ userStore.user.nickname || userStore.user.username }}，欢迎回来！
           </div>
           <div class="leading-5 mt-2">
             欢迎使用MineAdmin后台权限管理系统，系统开源、免费使用。喜欢的请点个 ⭐Star。

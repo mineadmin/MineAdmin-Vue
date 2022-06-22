@@ -48,4 +48,15 @@ export default {
       params
     })
   },
+
+  /**
+   * 清除所有缓存
+   * @returns
+   */
+  clearAllCache() {
+    return request({
+      url: 'system/common/clearAllCache',
+      method: 'get'
+    })
+  },
 }

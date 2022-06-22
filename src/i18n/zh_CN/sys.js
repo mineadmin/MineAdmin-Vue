@@ -59,5 +59,6 @@ export default {
     refresh: '刷新',
     closeTag: '关闭当前标签',
     closeOtherTag: '关闭其他标签',
-  }
+  },
+  noticeTitle: '系统提示',
 }
