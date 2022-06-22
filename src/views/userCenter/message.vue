@@ -9,7 +9,7 @@
 -->
 <template>
   <div class="ma-content-block p-5">
-    <ma-upload>
+    <ma-upload multiple>
     </ma-upload>
   </div>
 </template>
