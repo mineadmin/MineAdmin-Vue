@@ -27,12 +27,8 @@
         <ma-operation />
       </div>
     </a-layout-header>
-    <a-layout class="flex h-full justify-between layout-banner-content">
-      <a-layout class="flex flex-col">
-        <ma-tags class="hidden lg:flex" />
-        <ma-worker-area />
-      </a-layout>
-    </a-layout>
+    <ma-tags class="hidden lg:flex" />
+    <ma-worker-area />
   </a-layout>
 </template>
 

@@ -9,7 +9,8 @@
   .arco-layout-sider-light,
   .arco-menu-light,
   .tags,
-  .layout-banner-header {
+  .layout-banner-header
+  {
     background: #2c3643;
   }
 
@@ -28,7 +29,9 @@
     fill: var(--color-white);
   }
 
-  .layout-banner-header .banner-menus li:hover {
+  .layout-banner-header .banner-menus li:hover,
+  .arco-menu-light.arco-menu-horizontal .arco-menu-pop-header.arco-menu-selected:hover
+  {
     background-color: rgba(0, 0, 0, 0.2);
   }
 
