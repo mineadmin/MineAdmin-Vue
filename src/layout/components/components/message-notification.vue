@@ -1,5 +1,5 @@
 <template>
-  <div class="mgs-nfc rounded p-2">
+  <div class="mgs-nfc rounded p-2 shadow-lg">
     <a-tabs default-active-key="message" type="rounded">
       <a-tab-pane key="message">
         <template #title>

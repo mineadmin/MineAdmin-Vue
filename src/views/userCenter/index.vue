@@ -8,7 +8,9 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div>usercenter</div>
+  <div>
+    asdasd
+  </div>
 </template>
 
 <script setup>

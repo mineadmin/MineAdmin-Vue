@@ -4,7 +4,7 @@
   <st-count />
   <st-login-chart />
 
-  <div class="flex justify-between mt-3">
+  <div class="block lg:flex">
     <st-announced />
     <st-mineadmin />
   </div>
