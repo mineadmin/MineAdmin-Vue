@@ -9,12 +9,17 @@
 -->
 <template>
   <div class="ma-content-block p-5">
-    <ma-upload multiple>
+    <ma-upload v-model="ok">
     </ma-upload>
+
+    {{ ok }}
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+const ok = ref('http://127.0.0.1:9501/uploadfile/20220623/398592790730117121.jpg')
+
 </script>
 
 <style scoped>

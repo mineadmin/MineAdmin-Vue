@@ -1,4 +1,5 @@
-import CryptoJS from 'crypto-js';
+import CryptoJS from 'crypto-js'
+import uploadConfig from '@/config/upload'
 
 const typeColor = (type = 'default') => {
   let color = ''
@@ -277,6 +278,10 @@ tool.httpBuild = (data, isPrefix = false) => {
   }
 
   return _result.length ? prefix + _result.join('&') : ''
+}
+
+tool.viewImage = (path, defaultStorage = 'LOCAL') => {
+	return uploadConfig.storage[defaultStorage] + path
 }
 
 /**
