@@ -280,7 +280,7 @@ tool.httpBuild = (data, isPrefix = false) => {
   return _result.length ? prefix + _result.join('&') : ''
 }
 
-tool.viewImage = (path, defaultStorage = 'LOCAL') => {
+tool.attachUrl = (path, defaultStorage = 'LOCAL') => {
 	return uploadConfig.storage[defaultStorage] + path
 }
 

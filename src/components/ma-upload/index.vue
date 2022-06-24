@@ -58,7 +58,6 @@
         :accept="accept"
         :disabled="props.disabled"
         :tip="props.tip"
-        :draggable="props.draggable"
         :limit="props.limit"
         v-if="
           (
@@ -84,7 +83,35 @@
     </div>
 
     <div class="upload-file" v-if="props.type === 'file'">
-
+      <a-upload
+        ref="uploadFile"
+        :custom-request="uploadFileHandler"
+        show-file-list
+        :multiple="props.multiple"
+        :accept="accept"
+        :disabled="props.disabled"
+        :tip="props.tip"
+        :draggable="draggable"
+        :limit="props.limit"
+        :show-retry-button="false"
+        :show-cancel-button="false"
+        @before-remove="removeFile"
+      >
+        <template #upload-button v-if="props.fileType === 'drag'">
+          <slot name="customer">
+            <div
+              style="background-color: var(--color-fill-2); border: 1px dashed var(--color-fill-4);"
+              class="rounded text-center p-7 w-full"
+            >
+              <div>
+                <icon-upload class="text-5xl text-gray-400" />
+                <div class="text-red-600 font-bold">文件上传</div>
+                将文件拖到此处，或<span style="color: #3370FF">点击上传</span>
+              </div>
+            </div>
+          </slot>
+        </template>
+      </a-upload>
     </div>
   </div>
 </template>
@@ -106,7 +133,6 @@ const props = defineProps({
   rounded: { type: Boolean, default: false },
   multiple: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
-  draggable: { type: Boolean, default: false },
   size: { type: Number, default: 4 * 1024 * 1024 },
   chunk: { type: Boolean, default: false },
   chunkSize: { type: Number, default: 2 * 1024 * 1024 },
@@ -115,11 +141,13 @@ const props = defineProps({
   type: { type: String, default: 'image' },
   accept: { type: String, default: '*' },
   onlyUrl: { type: Boolean, default: true },
+  fileType: { type: String, default: 'drag' },
 })
 
 const fileList = ref()
-const imagesList = ref([])
 const accept = ref()
+const draggable = ref(false)
+const uploadFile = ref()
 const currentItem = ref(null)
 const storageMode = {
   '1': 'LOCAL',
@@ -136,6 +164,15 @@ onMounted(() => {
       accept.value = props.accept
     }
   })
+
+  if (props.type === 'file' && props.fileType === 'drag') {
+    draggable.value = true
+  }
+
+  if (props.multiple) {
+    fileList.value = []
+  }
+
   if (props.type === 'image' && (isString(props.modelValue) || isObject(props.modelValue))) {
     fileList.value = props.modelValue
     currentItem.value = {
@@ -176,7 +213,7 @@ const uploadImageHandler = async (options) => {
   const result = await uploadRequest(file)
 
   if (result) {
-    result.url = tool.viewImage(result.url, storageMode[result.storage_mode])
+    result.url = tool.attachUrl(result.url, storageMode[result.storage_mode])
     if (! props.multiple) {
       fileList.value = props.onlyUrl ? result.url : result
       emit('update:modelValue', fileList.value)
@@ -204,15 +241,46 @@ const uploadImageHandler = async (options) => {
   }
 }
 
+const uploadFileHandler = async (options) => {
+  const { onProgress, onError, onSuccess } = options
+  const res = await uploadRequest(options.fileItem.file)
+  const xhr = new XMLHttpRequest();
+  if (xhr.upload) {
+    xhr.upload.onprogress = function (event) {
+      let percent;
+      if (event.total > 0) {
+        percent = (event.loaded / event.total) * 100;
+      }
+      onProgress(parseInt(percent, 10), event);
+    };
+  }
+  res ? onSuccess(res) : onError(res)
+  res.url = tool.attachUrl(res.url, storageMode[res.storage_mode])
+  if (props.multiple) {
+    let files = []
+    fileList.value.push(res)
+    fileList.value.map(item => {
+      files.push(props.onlyUrl && item.url ? item.url : item)
+    })
+    emit('update:modelValue', files)
+  } else {
+    fileList.value = res
+    emit('update:modelValue', props.onlyUrl && res.url ? res.url : res)
+  }
+}
+
 const uploadRequest = async (file) => {
   try {
     const hash = await file2md5(file)
     const dataForm = new FormData()
-    dataForm.append('image', file)
+    const field = props.type === 'image' ? 'image' : 'file'
+    dataForm.append(field, file)
     dataForm.append('isChunk', props.chunk ? true : false)
     dataForm.append('hash', hash)
 
-    return commonApi.uploadImage(dataForm).then(response => {
+    const api = props.type === 'image' ? commonApi.uploadImage : commonApi.uploadFile
+
+    return api(dataForm).then(response => {
       return response.data
     }).catch(e => {
       console.error(e)
@@ -227,6 +295,32 @@ const uploadRequest = async (file) => {
 }
 
 const checkSize = file => file.size <= props.size
+
+const removeFile = async (fileItem) => {
+  try {
+    const hash = await file2md5(fileItem.file)
+    if (props.multiple) {
+      let files = []
+      fileList.value.map( (item, idx) => {
+        if (item.hash === hash) fileList.value.splice(idx, 1)
+      })
+      fileList.value.map( item => {
+        files.push(props.onlyUrl && item.url ? item.url : item)
+      })
+      emit('update:modelValue', files)
+      return true
+    } else if (fileList.value.hash === hash) {
+      fileList.value = undefined
+      emit('update:modelValue', undefined)
+      return true
+    }
+    return false
+  } catch (e) {
+    console.error(e)
+    Message.error('获取文件hash失败，请重试！')
+    return false;
+  }
+}
 
 const removeSignImage = () => {
   currentItem.value = undefined

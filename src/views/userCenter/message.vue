@@ -9,24 +9,15 @@
 -->
 <template>
   <div class="ma-content-block p-5">
-    <ma-upload v-model="ok" multiple></ma-upload>
+    <ma-upload v-model="ok" type="file" multiple file-type="drag"></ma-upload>
     {{ ok }}
-
-    <ma-upload v-model="ok1" :onlyUrl="false"></ma-upload>
-    {{ ok1 }}
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-const ok = ref(
-  [
-]
-)
+const ok = ref()
 
-const ok1 = ref()
-// http://127.0.0.1:9501/uploadfile/20220624/398803883821895681.jpg
-// 
 
 </script>
 
