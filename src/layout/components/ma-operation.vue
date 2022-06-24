@@ -27,6 +27,14 @@
         </a-button>
       </a-tooltip>
 
+      <a-tooltip :content="'任务'">
+        <a-button :shape="'circle'" class="hidden lg:inline" @click="screen">
+          <template #icon>
+            <icon-swap />
+          </template>
+        </a-button>
+      </a-tooltip>
+
       <a-trigger trigger="click">
         <a-button :shape="'circle'">
           <template #icon>
