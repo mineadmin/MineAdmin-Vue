@@ -135,13 +135,13 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   size: { type: Number, default: 4 * 1024 * 1024 },
   chunk: { type: Boolean, default: false },
-  chunkSize: { type: Number, default: 2 * 1024 * 1024 },
+  chunkSize: { type: Number, default: 1 * 1024 * 1024 },
   limit: { type: Number, default: 0 },
   tip: { type: String, default: undefined },
   type: { type: String, default: 'image' },
   accept: { type: String, default: '*' },
   onlyUrl: { type: Boolean, default: true },
-  fileType: { type: String, default: 'drag' },
+  fileType: { type: String, default: 'button' },
 })
 
 const fileList = ref()
@@ -210,7 +210,7 @@ const uploadImageHandler = async (options) => {
     return
   }
   
-  const result = await uploadRequest(file)
+  const result = await uploadRequest(options)
 
   if (result) {
     result.url = tool.attachUrl(result.url, storageMode[result.storage_mode])
@@ -242,51 +242,59 @@ const uploadImageHandler = async (options) => {
 }
 
 const uploadFileHandler = async (options) => {
-  const { onProgress, onError, onSuccess } = options
-  const res = await uploadRequest(options.fileItem.file)
-  const xhr = new XMLHttpRequest();
-  if (xhr.upload) {
-    xhr.upload.onprogress = function (event) {
-      let percent;
-      if (event.total > 0) {
-        percent = (event.loaded / event.total) * 100;
-      }
-      onProgress(parseInt(percent, 10), event);
-    };
+  const { onError, onSuccess, fileItem } = options
+  if (! checkSize(fileItem.file) && ! props.chunk) {
+    Message.warning('文件大小超过上传限制')
+    uploadFile.value.abort(fileItem)
+    return false
   }
-  res ? onSuccess(res) : onError(res)
-  res.url = tool.attachUrl(res.url, storageMode[res.storage_mode])
-  if (props.multiple) {
-    let files = []
-    fileList.value.push(res)
-    fileList.value.map(item => {
-      files.push(props.onlyUrl && item.url ? item.url : item)
-    })
-    emit('update:modelValue', files)
-  } else {
-    fileList.value = res
-    emit('update:modelValue', props.onlyUrl && res.url ? res.url : res)
-  }
+  
+  uploadRequest(options).then(res => {
+    res ? onSuccess(res) : onError(res)
+    res.url = tool.attachUrl(res.url, storageMode[res.storage_mode])
+    if (props.multiple) {
+      let files = []
+      fileList.value.push(res)
+      fileList.value.map(item => {
+        files.push(props.onlyUrl && item.url ? item.url : item)
+      })
+      emit('update:modelValue', files)
+    } else {
+      fileList.value = res
+      emit('update:modelValue', props.onlyUrl && res.url ? res.url : res)
+    }
+  })
 }
 
-const uploadRequest = async (file) => {
+const uploadRequest = async (options) => {
+  const { onProgress, fileItem } = options
   try {
-    const hash = await file2md5(file)
+    const hash = await file2md5(fileItem.file)
     const dataForm = new FormData()
     const field = props.type === 'image' ? 'image' : 'file'
-    dataForm.append(field, file)
+    dataForm.append(field, fileItem.file)
     dataForm.append('isChunk', props.chunk ? true : false)
     dataForm.append('hash', hash)
 
     const api = props.type === 'image' ? commonApi.uploadImage : commonApi.uploadFile
 
-    return api(dataForm).then(response => {
-      return response.data
-    }).catch(e => {
-      console.error(e)
-      Message.error('文件上传失败')
-      return false
-    })
+    if (! props.chunk) {
+
+      return api(dataForm).then(response => {
+        return response.data
+      }).catch(e => {
+        console.error(e)
+        Message.error('文件上传失败')
+        return false
+      })
+
+    // 分片上传
+    } else {
+      const slice = File.prototype.slice
+      const chunks = Math.ceil(fileItem.file.size / props.chunkSize)
+      
+      return { url: '' }
+    }
   } catch (e) {
     console.error(e)
     Message.error('获取文件hash失败，请重试！')
@@ -294,7 +302,7 @@ const uploadRequest = async (file) => {
   }
 }
 
-const checkSize = file => file.size <= props.size
+const checkSize = file => file.size < props.size
 
 const removeFile = async (fileItem) => {
   try {
