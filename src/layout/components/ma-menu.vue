@@ -71,7 +71,7 @@
   }
 
   const onCollapse = (val) => {
-    appStore.menuCollapse = val
+    appStore.toggleMenu(val)
   }
 
   const props = defineProps({

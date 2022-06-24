@@ -282,7 +282,7 @@ const handlerCascader = (val, column) => {
   if (column.cascaderItem && isArray(column.cascaderItem) && column.cascaderItem.length > 0 && val) {
     dataLoading.value = true
     column.cascaderItem.map(async name => {
-      const dict = props.columns.filter(col => col.dataIndex === name)[0].dict
+      const dict = columns.value.filter(col => col.dataIndex === name)[0].dict
       let response
       if (dict && dict.url.indexOf('{{key}}') > 0) {
         response = await requestDict(dict.url.replace('{{key}}', val), dict.method || 'GET', dict.params || {}, dict.data || {})

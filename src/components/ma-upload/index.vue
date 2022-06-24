@@ -1,6 +1,55 @@
 <template>
   <div>
-    <div class="upload-image" v-if="props.type === 'image'">
+    <div class="upload-image flex" v-if="props.type === 'image'">
+      <div class="image-list" v-if="! props.multiple && currentItem">
+        <a-progress
+          v-if="currentItem.status === 'uploading' && currentItem.percent < 100"
+          :percent="currentItem.percent"
+          animation
+          type="circle"
+          size="small"
+          class="progress"
+        />
+        <a-button
+          class="delete"
+          @click="removeSignImage()"
+          v-if="currentItem.percent === 100"
+        >
+          <template #icon><icon-delete /></template>
+        </a-button>
+        <a-image
+          v-if="currentItem.percent === 100 && currentItem.status === 'complete'"
+          width="130"
+          height="130"
+          :src="fileList.url ? fileList.url : (fileList ? fileList : currentItem.url)"
+        />
+      </div>
+      <a-space v-else class="mr-2">
+        <div class="image-list" v-for="(file, idx) in fileList" :key="idx">
+          <a-progress
+            v-if="file.status === 'uploading' && file.percent < 100"
+            :percent="file.percent"
+            animation
+            type="circle"
+            size="small"
+            class="progress"
+          />
+          <a-button
+            class="delete"
+            @click="removeImage(idx)"
+            v-if="file.percent === 100"
+          >
+            <template #icon><icon-delete /></template>
+          </a-button>
+          <a-image
+            v-if="file.percent === 100 && file.status === 'complete'"
+            width="130"
+            height="130"
+            :src="file.url ? file.url : file"
+          />
+        </div>
+      </a-space>
+
       <a-upload
         ref="uploadImage"
         :custom-request="uploadImageHandler"
@@ -17,7 +66,7 @@
             || props.modelValue.length === 0
             || props.multiple
           )
-          && !currentItem
+          || !currentItem
         "
       >
         <template #upload-button>
@@ -31,39 +80,7 @@
           </slot>
         </template>
       </a-upload>
-      <div class="image-list" v-if="! props.multiple && currentItem">
-        <a-progress
-          v-if="currentItem.status === 'uploading' && currentItem.percent < 100"
-          :percent="currentItem.percent"
-          type="circle"
-          size="small"
-          :style="{
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            transform: 'translateX(-50%) translateY(-50%)',
-          }"
-        />
-        <a-button
-          class="delete"
-          @click="removeSignImage()"
-          v-if="currentItem.percent === 100"
-        >
-          <template #icon><icon-delete /></template>
-        </a-button>
-        <a-image
-          v-if="currentItem.percent === 100 && currentItem.status === 'complete'"
-          width="130"
-          height="130"
-          :src="fileList.url ? fileList.url : (fileList ? fileList : currentItem.url)"
-        />
-      </div>
-      <a-space v-else>
-        <div class="image-list" v-if="! props.multiple && currentItem">
-          <a-button class="delete"><icon-delete /></a-button>
-          <a-image width="130" height="130" :src="currentItem.url" />
-        </div>
-      </a-space>
+      
     </div>
 
     <div class="upload-file" v-if="props.type === 'file'">
@@ -72,14 +89,13 @@
   </div>
 </template>
 <script setup>
-import { ref, watch, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import commonApi from '@/api/common'
 import file2md5 from 'file2md5'
-import { Message, Result } from '@arco-design/web-vue'
-import { success, error } from '@/utils/common'
+import { Message, } from '@arco-design/web-vue'
 import tool from '@/utils/tool'
 import { useI18n } from 'vue-i18n'
-import { isString } from '@vue/shared'
+import { isArray, isObject, isString } from '@vue/shared'
 
 const { t } = useI18n()
 const emit = defineEmits(['update:modelValue'])
@@ -120,29 +136,27 @@ onMounted(() => {
       accept.value = props.accept
     }
   })
-  if (isString(props.modelValue)) {
+  if (props.type === 'image' && (isString(props.modelValue) || isObject(props.modelValue))) {
     fileList.value = props.modelValue
     currentItem.value = {
       status: 'complete',
       percent: 100
     }
   }
+
+  if (props.type === 'image' && isArray(props.modelValue)) {
+    fileList.value = []
+    props.modelValue.map(item => {
+      if (isObject(item)) {
+        item.status = 'complete'
+        item.percent = 100
+        fileList.value.push(item)
+      } else {
+        fileList.value.push({ status: 'complete', percent: 100, url: item })
+      }
+    })
+  }
 })
-
-watch(
-  () => props.modelValue,
-  list => {
-    fileList.value = list
-  }
-)
-
-watch(
-  () => fileList,
-  value => {
-    console.log(value)
-    emit('update:modelValue', value)
-  }
-)
 
 const uploadImage = ref()
 
@@ -165,11 +179,27 @@ const uploadImageHandler = async (options) => {
     result.url = tool.viewImage(result.url, storageMode[result.storage_mode])
     if (! props.multiple) {
       fileList.value = props.onlyUrl ? result.url : result
+      emit('update:modelValue', fileList.value)
       currentItem.value.percent = 99
       setTimeout(() => {
         currentItem.value.status = 'complete'
         currentItem.value.percent = 100
       }, 1000)
+    } else {
+      const index = fileList.value.length
+      result.status = 'uploading'
+      result.percent = 0
+      fileList.value.push(result)
+      setTimeout(() => { fileList.value[index].percent = 99 }, 500)
+      setTimeout(() => {
+        fileList.value[index].status = 'complete'
+        fileList.value[index].percent = 100
+      }, 1200)
+      let files = []
+      fileList.value.map(item => {
+        files.push(props.onlyUrl ? item.url : item)
+      })
+      emit('update:modelValue', files)
     }
   }
 }
@@ -199,8 +229,16 @@ const uploadRequest = async (file) => {
 const checkSize = file => file.size <= props.size
 
 const removeSignImage = () => {
-  currentItem.value = null
+  currentItem.value = undefined
   fileList.value = undefined
+  emit('update:modelValue', undefined)
+}
+
+const removeImage = (idx) => {
+  fileList.value.splice(idx, 1)
+  let files = []
+  fileList.value.map(item => files.push(item.url || item) )
+  emit('update:modelValue', files)
 }
 
 </script>
@@ -226,6 +264,13 @@ const removeSignImage = () => {
   width: 130px; height: 130px;
   .delete {
     position: absolute; z-index: 99; right: 3px; top: 3px; display: none;
+  }
+
+  .progress {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
   }
 }
 
