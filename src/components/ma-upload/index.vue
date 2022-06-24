@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="upload-image flex" v-if="props.type === 'image'">
+    <div class="upload-image flex" v-if="props.type === 'image' && !props.chunk">
       <div class="image-list" v-if="! props.multiple && currentItem">
         <a-progress
           v-if="currentItem.status === 'uploading' && currentItem.percent < 100"
@@ -51,7 +51,6 @@
       </a-space>
 
       <a-upload
-        ref="uploadImage"
         :custom-request="uploadImageHandler"
         :show-file-list="false"
         :multiple="props.multiple"
@@ -82,9 +81,8 @@
       
     </div>
 
-    <div class="upload-file" v-if="props.type === 'file'">
+    <div class="upload-file" v-if="props.type === 'file' && !props.chunk">
       <a-upload
-        ref="uploadFile"
         :custom-request="uploadFileHandler"
         show-file-list
         :multiple="props.multiple"
@@ -112,6 +110,60 @@
           </slot>
         </template>
       </a-upload>
+    </div>
+
+    <div class="chunk" v-if="props.chunk">
+      <a-upload
+        :custom-request="chunkUpload"
+        :show-file-list="false"
+        :multiple="props.multiple"
+        :accept="accept"
+        :disabled="props.disabled"
+        :tip="props.tip"
+        :draggable="draggable"
+        :limit="props.limit"
+        :show-retry-button="false"
+        :show-cancel-button="false"
+        @before-remove="removeFile"
+      >
+        <template #upload-button v-if="props.fileType === 'drag'">
+          <slot name="customer">
+            <div
+              style="background-color: var(--color-fill-2); border: 1px dashed var(--color-fill-4);"
+              class="rounded text-center p-7 w-full"
+            >
+              <div>
+                <icon-upload class="text-5xl text-gray-400" />
+                <div class="text-red-600 font-bold">文件上传</div>
+                将文件拖到此处，或<span style="color: #3370FF">点击上传</span>
+              </div>
+            </div>
+          </slot>
+        </template>
+      </a-upload>
+      <div class="chunk-upload-list mt-3" v-if="fileList">
+        <a-space direction="vertical" fill>
+          <template v-if="props.multiple">
+            <div
+              class="chunk-file-list flex flex-col"
+              v-for="item in fileList"
+              :key="item.uid"
+            >
+              <a-progress size="large" animation :percent="0.1"/>
+            </div>
+          </template>
+          <div
+            v-else
+            class="chunk-file-list flex flex-col"
+          >
+            <div class="flex justify-between items-center">
+              <div>{{ fileList.file.name }}</div>
+              <a-button shape="circle"><template #icon><icon-delete /></template></a-button>
+            </div>
+            <a-progress size="large" animation :percent="0" class="mt-2"/>
+          </div>
+        </a-space>
+      </div>
     </div>
   </div>
 </template>
@@ -147,7 +199,6 @@ const props = defineProps({
 const fileList = ref()
 const accept = ref()
 const draggable = ref(false)
-const uploadFile = ref()
 const currentItem = ref(null)
 const storageMode = {
   '1': 'LOCAL',
@@ -165,7 +216,7 @@ onMounted(() => {
     }
   })
 
-  if (props.type === 'file' && props.fileType === 'drag') {
+  if ((props.type === 'file' || props.chunk) && props.fileType === 'drag') {
     draggable.value = true
   }
 
@@ -205,7 +256,7 @@ const uploadImageHandler = async (options) => {
     currentItem.value = options.fileItem
   }
   const file = options.fileItem.file
-  if (! checkSize(file) && ! props.chunk) {
+  if (! checkSize(file)) {
     Message.warning('文件大小超过上传限制')
     return
   }
@@ -243,9 +294,8 @@ const uploadImageHandler = async (options) => {
 
 const uploadFileHandler = async (options) => {
   const { onError, onSuccess, fileItem } = options
-  if (! checkSize(fileItem.file) && ! props.chunk) {
+  if (! checkSize(fileItem.file)) {
     Message.warning('文件大小超过上传限制')
-    uploadFile.value.abort(fileItem)
     return false
   }
   
@@ -266,8 +316,17 @@ const uploadFileHandler = async (options) => {
   })
 }
 
+const chunkUpload = (options) => {
+  if (props.multiple) {
+    fileList.value.push(options.fileItem)
+  } else {
+    fileList.value = options.fileItem
+  }
+  console.log(fileList.value)
+}
+
 const uploadRequest = async (options) => {
-  const { onProgress, fileItem } = options
+  const { fileItem } = options
   try {
     const hash = await file2md5(fileItem.file)
     const dataForm = new FormData()
