@@ -99,6 +99,19 @@ export default {
   },
 
   /**
+   * 上传文件接口
+   * @returns
+   */
+  chunkUpload (data = {}) {
+    return request({
+      url: 'system/chunkUpload',
+      method: 'post',
+      timeout: 30000,
+      data
+    })
+  },
+
+  /**
    * 保存网络图片
    * @returns
    */

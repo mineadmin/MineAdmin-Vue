@@ -149,7 +149,13 @@
               v-for="item in fileList"
               :key="item.uid"
             >
-              <a-progress size="large" animation :percent="0.1"/>
+              <div class="flex justify-between items-center">
+                <div>{{ item.name }}</div>
+                <a-button shape="circle" @click="removeChunkFile(item)">
+                  <template #icon><icon-delete /></template>
+                </a-button>
+              </div>
+              <a-progress animation :percent="item.percent || 0" class="mt-2"/>
             </div>
           </template>
           <div
@@ -158,9 +164,11 @@
           >
             <div class="flex justify-between items-center">
               <div>{{ fileList.file.name }}</div>
-              <a-button shape="circle"><template #icon><icon-delete /></template></a-button>
+              <a-button shape="circle" @click="removeChunkFile">
+                <template #icon><icon-delete /></template>
+              </a-button>
             </div>
-            <a-progress size="large" animation :percent="0" class="mt-2"/>
+            <a-progress animation :percent="fileList.percent || 0" class="mt-2"/>
           </div>
         </a-space>
       </div>
@@ -257,11 +265,11 @@ const uploadImageHandler = async (options) => {
   }
   const file = options.fileItem.file
   if (! checkSize(file)) {
-    Message.warning('文件大小超过上传限制')
+    Message.warning(file.name + ' 文件大小超过上传限制')
     return
   }
   
-  const result = await uploadRequest(options)
+  const result = await uploadRequest(file)
 
   if (result) {
     result.url = tool.attachUrl(result.url, storageMode[result.storage_mode])
@@ -295,13 +303,14 @@ const uploadImageHandler = async (options) => {
 const uploadFileHandler = async (options) => {
   const { onError, onSuccess, fileItem } = options
   if (! checkSize(fileItem.file)) {
-    Message.warning('文件大小超过上传限制')
+    Message.warning(fileItem.file.name + ' 文件大小超过上传限制')
     return false
   }
   
-  uploadRequest(options).then(res => {
+  uploadRequest(fileItem.file).then(res => {
     res ? onSuccess(res) : onError(res)
     res.url = tool.attachUrl(res.url, storageMode[res.storage_mode])
+    res.uid = fileItem.uid
     if (props.multiple) {
       let files = []
       fileList.value.push(res)
@@ -316,28 +325,77 @@ const uploadFileHandler = async (options) => {
   })
 }
 
-const chunkUpload = (options) => {
+const chunkUpload = async (options) => {
+  let idx
   if (props.multiple) {
     fileList.value.push(options.fileItem)
+    idx = fileList.value.length - 1
   } else {
     fileList.value = options.fileItem
   }
-  console.log(fileList.value)
+
+  try {
+    const file = options.fileItem.file
+    const hash = await file2md5(file)
+    const chunks = Math.ceil(file.size / props.chunkSize)
+    for (let currentChunk = 0; currentChunk < chunks; currentChunk++) {
+      const start = currentChunk * props.chunkSize
+      const end = (start + props.chunkSize >= file.size)
+                  ? file.size
+                  : start + props.chunkSize
+      const dataForm = new FormData()
+      dataForm.append('package', file.slice(start, end))
+      dataForm.append('hash', hash)
+      dataForm.append('total', chunks)
+      dataForm.append('name', file.name)
+      dataForm.append('type', file.type)
+      dataForm.append('size', file.size)
+      dataForm.append('index', currentChunk + 1)
+      dataForm.append('ext', /[^.]+$/g.exec(file.name)[0])
+      const res = await commonApi.chunkUpload(dataForm)
+
+      if (res.data && res.data.hash) {
+        res.data.url = tool.attachUrl(res.data.url, storageMode[res.data.storage_mode])
+        if (props.multiple) {
+          fileList.value[idx].percent = 1
+          fileList.value[idx].res = res.data
+          const files = []
+          fileList.value.map(item => {
+            item.percent === 1 && files.push(props.onlyUrl ? item.res.url : item.res)
+          })
+          emit('update:modelValue', files)
+        } else {
+          fileList.value.percent = 1
+          emit('update:modelValue', props.onlyUrl ? res.data.url : res.data)
+        }
+        return
+      }
+      if (res.data && res.data.code && res.data.code === 201) {
+        const percent = parseFloat((1 / chunks).toFixed(2))
+        if (props.multiple) {
+          fileList.value[idx].percent += percent
+        } else {
+          fileList.value.percent += percent
+        }
+      }
+    }
+  } catch (e) {
+    console.error(e)
+    Message.error('获取文件hash失败，请重试！')
+  }
 }
 
-const uploadRequest = async (options) => {
-  const { fileItem } = options
+const uploadRequest = async (file) => {
   try {
-    const hash = await file2md5(fileItem.file)
+    const hash = await file2md5(file)
     const dataForm = new FormData()
     const field = props.type === 'image' ? 'image' : 'file'
-    dataForm.append(field, fileItem.file)
-    dataForm.append('isChunk', props.chunk ? true : false)
+    dataForm.append(field, file)
+    dataForm.append('isChunk', false)
     dataForm.append('hash', hash)
 
     const api = props.type === 'image' ? commonApi.uploadImage : commonApi.uploadFile
 
-    if (! props.chunk) {
 
       return api(dataForm).then(response => {
         return response.data
@@ -346,14 +404,6 @@ const uploadRequest = async (options) => {
         Message.error('文件上传失败')
         return false
       })
-
-    // 分片上传
-    } else {
-      const slice = File.prototype.slice
-      const chunks = Math.ceil(fileItem.file.size / props.chunkSize)
-      
-      return { url: '' }
-    }
   } catch (e) {
     console.error(e)
     Message.error('获取文件hash失败，请重试！')
@@ -363,25 +413,40 @@ const uploadRequest = async (options) => {
 
 const checkSize = file => file.size < props.size
 
+const removeChunkFile = (file = null) => {
+  if (props.multiple) {
+    const files = []
+    fileList.value.map( (item, idx) => {
+      if (file.uid === item.uid) {
+        fileList.value.splice(idx, 1)
+      } else if (item.res) {
+        files.push(props.onlyUrl ? item.res.url : item.res)
+      }
+    })
+    emit('update:modelValue', files)
+  } else {
+    fileList.value = undefined
+    emit('update:modelValue', undefined)
+  }
+}
+
 const removeFile = async (fileItem) => {
   try {
-    const hash = await file2md5(fileItem.file)
     if (props.multiple) {
       let files = []
       fileList.value.map( (item, idx) => {
-        if (item.hash === hash) fileList.value.splice(idx, 1)
+        if (item.uid === fileItem.uid) fileList.value.splice(idx, 1)
       })
       fileList.value.map( item => {
         files.push(props.onlyUrl && item.url ? item.url : item)
       })
       emit('update:modelValue', files)
       return true
-    } else if (fileList.value.hash === hash) {
+    } else {
       fileList.value = undefined
       emit('update:modelValue', undefined)
       return true
     }
-    return false
   } catch (e) {
     console.error(e)
     Message.error('获取文件hash失败，请重试！')
