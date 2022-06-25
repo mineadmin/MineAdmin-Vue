@@ -202,7 +202,7 @@ const props = defineProps({
   rounded: { type: Boolean, default: false },
   multiple: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
-  size: { type: Number, default: 4 * 1024 * 1024 },
+  size: { type: Number, default: 1 * 1024 * 1024 },
   chunk: { type: Boolean, default: false },
   chunkSize: { type: Number, default: 1 * 1024 * 1024 },
   limit: { type: Number, default: 0 },
@@ -275,6 +275,7 @@ const uploadImageHandler = async (options) => {
   const file = options.fileItem.file
   if (! checkSize(file)) {
     Message.warning(file.name + ' 文件大小超过上传限制')
+    currentItem.value = undefined
     return
   }
   
