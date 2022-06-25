@@ -9,7 +9,7 @@
 -->
 <template>
   <div class="ma-content-block p-5">
-    <div class="w-6/12"><ma-upload v-model="ok" type="file"></ma-upload></div>
+    <div style="height: 500px;"><ma-resource /></div>
     {{ ok }}
   </div>
 </template>

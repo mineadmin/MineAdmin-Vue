@@ -10,14 +10,8 @@
 <template>
   <div class="block">
     <div class="user-header rounded-sm text-center">
-      <a-avatar :size="100" class="mt-7">
-        <img
-          :src="
-          (userStore.user && userStore.user.avatar)
-          ? userStore.user.avatar
-          : '/avatar.jpg'"
-        />
-      </a-avatar>
+      <ma-upload v-model="userInfo.avatar" rounded class="mt-2.5" />
+      
       <div><a-tag size="large" class="mt-3 rounded-full" color="#165dff">{{ userStore.user.nickname || userStore.user.username }}</a-tag></div>
     </div>
 
@@ -93,8 +87,15 @@
 </template>
 
 <script setup>
+  import { reactive } from 'vue'
   import { useUserStore } from '@/store'
   const userStore = useUserStore()
+
+  const userInfo = reactive({
+    ...userStore.user
+  })
+
+  userInfo.avatar = (userStore.user && userStore.user.avatar) ? userStore.user.avatar : '/avatar.jpg'
 </script>
 
 <style scoped>

@@ -128,5 +128,25 @@ export default {
    */
   importExcel (url, data) {
     return request({ url, method: 'post', data, timeout: 30 * 1000 })
-  }
+  },
+
+  /**
+   * 快捷查询字典
+   */
+  getDict(code) {
+    return request({
+      url: 'system/dataDict/list?code=' + code,
+      method: 'get'
+    })
+  },
+
+  /**
+   * 快捷查询多个字典
+   */
+  getDicts(codes) {
+    return request({
+      url: 'system/dataDict/lists?codes=' + codes.join(','),
+      method: 'get'
+    })
+  },
 }

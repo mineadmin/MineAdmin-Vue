@@ -8,9 +8,12 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div>
+  <div class="inline-block">
     <div class="upload-image flex" v-if="props.type === 'image' && !props.chunk">
-      <div class="image-list" v-if="! props.multiple && currentItem">
+      <div
+        :class="'image-list ' + (props.rounded ? 'rounded-full' : '')"
+        v-if="! props.multiple && currentItem && props.showImageList"
+      >
         <a-progress
           v-if="currentItem.status === 'uploading' && currentItem.percent < 100"
           :percent="currentItem.percent"
@@ -30,11 +33,18 @@
           v-if="currentItem.percent === 100 && currentItem.status === 'complete'"
           width="130"
           height="130"
+          :class="props.rounded ? 'rounded-full' : ''"
           :src="fileList.url ? fileList.url : (fileList ? fileList : currentItem.url)"
         />
       </div>
-      <a-space v-else :class="isArray(fileList) && fileList.length > 0 ? 'mr-2' : ''">
-        <div class="image-list" v-for="(file, idx) in fileList" :key="idx">
+      <a-space
+        v-else-if="props.multiple && !currentItem && props.showImageList"
+        :class="isArray(fileList) && fileList.length > 0 ? 'mr-2' : ''"
+      >
+        <div
+          :class="'image-list ' + (props.rounded ? 'rounded-full' : '')"
+          v-for="(file, idx) in fileList" :key="idx"
+        >
           <a-progress
             v-if="file.status === 'uploading' && file.percent < 100"
             :percent="file.percent"
@@ -54,6 +64,7 @@
             v-if="file.percent === 100 && file.status === 'complete'"
             width="130"
             height="130"
+            :class="props.rounded ? 'rounded-full' : ''"
             :src="file.url ? file.url : file"
           />
         </div>
@@ -67,19 +78,19 @@
         :disabled="props.disabled"
         :tip="props.tip"
         :limit="props.limit"
-        v-if="
-          (
-            !props.modelValue
-            || props.modelValue.length === 0
-            || props.multiple
-          )
-          || !currentItem
-        "
       >
         <template #upload-button>
           <slot name="customer">
             <div
               :class="'upload-skin ' + (props.rounded ? 'rounded-full' : 'rounded-sm')"
+              v-if="
+                (
+                  !props.modelValue
+                  || props.modelValue.length === 0
+                  || props.multiple
+                )
+                || !currentItem
+              "
             >
               <div class="icon text-3xl"><component :is="props.icon" /></div>
               <div class="title">{{ props.title }}</div>
@@ -202,7 +213,7 @@ const props = defineProps({
   rounded: { type: Boolean, default: false },
   multiple: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
-  size: { type: Number, default: 1 * 1024 * 1024 },
+  size: { type: Number, default: 4 * 1024 * 1024 },
   chunk: { type: Boolean, default: false },
   chunkSize: { type: Number, default: 1 * 1024 * 1024 },
   limit: { type: Number, default: 0 },
@@ -211,6 +222,7 @@ const props = defineProps({
   accept: { type: String, default: '*' },
   onlyUrl: { type: Boolean, default: true },
   fileType: { type: String, default: 'button' },
+  showImageList: { type: Boolean, default: true }
 })
 
 const fileList = ref()
