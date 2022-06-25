@@ -147,6 +147,16 @@
               :allow-half="item.half"
               :prefix="item.mentionPrefix"
               :type="item.type"
+              :limit="item.limit || 0"
+              :accept="item.accept || '*'"
+              :tip="item.tip"
+              :multiple="item.multiple || false"
+              :rounded="item.rounded || false"
+              :title="item.title || '点击上传'"
+              :icon="item.icon || 'icon-plus'"
+              :chunk="item.chunk || false"
+              :only-url="item.onlyUrl || true"
+              :file-type="item.fileType || 'button'"
               :show-word-limit="['input', 'textarea'].includes(item.formType) ? true : false"
               allow-clear
               @change="item.changeEvent"
@@ -163,6 +173,7 @@ import { ref, nextTick, reactive } from 'vue'
 import { request } from '@/utils/request'
 import { isArray } from '@vue/shared'
 import { Message } from '@arco-design/web-vue'
+import maUpload from '@cps/ma-upload/index.vue'
 
 const componentName = ref('a-modal')
 const columns = ref([])
@@ -327,10 +338,11 @@ const getComponent = (item) => {
   if (! item.formType) {
     return `a-input`
   }
+
   if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)) {
     return `a-${item.formType}-picker`
-  } else if (['image', 'file', 'upload'].includes(item.formType)) {
-    
+  } else if (item.formType === 'upload`') {
+    return 'ma-upload'
   } else {
     return `a-${item.formType}`
   }
