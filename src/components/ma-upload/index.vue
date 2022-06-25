@@ -33,7 +33,7 @@
           :src="fileList.url ? fileList.url : (fileList ? fileList : currentItem.url)"
         />
       </div>
-      <a-space v-else class="mr-2">
+      <a-space v-else :class="isArray(fileList) && fileList.length > 0 ? 'mr-2' : ''">
         <div class="image-list" v-for="(file, idx) in fileList" :key="idx">
           <a-progress
             v-if="file.status === 'uploading' && file.percent < 100"
