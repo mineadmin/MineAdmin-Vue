@@ -12,7 +12,7 @@
     <div class="upload-image flex" v-if="props.type === 'image' && !props.chunk">
       <div
         :class="'image-list ' + (props.rounded ? 'rounded-full' : '')"
-        v-if="! props.multiple && currentItem && props.showImageList"
+        v-if="! props.multiple && currentItem && props.showList"
       >
         <a-progress
           v-if="currentItem.status === 'uploading' && currentItem.percent < 100"
@@ -38,7 +38,7 @@
         />
       </div>
       <a-space
-        v-else-if="props.multiple && !currentItem && props.showImageList"
+        v-else-if="props.multiple && !currentItem && props.showList"
         :class="isArray(fileList) && fileList.length > 0 ? 'mr-2' : ''"
       >
         <div
@@ -104,7 +104,7 @@
     <div class="upload-file" v-if="props.type === 'file' && !props.chunk">
       <a-upload
         :custom-request="uploadFileHandler"
-        show-file-list
+        :show-file-list="props.showList"
         :multiple="props.multiple"
         :accept="accept"
         :disabled="props.disabled"
@@ -161,7 +161,7 @@
           </slot>
         </template>
       </a-upload>
-      <div class="chunk-upload-list mt-3" v-if="fileList">
+      <div class="chunk-upload-list mt-3" v-if="fileList && props.showList">
         <a-space direction="vertical" fill>
           <template v-if="props.multiple">
             <div
@@ -222,7 +222,7 @@ const props = defineProps({
   accept: { type: String, default: '*' },
   onlyUrl: { type: Boolean, default: true },
   fileType: { type: String, default: 'button' },
-  showImageList: { type: Boolean, default: true }
+  showList: { type: Boolean, default: true }
 })
 
 const fileList = ref()

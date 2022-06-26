@@ -12,6 +12,7 @@ import {
 import MaCrud from './ma-crud/index.vue'
 import MaChart from './ma-charts/index.vue'
 import MaUpload from './ma-upload/index.vue'
+import MaTreeSlider from './ma-treeSlider/index.vue'
 import MaResource from './ma-resource/index.vue'
 
 use([
@@ -32,6 +33,7 @@ export default {
     Vue.component('MaChart', MaChart)
     Vue.component('MaCrud', MaCrud)
     Vue.component('MaUpload', MaUpload)
+    Vue.component('MaTreeSlider', MaTreeSlider)
     Vue.component('MaResource', MaResource)
   }
 }

@@ -8,8 +8,8 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div class="ma-content-block p-5">
-    <div style="height: 500px;"><ma-resource /></div>
+  <div class="ma-content-block p-5 h-full">
+    <ma-resource class="h-full" v-model="ok" :multiple="true" />
     {{ ok }}
   </div>
 </template>
