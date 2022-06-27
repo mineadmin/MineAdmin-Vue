@@ -8,7 +8,12 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div class="w-full p-2 resource-container lg:flex lg:justify-between rounded-sm">
+  <div class="w-full p-2 resource-container h-full lg:flex lg:justify-between rounded-sm">
+    <a-modal v-model:visible="openNetworkModal" ok-text="保存" :on-before-ok="saveNetworkImg" draggable>
+      <template #title>{{ $t('maResource.saveNetworkImage') }}</template>
+      <a-input v-model="networkImg" class="mb-3" placeholder="请粘贴网络图片地址" allow-clear />
+      <a-image :src="networkImg" width="100%" style="min-height: 150px;" />
+    </a-modal>
     <ma-tree-slider
       v-model="sliderData"
       :search-placeholder="$t('maResource.searchResource')"
@@ -20,8 +25,8 @@
       
       <div class="lg:flex lg:justify-between">
         <div>
-          <ma-upload v-model="uploadFile" multiple :show-list="false" chunk />
-          <a-button class="ml-3" @click="openNetworkModal">
+          <ma-upload v-model="uploadFile" multiple :show-list="false" chunk :resource="false" />
+          <a-button class="ml-3" @click="openNetworkModal = true">
             <icon-image /> {{ $t('maResource.saveNetworkImage') }}
           </a-button>
         </div>
@@ -85,11 +90,14 @@
   import attachmentApi from '@/api/system/attachment'
   import tool from '@/utils/tool'
   import { useI18n } from 'vue-i18n'
+  import { Message } from '@arco-design/web-vue'
 
   const { t } = useI18n()
   const sliderData = ref([])
   const uploadFile = ref()
   const attachmentList = ref([])
+  const openNetworkModal = ref(false)
+  const networkImg = ref()
   const pageInfo = ref({
     total: 1,
     currentPage: 1
@@ -189,6 +197,22 @@
 
   const changePage = async (page) => {
     await getAttachmentList({ page })
+  }
+
+  const saveNetworkImg = async(done) => {
+    if (! networkImg.value) {
+      Message.error('请先粘贴网络图片地址')
+      done(false)
+    }
+    const response = await commonApi.saveNetWorkImage({ url: networkImg.value })
+    if (response.success) {
+      Message.success(response.message)
+      await getAttachmentList({ page })
+      done(true)
+    } else {
+      Message.error(response.message)
+      done(true)
+    }
   }
 
   watch(

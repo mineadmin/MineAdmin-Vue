@@ -98,7 +98,6 @@
           </slot>
         </template>
       </a-upload>
-      
     </div>
 
     <div class="upload-file" v-if="props.type === 'file' && !props.chunk">
@@ -223,7 +222,6 @@ const props = defineProps({
   onlyUrl: { type: Boolean, default: true },
   fileType: { type: String, default: 'button' },
   showList: { type: Boolean, default: true },
-  resource: { type: Boolean, default: false },
 })
 
 const fileList = ref()
@@ -275,10 +273,6 @@ onMounted(() => {
     })
   }
 })
-
-const uploadImage = ref()
-
-const onProgress = progress => console.log('progress', progress);
 
 const uploadImageHandler = async (options) => {
   if (! options.fileItem) return

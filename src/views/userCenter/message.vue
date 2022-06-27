@@ -9,7 +9,7 @@
 -->
 <template>
   <div class="ma-content-block p-5 h-full">
-    <ma-upload v-model="ok" resource />
+    <ma-resource v-model="ok" />
     {{ ok }}
   </div>
 </template>
