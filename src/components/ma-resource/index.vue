@@ -207,11 +207,12 @@
     const response = await commonApi.saveNetWorkImage({ url: networkImg.value })
     if (response.success) {
       Message.success(response.message)
-      await getAttachmentList({ page })
+      await getAttachmentList()
+      networkImg.value = undefined
       done(true)
     } else {
       Message.error(response.message)
-      done(true)
+      done(false)
     }
   }
 
