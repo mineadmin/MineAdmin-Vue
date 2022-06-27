@@ -9,9 +9,9 @@
 -->
 <template>
   <div class="w-full p-2 resource-container h-full lg:flex lg:justify-between rounded-sm">
-    <a-modal v-model:visible="openNetworkModal" ok-text="保存" :on-before-ok="saveNetworkImg" draggable>
+    <a-modal v-model:visible="openNetworkModal" :ok-text="$t('sys.save')" :on-before-ok="saveNetworkImg" draggable>
       <template #title>{{ $t('maResource.saveNetworkImage') }}</template>
-      <a-input v-model="networkImg" class="mb-3" placeholder="请粘贴网络图片地址" allow-clear />
+      <a-input v-model="networkImg" class="mb-3" :placeholder="$t('maResource.networkImageNotice')" allow-clear />
       <a-image :src="networkImg" width="100%" style="min-height: 150px;" />
     </a-modal>
     <ma-tree-slider
@@ -201,8 +201,9 @@
 
   const saveNetworkImg = async(done) => {
     if (! networkImg.value) {
-      Message.error('请先粘贴网络图片地址')
+      Message.error(t('maResource.networkImageNotice'))
       done(false)
+      return
     }
     const response = await commonApi.saveNetWorkImage({ url: networkImg.value })
     if (response.success) {

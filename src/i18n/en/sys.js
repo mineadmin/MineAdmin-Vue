@@ -61,4 +61,6 @@ export default {
     closeOtherTag: 'Close other tag',
   },
   noticeTitle: 'System Prompted',
+  save: 'Save',
+  cancel: 'Cancel',
 }

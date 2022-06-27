@@ -61,4 +61,6 @@ export default {
     closeOtherTag: '关闭其他标签',
   },
   noticeTitle: '系统提示',
+  save: '保存',
+  cancel: '取消',
 }

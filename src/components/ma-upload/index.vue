@@ -93,7 +93,9 @@
               "
             >
               <div class="icon text-3xl"><component :is="props.icon" /></div>
-              <div class="title">{{ props.title }}</div>
+              <div class="title">
+                {{ props.title === 'buttonText' ? $t('upload.buttonText') : props.title }}
+              </div>
             </div>
           </slot>
         </template>
@@ -122,7 +124,9 @@
             >
               <div>
                 <icon-upload class="text-5xl text-gray-400" />
-                <div class="text-red-600 font-bold">文件上传</div>
+                <div class="text-red-600 font-bold">
+                  {{ props.title === 'buttonText' ? $t('upload.buttonText') : props.title }}
+                </div>
                 将文件拖到此处，或<span style="color: #3370FF">点击上传</span>
               </div>
             </div>
@@ -153,8 +157,10 @@
             >
               <div>
                 <icon-upload class="text-5xl text-gray-400" />
-                <div class="text-red-600 font-bold">文件上传</div>
-                将文件拖到此处，或<span style="color: #3370FF">点击上传</span>
+                <div class="text-red-600 font-bold">
+                  {{ props.title === 'buttonText' ? $t('upload.buttonText') : props.title }}
+                </div>
+                {{ $t('upload.uploadDesc') }}<span style="color: #3370FF">{{ $t('upload.clickUpload') }}</span>
               </div>
             </div>
           </slot>
@@ -207,7 +213,7 @@ const { t } = useI18n()
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
   modelValue: { type: [ String, Object, Array ], default: () => {} },
-  title: { type: String, default: '点击上传' },
+  title: { type: String, default: 'buttonText', },
   icon: { type: String, default: 'icon-plus'},
   rounded: { type: Boolean, default: false },
   multiple: { type: Boolean, default: false },
@@ -281,7 +287,7 @@ const uploadImageHandler = async (options) => {
   }
   const file = options.fileItem.file
   if (! checkSize(file)) {
-    Message.warning(file.name + ' 文件大小超过上传限制')
+    Message.warning(file.name + ' ' + t('upload.sizeLimit'))
     currentItem.value = undefined
     return
   }
@@ -320,7 +326,7 @@ const uploadImageHandler = async (options) => {
 const uploadFileHandler = async (options) => {
   const { onError, onSuccess, fileItem } = options
   if (! checkSize(fileItem.file)) {
-    Message.warning(fileItem.file.name + ' 文件大小超过上传限制')
+    Message.warning(fileItem.file.name + ' ' + t('upload.sizeLimit'))
     return false
   }
   
@@ -398,7 +404,7 @@ const chunkUpload = async (options) => {
     }
   } catch (e) {
     console.error(e)
-    Message.error('获取文件hash失败，请重试！')
+    Message.error(t('upload.fileHashFail'))
   }
 }
 
@@ -418,12 +424,12 @@ const uploadRequest = async (file) => {
         return response.data
       }).catch(e => {
         console.error(e)
-        Message.error('文件上传失败')
+        Message.error(t('upload.uploadFailed'))
         return false
       })
   } catch (e) {
     console.error(e)
-    Message.error('获取文件hash失败，请重试！')
+    Message.error(t('upload.fileHashFail'))
     return false
   }
 }
@@ -466,7 +472,7 @@ const removeFile = async (fileItem) => {
     }
   } catch (e) {
     console.error(e)
-    Message.error('获取文件hash失败，请重试！')
+    Message.error(t('upload.fileHashFail'))
     return false;
   }
 }
