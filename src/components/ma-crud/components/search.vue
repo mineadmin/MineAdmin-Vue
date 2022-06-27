@@ -24,6 +24,7 @@
             :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`"
             allow-clear
             allow-search
+            :max-tag-count="1"
             :options="formDictData[item.dataIndex]"
             :multiple="item.multiple || ['transfer', 'checkbox'].includes(item.formType)"
             @change="handlerCascader($event, item)"
@@ -182,31 +183,33 @@ const handlerCascader = (val, column) => {
   if (column.cascaderItem && isArray(column.cascaderItem) && column.cascaderItem.length > 0 && val) {
     searchLoading.value = true
     column.cascaderItem.map(async name => {
-      const dict = props.columns.filter(col => col.dataIndex === name)[0].dict
-      let response
-      if (dict && dict.url.indexOf('{{key}}') > 0) {
-        response = await requestDict(dict.url.replace('{{key}}', val), dict.method || 'GET', dict.params || {}, dict.data || {})
-      } else {
-        let temp = { key: val }
-        const params = Object.assign(dict.params || {}, temp)
-        const data   = Object.assign(dict.data || {}, temp)
-        response = await requestDict(dict.url, dict.method || 'GET', params || {}, data || {})
-      }
-      // 原始数据格式的
-      if (response.data && response.data.data && response.status === 200) {
-        formDictData.value[name] = response.data.data
-      } else {
-        Message.error('字典联动请求失败：' + name)
-        console.error(response)
-      }
+      const dict = props.columns.filter(col => col.dataIndex === name && col.dict )[0].dict
+      if (dict && dict.url && dict.props) {
+        let response
+        if (dict && dict.url.indexOf('{{key}}') > 0) {
+          response = await requestDict(dict.url.replace('{{key}}', val), dict.method || 'GET', dict.params || {}, dict.data || {})
+        } else {
+          let temp = { key: val }
+          const params = Object.assign(dict.params || {}, temp)
+          const data   = Object.assign(dict.data || {}, temp)
+          response = await requestDict(dict.url, dict.method || 'GET', params || {}, data || {})
+        }
+        // 原始数据格式的
+        if (response.data && response.data.data && response.status === 200) {
+          formDictData.value[name] = response.data.data
+        } else {
+          Message.error('字典联动请求失败：' + name)
+          console.error(response)
+        }
 
-      if (response.data && response.code === 200) {
-        formDictData.value[name] = response.data.map(dicItem => {
-          return {
-            'label': dicItem[ (dict.props && dict.props.label) || 'code'  ],
-            'value': dicItem[ (dict.props && dict.props.value) || 'value' ]
-          } 
-        })
+        if (response.data && response.code === 200) {
+          formDictData.value[name] = response.data.map(dicItem => {
+            return {
+              'label': dicItem[ (dict.props && dict.props.label) || 'code'  ],
+              'value': dicItem[ (dict.props && dict.props.value) || 'value' ]
+            } 
+          })
+        }
       }
     })
     searchLoading.value = false

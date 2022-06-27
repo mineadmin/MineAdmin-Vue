@@ -77,6 +77,7 @@
             <template #cell="{ record, column, rowIndex }">
               <template v-if="row.dataIndex === '__operation'">
                 <a-space>
+                  <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
                   <a-button
                     v-if="defaultCrud.see.show"
                     size="mini" type="text" status="success"
@@ -99,7 +100,7 @@
                       v-role="defaultCrud.delete.role || []"
                     ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-button>
                   </a-popconfirm>
-                  <slot name="operationExtend" v-bind="{ record, column, rowIndex }"></slot>
+                  <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
                 </a-space>
               </template>
               <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else >
