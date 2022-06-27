@@ -23,24 +23,30 @@
     </ma-search>
     <div class="opartion-tools flex justify-between mb-3">
       <a-space>
-        <a-link
-          v-if="defaultCrud.add.show"
-          v-auth="defaultCrud.add.auth || []"
-          v-role="defaultCrud.add.role || []"
-          @click="addAction"
-        ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-link>
-        <a-link
-          v-auth="defaultCrud.import.auth || []"
-          v-role="defaultCrud.import.role || []"
-          v-if="defaultCrud.import.show"
-          @click="importAction"
-        ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-link>
-        <a-link
-          v-auth="defaultCrud.export.auth || []"
-          v-role="defaultCrud.export.role || []"
-          v-if="defaultCrud.export.show"
-          @click="exportAction"
-        ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-link>
+        <a-button
+          v-if="
+            defaultCrud.add.show
+            && ($common.auth(defaultCrud.add.auth || [])
+            || (defaultCrud.add.role || []))
+          "
+          @click="addAction" type="primary"
+        ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
+        <a-button
+         v-if="
+            defaultCrud.import.show
+            && ($common.auth(defaultCrud.import.auth || [])
+            || (defaultCrud.import.role || []))
+          "
+          @click="importAction" type="primary" status="success"
+        ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
+        <a-button
+          v-if="
+            defaultCrud.export.show
+            && ($common.auth(defaultCrud.export.auth || [])
+            || (defaultCrud.export.role || []))
+          "
+          @click="exportAction" type="primary" status="danger"
+        ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
         <slot name="operation"></slot>
       </a-space>
       <a-space>
@@ -78,27 +84,33 @@
               <template v-if="row.dataIndex === '__operation'">
                 <a-space>
                   <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
-                  <a-button
-                    v-if="defaultCrud.see.show"
-                    size="mini" type="text" status="success"
-                    v-auth="defaultCrud.see.auth || []"
-                    v-role="defaultCrud.see.role || []"
-                  ><icon-eye /> {{ defaultCrud.see.text || '查看' }}</a-button>
-                  <a-button
-                    v-if="defaultCrud.edit.show"
-                    size="mini" type="text" status="warning"
-                    v-auth="defaultCrud.edit.auth || []"
-                    v-role="defaultCrud.edit.role || []"
+                  <a-link
+                    v-if="
+                      defaultCrud.see.show
+                      && ($common.auth(defaultCrud.see.auth || [])
+                      || (defaultCrud.see.role || []))
+                    "
+                    type="primary"
+                  ><icon-eye /> {{ defaultCrud.see.text || '查看' }}</a-link>
+                  <a-link
+                    v-if="
+                      defaultCrud.edit.show
+                      && ($common.auth(defaultCrud.edit.auth || [])
+                      || (defaultCrud.edit.role || []))
+                    "
+                    type="primary"
                     @click="editAction(record)"
-                  ><icon-edit /> {{ defaultCrud.edit.text || '编辑' }}</a-button>
+                  ><icon-edit /> {{ defaultCrud.edit.text || '编辑' }}</a-link>
 
                   <a-popconfirm content="确定要删除数据吗?" position="bottom" @ok="deleteAction(record)">
-                    <a-button
-                      v-if="defaultCrud.delete.show"
-                      size="mini" type="text" status="danger"
-                      v-auth="defaultCrud.delete.auth || []"
-                      v-role="defaultCrud.delete.role || []"
-                    ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-button>
+                    <a-link
+                       v-if="
+                        defaultCrud.delete.show
+                        && ($common.auth(defaultCrud.delete.auth || [])
+                        || (defaultCrud.delete.role || []))
+                      "
+                      type="primary"
+                    ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-link>
                   </a-popconfirm>
                   <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
                 </a-space>
@@ -348,7 +360,7 @@ const requestHandle = async () => {
     const response = config.parseResponseData(await settingProps.crud.api(requestParams.value))
     if (response.rows) {
       tableData.value = response.rows
-      total.value = response.total
+      total.value = response.pageInfo.total
       openPagination.value = true
     } else {
       tableData.value = response

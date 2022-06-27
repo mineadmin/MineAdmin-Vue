@@ -145,7 +145,7 @@
               :step="item.step"
               :show-ticks="item.showTicks"
               :allow-half="item.half"
-              :prefix="item.mentionPrefix"
+              :prefix="item.mentionPrefix || '@'"
               :type="item.type"
               :limit="item.limit || 0"
               :accept="item.accept || '*'"
@@ -218,11 +218,12 @@ const submit = (done) => {
 }
 
 const open = () => {
-  nextTick()
-  componentName.value = setting.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
-  dataVisible.value = true
-  columns.value = props.modelValue
-  init()
+  nextTick(() =>{
+    componentName.value = setting.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
+    dataVisible.value = true
+    columns.value = props.modelValue
+    init()
+  })
 }
 
 const close = () => {

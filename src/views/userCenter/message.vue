@@ -9,7 +9,7 @@
 -->
 <template>
   <div class="ma-content-block p-5 h-full">
-    
+    <ma-user v-model="ok" />
     {{ ok }}
   </div>
 </template>

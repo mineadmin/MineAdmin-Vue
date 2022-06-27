@@ -14,6 +14,7 @@ import MaChart from './ma-charts/index.vue'
 import MaUpload from './ma-upload/index.vue'
 import MaTreeSlider from './ma-treeSlider/index.vue'
 import MaResource from './ma-resource/index.vue'
+import MaUser from './ma-user/index.vue'
 
 use([
   CanvasRenderer,
@@ -35,5 +36,6 @@ export default {
     Vue.component('MaUpload', MaUpload)
     Vue.component('MaTreeSlider', MaTreeSlider)
     Vue.component('MaResource', MaResource)
+    Vue.component('MaUser', MaUser)
   }
 }
