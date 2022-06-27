@@ -1,8 +1,17 @@
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <div class="w-full p-2 resource-container lg:flex lg:justify-between rounded-sm">
     <ma-tree-slider
       v-model="sliderData"
-      search-placeholder="搜索资源类型"
+      :search-placeholder="$t('maResource.searchResource')"
       @click="handlerClick"
       class="lg:w-1/5 w-full"
       :selected-keys="['all']"
@@ -11,19 +20,19 @@
       
       <div class="lg:flex lg:justify-between">
         <div>
-          <ma-upload v-model="uploadFile" multiple :show-list="false" chunk>
-            <template #customer><a-button type="primary"><icon-upload /> 本地上传</a-button></template>
-          </ma-upload>
-          <a-button class="ml-3"><icon-image /> 保存网络图片</a-button>
+          <ma-upload v-model="uploadFile" multiple :show-list="false" chunk />
+          <a-button class="ml-3" @click="openNetworkModal">
+            <icon-image /> {{ $t('maResource.saveNetworkImage') }}
+          </a-button>
         </div>
         <a-input
           v-model="filename"
           class="input-search lg:mt-0 mt-2"
-          placeholder="文件名搜索"
+          :placeholder="$t('maResource.searchFileNotice')"
           @press-enter="searchFile"
         />
       </div>
-      <a-spin :loading="resourceLoading" tip="数据加载中..." class="h-full">
+      <a-spin :loading="resourceLoading" :tip="$t('maResource.loadingText')" class="h-full">
         <div class="resource-list mt-2" ref="rl">
           <div
             class="item rounded-sm"
@@ -64,7 +73,7 @@
           v-model:page-size="pageSize"
           @change="changePage"
         />
-        <a-button type="primary" @click="selectComplete" class="mt-3 lg:mt-0">确定</a-button>
+        <a-button type="primary" @click="selectComplete" class="mt-3 lg:mt-0">{{ $t('maResource.ok') }}</a-button>
       </div>
     </div>
   </div>
@@ -75,7 +84,9 @@
   import commonApi from '@/api/common'
   import attachmentApi from '@/api/system/attachment'
   import tool from '@/utils/tool'
+  import { useI18n } from 'vue-i18n'
 
+  const { t } = useI18n()
   const sliderData = ref([])
   const uploadFile = ref()
   const attachmentList = ref([])
@@ -171,7 +182,10 @@
     }
   }
 
-  const selectComplete = () => emit('update:modelValue', selecteds.value || undefined)
+  const selectComplete = () => {
+    const files = props.multiple ? Object.assign([], selecteds.value) : selecteds.value
+    emit('update:modelValue', files)
+  }
 
   const changePage = async (page) => {
     await getAttachmentList({ page })

@@ -222,7 +222,8 @@ const props = defineProps({
   accept: { type: String, default: '*' },
   onlyUrl: { type: Boolean, default: true },
   fileType: { type: String, default: 'button' },
-  showList: { type: Boolean, default: true }
+  showList: { type: Boolean, default: true },
+  resource: { type: Boolean, default: false },
 })
 
 const fileList = ref()
