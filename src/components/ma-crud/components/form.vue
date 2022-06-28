@@ -104,7 +104,7 @@
             />
 
             <a-tree-select
-              v-else-if="item.formType === 'treeSelect'"
+              v-else-if="item.formType === 'treeSelect' || item.formType === 'tree-select'"
               v-model="form[item.dataIndex]"
               :treeProps="{ virtualListProps: { height: 240 } }"
               :placeholder="item.placeholder || `请选择${item.title}`"
@@ -112,7 +112,7 @@
               :readonly="item.readonly"
               allow-clear
               allow-search
-              label-in-value
+              :field-names="item.dict.props || { key: 'value', title: 'label' }"
               :tree-checkable="item.multiple"
               :multiple="item.multiple"
               :data="formDictData[item.dataIndex]"
@@ -133,6 +133,19 @@
             />
 
             <component
+              v-else-if="item.formType === 'mention'"
+              :is="getComponent(item)"
+              v-model="form[item.dataIndex]"
+              :placeholder="item.placeholder || `请输入${item.title}`"
+              :disabled="item.disabled"
+              :split="item.split"
+              :type="item.type"
+              allow-clear
+              :prefix="item.prefix"
+              @change="item.changeEvent"
+            />
+
+            <component
               v-else
               :is="getComponent(item)"
               v-model="form[item.dataIndex]"
@@ -145,7 +158,6 @@
               :step="item.step"
               :show-ticks="item.showTicks"
               :allow-half="item.half"
-              :prefix="item.mentionPrefix || '@'"
               :type="item.type"
               :limit="item.limit || 0"
               :accept="item.accept || '*'"
@@ -248,13 +260,13 @@ const edit = (data) => {
 const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
 
 const init = () => {
-  const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'cascader']
+  const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
   if (columns.value.length > 0) {
     columns.value.map(async item => {
       if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
       if (currentAction.value === 'add') {
-        form.value[item.dataIndex] = undefined
+        form.value[item.dataIndex] = item.defaultValue || undefined
       }
 
       if (allowRequestFormType.includes(item.formType) && item.dict) {
@@ -344,7 +356,7 @@ const getComponent = (item) => {
 
   if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)) {
     return `a-${item.formType}-picker`
-  } else if (item.formType === 'upload`') {
+  } else if (item.formType === 'upload') {
     return 'ma-upload'
   } else {
     return `a-${item.formType}`

@@ -9,14 +9,14 @@
 -->
 <template>
   <div class="ma-content-block p-5 h-full">
-    <ma-user v-model="ok" />
+    <ma-user v-model="ok" is-echo />
     {{ ok }}
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-const ok = ref()
+const ok = ref([1])
 
 
 </script>

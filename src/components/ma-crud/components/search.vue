@@ -32,7 +32,7 @@
 
           <a-cascader
             v-else-if="item.formType === 'cascader'"
-            v-model="form[item.dataIndex]"
+            v-model="searchForm[item.dataIndex]"
             :placeholder="item.placeholder || `请选择${item.title}`"
             allow-clear
             allow-search
@@ -44,15 +44,15 @@
           />
 
           <a-tree-select
-            v-else-if="item.formType === 'treeSelect'"
-            v-model="form[item.dataIndex]"
+            v-else-if="item.formType === 'treeSelect' || item.formType === 'tree-select'"
+            v-model="searchForm[item.dataIndex]"
             :treeProps="{ virtualListProps: { height: 240 } }"
             :placeholder="item.placeholder || `请选择${item.title}`"
             :disabled="item.disabled"
             :readonly="item.readonly"
             allow-clear
             allow-search
-            label-in-value
+            :field-names="item.dict.props || { key: 'value', title: 'label' }"
             :tree-checkable="item.multiple"
             :multiple="item.multiple"
             :data="formDictData[item.dataIndex]"
@@ -114,7 +114,7 @@ watch(() => props.columns, () => {
 const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
 
 const init = async () => {
-  const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'cascader']
+  const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
   if (props.columns.length > 0) {
     props.columns.map(async item => {
@@ -128,6 +128,7 @@ const init = async () => {
           let response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.data || {})
           if (response.data) {
             if (allowCoverFormType.includes(item.formType)) {
+              console.log(item.formType)
               formDictData.value[item.dataIndex] = response.data.map(dicItem => {
                 return {
                   'label': dicItem[ (item.dict.props && item.dict.props.label) || 'code'  ],

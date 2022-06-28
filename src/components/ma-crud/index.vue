@@ -440,9 +440,10 @@ const addAction = () => maf.value.add()
 const importAction = () => mai.value.open()
 
 const exportAction = () => {
-  const download = (url) => request({ url, method: 'get', timeout: 30 * 100 })
+  const params = settingProps.crud.requestParamsLabel ? requestParams.value[settingProps.crud.requestParamsLabel] : requestParams.value
+  const download = (url) => request({ url, params, method: 'get', timeout: 60 * 1000 })
 
-  download(defaultCrud.export.url).then(res => {
+  download(defaultCrud.value.export.url).then(res => {
     tool.download(res)
     Message.success('导出成功')
   }).catch(e => {

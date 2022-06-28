@@ -2,52 +2,96 @@
   <div class="ma-content-block">
     <a-space class="flex">
       <a-button type="primary" @click="visible = true"><icon-select-all /> 选择用户</a-button>
-      <a-tag size="large">已选择 0 位用户</a-tag>
+      <a-tag size="large" color="blue">已选择 {{ selecteds.length }} 位用户</a-tag>
     </a-space>
-    <a-modal v-model:visible="visible" width="1000px" draggable>
+
+    <a-modal v-model:visible="visible" width="1000px" draggable :on-before-close="close">
       <template #title>选择用户</template>
-      <a-tabs position="left">
-        <a-tab-pane key="condition" title="按条件">
-          <ma-crud :crud="crud" :columns="columns" />
-        </a-tab-pane>
-        <a-tab-pane key="dept" title="按部门">
-          Content of Tab Panel 2
-        </a-tab-pane>
-        <a-tab-pane key="role" title="按角色">
-          Content of Tab Panel 3
-        </a-tab-pane>
-        <a-tab-pane key="post" title="按岗位">
-          Content of Tab Panel 3
-        </a-tab-pane>
-      </a-tabs>
+
+      <ma-crud
+        ref="crudRef"
+        :crud="crud"
+        :columns="columns"
+        v-model:selected-keys="selecteds"
+        @selection-change="selectHandler"
+      />
     </a-modal>
   </div>
 </template>
 
 <script setup>
-  import { ref } from 'vue'
+  import { onMounted, ref, watch } from 'vue'
   import commonApi from '@/api/common'
 
+  const props = defineProps({
+    modelValue: { type: Array },
+    isEcho: { type: Boolean, default: false }
+  })
+
+  const emit = defineEmits(['update:modelValue'])
+
   const visible = ref(false)
+  const selecteds = ref([])
+
+  onMounted(() => {
+    if (props.isEcho) selecteds.value = props.modelValue 
+  })
+
+  watch(
+    ()  => props.modelValue,
+    val => {
+      if (props.isEcho) selecteds.value = val
+    }
+  )
+
+  const selectHandler = (rows) => {
+    console.log(rows)
+  }
+
+  const close = (done) => {
+    
+  }
   
   const crud = ref({
+    showIndex: false,
     api: commonApi.getUserList,
-    add: { show: true },
-    import: { show: true },
-    export: { show: true },
-    edit: { show: true}, 
-    operationColumn: true
+    rowSelection: { type: 'checkbox', showCheckedAll: true }
   })
 
   const columns = ref([
+    { title: '账户', dataIndex: 'username', search: true },
+    { title: '昵称', dataIndex: 'nickname', search: true },
+    { title: '手机', dataIndex: 'phone', search: true },
+    { title: '邮箱', dataIndex: 'email', search: true },
     {
-      title: '账户',
-      dataIndex: 'username',
+      title: '部门',
+      dataIndex: 'dept_id',
       search: true,
-    }
+      formType: 'tree-select',
+      hide: true,
+      dict: { url: 'system/common/getDeptTreeList' }
+    },
+    {
+      title: '角色',
+      dataIndex: 'role_id',
+      search: true,
+      formType: 'select',
+      hide: true,
+      dict: { url: 'system/common/getRoleList', props: { label: 'name', value: 'code' } }
+    },
+    {
+      title: '岗位',
+      dataIndex: 'post_id',
+      search: true,
+      formType: 'select',
+      hide: true,
+      dict: { url: 'system/common/getPostList', props: { label: 'name', value: 'code' } }
+    },
   ])
 </script>
 
 <style scoped>
-
+:deep(.arco-tabs-nav-type-capsule .arco-tabs-nav-tab) {
+  justify-content: flex-start;
+}
 </style>
