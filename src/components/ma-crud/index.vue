@@ -326,6 +326,10 @@ watch(() => settingProps.columns, () => {
   requestData()
 })
 
+watch(() => settingProps.api, () => {
+  requestData()
+}, { deep: true })
+
 const requestData = async () => {
   defaultCrud.value = Object.assign(defaultCrud.value, settingProps.crud)
   columns.value = Object.assign(settingProps.columns, {})
