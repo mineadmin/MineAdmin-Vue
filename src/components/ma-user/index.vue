@@ -5,7 +5,7 @@
       <a-tag size="large" color="blue">已选择 {{ selecteds.length }} 位用户</a-tag>
     </a-space>
 
-    <a-modal v-model:visible="visible" width="1000px" draggable :on-before-close="close">
+    <a-modal v-model:visible="visible" width="1000px" draggable :on-before-ok="close" unmountOnClose>
       <template #title>选择用户</template>
 
       <ma-crud
@@ -22,6 +22,7 @@
 <script setup>
   import { onMounted, ref, watch } from 'vue'
   import commonApi from '@/api/common'
+  import { Message } from '@arco-design/web-vue'
 
   const props = defineProps({
     modelValue: { type: Array },
@@ -45,11 +46,13 @@
   )
 
   const selectHandler = (rows) => {
-    console.log(rows)
+    selecteds.value = rows
   }
 
   const close = (done) => {
-    
+    emit('update:modelValue', selecteds.value)
+    Message.success('选择成功')
+    done(true)
   }
   
   const crud = ref({
