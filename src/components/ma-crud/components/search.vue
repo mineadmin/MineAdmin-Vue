@@ -91,8 +91,10 @@
 <script setup>
 import { ref, reactive, onMounted, watch } from 'vue'
 import { request } from '@/utils/request'
-import { isArray } from '@vue/shared'
+import { isArray, isFunction } from '@vue/shared'
 import { Message } from '@arco-design/web-vue'
+import commonApi from '@/api/common'
+import { handlerProps } from '../js/common'
 
 const searchLoading = ref(true)
 const formDictData = ref({})
@@ -124,31 +126,22 @@ const init = async () => {
       }
 
       if (allowRequestFormType.includes(item.formType) && item.dict) {
-        if (item.dict.url) {
-          let response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.data || {})
+        if (item.dict.name) {
+          const response = await commonApi.getDict(item.dict.name)
           if (response.data) {
-            if (allowCoverFormType.includes(item.formType)) {
-              console.log(item.formType)
-              formDictData.value[item.dataIndex] = response.data.map(dicItem => {
-                return {
-                  'label': dicItem[ (item.dict.props && item.dict.props.label) || 'code'  ],
-                  'value': dicItem[ (item.dict.props && item.dict.props.value) || 'value' ]
-                } 
-              })
-            } else {
-              formDictData.value[item.dataIndex] = response.data
-            }
+            formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
           }
-        } else if (item.dict.data && isArray(item.dict.data) && item.dict.data.length > 0) {
-          if (allowCoverFormType.includes(item.formType)) {
-            formDictData.value[item.dataIndex] = item.dict.data.map(dicItem => {
-              return {
-                'label': dicItem[ (item.dict.props && item.dict.props.label) || 'code'  ],
-                'value': dicItem[ (item.dict.props && item.dict.props.value) || 'value' ]
-              } 
-            })
-          } else {
-            formDictData.value[item.dataIndex] = item.dict.data
+        } else if (item.dict.url) {
+          const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.data || {})
+          if (response.data) {
+            formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
+          }
+        } else if (item.dict.data) {
+          if (isArray(item.dict.data)) {
+            formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, item.dict.data)
+          } else if (isFunction(item.dict.data)) {
+            const response = await item.dict.data()
+            formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response)
           }
         }
       }
