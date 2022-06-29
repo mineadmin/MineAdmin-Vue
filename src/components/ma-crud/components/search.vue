@@ -9,7 +9,13 @@
 -->
 <template>
   <a-spin :loading="searchLoading" tip="加载数据中..." class="mt-5 mb-5" v-if="isShowSearch">
-    <a-form :model="searchForm" layout="inline" class="grid grid-cols-1 lg:grid-cols-4" :label-align="props.searchLabelAlign" ref="search">
+    <a-form
+      :model="searchForm"
+      layout="inline"
+      class="grid grid-cols-1 lg:grid-cols-3"
+      :label-align="props.searchLabelAlign"
+      ref="search"
+    >
       <template v-for="(item, index) in props.columns" :key="index">
         <a-form-item
           :field="item.dataIndex"
@@ -214,7 +220,7 @@ const handlerCascader = (val, column) => {
 const props = defineProps({
   columns: { type: Array },
   searchLabelWidth: { type: String, default: () => 'auto' },
-  searchLabelAlign: { type: String, default: () => 'right' }
+  searchLabelAlign: { type: String, default: () => 'right' },
 })
 
 const dictTrans = (dataIndex, value) => {

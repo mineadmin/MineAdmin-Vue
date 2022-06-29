@@ -36,6 +36,8 @@
             label-col-flex="auto"
             :label-col-style="{ width: item.labelWidth || '100px' }"
             :rules="item.rules || []"
+            :validate-trigger="item.validateTrigger"
+            :validate-status="item.validateStatus"
           >
             <a-select
               v-if="item.formType === 'select'"
@@ -171,6 +173,7 @@
               :only-url="item.onlyUrl || true"
               :file-type="item.fileType || 'button'"
               :show-word-limit="['input', 'textarea'].includes(item.formType) ? true : false"
+              :is-echo="item.isEcho"
               allow-clear
               @change="item.changeEvent"
             />
@@ -264,11 +267,16 @@ const requestDict = (url, method, params, data, timeout = 10 * 1000) => request(
 const init = () => {
   const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
+  const arrayDefault = ['checkbox', 'user-select']
   if (columns.value.length > 0) {
     columns.value.map(async item => {
       if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
-      if (currentAction.value === 'add') {
-        form.value[item.dataIndex] = item.defaultValue || undefined
+      if (currentAction.value === 'add' && item.defaultValue) {
+        form.value[item.dataIndex] = item.defaultValue
+      } else if (arrayDefault.includes(item.formType)) {
+        form.value[item.dataIndex] = []
+      } else {
+        form.value[item.dataIndex] = undefined
       }
 
       if (allowRequestFormType.includes(item.formType) && item.dict) {
@@ -352,6 +360,8 @@ const getComponent = (item) => {
     return `a-${item.formType}-picker`
   } else if (item.formType === 'upload') {
     return 'ma-upload'
+  } else if (item.formType === 'select-user') {
+    return 'ma-user'
   } else {
     return `a-${item.formType}`
   }

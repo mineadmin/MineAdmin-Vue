@@ -13,6 +13,7 @@
       :columns="settingProps.columns"
       :search-label-width="settingProps.crud.searchLabelWidth"
       :search-label-align="settingProps.crud.searchLabelAlign"
+      :search-col="settingProps.crud.searchCol"
       @search="searchHandler"
       id="__search-panel"
       ref="searchRef"

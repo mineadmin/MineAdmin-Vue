@@ -2,7 +2,7 @@
   <div class="ma-content-block">
     <a-space class="flex">
       <a-button type="primary" @click="visible = true"><icon-select-all /> 选择用户</a-button>
-      <a-tag size="large" color="blue">已选择 {{ selecteds.length }} 位用户</a-tag>
+      <a-tag size="large" color="blue">已选择 {{ _.isArray(selecteds) ? selecteds.length : 0 }} 位用户</a-tag>
     </a-space>
 
     <a-modal v-model:visible="visible" width="1000px" draggable :on-before-ok="close" unmountOnClose>
@@ -23,6 +23,7 @@
   import { onMounted, ref, watch } from 'vue'
   import commonApi from '@/api/common'
   import { Message } from '@arco-design/web-vue'
+  import _ from 'lodash'
 
   const props = defineProps({
     modelValue: { type: Array },
@@ -50,8 +51,10 @@
   }
 
   const close = (done) => {
-    emit('update:modelValue', selecteds.value)
-    Message.success('选择成功')
+    if (_.isArray(selecteds.value) && selecteds.value.length > 0) {
+      emit('update:modelValue', selecteds.value)
+      Message.success('选择成功')
+    }
     done(true)
   }
   
