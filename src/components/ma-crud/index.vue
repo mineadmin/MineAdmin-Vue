@@ -511,7 +511,7 @@ defineExpose({ refresh, requestParams, requestData })
 
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 #__search-panel {
   transition: display 1s; overflow: hidden;
 }

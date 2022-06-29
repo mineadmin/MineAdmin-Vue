@@ -217,16 +217,16 @@ const props = defineProps({
 })
 
 const dictTrans = (dataIndex, value) => {
-  if (! formDictData.value[dataIndex]) {
+  if (! formDictData.value[dataIndex] && ! formDictData.value[dataIndex].tran && ! formDictData.value[dataIndex].tran[value]) {
     return value
   }
-  return formDictData.value[dataIndex].filter(item => item.value === value)[0].label
+  return formDictData.value[dataIndex].tran[value]
 }
 
 defineExpose({ dictTrans })
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 :deep(.arco-form-item-label-required-symbol svg) {
   vertical-align: baseline !important;
 }

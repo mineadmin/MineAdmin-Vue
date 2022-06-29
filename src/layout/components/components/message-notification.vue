@@ -61,7 +61,7 @@
   </div>
 </template>
 
-<style lang="scss">
+<style lang="less">
 .mgs-nfc {
   width: 400px;
   background: var(--color-bg-1);

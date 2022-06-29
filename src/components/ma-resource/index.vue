@@ -224,7 +224,7 @@
   )
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 .input-search {
   width: 252px;
 }

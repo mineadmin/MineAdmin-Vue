@@ -18,7 +18,7 @@
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 .page {
     position: absolute; top: 50%; left: 50%; margin-top: -200px; margin-left: -195px;
 }

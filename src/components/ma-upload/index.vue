@@ -492,7 +492,7 @@ const removeImage = (idx) => {
 
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 .upload-skin {
   background-color: var(--color-fill-2);
   border: 1px dashed var(--color-fill-4);

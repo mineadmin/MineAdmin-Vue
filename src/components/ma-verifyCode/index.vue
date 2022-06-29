@@ -109,7 +109,7 @@ defineExpose({ checkResult, refresh })
   </a-tooltip>
 </template>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 :deep(.arco-input-append){
   padding: 0 !important;
 }

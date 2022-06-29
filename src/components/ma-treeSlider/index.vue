@@ -84,7 +84,7 @@
   }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 .resource-container {
   background-color: var(--color-bg-4);
 }

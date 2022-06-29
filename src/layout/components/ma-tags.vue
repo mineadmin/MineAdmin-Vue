@@ -170,7 +170,7 @@
   })
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 [mine-skin="mine"] {
   .tags a {
     margin-left: 4px; margin-right: 0;

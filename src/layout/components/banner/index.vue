@@ -57,7 +57,7 @@
   }, { deep: true })
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 .tags {
   margin-top: -1px;
 }
