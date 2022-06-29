@@ -126,6 +126,7 @@
               :placeholder="item.placeholder || `请选择${item.title}`"
               :format="item.format || ''"
               :disabled="item.disabled"
+              :show-time="item.showTime"
               :readonly="item.readonly"
               allow-clear
               style="width: 100%;"

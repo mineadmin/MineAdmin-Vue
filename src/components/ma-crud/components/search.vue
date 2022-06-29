@@ -63,6 +63,7 @@
             :is="getComponent(item)"
             v-model="searchForm[item.dataIndex]"
             :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`"
+            :show-time="item.showTime"
             :format="item.format || ''"
             allow-clear
             style="width: 100%;"

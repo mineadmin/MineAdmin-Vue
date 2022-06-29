@@ -14,12 +14,11 @@
         v-for="(item, index) in msgType"
         :key="item"
         @click="getMessageList(item.key, index)"
-        :class="item.title == '收件箱' ? 'active' : ''"
       >
         <Component :is="typeIcon[item.key] ? typeIcon[item.key] : 'icon-message'" /> 
         <span class="pl-3">{{ item.title }}</span></li>
     </ul>
-    <div class="h-hull w-full lg:ml-2 lg:mr-1">
+    <div class="h-hull w-full lg:ml-3 lg:mr-2 pt-2">
       <ma-crud :crud="crud" :columns="columns" ref="crudRef" />
     </div>
   </div>
@@ -68,15 +67,33 @@
 
   const loadData = (key) => {
     crud.value.api = key === 'send_box' ? queueMessage.getSendList : queueMessage.getReceiveList
+    if (! ['send_box', 'receive_box'].includes(key)) {
+      crud.value.requestParams.content_type = key
+    }
     crudRef.value.requestData()
   }
 
   const crud = ref({
     autoRequest: false,
+    requestParams: { read_status: 'all' },
+    rowSelection: { showCheckAll: true },
+    delete: { show: true, api: queueMessage.deletes },
+    see: { show: true },
+    operationColumn: true,
+    operationWidth: 230,
     api: () => {}
   })
 
-  const columns = ref([])
+  const columns = ref([
+    { title: '标题', dataIndex: 'title' },
+    {
+      title: '消息类型',
+      dataIndex: 'content_type',
+      width: 150,
+      dict: { name: 'queue_msg_type', translation: true, props: { label: 'title', value: 'key' } }
+    }, 
+    { title: '发送时间', dataIndex: 'created_at', width: 200 },
+  ])
 
 
 </script>
