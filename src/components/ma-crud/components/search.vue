@@ -68,7 +68,11 @@
             v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
             :is="getComponent(item)"
             v-model="searchForm[item.dataIndex]"
-            :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`"
+            :placeholder="
+              item.formType === 'range'
+              ? ['请选择开始时间', '请选择结束时间']
+              : item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`
+            "
             :show-time="item.showTime"
             :format="item.format || ''"
             allow-clear

@@ -50,7 +50,6 @@
   )
 
   const handlerSelect = (item, data) => {
-    console.log(item)
     selectedKeys.value = [ item ]
     emit('click', ...[item, data])
   }

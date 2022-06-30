@@ -190,6 +190,18 @@
     }
   }
 
+  const clearSelecteds = () => {
+    const children = rl.value.children
+    for (let i = 0; i < children.length; i++) {
+      children[i].className = 'item rounded-sm'
+    }
+    if (props.multiple) {
+      selecteds.value = []
+    } else {
+      selecteds.value = undefined
+    }
+  }
+
   const selectComplete = () => {
     const files = props.multiple ? Object.assign([], selecteds.value) : selecteds.value
     emit('update:modelValue', files)
@@ -222,6 +234,8 @@
     async () => await getAttachmentList(),
     { deep: true }
   )
+
+  defineExpose({ clearSelecteds })
 </script>
 
 <style scoped lang="less">

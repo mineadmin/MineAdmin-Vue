@@ -15,7 +15,7 @@
     ok-text="保存"
     cancel-text="关闭"
     draggable
-    :width="setting.width || 600"
+    :width="setting.width"
     :fullscreen="setting.isFull || false"
     unmount-on-close
   >
@@ -185,7 +185,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick, reactive } from 'vue'
+import { ref, nextTick, reactive, watch } from 'vue'
 import { request } from '@/utils/request'
 import { isArray } from '@vue/shared'
 import { Message } from '@arco-design/web-vue'
@@ -202,15 +202,19 @@ const actionTitle = ref('')
 
 const dataLoading = ref(true)
 const formDictData = ref({})
+const setting = ref({})
 
 const emit = defineEmits(['success', 'error'])
 
 const props = defineProps({
   modelValue: Array,
-  crud: { type: Object, default: { viewType: 'modal', width: '500' }}
+  crud: { type: Object }
 })
 
-const setting = reactive( props.crud.viewLayoutSetting )
+watch(
+  () => props.crud.viewLayoutSetting,
+  vl => setting.value = vl
+)
 
 const submit = (done) => {
   crudForm.value.validate()
@@ -358,12 +362,13 @@ const getComponent = (item) => {
 
   if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)) {
     return `a-${item.formType}-picker`
-  } else if (item.formType === 'upload') {
-    return 'ma-upload'
-  } else if (item.formType === 'select-user') {
-    return 'ma-user'
-  } else {
-    return `a-${item.formType}`
+  }
+  
+  switch (item.formType) {
+    case 'upload': return 'ma-upload'
+    case 'select-user': return 'ma-user'
+    case 'editor': return 'ma-editor'
+    default: return `a-${item.formType}`
   }
 }
 

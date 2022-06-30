@@ -21,7 +21,7 @@
     <div class="h-hull w-full lg:ml-3 lg:mr-2 pt-2">
       <ma-crud :crud="crud" :columns="columns" ref="crudRef">
         <template #operation>
-          <a-radio-group type="button" default-value="all" @change="changeReadStatus">
+          <a-radio-group type="button" default-value="all" @change="changeReadStatus" v-if="btnDisplay">
             <a-radio value="all">全部</a-radio>
             <a-radio value="1">未读</a-radio>
             <a-radio value="2">已读</a-radio>
@@ -29,7 +29,9 @@
         </template>
       </ma-crud>
     </div>
+
   </div>
+
 </template>
 
 <script setup>
@@ -50,6 +52,7 @@
   const msgType = ref([])
   const msgMenuRef = ref()
   const crudRef = ref()
+  const btnDisplay = ref(true)
   
   onMounted(async () => {
     const response = await commonApi.getDict('queue_msg_type')
@@ -66,6 +69,11 @@
       if (children && children[index].className.indexOf('active') === -1) {
         for ( let i = 0; i < children.length; i++) children[i].className = ''
         children[index].className = 'active'
+        if (key === 'send_box') {
+          btnDisplay.value = false
+        } else {
+          btnDisplay.value = true
+        }
         loadData(key)
       } else {
         return
@@ -102,6 +110,7 @@
     see: { show: true },
     operationColumn: true,
     operationWidth: 230,
+    viewLayoutSetting: { width: 800 },
     api: () => {}
   })
 
@@ -132,12 +141,13 @@
         required: true,
         message: '请选择接收用户',
       }],
+      validateTrigger: 'change',
       hide: true,
     },
     {
       title: '消息内容',
       dataIndex: 'content',
-      formType: 'textarea',
+      formType: 'editor',
       hide: true,
     },
     {
@@ -145,7 +155,7 @@
       dataIndex: 'created_at',
       width: 180,
       search: true,
-      formType: 'date',
+      formType: 'range',
       showTime: true,
       addDisplay: false,
       editDisplay: false 

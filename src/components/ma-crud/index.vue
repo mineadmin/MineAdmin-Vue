@@ -23,7 +23,7 @@
       </template>
     </ma-search>
     <div class="opartion-tools flex justify-between mb-3">
-      <a-space>
+      <a-space >
         <a-button
           v-if="
             defaultCrud.add.show
@@ -33,12 +33,28 @@
           @click="addAction" type="primary"
         ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
         <a-button
+          v-if="
+            defaultCrud.delete.show
+            && ($common.auth(defaultCrud.delete.auth || [])
+            || (defaultCrud.delete.role || []))
+          "
+          @click="addAction" type="primary" status="danger"
+        ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-button>
+        <a-button
+          v-if="
+            defaultCrud.recover.show
+            && ($common.auth(defaultCrud.recover.auth || [])
+            || (defaultCrud.recover.role || []))
+          "
+          @click="addAction" type="primary" status="success"
+        ><icon-loop /> {{ defaultCrud.recover.text || '恢复' }}</a-button>
+        <a-button
          v-if="
             defaultCrud.import.show
             && ($common.auth(defaultCrud.import.auth || [])
             || (defaultCrud.import.role || []))
           "
-          @click="importAction" type="primary" status="success"
+          @click="importAction"
         ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
         <a-button
           v-if="
@@ -46,7 +62,7 @@
             && ($common.auth(defaultCrud.export.auth || [])
             || (defaultCrud.export.role || []))
           "
-          @click="exportAction" type="primary" status="danger"
+          @click="exportAction"
         ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
         <slot name="operation"></slot>
       </a-space>
@@ -72,6 +88,7 @@
       :size="defaultCrud.size"
       :hide-expand-button-on-empty="defaultCrud.hideExpandButtonOnEmpty"
       :default-expand-all-rows="defaultCrud.expandAllRows"
+      @selection-change="selectChange"
     >
       <template #columns>
         <template v-for="(row, index) in columns" :key="index">
@@ -262,6 +279,16 @@ const defaultCrud = ref({
     role: [],
     // 按钮文案
     text: '删除',
+    // 是否显示
+    show: false,
+  },
+  recover: {
+    // 显示恢复按钮的权限
+    auth: [],
+    // 显示恢复按钮的角色
+    role: [],
+    // 按钮文案
+    text: '恢复',
     // 是否显示
     show: false,
   },
@@ -467,6 +494,10 @@ const deleteAction = async (record) => {
   ? Message.success(response.message || `删除成功！`)
   : Message.error(response.message || `删除失败！`)
   refresh()
+}
+
+const selectChange = (key) => {
+  console.log(key)
 }
 
 const settingProps = defineProps({
