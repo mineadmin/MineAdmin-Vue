@@ -32,14 +32,16 @@
           "
           @click="addAction" type="primary"
         ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
-        <a-button
-          v-if="
-            defaultCrud.delete.show
-            && ($common.auth(defaultCrud.delete.auth || [])
-            || (defaultCrud.delete.role || []))
-          "
-          @click="addAction" type="primary" status="danger"
-        ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-button>
+        <a-popconfirm content="确定要删除数据吗?" position="bottom" @ok="deletesMultipleAction">
+          <a-button
+            v-if="
+              defaultCrud.delete.show
+              && ($common.auth(defaultCrud.delete.auth || [])
+              || (defaultCrud.delete.role || []))
+            "
+            type="primary" status="danger"
+          ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-button>
+        </a-popconfirm>
         <a-button
           v-if="
             defaultCrud.recover.show
@@ -128,6 +130,7 @@
                         || (defaultCrud.delete.role || []))
                       "
                       type="primary"
+                      @click="deleteAction"
                     ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-link>
                   </a-popconfirm>
                   <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
@@ -138,6 +141,7 @@
                 <template v-if="row.dict && row.dict.translation">
                   {{ searchRef.dictTrans(row.dataIndex, record[row.dataIndex]) }}
                 </template>
+                <template v-else-if="row.dataIndex.indexOf('.') !== -1">{{ _.get(record, row.dataIndex) }}</template>
                 <template v-else>{{ record[row.dataIndex] }}</template>
               </slot>
             </template>
@@ -195,6 +199,7 @@ import maImport from './components/import.vue'
 import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
+import _ from 'lodash'
 
 const loading = ref(true)
 const openPagination = ref(false)
@@ -204,6 +209,7 @@ const requestParams = ref({})
 const columns = ref([])
 const showSearch = ref(true)
 const searchRef = ref(null)
+const selecteds = ref([])
 
 const tableData = ref([])
 const mas = ref(null)
@@ -257,8 +263,6 @@ const defaultCrud = ref({
   edit: {
     // 编辑api
     api: undefined,
-    // 主键参数是否附加到url后面,
-    attachUrl: false,
     // 显示编辑按钮的权限
     auth: [],
     // 显示编辑按钮的角色
@@ -271,8 +275,6 @@ const defaultCrud = ref({
   delete: {
     // 删除api
     api: undefined,
-    // 主键参数是否附加到url后面,
-    attachUrl: false,
     // 显示删除按钮的权限
     auth: [],
     // 显示删除按钮的角色
@@ -486,18 +488,27 @@ const exportAction = () => {
 const editAction = (record) => maf.value.edit(record)
 
 const deleteAction = async (record) => {
-  const deleted = defaultCrud.value.delete
-  const pk = defaultCrud.value.pk
-  const data = deleted.attachUrl ? record[pk] : { [pk]: record[pk] }
-  const response = await deleted.api(data)
+  const response = await defaultCrud.value.delete.api({ ids: record[pk] })
   response.code === 200 
   ? Message.success(response.message || `删除成功！`)
   : Message.error(response.message || `删除失败！`)
   refresh()
 }
 
+const deletesMultipleAction = async () => {
+  if (selecteds.value && selecteds.value.length > 0) {
+    const response = await defaultCrud.value.delete.api({ ids: selecteds.value })
+    response.code === 200 
+    ? Message.success(response.message || `删除成功！`)
+    : Message.error(response.message || `删除失败！`)
+    refresh()
+  } else {
+    Message.error('至少选择一条数据')
+  }
+}
+
 const selectChange = (key) => {
-  // console.log(key)
+  selecteds.value = key
 }
 
 const settingProps = defineProps({

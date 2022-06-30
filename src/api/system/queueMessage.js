@@ -42,10 +42,11 @@ export default {
    * 删除消息
    * @returns
    */
-  deletes(ids) {
+  deletes(data = {}) {
     return request({
-      url: 'system/queueMessage/deletes/' + ids,
-      method: 'delete'
+      url: 'system/queueMessage/deletes',
+      method: 'delete',
+      data
     })
   },
 
@@ -53,10 +54,11 @@ export default {
    * 更新读取状态
    * @returns
    */
-  updateReadStatus(ids = {}) {
+  updateReadStatus(data = {}) {
     return request({
-      url: 'system/queueMessage/updateReadStatus/' + ids,
+      url: 'system/queueMessage/updateReadStatus',
       method: 'put',
+      data
     })
   },
 

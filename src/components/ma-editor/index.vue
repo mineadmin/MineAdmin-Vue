@@ -109,7 +109,7 @@
   watch(
     () => list.value,
     imgs => {
-      imgs.map(img => content += `<img src=${img} width="100%" />`)
+      imgs.map(img => content.value += `<img src=${img} width="100%" />` )
       list.value = []
       resource.value.clearSelecteds()
       resourceVisible.value = false

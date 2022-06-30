@@ -8,7 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div class="ma-content-block p-1 block lg:border-0 lg:flex justify-between">
+  <div class="ma-content-block p-1 h-full block lg:border-0 lg:flex justify-between">
     <ul class="w-full lg:w-52 msg-menu h-full p-2" ref="msgMenuRef">
       <li
         v-for="(item, index) in msgType"
@@ -20,12 +20,17 @@
     </ul>
     <div class="h-hull w-full lg:ml-3 lg:mr-2 pt-2">
       <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+
         <template #operation>
-          <a-radio-group type="button" default-value="all" @change="changeReadStatus" v-if="btnDisplay">
+          <a-radio-group type="button" default-value="all" @change="changeReadStatus" v-if="currentKey !== 'send_box'">
             <a-radio value="all">全部</a-radio>
             <a-radio value="1">未读</a-radio>
             <a-radio value="2">已读</a-radio>
           </a-radio-group>
+        </template>
+
+        <template #operationBeforeExtend="{ record }">
+          <a-link @click="showReceiveList(record.id)" v-if="currentKey === 'send_box'"><icon-eye /> 接收用户</a-link>
         </template>
       </ma-crud>
     </div>
@@ -52,7 +57,7 @@
   const msgType = ref([])
   const msgMenuRef = ref()
   const crudRef = ref()
-  const btnDisplay = ref(true)
+  const currentKey = ref()
   
   onMounted(async () => {
     const response = await commonApi.getDict('queue_msg_type')
@@ -69,11 +74,7 @@
       if (children && children[index].className.indexOf('active') === -1) {
         for ( let i = 0; i < children.length; i++) children[i].className = ''
         children[index].className = 'active'
-        if (key === 'send_box') {
-          btnDisplay.value = false
-        } else {
-          btnDisplay.value = true
-        }
+        currentKey.value = key
         loadData(key)
       } else {
         return
@@ -100,14 +101,17 @@
     crudRef.value.requestData()
   }
 
+  const showReceiveList = (id) => {
+    console.log(id)
+  }
+
   const crud = ref({
     autoRequest: false,
     showIndex: false,
     requestParams: { read_status: 'all' },
-    rowSelection: { showCheckAll: true },
-    add: { show: true, text: '发私信' },
+    rowSelection: { showCheckedAll: true },
+    add: { show: true, text: '发私信', api: queueMessage.sendPrivateMessage },
     delete: { show: true, api: queueMessage.deletes },
-    see: { show: true },
     operationColumn: true,
     operationWidth: 230,
     viewLayoutSetting: { width: 800 },
@@ -128,6 +132,7 @@
     {
       title: '消息类型',
       dataIndex: 'content_type',
+      formType: 'select',
       width: 150,
       dict: { name: 'queue_msg_type', translation: true, props: { label: 'title', value: 'key' } },
       addDisplay: false, editDisplay: false 
@@ -147,7 +152,6 @@
       title: '消息内容',
       dataIndex: 'content',
       formType: 'editor',
-      defaultValue: 'asdfasdf',
       hide: true,
     },
     {

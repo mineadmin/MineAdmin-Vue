@@ -50,7 +50,7 @@
         <a-table-column title="宽度" data-index="width" align="center">
           <template #cell="{ record }">
               <a-input-number
-                v-if="record.dataIndex !== '__index'"
+                v-if="! ['__index', '__operation'].includes(record.dataIndex)"
                 style="width: 150px;"
                 placeholder="列宽度"
                 v-model="record.width"
@@ -65,7 +65,7 @@
         </a-table-column>
         <a-table-column title="固定" data-index="fixed" align="center">
           <template #cell="{ record }">
-            <a-space v-if="record.dataIndex !== '__index'">
+            <a-space v-if="! ['__index', '__operation'].includes(record.dataIndex)">
               <a-radio v-model="record.fixed" value="" @change="changeColumn($event, 'fixed', record.dataIndex)">无</a-radio>
               <a-radio v-model="record.fixed" value="left" @change="changeColumn($event, 'fixed', record.dataIndex)">左</a-radio>
               <a-radio v-model="record.fixed" value="right" @change="changeColumn($event, 'fixed', record.dataIndex)">右</a-radio>
@@ -75,7 +75,7 @@
         </a-table-column>
         <a-table-column title="排序" data-index="order" align="center">
           <template #cell="{ record }">
-            <a-space v-if="record.dataIndex !== '__index'" >
+            <a-space v-if="! ['__index', '__operation'].includes(record.dataIndex)" >
               <a-radio v-model="record.__order" value="" @change="changeColumn($event, 'order', record.dataIndex)">无</a-radio>
               <a-radio v-model="record.__order" value="page" @change="changeColumn($event, 'order', record.dataIndex)">本页</a-radio>
               <a-radio v-model="record.__order" value="serve" @change="changeColumn($event, 'order', record.dataIndex)">服务器</a-radio>

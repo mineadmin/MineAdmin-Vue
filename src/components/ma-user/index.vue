@@ -77,7 +77,7 @@
   const crud = ref({
     showIndex: false,
     api: commonApi.getUserList,
-    rowSelection: { type: 'checkbox' }
+    rowSelection: { type: 'checkbox', showCheckedAll: true }
   })
 
   const columns = ref([
