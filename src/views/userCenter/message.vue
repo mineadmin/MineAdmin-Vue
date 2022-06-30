@@ -30,11 +30,38 @@
         </template>
 
         <template #operationBeforeExtend="{ record }">
-          <a-link @click="showReceiveList(record.id)" v-if="currentKey === 'send_box'"><icon-eye /> 接收用户</a-link>
+          <a-link
+            @click="showReceiveList(record.id)"
+            v-if="currentKey === 'send_box'"
+          >
+            <icon-user-group /> 接收用户
+          </a-link>
+
+          <a-link @click="showDetail(record)">
+            <icon-eye /> 详细
+          </a-link>
         </template>
       </ma-crud>
     </div>
 
+    <a-drawer v-model:visible="detailVisible" width="1000px" :footer="false">
+      <template #title>消息详情</template>
+      <a-spin :loading="detailLoading" tip="数据加载中..." class="block">
+        <a-typography :style="{ marginTop: '-30px' }">
+          <a-typography-title>
+            {{ record?.title }}
+          </a-typography-title>
+          <a-typography-paragraph class="text-right" style="font-size: 13px; color: var(--color-text-3)">
+            <a-space size="large">
+              <span>创建时间：{{ record?.created_at }}</span>
+            </a-space>
+          </a-typography-paragraph>
+          <a-typography-paragraph>
+            <div v-html="record?.content" ></div>
+          </a-typography-paragraph>
+        </a-typography>
+      </a-spin>
+    </a-drawer>
   </div>
 
 </template>
@@ -58,6 +85,9 @@
   const msgMenuRef = ref()
   const crudRef = ref()
   const currentKey = ref()
+  const detailVisible = ref(false)
+  const detailLoading = ref(true)
+  const record = ref({})
   
   onMounted(async () => {
     const response = await commonApi.getDict('queue_msg_type')
@@ -101,6 +131,14 @@
     crudRef.value.requestData()
   }
 
+  const showDetail = async(row) => {
+    detailVisible.value = true
+    detailLoading.value = true
+    await queueMessage.updateReadStatus({ ids: row.id })
+    record.value = row
+    detailLoading.value = false
+  }
+
   const showReceiveList = (id) => {
     console.log(id)
   }
@@ -113,7 +151,7 @@
     add: { show: true, text: '发私信', api: queueMessage.sendPrivateMessage },
     delete: { show: true, api: queueMessage.deletes },
     operationColumn: true,
-    operationWidth: 230,
+    operationWidth: 240,
     viewLayoutSetting: { width: 800 },
     api: () => {}
   })

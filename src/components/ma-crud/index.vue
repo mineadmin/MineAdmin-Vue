@@ -488,7 +488,7 @@ const exportAction = () => {
 const editAction = (record) => maf.value.edit(record)
 
 const deleteAction = async (record) => {
-  const response = await defaultCrud.value.delete.api({ ids: record[pk] })
+  const response = await defaultCrud.value.delete.api({ ids: record[ defaultCrud.value.pk ] })
   response.code === 200 
   ? Message.success(response.message || `删除成功！`)
   : Message.error(response.message || `删除失败！`)
