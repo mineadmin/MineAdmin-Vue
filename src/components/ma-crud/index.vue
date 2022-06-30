@@ -497,7 +497,7 @@ const deleteAction = async (record) => {
 }
 
 const selectChange = (key) => {
-  console.log(key)
+  // console.log(key)
 }
 
 const settingProps = defineProps({

@@ -3,6 +3,7 @@
     <a-space class="flex">
       <a-button type="primary" @click="visible = true"><icon-select-all /> 选择用户</a-button>
       <a-tag size="large" color="blue">已选择 {{ _.isArray(selecteds) ? selecteds.length : 0 }} 位用户</a-tag>
+      <a-input-tag v-model="userList" :style="{ width:'320px' }" placeholder="请点击前面按钮选择用户" :max-tag-count="3" disabled/>
     </a-space>
 
     <a-modal v-model:visible="visible" width="1000px" draggable :on-before-ok="close" unmountOnClose>
@@ -27,22 +28,24 @@
 
   const props = defineProps({
     modelValue: { type: Array },
-    isEcho: { type: Boolean, default: false }
+    isEcho: { type: Boolean, default: false },
+    onlyId: { type: Boolean, default: true }
   })
 
   const emit = defineEmits(['update:modelValue'])
 
   const visible = ref(false)
   const selecteds = ref([])
+  const userList = ref([])
 
   onMounted(() => {
-    if (props.isEcho) selecteds.value = props.modelValue 
+    if (props.isEcho && props.onlyId) selecteds.value = props.modelValue
   })
 
   watch(
     ()  => props.modelValue,
     val => {
-      if (props.isEcho) selecteds.value = val
+      if (props.isEcho && props.onlyId) selecteds.value = val
     }
   )
 
@@ -50,10 +53,23 @@
     selecteds.value = rows
   }
 
-  const close = (done) => {
+  const close = async (done) => {
     if (_.isArray(selecteds.value) && selecteds.value.length > 0) {
-      emit('update:modelValue', selecteds.value)
-      Message.success('选择成功')
+      const response = await commonApi.getUserInfoByIds({ ids: selecteds.value })
+      if (! _.isEmpty(response) && _.isArray(response.data)) {
+        userList.value = response.data.map( item => {
+          return `${item.username}(${item.id})`
+        })
+        if (props.onlyId) {
+          emit('update:modelValue', selecteds.value)
+        } else {
+          emit('update:modelValue', response.data)
+        }
+        Message.success('选择成功')
+      }
+    } else {
+      emit('update:modelValue', [])
+      userList.value = []
     }
     done(true)
   }
@@ -61,7 +77,7 @@
   const crud = ref({
     showIndex: false,
     api: commonApi.getUserList,
-    rowSelection: { type: 'checkbox', showCheckedAll: true }
+    rowSelection: { type: 'checkbox' }
   })
 
   const columns = ref([

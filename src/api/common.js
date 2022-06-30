@@ -14,6 +14,18 @@ export default {
   },
 
   /**
+   * 通过id 列表获取用户基础信息
+   * @returns
+   */
+   getUserInfoByIds(data = {}) {
+    return request({
+      url: 'system/common/getUserInfoByIds',
+      method: 'post',
+      data
+    })
+  },
+
+  /**
    * 获取部门列表
    * @returns
    */

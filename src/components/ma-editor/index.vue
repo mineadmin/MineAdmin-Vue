@@ -1,6 +1,6 @@
 <template>
   <div>
-    <editor v-model="content" :init="initConfig"></editor>
+    <editor v-model="content" :init="initConfig" :id="props.id"></editor>
 
     <a-modal v-model:visible="resourceVisible" :width="910" :footer="false"  draggable>
       <template #title>资源选择器</template>
@@ -10,7 +10,8 @@
 </template>
 
 <script setup>
-  import { reactive, ref, watch } from 'vue'
+  import { reactive, ref, watch, computed } from 'vue'
+  import { useAppStore } from '@/store'
 
   import Editor from '@tinymce/tinymce-vue'
   import tinymce from 'tinymce/tinymce'
@@ -48,7 +49,13 @@
   import 'tinymce/plugins/visualchars'    //显示不可见字符
   import 'tinymce/plugins/wordcount'    //字数统计
 
+
+  const appStore = useAppStore()
+
   const props = defineProps({
+    modelValue: { type: String },
+    height: { type: Number, default: 400 },
+    id: { type: String, default: () => 'tinymce' + new Date().getTime().toString() },
     plugins: {
       type: [String, Array],
       default:
@@ -63,7 +70,17 @@
     }
   })
 
-  const content = ref('')
+  const emit = defineEmits(['update:modelValue'])
+
+  let content = computed({
+    get() {
+      return props.modelValue
+    },
+    set(value) {
+      emit('update:modelValue', value)
+    },
+  });
+
   const list = ref([])
   const resource = ref()
   const resourceVisible = ref(false)
@@ -72,11 +89,12 @@
     menubar: false, // 菜单栏显隐
     language_url: '/tinymce/i18n/zh_CN.js',
     language: 'zh_CN',
-    skin_url: '/tinymce/skins/ui/tinymce-5',
-    height: 400,
+    skin_url: appStore.mode === 'light' ? '/tinymce/skins/ui/tinymce-5' : '/tinymce/skins/ui/tinymce-5-dark',
+    height: props.height,
     toolbar_mode: 'wrap',
     plugins: props.plugins,
     toolbar: props.toolbar,
+    branding: false,
     setup: (editor) => {
       editor.on('init', () => {
         editor.getBody().style.fontSize = '14px';
@@ -91,7 +109,7 @@
   watch(
     () => list.value,
     imgs => {
-      imgs.map(img => content.value += `<img src=${img} width="100%" />`)
+      imgs.map(img => content += `<img src=${img} width="100%" />`)
       list.value = []
       resource.value.clearSelecteds()
       resourceVisible.value = false

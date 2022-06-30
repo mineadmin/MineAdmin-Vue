@@ -141,13 +141,13 @@
         required: true,
         message: '请选择接收用户',
       }],
-      validateTrigger: 'change',
       hide: true,
     },
     {
       title: '消息内容',
       dataIndex: 'content',
       formType: 'editor',
+      defaultValue: 'asdfasdf',
       hide: true,
     },
     {
