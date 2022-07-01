@@ -8,8 +8,8 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div class="ma-content-block p-1 h-full block lg:border-0 lg:flex justify-between">
-    <ul class="w-full lg:w-52 msg-menu h-full p-2" ref="msgMenuRef">
+  <div class="ma-content-block p-3 lg:h-full block lg:border-0 lg:flex justify-between">
+    <ul class="w-full lg:w-52 msg-menu p-2 shadow" ref="msgMenuRef">
       <li
         v-for="(item, index) in msgType"
         :key="item"
@@ -22,7 +22,11 @@
       <ma-crud :crud="crud" :columns="columns" ref="crudRef">
 
         <template #operation>
-          <a-radio-group type="button" default-value="all" @change="changeReadStatus" v-if="currentKey !== 'send_box'">
+          <a-radio-group
+            class="mt-2 lg:mt-0"
+            type="button"
+            default-value="all"
+            @change="changeReadStatus" v-if="currentKey !== 'send_box'">
             <a-radio value="all">全部</a-radio>
             <a-radio value="1">未读</a-radio>
             <a-radio value="2">已读</a-radio>
@@ -227,9 +231,13 @@
   ])
 
 </script>
+<script>
+export default { name: 'message' }
+</script>
+
 <style scoped lang="less">
 .msg-menu{
-  border-right: 1px solid var(--color-border-2);
+  // border-right: 1px solid var(--color-border-2);
   & li {
     border-radius: 3px; cursor: pointer; margin-bottom: 5px;
     padding: 10px; padding-left: 20px;

@@ -8,151 +8,160 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <a-layout-content class="flex flex-col">
-    <ma-search
-      :columns="settingProps.columns"
-      :search-label-width="settingProps.crud.searchLabelWidth"
-      :search-label-align="settingProps.crud.searchLabelAlign"
-      :search-col="settingProps.crud.searchCol"
-      @search="searchHandler"
-      id="__search-panel"
-      ref="searchRef"
-    >
-      <template #buttons>
-        <slot name="buttons"></slot>
-      </template>
-    </ma-search>
-    <div class="opartion-tools flex justify-between mb-3">
-      <a-space >
-        <a-button
-          v-if="
-            defaultCrud.add.show
-            && ($common.auth(defaultCrud.add.auth || [])
-            || (defaultCrud.add.role || []))
-          "
-          @click="addAction" type="primary"
-        ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
-        <a-popconfirm content="确定要删除数据吗?" position="bottom" @ok="deletesMultipleAction">
+  <a-layout-content class="flex flex-col lg:h-full relative">
+    <div class="_crud-header flex flex-col" ref="crudHeader">
+      <ma-search
+        :columns="settingProps.columns"
+        :search-label-width="settingProps.crud.searchLabelWidth"
+        :search-label-align="settingProps.crud.searchLabelAlign"
+        :search-col="settingProps.crud.searchCol"
+        @search="searchHandler"
+        class="__search-panel"
+        ref="searchRef"
+      >
+        <template #buttons>
+          <slot name="buttons"></slot>
+        </template>
+      </ma-search>
+    </div>
+    <div class="_crud-content">
+      <div class="opartion-tools lg:flex justify-between mb-3">
+        <a-space class="lg:flex block lg:inline-block">
           <a-button
             v-if="
-              defaultCrud.delete.show
-              && ($common.auth(defaultCrud.delete.auth || [])
-              || (defaultCrud.delete.role || []))
+              defaultCrud.add.show
+              && ($common.auth(defaultCrud.add.auth || [])
+              || (defaultCrud.add.role || []))
             "
-            type="primary" status="danger"
-          ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-button>
-        </a-popconfirm>
-        <a-button
+            @click="addAction" type="primary"
+            class="w-full lg:w-auto mt-2 lg:mt-0"
+          ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
+          <a-popconfirm content="确定要删除数据吗?" position="bottom" @ok="deletesMultipleAction">
+            <a-button
+              v-if="
+                defaultCrud.delete.show
+                && ($common.auth(defaultCrud.delete.auth || [])
+                || (defaultCrud.delete.role || []))
+              "
+              type="primary" status="danger"
+              class="w-full lg:w-auto mt-2 lg:mt-0"
+            ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-button>
+          </a-popconfirm>
+          <a-button
+            v-if="
+              defaultCrud.recover.show
+              && ($common.auth(defaultCrud.recover.auth || [])
+              || (defaultCrud.recover.role || []))
+            "
+            @click="addAction" type="primary" status="success"
+            class="w-full lg:w-auto mt-2 lg:mt-0"
+          ><icon-loop /> {{ defaultCrud.recover.text || '恢复' }}</a-button>
+          <a-button
           v-if="
-            defaultCrud.recover.show
-            && ($common.auth(defaultCrud.recover.auth || [])
-            || (defaultCrud.recover.role || []))
-          "
-          @click="addAction" type="primary" status="success"
-        ><icon-loop /> {{ defaultCrud.recover.text || '恢复' }}</a-button>
-        <a-button
-         v-if="
-            defaultCrud.import.show
-            && ($common.auth(defaultCrud.import.auth || [])
-            || (defaultCrud.import.role || []))
-          "
-          @click="importAction"
-        ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
-        <a-button
-          v-if="
-            defaultCrud.export.show
-            && ($common.auth(defaultCrud.export.auth || [])
-            || (defaultCrud.export.role || []))
-          "
-          @click="exportAction"
-        ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
-        <slot name="operation"></slot>
-      </a-space>
-      <a-space>
-        <a-tooltip content="刷新表格"><a-button shape="circle" @click="refresh"><icon-refresh /></a-button></a-tooltip>
-        <a-tooltip content="显隐搜索"><a-button shape="circle" @click="toggleSearch"><icon-search /></a-button></a-tooltip>
-        <a-tooltip content="设置"><a-button shape="circle" @click="tableSetting"><icon-settings /></a-button></a-tooltip>
-        <slot name="tools"></slot>
-      </a-space>
-    </div>
-    <a-table
-      v-bind="$attrs"
-      ref="table"
-      :data="tableData"
-      :loading="loading"
-      :pagination="settingProps.pagination"
-      :stripe="defaultCrud.stripe"
-      :bordered="defaultCrud.bordered"
-      :rowSelection="defaultCrud.rowSelection || undefined"
-      :row-key="defaultCrud.rowSelection && defaultCrud.rowSelection.key || 'id'"
-      :scroll="defaultCrud.scroll"
-      :column-resizable="defaultCrud.resizable"
-      :size="defaultCrud.size"
-      :hide-expand-button-on-empty="defaultCrud.hideExpandButtonOnEmpty"
-      :default-expand-all-rows="defaultCrud.expandAllRows"
-      @selection-change="selectChange"
-    >
-      <template #columns>
-        <template v-for="(row, index) in columns" :key="index">
-          <a-table-column
-            :title="row.title" :data-index="row.dataIndex" :width="row.width"
-            :ellipsis="true" :tooltip="row.dataIndex === '__operation' ? false : true" :align="row.align || 'left'" :fixed="row.fixed"
-            :sortable="row.sortable"
-            v-if="! row.hide"
-          >
-            <template #cell="{ record, column, rowIndex }">
-              <template v-if="row.dataIndex === '__operation'">
-                <a-space>
-                  <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
-                  <a-link
-                    v-if="
-                      defaultCrud.see.show
-                      && ($common.auth(defaultCrud.see.auth || [])
-                      || (defaultCrud.see.role || []))
-                    "
-                    type="primary"
-                  ><icon-eye /> {{ defaultCrud.see.text || '查看' }}</a-link>
-                  <a-link
-                    v-if="
-                      defaultCrud.edit.show
-                      && ($common.auth(defaultCrud.edit.auth || [])
-                      || (defaultCrud.edit.role || []))
-                    "
-                    type="primary"
-                    @click="editAction(record)"
-                  ><icon-edit /> {{ defaultCrud.edit.text || '编辑' }}</a-link>
-
-                  <a-popconfirm content="确定要删除数据吗?" position="bottom" @ok="deleteAction(record)">
+              defaultCrud.import.show
+              && ($common.auth(defaultCrud.import.auth || [])
+              || (defaultCrud.import.role || []))
+            "
+            @click="importAction"
+            class="w-full lg:w-auto mt-2 lg:mt-0"
+          ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
+          <a-button
+            v-if="
+              defaultCrud.export.show
+              && ($common.auth(defaultCrud.export.auth || [])
+              || (defaultCrud.export.role || []))
+            "
+            @click="exportAction"
+            class="w-full lg:w-auto mt-2 lg:mt-0"
+          ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
+          <slot name="operation"></slot>
+        </a-space>
+        <a-space class="lg:mt-0 mt-2">
+          <a-tooltip content="刷新表格"><a-button shape="circle" @click="refresh"><icon-refresh /></a-button></a-tooltip>
+          <a-tooltip content="显隐搜索"><a-button shape="circle" @click="toggleSearch"><icon-search /></a-button></a-tooltip>
+          <a-tooltip content="设置"><a-button shape="circle" @click="tableSetting"><icon-settings /></a-button></a-tooltip>
+          <slot name="tools"></slot>
+        </a-space>
+      </div>
+      <a-table
+        v-bind="$attrs"
+        ref="table"
+        :data="tableData"
+        :loading="loading"
+        :pagination="settingProps.pagination"
+        :stripe="defaultCrud.stripe"
+        :bordered="defaultCrud.bordered"
+        :rowSelection="defaultCrud.rowSelection || undefined"
+        :row-key="defaultCrud.rowSelection && defaultCrud.rowSelection.key || 'id'"
+        :scroll="defaultCrud.scroll"
+        :column-resizable="defaultCrud.resizable"
+        :size="defaultCrud.size"
+        :hide-expand-button-on-empty="defaultCrud.hideExpandButtonOnEmpty"
+        :default-expand-all-rows="defaultCrud.expandAllRows"
+        @selection-change="selectChange"
+      >
+        <template #columns>
+          <template v-for="(row, index) in columns" :key="index">
+            <a-table-column
+              :title="row.title" :data-index="row.dataIndex" :width="row.width"
+              :ellipsis="true" :tooltip="row.dataIndex === '__operation' ? false : true" :align="row.align || 'left'" :fixed="row.fixed"
+              :sortable="row.sortable"
+              v-if="! row.hide"
+            >
+              <template #cell="{ record, column, rowIndex }">
+                <template v-if="row.dataIndex === '__operation'">
+                  <a-space>
+                    <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
                     <a-link
-                       v-if="
-                        defaultCrud.delete.show
-                        && ($common.auth(defaultCrud.delete.auth || [])
-                        || (defaultCrud.delete.role || []))
+                      v-if="
+                        defaultCrud.see.show
+                        && ($common.auth(defaultCrud.see.auth || [])
+                        || (defaultCrud.see.role || []))
                       "
                       type="primary"
-                      @click="deleteAction"
-                    ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-link>
-                  </a-popconfirm>
-                  <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
-                </a-space>
-              </template>
-              <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else >
-                <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
-                <template v-if="row.dict && row.dict.translation">
-                  {{ searchRef.dictTrans(row.dataIndex, record[row.dataIndex]) }}
+                    ><icon-eye /> {{ defaultCrud.see.text || '查看' }}</a-link>
+                    <a-link
+                      v-if="
+                        defaultCrud.edit.show
+                        && ($common.auth(defaultCrud.edit.auth || [])
+                        || (defaultCrud.edit.role || []))
+                      "
+                      type="primary"
+                      @click="editAction(record)"
+                    ><icon-edit /> {{ defaultCrud.edit.text || '编辑' }}</a-link>
+
+                    <a-popconfirm content="确定要删除数据吗?" position="bottom" @ok="deleteAction(record)">
+                      <a-link
+                        v-if="
+                          defaultCrud.delete.show
+                          && ($common.auth(defaultCrud.delete.auth || [])
+                          || (defaultCrud.delete.role || []))
+                        "
+                        type="primary"
+                        @click="deleteAction"
+                      ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-link>
+                    </a-popconfirm>
+                    <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
+                  </a-space>
                 </template>
-                <template v-else-if="row.dataIndex.indexOf('.') !== -1">{{ _.get(record, row.dataIndex) }}</template>
-                <template v-else>{{ record[row.dataIndex] }}</template>
-              </slot>
-            </template>
-            <template #summary-cell="{ column,record,rowIndex }">
-              <slot name="summary-cell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
-            </template>
-          </a-table-column>
+                <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else >
+                  <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
+                  <template v-if="row.dict && row.dict.translation">
+                    {{ searchRef.dictTrans(row.dataIndex, record[row.dataIndex]) }}
+                  </template>
+                  <template v-else-if="row.dataIndex.indexOf('.') !== -1">{{ _.get(record, row.dataIndex) }}</template>
+                  <template v-else>{{ record[row.dataIndex] }}</template>
+                </slot>
+              </template>
+              <template #summary-cell="{ column,record,rowIndex }">
+                <slot name="summary-cell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
+              </template>
+            </a-table-column>
+          </template>
         </template>
-      </template>
-    </a-table>
-    <div class="mt-3 text-right">
+      </a-table>
+    </div>
+    <div class="_crud-footer mt-3 text-right">
       <a-pagination
         :total="total"
         v-if="total > 0 && openPagination && !settingProps.pagination"
@@ -209,6 +218,7 @@ const requestParams = ref({})
 const columns = ref([])
 const showSearch = ref(true)
 const searchRef = ref(null)
+const crudHeader = ref(null)
 const selecteds = ref([])
 
 const tableData = ref([])
@@ -353,7 +363,6 @@ watch(() => settingProps.pageSizeOption, (val) => {
 })
 
 watch(() => settingProps.crud.requestParams, (val) => {
-  console.log(val)
   requestParams.value = val
 }, { deep: true })
 
@@ -452,8 +461,8 @@ const pageChangeHandler = (currentPage) => {
 }
 
 const toggleSearch = () => {
-  const dom = document.querySelector('#__search-panel')
-  dom.style.display = showSearch.value ? 'none' : 'block'
+  const dom = crudHeader.value.style
+  dom.display = showSearch.value ? 'none' : 'block'
   showSearch.value = ! showSearch.value
 }
 
@@ -559,7 +568,7 @@ defineExpose({ refresh, requestParams, requestData })
 </script>
 
 <style scoped lang="less">
-#__search-panel {
+.__search-panel {
   transition: display 1s; overflow: hidden;
 }
 </style>
