@@ -352,6 +352,11 @@ watch(() => settingProps.pageSizeOption, (val) => {
   pageSizeOption.value = val
 })
 
+watch(() => settingProps.crud.requestParams, (val) => {
+  console.log(val)
+  requestParams.value = val
+}, { deep: true })
+
 watch(() => settingProps.columns, () => {
   requestData()
 })
@@ -432,7 +437,6 @@ const searchHandler = (formData) => {
   } else {
     requestParams.value = Object.assign(requestParams.value, formData)
   }
-
   refresh()
 }
 

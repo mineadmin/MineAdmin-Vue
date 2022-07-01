@@ -14,7 +14,7 @@
   </a-layout-content>
 </template>
 
-<script setup>
+<script setup name="dashboard">
 import { useUserStore } from '@/store'
 import statistics from './components/statistics.vue'
 import workPanel from './components/work-panel.vue'

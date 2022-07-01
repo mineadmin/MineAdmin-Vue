@@ -51,7 +51,8 @@
   watch(
     () => route,
     r  => {
-      tagStore.addTag({
+
+      addTag({
         name: r.name,
         path: r.path,
         affix: r.meta.affix,
@@ -143,8 +144,14 @@
     contextMenuVisible.value = false
   }
 
+  const addTag = async (tag) => {
+    tagStore.addTag(tag)
+    keepStore.addKeepAlive(tag.name)
+  }
+
   const closeTag = async (tag) => {
     const t = await tagStore.removeTag(tag)
+    keepStore.removeKeepAlive(tag.name)
     router.push({ name: t.name, query: t.query })
   }
 

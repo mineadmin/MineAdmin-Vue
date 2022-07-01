@@ -62,10 +62,14 @@
         </a-typography>
       </a-spin>
     </a-drawer>
+
+    <a-modal v-model:visible="receiveListVisible" width="1000px">
+      <template #title>接收用户列表</template>
+      <ma-crud :crud="receiveCrud" :columns="receiveColumns" ref="receiveCrudRef" />
+    </a-modal>
   </div>
 
 </template>
-
 <script setup>
   import { nextTick, onMounted, ref } from 'vue'
   import commonApi from '@/api/common'
@@ -84,9 +88,11 @@
   const msgType = ref([])
   const msgMenuRef = ref()
   const crudRef = ref()
+  const receiveCrudRef = ref()
   const currentKey = ref()
   const detailVisible = ref(false)
   const detailLoading = ref(true)
+  const receiveListVisible = ref(false)
   const record = ref({})
   
   onMounted(async () => {
@@ -104,6 +110,11 @@
       if (children && children[index].className.indexOf('active') === -1) {
         for ( let i = 0; i < children.length; i++) children[i].className = ''
         children[index].className = 'active'
+        if (! ['send_box', 'receive_box'].includes(key)) {
+          crud.value.requestParams.content_type = key
+        } else {
+          crud.value.requestParams.content_type = 'all'
+        }
         currentKey.value = key
         loadData(key)
       } else {
@@ -115,9 +126,6 @@
   const loadData = (key) => {
     crud.value.api = key === 'send_box' ? queueMessage.getSendList : queueMessage.getReceiveList
     const sendBy = { title: '发送人', dataIndex: 'send_user.nickname', width: 120, addDisplay: false, editDisplay: false  }
-    if (! ['send_box', 'receive_box'].includes(key)) {
-      crud.value.requestParams.content_type = key
-    }
     if (key === 'send_box' && columns.value[0].title === '发送人') {
       columns.value.splice(0, 1)
     } else if (key !== 'send_box' && columns.value[0].title !== '发送人') {
@@ -140,8 +148,22 @@
   }
 
   const showReceiveList = (id) => {
-    console.log(id)
+    receiveListVisible.value = true
+    receiveCrud.value.requestParams.id = id
+    receiveCrudRef.value.requestData()
   }
+
+  const receiveCrud = ref({
+    api: queueMessage.getReceiveUser,
+    requestParams: {},
+    autoRequest: false
+  })
+
+  const receiveColumns = ref([
+    { title: '用户名', dataIndex: 'username' },
+    { title: '昵称', dataIndex: 'nickname' },
+    { title: '查看状态', dataIndex: 'read_status' }
+  ])
 
   const crud = ref({
     autoRequest: false,
@@ -204,9 +226,7 @@
     },
   ])
 
-
 </script>
-
 <style scoped lang="less">
 .msg-menu{
   border-right: 1px solid var(--color-border-2);
