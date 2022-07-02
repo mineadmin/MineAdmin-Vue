@@ -8,10 +8,16 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  user page
+  <div class="ma-content-block h-full">
+    演示页面
+  </div>
 </template>
 
 <script setup>
+</script>
+
+<script>
+export default { name: 'demo' }
 </script>
 
 <style scoped>
