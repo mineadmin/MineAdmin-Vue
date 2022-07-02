@@ -144,11 +144,11 @@ export default {
    * 用户更新个人资料
    * @returns
    */
-  updateInfo(params = {}) {
+  updateInfo(data = {}) {
     return request({
       url: 'system/user/updateInfo',
       method: 'post',
-      data: params
+      data
     })
   },
 
@@ -156,11 +156,11 @@ export default {
    * 用户修改密码
    * @returns
    */
-  modifyPassword(params = {}) {
+  modifyPassword(data = {}) {
     return request({
       url: 'system/user/modifyPassword',
       method: 'post',
-      data: params
+      data
     })
   },
 

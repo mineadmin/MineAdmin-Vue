@@ -19,42 +19,10 @@
       <div class="ma-content-block w-full lg:w-6/12 mt-3 p-4">
         <a-tabs type="rounded">
           <a-tab-pane key="info" title="个人资料">
-            <a-form class="w-full md:w-full mt-3">
-              <a-form-item label="账户名" label-col-flex="80px">
-                <a-input disabled :default-value="userStore.user.username" allow-clear />
-              </a-form-item>
-              <a-form-item label="昵称" label-col-flex="80px">
-                <a-input v-model="userStore.user.nickname" allow-clear />
-              </a-form-item>
-              <a-form-item label="手机" label-col-flex="80px">
-                <a-input v-model="userStore.user.phone" allow-clear />
-              </a-form-item>
-              <a-form-item label="邮箱" label-col-flex="80px">
-                <a-input v-model="userStore.user.email" allow-clear />
-              </a-form-item>
-              <a-form-item label="个人签名" label-col-flex="80px">
-                <a-textarea v-model="userStore.user.signed" :max-length="255" class="h-28" show-word-limit allow-clear />
-              </a-form-item>
-              <a-form-item label-col-flex="80px">
-                <a-button html-type="submit" type="primary">保存</a-button>
-              </a-form-item>
-            </a-form>
+            <user-infomation />
           </a-tab-pane>
           <a-tab-pane key="safe" title="安全设置">
-            <a-form class="w-full md:w-full mt-3">
-              <a-form-item label="旧密码" label-col-flex="80px">
-                <a-input-password allow-clear />
-              </a-form-item>
-              <a-form-item label="新密码" label-col-flex="80px">
-                <a-input-password allow-clear />
-              </a-form-item>
-              <a-form-item label="确认密码" label-col-flex="80px">
-                <a-input-password allow-clear />
-              </a-form-item>
-              <a-form-item label-col-flex="80px">
-                <a-button html-type="submit" type="primary">保存</a-button>
-              </a-form-item>
-            </a-form>
+            <modify-password />
           </a-tab-pane>
         </a-tabs>
       </div>
@@ -62,22 +30,24 @@
         <a-tabs type="rounded">
           <a-tab-pane key="login-log" title="登录日志">
             <a-timeline class="pl-5 mt-3">
-              <a-timeline-item label="河南-洛阳市:电信">于 2022-07-13 登录了系统</a-timeline-item>
-              <a-timeline-item label="河南-洛阳市:联通">于 2022-07-13 登录了系统</a-timeline-item>
-              <a-timeline-item label="河南-郑州市:联通">于 2022-07-13 登录了系统</a-timeline-item>
-              <a-timeline-item label="河南-郑州市:联通">于 2022-07-13 登录了系统</a-timeline-item>
-              <a-timeline-item label="河南-郑州市:联通">于 2022-07-13 登录了系统</a-timeline-item>
-              <a-timeline-item label="河南-郑州市:联通">于 2022-07-13 登录了系统</a-timeline-item>
+              <a-timeline-item
+                :label="`地理位置；${item.ip_location}，操作系统：${item.os}`"
+                v-for="(item, idx) in loginLogList"
+                :key="idx"
+              >
+                您于 {{ item.login_time }} 登录系统，{{ item.message }}
+              </a-timeline-item>
             </a-timeline>
           </a-tab-pane>
           <a-tab-pane key="operation-log" title="操作日志">
             <a-timeline class="pl-5 mt-3">
-              <a-timeline-item label="河南-洛阳市:电信">于 2022-07-13 登录了系统</a-timeline-item>
-              <a-timeline-item label="河南-洛阳市:联通">于 2022-07-13 登录了系统</a-timeline-item>
-              <a-timeline-item label="河南-郑州市:联通">于 2022-07-13 登录了系统</a-timeline-item>
-              <a-timeline-item label="河南-郑州市:联通">于 2022-07-13 登录了系统</a-timeline-item>
-              <a-timeline-item label="河南-郑州市:联通">于 2022-07-13 登录了系统</a-timeline-item>
-              <a-timeline-item label="河南-郑州市:联通">于 2022-07-13 登录了系统</a-timeline-item>
+              <a-timeline-item
+                :label="`地理位置；${item.ip_location}，方式：${item.method}，路由：${item.router}`"
+                v-for="(item, idx) in operationLogList"
+                :key="idx"
+              >
+                您于 {{ item.created_at }} 执行了 {{ item.service_name }}
+              </a-timeline-item>
             </a-timeline>
           </a-tab-pane>
         </a-tabs>
@@ -87,15 +57,57 @@
 </template>
 
 <script setup>
-  import { reactive } from 'vue'
+  import { ref, reactive, onMounted, watch } from 'vue'
   import { useUserStore } from '@/store'
-  const userStore = useUserStore()
+  import { Message } from '@arco-design/web-vue'
+  import user from '@/api/system/user'
+  import loginLog from '@/api/system/loginLog'
+  import operLog from '@/api/system/operLog'
 
+  import modifyPassword from './components/modifyPassword.vue'
+  import userInfomation from './components/userInfomation.vue'
+
+  const userStore = useUserStore()
   const userInfo = reactive({
     ...userStore.user
   })
 
+  const loginLogList = ref([])
+  const operationLogList = ref([])
+
+  const requestParams = reactive({
+    username: userStore.user.username,
+    pageSize: 5
+  })
+
+  onMounted(() => {
+    loginLog.getPageList(requestParams).then(res => {
+      loginLogList.value = res.data.items
+    })
+
+    operLog.getPageList(requestParams).then(res => {
+      operationLogList.value = res.data.items
+    })
+  })
+
   userInfo.avatar = (userStore.user && userStore.user.avatar) ? userStore.user.avatar : '/avatar.jpg'
+
+  watch(
+    () => userInfo.avatar,
+    async newAvatar => {
+      if (newAvatar) {
+        const response = await user.updateInfo({ id: userInfo.id, avatar: newAvatar })
+        if (response.success) {
+          Message.success(response.message)
+          userStore.user.avatar = newAvatar
+        }
+      }
+    }
+  )
+
+</script>
+<script>
+export default { name: 'userCenter' }
 </script>
 
 <style scoped>
