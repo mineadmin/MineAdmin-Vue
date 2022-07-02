@@ -58,8 +58,8 @@
     if (! route.matched[1].meta.breadcrumb) {
       openKeys.value = []
       route.matched.map((item, index) => {
-        if (route.matched[0].name === 'layout' && index !== 0) {
-          openKeys.value.push(item.name)
+        if (route.matched[0].name === 'layout') {
+          openKeys.value.push('home')
         }
       })
     } else {

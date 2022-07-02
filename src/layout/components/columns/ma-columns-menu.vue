@@ -71,7 +71,7 @@ import router from '../../../router';
     if (route.matched[1].meta.breadcrumb) {
       current = route.matched[1].meta.breadcrumb[0].name
     } else {
-      current = route.matched[1].name
+      current = 'home'
     }
     userStore.routers.map((item, index) => {
       if (item.name == current) loadMenu(item, index)

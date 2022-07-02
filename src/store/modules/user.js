@@ -3,6 +3,7 @@ import loginApi from '@/api/login'
 import tool from '@/utils/tool'
 import router from '@/router'
 import webRouter from '@/router/webRouter'
+import { homePage } from '@/router/homePageRoutes'
 
 const useUserStore = defineStore('user', {
 
@@ -53,7 +54,8 @@ const useUserStore = defineStore('user', {
           await this.setInfo(response.data)
           this.routers = removeButtonMenu(this.routers)
           this.setMenu(this.routers)
-          this.routers.unshift(webRouter[0].children[0])
+          homePage.children = webRouter[0].children
+          this.routers.unshift(homePage)
           resolve(response.data)
         }).catch(error => {
           this.clearToken()
