@@ -8,7 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div class="ma-content-block h-full">
+  <div class="ma-content-block h-full p-4">
     演示页面
   </div>
 </template>

@@ -8,10 +8,17 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div>user page</div>
+  <div class="ma-content-block h-full p-4">
+    <a-input />
+  </div>
 </template>
 
 <script setup>
+  import { ref } from 'vue'
+</script>
+
+<script>
+export default { name: 'system:user' }
 </script>
 
 <style scoped>

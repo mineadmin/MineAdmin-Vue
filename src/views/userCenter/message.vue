@@ -108,7 +108,7 @@
     await getMessageList('receive_box', 0)
   })
 
-  const getMessageList = (key, index) => {
+  const getMessageList = async (key, index) => {
     nextTick(() => {
       const children = msgMenuRef.value.children
       if (children && children[index].className.indexOf('active') === -1) {

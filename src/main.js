@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import 'default-passive-events'
 import ArcoVue from '@arco-design/web-vue'
 import ArcoVueIcon from '@arco-design/web-vue/es/icon'
 

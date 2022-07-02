@@ -15,7 +15,11 @@
       label-col-flex="80px"
       :rules="[{ required: true, message: '旧密码必填'}]"
     >
-      <a-input-password v-model="password.oldPassword" allow-clear />
+      <a-input-password
+        v-model="password.oldPassword"
+        allow-clear
+        autocomplete="off"
+      />
     </a-form-item>
     <a-form-item
       label="新密码"
@@ -27,6 +31,7 @@
         v-model="password.newPassword"
         @input="checkSafe"
         @clear="() => passwordSafePercent = 0"
+        autocomplete="off"
         allow-clear
       />
     </a-form-item>
@@ -45,7 +50,11 @@
       label-col-flex="80px"
       :rules="[{ required: true, message: '确认密码必填' }]"
     >
-      <a-input-password allow-clear v-model="password.newPassword_confirmation" />
+      <a-input-password
+        allow-clear
+        v-model="password.newPassword_confirmation"
+        autocomplete="off"
+      />
     </a-form-item>
     <a-form-item label-col-flex="80px">
       <a-button html-type="submit" type="primary">保存</a-button>
