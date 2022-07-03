@@ -21,9 +21,10 @@
       :data="treeData"
       class="shadow h-full w-full"
       @select="handlerSelect"
+      :field-names="props.props"
       v-model:selected-keys="selectedKeys"
     >
-      <template #icon><icon-folder /></template>
+      <template #icon v-if="props.icon"><component :is="props.icon" /></template>
     </a-tree>
   </div>
 </template>
@@ -39,7 +40,9 @@
   const props = defineProps({
     modelValue: { type: Array },
     searchPlaceholder: { type: String },
-    selectedKeys: { type: Array }
+    selectedKeys: { type: Array },
+    icon: { type: String, default: undefined },
+    props: { title: 'title', key: 'value' }
   })
 
   onMounted( () => selectedKeys.value = props.selectedKeys )
@@ -71,7 +74,7 @@
         if (item.children && item.children.length > 0) {
           const temp = loop(item.children)
           tree.push(...temp)
-        } else if (item.title.indexOf(keyword) !== -1) {
+        } else if (item[props.props.title].indexOf(keyword) !== -1) {
           tree.push(item)
         }
         return tree

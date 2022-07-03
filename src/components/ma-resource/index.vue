@@ -19,6 +19,7 @@
       :search-placeholder="$t('maResource.searchResource')"
       @click="handlerClick"
       class="lg:w-1/5 w-full"
+      icon="icon-folder"
       :selected-keys="['all']"
     />
     <div class="w-full lg:ml-3 mt-3 lg:mt-0 flex flex-col">

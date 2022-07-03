@@ -52,10 +52,11 @@ export default {
    * 移到回收站
    * @returns
    */
-  deletes(ids) {
+  deletes(data) {
     return request({
-      url: 'system/user/delete/' + ids,
-      method: 'delete'
+      url: 'system/user/delete',
+      method: 'delete',
+      data
     })
   },
 
@@ -63,10 +64,11 @@ export default {
    * 恢复数据
    * @returns
    */
-  recoverys(ids) {
+  recoverys(data) {
     return request({
-      url: 'system/user/recovery/' + ids,
-      method: 'put'
+      url: 'system/user/recovery',
+      method: 'put',
+      data
     })
   },
 
@@ -74,10 +76,11 @@ export default {
    * 真实删除
    * @returns
    */
-  realDeletes(ids) {
+  realDeletes(data) {
     return request({
-      url: 'system/user/realDelete/' + ids,
-      method: 'delete'
+      url: 'system/user/realDelete',
+      method: 'delete',
+      data
     })
   },
 
@@ -85,11 +88,11 @@ export default {
    * 更新数据
    * @returns
    */
-  update(id, params = {}) {
+  update(id, data = {}) {
     return request({
       url: 'system/user/update/' + id,
       method: 'put',
-      data: params
+      data
     })
   },
 

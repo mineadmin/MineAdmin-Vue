@@ -6,7 +6,7 @@ export const handlerProps = (allowType, item, tmpArr) => {
       const label = dicItem[ (item.dict.props && item.dict.props.label) || 'code'  ]
       const value = dicItem[ (item.dict.props && item.dict.props.value) || 'value' ]
       tran[value] = label
-      return { 'label': label, 'value': value } 
+      return { label, value } 
     })
   } else {
     data = tmpArr

@@ -49,13 +49,14 @@
           </a-popconfirm>
           <a-button
             v-if="
-              defaultCrud.recover.show
-              && ($common.auth(defaultCrud.recover.auth || [])
-              || (defaultCrud.recover.role || []))
+              defaultCrud.recovery.show
+              && isRecovery
+              && ($common.auth(defaultCrud.recovery.auth || [])
+              || (defaultCrud.recovery.role || []))
             "
             @click="addAction" type="primary" status="success"
             class="w-full lg:w-auto mt-2 lg:mt-0"
-          ><icon-loop /> {{ defaultCrud.recover.text || '恢复' }}</a-button>
+          ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-button>
           <a-button
           v-if="
               defaultCrud.import.show
@@ -77,6 +78,15 @@
           <slot name="operation"></slot>
         </a-space>
         <a-space class="lg:mt-0 mt-2">
+          <a-tooltip
+            :content="isRecovery ? '显示正常数据' : '显示回收站数据'"
+            v-if="defaultCrud.recycleApi && isFunction(defaultCrud.recycleApi)"
+          >
+            <a-button
+              shape="circle"
+              @click="switchDataType"
+            ><icon-swap /></a-button>
+          </a-tooltip>
           <a-tooltip content="刷新表格"><a-button shape="circle" @click="refresh"><icon-refresh /></a-button></a-tooltip>
           <a-tooltip content="显隐搜索"><a-button shape="circle" @click="toggleSearch"><icon-search /></a-button></a-tooltip>
           <a-tooltip content="设置"><a-button shape="circle" @click="tableSetting"><icon-settings /></a-button></a-tooltip>
@@ -85,7 +95,7 @@
       </div>
       <a-table
         v-bind="$attrs"
-        ref="table"
+        ref="tableRef"
         :data="tableData"
         :loading="loading"
         :pagination="settingProps.pagination"
@@ -112,35 +122,48 @@
                 <template v-if="row.dataIndex === '__operation'">
                   <a-space>
                     <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
-                    <a-link
-                      v-if="
-                        defaultCrud.see.show
-                        && ($common.auth(defaultCrud.see.auth || [])
-                        || (defaultCrud.see.role || []))
-                      "
-                      type="primary"
-                    ><icon-eye /> {{ defaultCrud.see.text || '查看' }}</a-link>
-                    <a-link
-                      v-if="
-                        defaultCrud.edit.show
-                        && ($common.auth(defaultCrud.edit.auth || [])
-                        || (defaultCrud.edit.role || []))
-                      "
-                      type="primary"
-                      @click="editAction(record)"
-                    ><icon-edit /> {{ defaultCrud.edit.text || '编辑' }}</a-link>
-
-                    <a-popconfirm content="确定要删除数据吗?" position="bottom" @ok="deleteAction(record)">
+                    <slot name="operationCell" v-bind="{ record, column, rowIndex }">
                       <a-link
                         v-if="
-                          defaultCrud.delete.show
-                          && ($common.auth(defaultCrud.delete.auth || [])
-                          || (defaultCrud.delete.role || []))
+                          defaultCrud.see.show
+                          && ($common.auth(defaultCrud.see.auth || [])
+                          || (defaultCrud.see.role || []))
                         "
                         type="primary"
-                        @click="deleteAction"
-                      ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-link>
-                    </a-popconfirm>
+                      ><icon-eye /> {{ defaultCrud.see.text || '查看' }}</a-link>
+
+                      <a-link
+                        v-if="
+                          defaultCrud.edit.show
+                          && ! isRecovery
+                          && ($common.auth(defaultCrud.edit.auth || [])
+                          || (defaultCrud.edit.role || []))
+                        "
+                        type="primary"
+                        @click="editAction(record)"
+                      ><icon-edit /> {{ defaultCrud.edit.text || '编辑' }}</a-link>
+
+                      <a-link
+                        v-if="
+                          defaultCrud.recovery.show
+                          && isRecovery
+                          && ($common.auth(defaultCrud.recovery.auth || [])
+                          || (defaultCrud.recovery.role || []))
+                        "
+                        type="primary"
+                      ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-link>
+
+                      <a-popconfirm content="确定要删除数据吗?" position="bottom" @ok="deleteAction(record)">
+                        <a-link
+                          v-if="
+                            defaultCrud.delete.show
+                            && ($common.auth(defaultCrud.delete.auth || [])
+                            || (defaultCrud.delete.role || []))
+                          "
+                          type="primary"
+                        ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-link>
+                      </a-popconfirm>
+                    </slot>
                     <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
                   </a-space>
                 </template>
@@ -149,7 +172,7 @@
                   <template v-if="row.dict && row.dict.translation">
                     {{ searchRef.dictTrans(row.dataIndex, record[row.dataIndex]) }}
                   </template>
-                  <template v-else-if="row.dataIndex.indexOf('.') !== -1">{{ _.get(record, row.dataIndex) }}</template>
+                  <template v-else-if="row.dataIndex && row.dataIndex.indexOf('.') !== -1">{{ _.get(record, row.dataIndex) }}</template>
                   <template v-else>{{ record[row.dataIndex] }}</template>
                 </slot>
               </template>
@@ -199,7 +222,7 @@
 <script setup>
 import config from '@/config/crud'
 import { isFunction } from '@vue/shared'
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, onMounted } from 'vue'
 
 import maSearch from './components/search.vue'
 import maForm from './components/form.vue'
@@ -217,11 +240,14 @@ const total = ref(0)
 const requestParams = ref({})
 const columns = ref([])
 const showSearch = ref(true)
+const isRecovery = ref(false)
 const searchRef = ref(null)
 const crudHeader = ref(null)
 const selecteds = ref([])
 
 const tableData = ref([])
+const tableRef = ref()
+const currentApi = ref()
 const mas = ref(null)
 const maf = ref(null)
 const mai = ref(null)
@@ -247,13 +273,15 @@ const defaultCrud = ref({
   size: 'large',
   // 新增和编辑显示设置
   viewLayoutSetting: {
+    // 布局方式, 支持 auto（自动） 和 customer（自定义）两种
+    layout: 'auto',
     // 显示方式支持模态框和抽屉: modal drawer
     viewType: 'modal',
     // 显示宽度 
     width: 600,
     // 是否全屏，只有modal有效    
     isFull: false,
-    // 表单设置一行多少列，会自适应
+    // 表单设置一行多少列，会自适应，在布局为 auto 下生效
     cols: 1,
     // 标签对齐方式
     labelAlign: 'right'
@@ -294,7 +322,7 @@ const defaultCrud = ref({
     // 是否显示
     show: false,
   },
-  recover: {
+  recovery: {
     // 显示恢复按钮的权限
     auth: [],
     // 显示恢复按钮的角色
@@ -404,8 +432,8 @@ const requestHandle = async () => {
 
   isFunction(settingProps.crud.before) && settingProps.crud.before(requestParams.value)
 
-  if (isFunction(settingProps.crud.api)) {
-    const response = config.parseResponseData(await settingProps.crud.api(requestParams.value))
+  if (isFunction(currentApi.value)) {
+    const response = config.parseResponseData(await currentApi.value(requestParams.value))
     if (response.rows) {
       tableData.value = response.rows
       total.value = response.pageInfo.total
@@ -433,7 +461,10 @@ const refresh = async () => {
       tableData.value = data
     }
     loading.value = false
-  } else if (isFunction(settingProps.crud.api)) {
+  } else {
+    currentApi.value = isRecovery.value && defaultCrud.value.recycleApi && isFunction(defaultCrud.value.recycleApi)
+    ? defaultCrud.value.recycleApi
+    : defaultCrud.value.api
     await requestHandle()
   }
 }
@@ -501,7 +532,7 @@ const exportAction = () => {
 const editAction = (record) => maf.value.edit(record)
 
 const deleteAction = async (record) => {
-  const response = await defaultCrud.value.delete.api({ ids: record[ defaultCrud.value.pk ] })
+  const response = await defaultCrud.value.delete.api({ ids: [ record[ defaultCrud.value.pk ] ] })
   response.code === 200 
   ? Message.success(response.message || `删除成功！`)
   : Message.error(response.message || `删除失败！`)
@@ -524,6 +555,14 @@ const selectChange = (key) => {
   selecteds.value = key
 }
 
+const switchDataType = () => {
+  isRecovery.value = ! isRecovery.value
+  currentApi.value = isRecovery.value && defaultCrud.value.recycleApi && isFunction(defaultCrud.value.recycleApi)
+    ? defaultCrud.value.recycleApi
+    : defaultCrud.value.api
+  requestData()
+}
+
 const settingProps = defineProps({
 
   // 表格数据
@@ -539,6 +578,8 @@ const settingProps = defineProps({
     default: () => { return {
         // 请求api方法
         api: () => {},
+        // 请求回收站api方法
+        recycleApi: undefined,
         // 请求前置处理
         before: () => {},
         // 请求后置处理
@@ -562,6 +603,8 @@ if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.aut
   nextTick()
   requestData()
 }
+
+onMounted(() => document.querySelector('.arco-table-body').className += ' customer-scrollbar' )
 
 defineExpose({ refresh, requestParams, requestData })
 

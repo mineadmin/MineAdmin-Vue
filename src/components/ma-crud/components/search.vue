@@ -8,7 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <a-spin :loading="searchLoading" tip="加载数据中..." class="mt-5 mb-5" v-if="isShowSearch">
+  <a-spin :loading="searchLoading" tip="加载数据中..." v-if="isShowSearch">
     <a-form
       :model="searchForm"
       layout="inline"
@@ -133,7 +133,7 @@ const init = async () => {
     props.columns.map(async item => {
       if (item.search && ! isShowSearch.value) isShowSearch.value = true
       if (item.dataIndex && item.search) {
-        searchForm[item.dataIndex] = item.defaultValue || undefined
+        searchForm[item.dataIndex] = item.searchDefaultValue || undefined
       }
 
       if (allowRequestFormType.includes(item.formType) && item.dict) {
