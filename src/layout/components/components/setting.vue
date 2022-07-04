@@ -41,13 +41,13 @@
         </a-select>
       </a-form-item>
       <a-form-item :label="$t('sys.dark')" :help="$t('sys.darkHelp')" v-if="currentSkin === 'Mine'">
-        <a-switch type="line" v-model="form.mode" @change="handleSettingMode" />
+        <a-switch v-model="form.mode" @change="handleSettingMode" />
       </a-form-item>
       <a-form-item :label="$t('sys.tag')" :help="$t('sys.tagHelp')">
-        <a-switch type="line" v-model="form.tag" @change="handleSettingTag" />
+        <a-switch v-model="form.tag" @change="handleSettingTag" />
       </a-form-item>
       <a-form-item v-if="form.layout !== 'banner'" :label="$t('sys.menuFold')" :help="$t('sys.menuFoldHelp')">
-        <a-switch type="line" v-model="form.menuCollapse" @change="handleMenuCollapse" />
+        <a-switch v-model="form.menuCollapse" @change="handleMenuCollapse" />
       </a-form-item>
       <a-form-item v-if="form.layout !== 'banner'" :label="$t('sys.menuWidth')" :help="$t('sys.menuWidthHelp')">
         <a-input-number size="mini" v-model="form.menuWidth" mode="button" @change="handleMenuWidth" />
