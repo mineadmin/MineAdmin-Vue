@@ -18,15 +18,19 @@
       @click="switchDept"
     />
     <div class="lg:w-10/12 w-full lg:ml-4 mt-5 lg:mt-0">
-      <ma-crud :crud="crud" :columns="columns">
+      <!-- CRUD 组件 -->
+      <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+        <!-- 状态列 -->
         <template #status="{ record }">
           <a-switch :checked-value="1"  unchecked-value="2" :default-checked="record.status == 1" />
         </template>
+        <!-- 头像列 -->
         <template #avatar="{ record }">
           <a-avatar>
             <img :src="record.avatar || '/avatar.jpg'" style="object-fit: cover" />
           </a-avatar>
         </template>
+        <!-- 操作列 -->
         <template #operationCell="{ record }">
           <div v-if="record.id == 1">
             <a-link><icon-refresh /> 更新缓存</a-link>
@@ -43,6 +47,7 @@
   import user from '@/api/system/user'
 
   const depts = ref([])
+  const crudRef = ref()
 
   onMounted(() => {
     dept.tree().then(res => {
@@ -52,7 +57,8 @@
   })
 
   const switchDept = (id) => {
-    console.log(id)
+    crud.requestParams = id[0] === 'all' ? { dept_id: undefined } : { dept_id: id[0] }
+    crudRef.value.requestData()
   }
 
   const crud = reactive({
@@ -64,19 +70,26 @@
     operationColumn: true,
     add: { show: true, api: user.save, auth: ['system:user:add'] },
     edit: { show: true, api: user.update, auth: ['system:user:edit'] },
-    delete: { show: true, api: user.deletes, auth: ['system:user:delete'] },
+    delete: {
+      show: true,
+      api: user.deletes, auth: ['system:user:delete'],
+      realApi: user.realDeletes, realAuth: ['system:user:realDeletes']
+    },
     recovery: { show: true, api: user.recoverys, auth: ['system:user:recovery']},
-    viewLayoutSetting: { layout: 'customer', width: 800, cols: 2 }
+    import: { show: true, },
+    export: { show: true, },
+    viewLayoutSetting: { layout: 'customer', width: 800, cols: 2 },
+    isDbClickEdit: false
   })
 
   const columns = reactive([
-    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, fixed: 'left' },
+    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
     {
-      title: '头像', dataIndex: 'avatar', width: 75, fixed: 'left', formType: 'upload',
+      title: '头像', dataIndex: 'avatar', width: 75, formType: 'upload',
       type: 'image', rounded: true, span: 24, labelWidth: '86px'
     },
     { 
-      title: '账户', dataIndex: 'username', width: 130, search: true, fixed: 'left',
+      title: '账户', dataIndex: 'username', width: 130, search: true,
       rules: [{ required: true, message: '账户必填' }], span: 12
     },
     {
@@ -101,7 +114,7 @@
     },
     {
       title: '手机', dataIndex: 'phone', width: 150, search: true, span: 12,
-      rules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
+      addRules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
     },
     { 
       title: '岗位', dataIndex: 'post_ids', width: 120, span: 12, formType: 'select', multiple: true,
@@ -114,7 +127,7 @@
     },
     {
       title: '邮箱', dataIndex: 'email', width: 200, search: true, span: 12,
-      rules: [{ type: 'email', message: '请输入正确的邮箱' }]
+      addRules: [{ type: 'email', message: '请输入正确的邮箱' }]
     },
     {
       title: '状态', dataIndex: 'status', width: 100, search: true, formType: 'radio',

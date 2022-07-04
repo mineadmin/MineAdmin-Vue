@@ -9,7 +9,7 @@
 -->
 <template>
   <a-layout-content class="flex flex-col lg:h-full relative">
-    <div class="_crud-header flex flex-col" ref="crudHeader">
+    <div class="_crud-header flex flex-col mb-2" ref="crudHeader">
       <ma-search
         :columns="settingProps.columns"
         :search-label-width="settingProps.crud.searchLabelWidth"
@@ -26,7 +26,8 @@
     </div>
     <div class="_crud-content">
       <div class="opartion-tools lg:flex justify-between mb-3">
-        <a-space class="lg:flex block lg:inline-block">
+        <a-space class="lg:flex block lg:inline-block" >
+
           <a-button
             v-if="
               defaultCrud.add.show
@@ -36,29 +37,42 @@
             @click="addAction" type="primary"
             class="w-full lg:w-auto mt-2 lg:mt-0"
           ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
-          <a-popconfirm content="确定要删除数据吗?" position="bottom" @ok="deletesMultipleAction">
+
+          <a-popconfirm
+            content="确定要删除数据吗?"
+            position="bottom"
+            @ok="deletesMultipleAction"
+            v-if="
+              defaultCrud.delete.show
+              && ($common.auth(defaultCrud.delete.auth || [])
+              || (defaultCrud.delete.role || []))
+            "
+          >
             <a-button
-              v-if="
-                defaultCrud.delete.show
-                && ($common.auth(defaultCrud.delete.auth || [])
-                || (defaultCrud.delete.role || []))
-              "
               type="primary" status="danger"
               class="w-full lg:w-auto mt-2 lg:mt-0"
-            ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-button>
+            ><icon-delete /> {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-button>
           </a-popconfirm>
-          <a-button
+
+          <a-popconfirm
+            content="确定要恢复数据吗?"
+            position="bottom"
+            @ok="recoverysMultipleAction"
             v-if="
               defaultCrud.recovery.show
               && isRecovery
               && ($common.auth(defaultCrud.recovery.auth || [])
               || (defaultCrud.recovery.role || []))
             "
-            @click="addAction" type="primary" status="success"
-            class="w-full lg:w-auto mt-2 lg:mt-0"
-          ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-button>
+          >
+            <a-button
+              type="primary" status="success"
+              class="w-full lg:w-auto mt-2 lg:mt-0"
+            ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-button>
+          </a-popconfirm>
+
           <a-button
-          v-if="
+            v-if="
               defaultCrud.import.show
               && ($common.auth(defaultCrud.import.auth || [])
               || (defaultCrud.import.role || []))
@@ -66,6 +80,7 @@
             @click="importAction"
             class="w-full lg:w-auto mt-2 lg:mt-0"
           ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
+
           <a-button
             v-if="
               defaultCrud.export.show
@@ -110,6 +125,9 @@
         :default-expand-all-rows="defaultCrud.expandAllRows"
         @selection-change="selectChange"
       >
+        <template #tr="{ record }">
+          <tr class="ma-crud-table-tr" @dblclick="dbClickOpenEdit(record)" />
+        </template>
         <template #columns>
           <template v-for="(row, index) in columns" :key="index">
             <a-table-column
@@ -118,19 +136,20 @@
               :sortable="row.sortable"
               v-if="! row.hide"
             >
+              
               <template #cell="{ record, column, rowIndex }">
                 <template v-if="row.dataIndex === '__operation'">
-                  <a-space>
+                  <a-space size="mini">
                     <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
                     <slot name="operationCell" v-bind="{ record, column, rowIndex }">
-                      <a-link
+                      <!-- <a-link
                         v-if="
                           defaultCrud.see.show
                           && ($common.auth(defaultCrud.see.auth || [])
                           || (defaultCrud.see.role || []))
                         "
                         type="primary"
-                      ><icon-eye /> {{ defaultCrud.see.text || '查看' }}</a-link>
+                      ><icon-eye /> {{ defaultCrud.see.text || '查看' }}</a-link> -->
 
                       <a-link
                         v-if="
@@ -143,25 +162,35 @@
                         @click="editAction(record)"
                       ><icon-edit /> {{ defaultCrud.edit.text || '编辑' }}</a-link>
 
-                      <a-link
+                      <a-popconfirm
+                        content="确定要恢复该数据吗?"
+                        position="bottom"
+                        @ok="recoveryAction(record)"
                         v-if="
                           defaultCrud.recovery.show
                           && isRecovery
                           && ($common.auth(defaultCrud.recovery.auth || [])
                           || (defaultCrud.recovery.role || []))
                         "
-                        type="primary"
-                      ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-link>
-
-                      <a-popconfirm content="确定要删除数据吗?" position="bottom" @ok="deleteAction(record)">
+                      >
                         <a-link
-                          v-if="
-                            defaultCrud.delete.show
-                            && ($common.auth(defaultCrud.delete.auth || [])
-                            || (defaultCrud.delete.role || []))
-                          "
                           type="primary"
-                        ><icon-delete /> {{ defaultCrud.delete.text || '删除' }}</a-link>
+                        ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-link>
+                      </a-popconfirm>
+
+                      <a-popconfirm
+                        content="确定要删除该数据吗?"
+                        position="bottom"
+                        @ok="deleteAction(record)"
+                        v-if="
+                          defaultCrud.delete.show
+                          && ($common.auth(defaultCrud.delete.auth || [])
+                          || (defaultCrud.delete.role || []))
+                        "
+                      >
+                        <a-link
+                          type="primary"
+                        ><icon-delete /> {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-link>
                       </a-popconfirm>
                     </slot>
                     <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
@@ -271,6 +300,8 @@ const defaultCrud = ref({
   dataCompleteRefresh: true,
   // 表格大小
   size: 'large',
+  // 是否开启双击编辑数据
+  isDbClickEdit: true,
   // 新增和编辑显示设置
   viewLayoutSetting: {
     // 布局方式, 支持 auto（自动） 和 customer（自定义）两种
@@ -311,6 +342,7 @@ const defaultCrud = ref({
     show: false,
   },
   delete: {
+
     // 删除api
     api: undefined,
     // 显示删除按钮的权限
@@ -319,6 +351,16 @@ const defaultCrud = ref({
     role: [],
     // 按钮文案
     text: '删除',
+
+    // 真实删除api
+    realApi: undefined,
+    // 显示真实删除按钮的权限
+    realAuth: [],
+    // 显示真实删除按钮的角色
+    realRole: [],
+    // 真实按钮文案
+    realText: '删除',
+
     // 是否显示
     show: false,
   },
@@ -332,16 +374,16 @@ const defaultCrud = ref({
     // 是否显示
     show: false,
   },
-  see: {
-    // 显示查看按钮的权限
-    auth: [],
-    // 显示查看按钮的角色
-    role: [],
-    // 按钮文案
-    text: '查看',
-    // 是否显示
-    show: false,
-  },
+  // see: {
+  //   // 显示查看按钮的权限
+  //   auth: [],
+  //   // 显示查看按钮的角色
+  //   role: [],
+  //   // 按钮文案
+  //   text: '查看',
+  //   // 是否显示
+  //   show: false,
+  // },
   import: {
     // 导入url
     url: undefined,
@@ -381,7 +423,7 @@ const defaultCrud = ref({
   // 是否显示操作列
   operationColumn: false,
   // 操作列宽度
-  operationWidth: 180,
+  operationWidth: 140,
   // 操作列名称
   operationColumnText: '操作',
 })
@@ -529,10 +571,21 @@ const exportAction = () => {
   })
 }
 
+const dbClickOpenEdit = (record) => {
+  if (defaultCrud.value.isDbClickEdit) {
+    if (isRecovery.value) {
+      Message.error('回收站数据不可编辑')
+      return
+    }
+    maf.value.edit(record)
+  }
+}
+
 const editAction = (record) => maf.value.edit(record)
 
 const deleteAction = async (record) => {
-  const response = await defaultCrud.value.delete.api({ ids: [ record[ defaultCrud.value.pk ] ] })
+  const api = isRecovery.value ? defaultCrud.value.delete.realApi : defaultCrud.value.delete.api
+  const response = await api({ ids: [ record[ defaultCrud.value.pk ] ] })
   response.code === 200 
   ? Message.success(response.message || `删除成功！`)
   : Message.error(response.message || `删除失败！`)
@@ -541,10 +594,31 @@ const deleteAction = async (record) => {
 
 const deletesMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
-    const response = await defaultCrud.value.delete.api({ ids: selecteds.value })
+    const api = isRecovery.value ? defaultCrud.value.delete.realApi : defaultCrud.value.delete.api
+    const response = await api({ ids: selecteds.value })
     response.code === 200 
-    ? Message.success(response.message || `删除成功！`)
-    : Message.error(response.message || `删除失败！`)
+    ? Message.success(response.message || `恢复成功！`)
+    : Message.error(response.message || `恢复失败！`)
+    refresh()
+  } else {
+    Message.error('至少选择一条数据')
+  }
+}
+
+const recoveryAction = async (record) => {
+  const response = await defaultCrud.value.recovery.api({ ids: [ record[ defaultCrud.value.pk ] ] })
+  response.code === 200 
+  ? Message.success(response.message || `删除成功！`)
+  : Message.error(response.message || `删除失败！`)
+  refresh()
+}
+
+const recoverysMultipleAction = async() => {
+  if (selecteds.value && selecteds.value.length > 0) {
+    const response = await defaultCrud.value.recovery.api({ ids: selecteds.value })
+    response.code === 200 
+    ? Message.success(response.message || `恢复成功！`)
+    : Message.error(response.message || `恢复失败！`)
     refresh()
   } else {
     Message.error('至少选择一条数据')
