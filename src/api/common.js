@@ -143,6 +143,13 @@ export default {
   },
 
   /**
+   * 下载通用方法
+   */
+  download(url, method = 'post') {
+    return request({ url, method, responseType: 'blob' })
+  },
+
+  /**
    * 快捷查询字典
    */
   getDict(code) {

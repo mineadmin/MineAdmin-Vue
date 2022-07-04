@@ -22,7 +22,7 @@
       <ma-crud :crud="crud" :columns="columns" ref="crudRef">
         <!-- 状态列 -->
         <template #status="{ record }">
-          <a-switch :checked-value="1"  unchecked-value="2" :default-checked="record.status == 1" />
+          <a-switch :checked-value="1"  unchecked-value="2" @change="changeStatus($event, record.id)" :default-checked="record.status == 1" />
         </template>
         <!-- 头像列 -->
         <template #avatar="{ record }">
@@ -33,11 +33,37 @@
         <!-- 操作列 -->
         <template #operationCell="{ record }">
           <div v-if="record.id == 1">
-            <a-link><icon-refresh /> 更新缓存</a-link>
+            <a-link @click="updateCache(record.id)"><icon-refresh /> 更新缓存</a-link>
           </div>
+        </template>
+        <!-- 操作列扩展 -->
+        <template #operationAfterExtend="{ record }">
+          <a-dropdown
+            trigger="hover"
+            v-if="record.id != 1"
+            @select="selectOperation($event, record.id)"
+          >
+            <a-link><icon-double-right /> 更多</a-link>
+            <template #content>
+              <a-doption value="updateCache">更新缓存</a-doption>
+              <a-doption value="setHomePage">设置首页</a-doption>
+              <a-doption value="resetPassword">重置密码</a-doption>
+            </template>
+          </a-dropdown>
         </template>
       </ma-crud>
     </div>
+
+    <a-modal v-model:visible="setHomeVisible" @before-ok="saveHomePage">
+      <template #title>设置用户后台首页</template>
+      <a-form-item label="用户首页">
+        <a-select v-model="homePage" placeholder="请选择用户首页">
+          <a-option v-for="item in homePageList" :key="item" :value="item.key">
+            {{ item.title }}
+          </a-option>
+        </a-select>
+      </a-form-item>
+    </a-modal>
   </div>
 </template>
 
@@ -45,20 +71,78 @@
   import { ref, onMounted, reactive } from 'vue'
   import dept from '@/api/system/dept'
   import user from '@/api/system/user'
+  import commonApi from '@/api/common'
+  import { Message, Modal } from '@arco-design/web-vue'
 
   const depts = ref([])
+  const homePageList = ref([])
   const crudRef = ref()
+
+  const setHomeVisible = ref(false)
+  const userid = ref()
+  const homePage = ref('')
 
   onMounted(() => {
     dept.tree().then(res => {
       depts.value = res.data
       depts.value.unshift({ label: '所有部门', value: 'all' })
     })
+    commonApi.getDict('dashboard').then(res => homePageList.value = res.data )
   })
 
   const switchDept = (id) => {
     crud.requestParams = id[0] === 'all' ? { dept_id: undefined } : { dept_id: id[0] }
     crudRef.value.requestData()
+  }
+
+  const changeStatus = async (status, id) => {
+    const response = await user.changeStatus({ id, status })
+    if (response.success) {
+      Message.success(response.message)
+    }
+  }
+
+  const updateCache = id => {
+    user.clearCache(id).then(res => {
+      if (res.success) Message.success(res.message)
+    })
+  }
+  
+  const resetPassword = (id) => {
+    user.initUserPassword({ id }).then(res => res.success && Message.success(res.message) )
+  }
+
+  const saveHomePage = (done) => {
+    user.setHomePage({ id: userid.value, dashboard: homePage.value }).then(res => {
+      res.success && Message.success(res.message)
+    })
+    done(true)
+  }
+
+  const selectOperation = (value, id) => {
+    if (value === 'resetPassword') {
+      Modal.info({
+        title: '提示',
+        content: '确定将该用户密码重置为 123456 吗？',
+        simple: false,
+        onBeforeOk: (done) => {
+          resetPassword(id)
+          done(true)
+        }
+      })
+      return
+    }
+
+    if (value === 'updateCache') {
+      updateCache(id)
+      return
+    }
+
+    if (value === 'setHomePage') {
+      setHomeVisible.value = true
+      userid.value = id
+      return
+    }
   }
 
   const crud = reactive({
@@ -68,6 +152,7 @@
     searchLabelWidth: '75px',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
+    operationWidth: 200,
     add: { show: true, api: user.save, auth: ['system:user:add'] },
     edit: { show: true, api: user.update, auth: ['system:user:edit'] },
     delete: {
@@ -76,8 +161,8 @@
       realApi: user.realDeletes, realAuth: ['system:user:realDeletes']
     },
     recovery: { show: true, api: user.recoverys, auth: ['system:user:recovery']},
-    import: { show: true, },
-    export: { show: true, },
+    import: { show: true, url: 'system/user/import', templateUrl: 'system/user/downloadTemplate' },
+    export: { show: true, url: 'system/user/export' },
     viewLayoutSetting: { layout: 'customer', width: 800, cols: 2 },
     isDbClickEdit: false
   })

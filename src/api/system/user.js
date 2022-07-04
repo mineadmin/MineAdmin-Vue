@@ -100,11 +100,11 @@ export default {
    * 更改用户状态
    * @returns
    */
-  changeStatus(params = {}) {
+  changeStatus(data = {}) {
     return request({
       url: 'system/user/changeStatus',
       method: 'put',
-      data: params
+      data
     })
   },
 
@@ -124,11 +124,11 @@ export default {
    * 设置用户首页
    * @returns
    */
-  setHomePage(params = {}) {
+  setHomePage(data = {}) {
     return request({
       url: 'system/user/setHomePage',
       method: 'post',
-      data: params
+      data
     })
   },
 
@@ -136,10 +136,11 @@ export default {
    * 初始化用户密码
    * @returns
    */
-  initUserPassword(id) {
+  initUserPassword(data) {
     return request({
-      url: 'system/user/initUserPassword/' + id,
-      method: 'put'
+      url: 'system/user/initUserPassword',
+      method: 'put',
+      data
     })
   },
 
@@ -164,55 +165,6 @@ export default {
       url: 'system/user/modifyPassword',
       method: 'post',
       data
-    })
-  },
-
-  /**
-   * 导出
-   * @returns
-   */
-  exportExcel(params = {}) {
-    return request({
-      url: 'system/user/export',
-      method: 'post',
-      responseType: 'blob',
-      params
-    })
-  },
-
-  /**
-   * 导入
-   * @returns
-   */
-  importExcel(data = {}) {
-    return request({
-      url: 'system/user/import',
-      method: 'post',
-      data
-    })
-  },
-
-  /**
-   * 下载模板
-   * @returns
-   */
-  downloadTemplate() {
-    return request({
-      url: 'system/user/downloadTemplate',
-      method: 'post',
-      responseType: 'blob'
-    })
-  },
-
-  /**
-   * 清除自身缓存
-   * @returns
-   */
-  clearSelfCache(params = {}) {
-    return request({
-      url: 'system/user/clearSelfCache',
-      method: 'post',
-      data: params
     })
   },
 }

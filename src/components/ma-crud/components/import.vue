@@ -30,6 +30,9 @@
 
 <script setup>
 import { ref } from 'vue'
+import commonApi from '@/api/common'
+import tool from '@/utils/tool'
+import { Message } from '@arco-design/web-vue'
 
 const visible = ref(false)
 
@@ -45,7 +48,7 @@ const upload = (options) => {
 
   const dataForm = new FormData()
   dataForm.append('file', options.fileItem.file)
-  importExcel(props.modelValue.url, dataForm).then( res => {
+  commonApi.importExcel(props.modelValue.url, dataForm).then( res => {
     res.code == 200 && Message.success(res.message || '导入成功')
     res.code != 200 && Message.error(res.message || '导入失败')
     close()
@@ -54,10 +57,13 @@ const upload = (options) => {
 
 const sendDownload = () => {
   const url = props.modelValue.templateUrl
-  if ( /^[http|https]/g.test(url) ) {
+  if ( /^(http|https)/g.test(url) ) {
     window.open(url)
   } else {
-    window.open(window.location.origin + url)
+    commonApi.download(url).then(res => {
+      tool.download(res)
+      Message.success('下载成功')  
+    })
   }
 }
 

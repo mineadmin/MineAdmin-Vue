@@ -560,8 +560,8 @@ const addAction = () => maf.value.add()
 const importAction = () => mai.value.open()
 
 const exportAction = () => {
-  const params = settingProps.crud.requestParamsLabel ? requestParams.value[settingProps.crud.requestParamsLabel] : requestParams.value
-  const download = (url) => request({ url, params, method: 'get', timeout: 60 * 1000 })
+  const data = settingProps.crud.requestParamsLabel ? requestParams.value[settingProps.crud.requestParamsLabel] : requestParams.value
+  const download = (url) => request({ url, data, method: 'post', timeout: 60 * 1000, responseType: 'blob' })
 
   download(defaultCrud.value.export.url).then(res => {
     tool.download(res)
