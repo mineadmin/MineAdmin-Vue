@@ -47,21 +47,25 @@
   const contextMenuItem = ref(null)
   const left = ref(0)
   const top = ref(0)
+  const notAddTagList = [
+    'login'
+  ]
 
   watch(
     () => route,
     r  => {
+      if (! notAddTagList.includes(r.name)) {
+        addTag({
+          name: r.name,
+          path: r.path,
+          affix: r.meta.affix,
+          title: r.meta.title,
+          query: r.query
+        })
 
-      addTag({
-        name: r.name,
-        path: r.path,
-        affix: r.meta.affix,
-        title: r.meta.title,
-        query: r.query
-      })
-
-      if (tags.value && tags.value.scrollWidth > tags.value.clientWidth) {
-        tags.value.querySelector('.active').scrollIntoView()
+        if (tags.value && tags.value.scrollWidth > tags.value.clientWidth) {
+          tags.value.querySelector('.active').scrollIntoView()
+        }
       }
     },
     { deep: true }
