@@ -1,0 +1,102 @@
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
+<template>
+  <div class="ma-content-block lg:h-full lg:flex justify-between p-4">
+    <!-- CRUD 组件 -->
+    <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+      <!-- 状态列 -->
+      <template #status="{ record }">
+        <a-switch :checked-value="1"  unchecked-value="2" @change="changeStatus($event, record.id)" :default-checked="record.status == 1" />
+      </template>
+    </ma-crud>
+  </div>
+</template>
+
+<script setup>
+  import { ref, onMounted, reactive } from 'vue'
+  import dept from '@/api/system/dept'
+  import { Message, Modal } from '@arco-design/web-vue'
+
+  const depts = ref([])
+  const homePageList = ref([])
+  const crudRef = ref()
+
+
+  onMounted(() => {
+
+  })
+
+  const changeStatus = async (status, id) => {
+    const response = await user.changeStatus({ id, status })
+    if (response.success) {
+      Message.success(response.message)
+    }
+  }
+
+  const crud = reactive({
+    api: dept.getList,
+    recycleApi: dept.getRecycleList,
+    showIndex: false,
+    searchLabelWidth: '75px',
+    rowSelection: { showCheckedAll: true },
+    operationColumn: true,
+    operationWidth: 200,
+    searchLabelCols: 4,
+    add: { show: true, api: dept.save, auth: ['system:dept:add'] },
+    edit: { show: true, api: dept.update, auth: ['system:dept:edit'] },
+    delete: {
+      show: true,
+      api: dept.deletes, auth: ['system:dept:delete'],
+      realApi: dept.realDeletes, realAuth: ['system:dept:realDeletes']
+    },
+    recovery: { show: true, api: dept.recoverys, auth: ['system:dept:recovery']},
+    isDbClickEdit: false
+  })
+
+  const columns = reactive([
+    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
+    {
+      title: '上级部门', dataIndex: 'parent_id', hide: true, formType: 'tree-select', 
+      dict: { url: 'system/dept/tree' },
+    },
+    { 
+      title: '部门名称', dataIndex: 'name', search: true,
+      rules: [{ required: true, message: '部门名称必填' }],
+    },
+    { title: '负责人', dataIndex: 'leader', search: true },
+    {
+      title: '手机', dataIndex: 'phone', search: true, 
+      addRules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
+    },
+    {
+      title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1,
+    },
+    {
+      title: '状态', dataIndex: 'status', search: true, formType: 'radio',
+      dict: { name: 'data_status', props: { label: 'title', value: 'key' } },
+      addDefaultValue: '1',
+    },
+    {
+      title: '备注', dataIndex: 'remark', hide: true, formType: 'textarea',
+    },
+    {
+      title: '创建时间', dataIndex: 'created_at', addDisplay: false, editDisplay: false,
+      search: true, formType: 'range'
+    },
+  ])
+</script>
+
+<script>
+export default { name: 'system:user' }
+</script>
+
+<style scoped>
+
+</style>

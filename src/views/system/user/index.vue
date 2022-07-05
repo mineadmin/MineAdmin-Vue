@@ -22,7 +22,12 @@
       <ma-crud :crud="crud" :columns="columns" ref="crudRef">
         <!-- 状态列 -->
         <template #status="{ record }">
-          <a-switch :checked-value="1"  unchecked-value="2" @change="changeStatus($event, record.id)" :default-checked="record.status == 1" />
+          <a-switch
+            :checked-value="1"
+            unchecked-value="2"
+            @change="changeStatus($event, record.id)"
+            :default-checked="record.status == 1" 
+          />
         </template>
         <!-- 头像列 -->
         <template #avatar="{ record }">
@@ -40,9 +45,10 @@
         <template #operationAfterExtend="{ record }">
           <a-dropdown
             trigger="hover"
-            v-if="record.id != 1"
+            v-if="record.id != 1 && ! isRecovery"
             @select="selectOperation($event, record.id)"
           >
+          
             <a-link><icon-double-right /> 更多</a-link>
             <template #content>
               <a-doption value="updateCache">更新缓存</a-doption>
@@ -58,7 +64,7 @@
       <template #title>设置用户后台首页</template>
       <a-form-item label="用户首页">
         <a-select v-model="homePage" placeholder="请选择用户首页">
-          <a-option v-for="item in homePageList" :key="item" :value="item.key">
+          <a-option v-for="(item, index) in homePageList" :key="index" :value="item.key">
             {{ item.title }}
           </a-option>
         </a-select>
@@ -68,7 +74,7 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, reactive } from 'vue'
+  import { ref, onMounted, reactive, computed } from 'vue'
   import dept from '@/api/system/dept'
   import user from '@/api/system/user'
   import commonApi from '@/api/common'
@@ -89,6 +95,8 @@
     })
     commonApi.getDict('dashboard').then(res => homePageList.value = res.data )
   })
+
+  let isRecovery = computed(() => crudRef.value.isRecovery )
 
   const switchDept = (id) => {
     crud.requestParams = id[0] === 'all' ? { dept_id: undefined } : { dept_id: id[0] }

@@ -55,7 +55,7 @@
   }
 
   const findTopMenuName = () => {
-    if (! route.matched[1].meta.breadcrumb) {
+    if (route.matched[1] && route.matched[1].meta && ! route.matched[1].meta.breadcrumb) {
       openKeys.value = []
       route.matched.map((item, index) => {
         if (route.matched[0].name === 'layout') {
@@ -64,9 +64,11 @@
       })
     } else {
       openKeys.value = []
-      route.matched[1].meta.breadcrumb.map(item => {
-        openKeys.value.push(item.name)
-      })
+      if (route.matched[1] && route.matched[1].meta) {
+        route.matched[1].meta.breadcrumb.map(item => {
+          openKeys.value.push(item.name)
+        })
+      }
     }
   }
 

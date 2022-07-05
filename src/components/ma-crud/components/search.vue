@@ -16,7 +16,7 @@
       ref="search"
       @submit="handlerSearch"
     >
-      <div class="grid grid-cols-1 lg:grid-cols-3">
+      <div :class="`grid grid-cols-1 lg:grid-cols-${props.searchLabelCols} w-full`">
         <template v-for="(item, index) in props.columns" :key="index">
           <a-form-item
             :field="item.dataIndex"
@@ -227,6 +227,7 @@ const props = defineProps({
   columns: { type: Array },
   searchLabelWidth: { type: String, default: () => 'auto' },
   searchLabelAlign: { type: String, default: () => 'right' },
+  searchLabelCols: { type: Number, default: 3 },
 })
 
 const dictTrans = (dataIndex, value) => {

@@ -181,6 +181,7 @@
                   :file-type="item.fileType || 'button'"
                   :show-word-limit="['input', 'textarea'].includes(item.formType) ? true : false"
                   :is-echo="item.isEcho"
+                  :mode="item.formType === 'input-number' ? 'button' : undefined"
                   allow-clear
                   @change="item.changeEvent"
                 />

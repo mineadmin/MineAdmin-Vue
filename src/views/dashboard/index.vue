@@ -9,8 +9,8 @@
 -->
 <template>
   <a-layout-content class="flex flex-col">
-    <statistics v-if="userStore.user.dashboard === 'statistics'" />
-    <work-panel v-else />
+    <statistics v-if="userStore.user && userStore.user.dashboard === 'statistics'" />
+    <work-panel v-else-if="userStore.user" />
   </a-layout-content>
 </template>
 

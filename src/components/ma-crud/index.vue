@@ -14,6 +14,7 @@
         :columns="settingProps.columns"
         :search-label-width="settingProps.crud.searchLabelWidth"
         :search-label-align="settingProps.crud.searchLabelAlign"
+        :search-label-cols="settingProps.crud.searchLabelCols"
         :search-col="settingProps.crud.searchCol"
         @search="searchHandler"
         class="__search-panel"
@@ -129,7 +130,7 @@
           <tr class="ma-crud-table-tr" @dblclick="dbClickOpenEdit(record)" />
         </template>
         <template #columns>
-          <template v-for="(row, index) in columns" :key="index">
+          <template v-for="row in columns" :key="row[defaultCrud.pk]">
             <a-table-column
               :title="row.title" :data-index="row.dataIndex" :width="row.width"
               :ellipsis="true" :tooltip="row.dataIndex === '__operation' ? false : true" :align="row.align || 'left'" :fixed="row.fixed"
@@ -478,8 +479,10 @@ const requestHandle = async () => {
     const response = config.parseResponseData(await currentApi.value(requestParams.value))
     if (response.rows) {
       tableData.value = response.rows
-      total.value = response.pageInfo.total
-      openPagination.value = true
+      if (response.pageInfo) {
+        total.value = response.pageInfo.total
+        openPagination.value = true
+      }
     } else {
       tableData.value = response
     }
@@ -680,7 +683,7 @@ if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.aut
 
 onMounted(() => document.querySelector('.arco-table-body').className += ' customer-scrollbar' )
 
-defineExpose({ refresh, requestParams, requestData })
+defineExpose({ refresh, requestParams, requestData, isRecovery })
 
 </script>
 
