@@ -26,53 +26,44 @@
 
 <script setup>
   import { ref, reactive } from 'vue'
-  import dept from '@/api/system/dept'
+  import post from '@/api/system/post'
   import { Message } from '@arco-design/web-vue'
 
   const crudRef = ref()
 
   const changeStatus = async (status, id) => {
-    const response = await dept.changeStatus({ id, status })
+    const response = await post.changeStatus({ id, status })
     if (response.success) {
       Message.success(response.message)
     }
   }
 
   const crud = reactive({
-    api: dept.getList,
-    recycleApi: dept.getRecycleList,
+    api: post.getPageList,
+    recycleApi: post.getRecyclePageList,
     showIndex: false,
     searchLabelWidth: '75px',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 200,
     searchLabelCols: 4,
-    add: { show: true, api: dept.save, auth: ['system:dept:add'] },
-    edit: { show: true, api: dept.update, auth: ['system:dept:edit'] },
+    add: { show: true, api: post.save, auth: ['system:post:add'] },
+    edit: { show: true, api: post.update, auth: ['system:post:edit'] },
     delete: {
       show: true,
-      api: dept.deletes, auth: ['system:dept:delete'],
-      realApi: dept.realDeletes, realAuth: ['system:dept:realDeletes']
+      api: post.deletes, auth: ['system:post:delete'],
+      realApi: post.realDeletes, realAuth: ['system:post:realDeletes']
     },
-    recovery: { show: true, api: dept.recoverys, auth: ['system:dept:recovery']},
+    recovery: { show: true, api: post.recoverys, auth: ['system:post:recovery']},
   })
 
   const columns = reactive([
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
-    {
-      title: '上级部门', dataIndex: 'parent_id', hide: true, formType: 'tree-select', 
-      dict: { url: 'system/dept/tree' },
-      editDefaultValue: (record) => {
-        return record.parent_id == 0 ? undefined : record.parent_id
-      }
+    { 
+      title: '岗位名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '岗位名称必填' }],
     },
     { 
-      title: '部门名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '部门名称必填' }],
-    },
-    { title: '负责人', dataIndex: 'leader', search: true },
-    {
-      title: '手机', dataIndex: 'phone', search: true, 
-      addRules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
+      title: '岗位标识', dataIndex: 'code', search: true, rules: [{ required: true, message: '岗位标识必填' }],
     },
     {
       title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1,
@@ -93,7 +84,7 @@
 </script>
 
 <script>
-export default { name: 'system:dept' }
+export default { name: 'system:post' }
 </script>
 
 <style scoped>

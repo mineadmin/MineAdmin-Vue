@@ -115,14 +115,14 @@
       router.push({ name: tag.name, query: tag.query || {} })
     }
     
-    setTimeout(() => {
+    // setTimeout(() => {
       keepStore.removeKeepAlive(tag.name)
       keepStore.hidden()
       nextTick(() => {
         keepStore.addKeepAlive(tag.name)
         keepStore.display()
       })
-    }, 0)
+    // }, 0)
   }
 
   const contextMenuCloseTag = () => {
