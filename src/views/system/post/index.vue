@@ -13,7 +13,13 @@
     <ma-crud :crud="crud" :columns="columns" ref="crudRef">
       <!-- 排序列 -->
       <template #sort="{ record }">
-        <a-input-number :default-value="record.sort" mode="button" @change="changeSort($event, record.id)" />
+        <a-input-number
+          :default-value="record.sort"
+          mode="button"
+          @change="changeSort($event, record.id)"
+          :min="0"
+          :max="1000"
+        />
       </template>
       <!-- 状态列 -->
       <template #status="{ record }">
@@ -78,6 +84,7 @@
     },
     {
       title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1, width: 180,
+      min: 0, max: 1000
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',

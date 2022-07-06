@@ -23,6 +23,8 @@
       @select="handlerSelect"
       :field-names="props.fieldNames"
       v-model:selected-keys="selectedKeys"
+      ref="maTree"
+      v-bind="$attrs"
     >
       <template #icon v-if="props.icon"><component :is="props.icon" /></template>
     </a-tree>
@@ -34,6 +36,7 @@
 
   const treeData = ref([])
   const selectedKeys = ref([])
+  const maTree = ref()
 
   const emit = defineEmits(['click'])
 
@@ -76,7 +79,7 @@
         if (item.children && item.children.length > 0) {
           const temp = loop(item.children)
           tree.push(...temp)
-        } else if (item[props.props.title].indexOf(keyword) !== -1) {
+        } else if (item[props.fieldNames['title']].indexOf(keyword) !== -1) {
           tree.push(item)
         }
         return tree
@@ -86,6 +89,8 @@
     }
     return loop(props.modelValue)
   }
+
+  defineExpose({ maTree })
 </script>
 
 <style scoped lang="less">
@@ -94,6 +99,6 @@
   border-radius: 3px;
 }
 :deep(.arco-tree-node-switcher) {
-  margin-left: 5px;
+  margin-left: 2px;
 }
 </style>

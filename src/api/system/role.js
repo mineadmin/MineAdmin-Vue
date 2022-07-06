@@ -63,11 +63,11 @@ export default {
    * 添加角色
    * @returns
    */
-  save(params = {}) {
+  save(data = {}) {
     return request({
       url: 'system/role/save',
       method: 'post',
-      data: params
+      data
     })
   },
 
@@ -75,10 +75,11 @@ export default {
    * 移到回收站
    * @returns
    */
-  deletes(ids) {
+  deletes(data) {
     return request({
-      url: 'system/role/delete/' + ids,
-      method: 'delete'
+      url: 'system/role/delete',
+      method: 'delete',
+      data
     })
   },
 
@@ -86,10 +87,11 @@ export default {
    * 恢复数据
    * @returns
    */
-  recoverys(ids) {
+  recoverys(data) {
     return request({
-      url: 'system/role/recovery/' + ids,
-      method: 'put'
+      url: 'system/role/recovery',
+      method: 'put',
+      data
     })
   },
 
@@ -97,10 +99,11 @@ export default {
    * 真实删除
    * @returns
    */
-  realDeletes(ids) {
+  realDeletes(data) {
     return request({
-      url: 'system/role/realDelete/' + ids,
-      method: 'delete'
+      url: 'system/role/realDelete',
+      method: 'delete',
+      data
     })
   },
 
@@ -108,11 +111,27 @@ export default {
    * 更新数据
    * @returns
    */
-  update(id, params = {}) {
+  update(id, data = {}) {
     return request({
       url: 'system/role/update/' + id,
       method: 'put',
-      data: params
+      data
+    })
+  },
+
+  updateMenuPermission(id, data) {
+    return request({
+      url: 'system/role/menuPermission/' + id,
+      method: 'put',
+      data
+    })
+  },
+
+  updateDataPermission(id, data) {
+    return request({
+      url: 'system/role/dataPermission/' + id,
+      method: 'put',
+      data
     })
   },
 
