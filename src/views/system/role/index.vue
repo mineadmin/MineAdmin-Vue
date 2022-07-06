@@ -20,18 +20,26 @@
         <a-switch
           :checked-value="1" 
           unchecked-value="2"
-          @change="changeStatus($event, record.id)"
+          @change="changeStatus($event, record)"
           :default-checked="record.status == 1"
         />
       </template>
+      <!-- 操作列 -->
+      <template #operationCell="{ record }">
+        <div v-if="record.code === 'superAdmin'"></div>
+      </template>
       <!-- 操作前置插槽 -->
-      <template #operationBeforeExtend>
-        <a-space size="mini">
-            <a-link><icon-menu /> 菜单权限</a-link>
-            <a-link><icon-layers /> 数据权限</a-link>
+      <template #operationBeforeExtend="{ record }">
+        <a-space size="mini" v-if="record.code !== 'superAdmin'">
+            <a-link @click="openMenuList(record)"><icon-menu /> 菜单权限</a-link>
+            <a-link @click="openDataScopeList(record)"><icon-layers /> 数据权限</a-link>
         </a-space>
       </template>
     </ma-crud>
+
+    <menu-permission ref="mpRef" />
+
+    <data-permission ref="dpRef" />
   </div>
 </template>
 
@@ -39,17 +47,34 @@
   import { ref, reactive } from 'vue'
   import role from '@/api/system/role'
   import { Message } from '@arco-design/web-vue'
+  import MenuPermission from './components/menuPermission.vue'
+  import DataPermission from './components/dataPermission.vue'
 
   const crudRef = ref()
+  const mpRef = ref()
+  const dpRef = ref()
 
-  const changeStatus = async (status, id) => {
-    const response = await role.changeStatus({ id, status })
+  const openMenuList = (record) => {
+    mpRef.value.open(record)
+  }
+
+  const openDataScopeList = (record) => {
+
+  }
+
+  const changeStatus = async (status, record) => {
+    if (record.code === 'superAdmin') {
+      Message.error('超级管理员角色不能禁用')
+      return
+    }
+    const response = await role.changeStatus({ id: record.id, status })
     if (response.success) {
       Message.success(response.message)
     }
   }
 
   const changeSort = async (value, id) => {
+    
     const response = await role.numberOperation({ id, numberName: 'sort', numberValue: value })
     if (response.success) {
       Message.success(response.message)
@@ -63,7 +88,7 @@
     searchLabelWidth: '75px',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 300,
+    operationWidth: 320,
     add: { show: true, api: role.save, auth: ['system:role:add'] },
     edit: { show: true, api: role.update, auth: ['system:role:edit'] },
     delete: {
@@ -72,6 +97,7 @@
       realApi: role.realDeletes, realAuth: ['system:role:realDeletes']
     },
     recovery: { show: true, api: role.recoverys, auth: ['system:role:recovery']},
+    isDbClickEdit: false,
   })
 
   const columns = reactive([

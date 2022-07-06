@@ -56,13 +56,14 @@ const upload = (options) => {
 }
 
 const sendDownload = () => {
+  Message.info('请求服务器下载文件中...')
   const url = props.modelValue.templateUrl
   if ( /^(http|https)/g.test(url) ) {
     window.open(url)
   } else {
     commonApi.download(url).then(res => {
       tool.download(res)
-      Message.success('下载成功')  
+      Message.success('请求成功，文件开始下载')  
     })
   }
 }

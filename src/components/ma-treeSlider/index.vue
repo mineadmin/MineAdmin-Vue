@@ -8,7 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div class="flex flex-col h-full">
+  <div class="flex flex-col w-full h-full">
     <a-input
       class="mb-2"
       :placeholder="props?.searchPlaceholder"
@@ -19,9 +19,9 @@
     <a-tree
       blockNode
       :data="treeData"
-      class="shadow h-full w-full"
+      class="h-full w-full"
       @select="handlerSelect"
-      :field-names="props.props"
+      :field-names="props.fieldNames"
       v-model:selected-keys="selectedKeys"
     >
       <template #icon v-if="props.icon"><component :is="props.icon" /></template>
@@ -41,15 +41,17 @@
     modelValue: { type: Array },
     searchPlaceholder: { type: String },
     selectedKeys: { type: Array },
+    fieldNames: { type: Object, default: () => { return { title: 'label', value: 'code' } } },
     icon: { type: String, default: undefined },
-    props: { title: 'title', key: 'value' }
   })
 
   onMounted( () => selectedKeys.value = props.selectedKeys )
 
   watch(
     () => props.modelValue,
-    val => treeData.value = val
+    val => { 
+      treeData.value = val
+    }
   )
 
   const handlerSelect = (item, data) => {
@@ -87,15 +89,11 @@
 </script>
 
 <style scoped lang="less">
-.resource-container {
-  background-color: var(--color-bg-4);
+:deep(.arco-tree-node:hover) {
+  background-color: var(--color-fill-2);
+  border-radius: 3px;
 }
-:deep(.arco-tree-node-indent),
-:deep(.arco-tree-node-switcher)
-{
-  display: none;
-}
-:deep(.arco-tree-node-title) {
-  padding-left: 15px; margin-left: -2px;
+:deep(.arco-tree-node-switcher) {
+  margin-left: 5px;
 }
 </style>

@@ -572,14 +572,15 @@ const addAction = () => maf.value.add()
 const importAction = () => mai.value.open()
 
 const exportAction = () => {
+  Message.info('请求服务器下载文件中...')
   const data = settingProps.crud.requestParamsLabel ? requestParams.value[settingProps.crud.requestParamsLabel] : requestParams.value
   const download = (url) => request({ url, data, method: 'post', timeout: 60 * 1000, responseType: 'blob' })
 
   download(defaultCrud.value.export.url).then(res => {
     tool.download(res)
-    Message.success('导出成功')
+    Message.success('请求成功，文件开始下载')
   }).catch(e => {
-    Message.error('导出失败')
+    Message.error('请求服务器错误，下载失败')
   })
 }
 

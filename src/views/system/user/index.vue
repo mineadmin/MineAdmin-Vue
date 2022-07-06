@@ -9,14 +9,17 @@
 -->
 <template>
   <div class="ma-content-block lg:h-full lg:flex justify-between p-4">
-    <ma-tree-slider
-      v-model="depts"
-      searchPlaceholder="搜索部门"
-      :props="{ title: 'label', key: 'value' }"
-      class="lg:w-2/12 w-full h-full"
-      :selectedKeys="['all']"
-      @click="switchDept"
-    />
+
+    <div class="lg:w-2/12 w-full h-full p-2 shadow">
+      <ma-tree-slider
+        v-model="depts"
+        searchPlaceholder="搜索部门"
+        :field-names="{ title: 'label', key: 'value' }"
+        :selectedKeys="['all']"
+        @click="switchDept"
+      />
+    </div>
+
     <div class="lg:w-10/12 w-full lg:ml-4 mt-5 lg:mt-0">
       <!-- CRUD 组件 -->
       <ma-crud :crud="crud" :columns="columns" ref="crudRef">
