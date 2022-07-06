@@ -11,6 +11,10 @@
   <div class="ma-content-block lg:h-full lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
     <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+      <!-- 排序列 -->
+      <template #sort="{ record }">
+        <a-input-number :default-value="record.sort" mode="button" @change="changeSort($event, record.id)" />
+      </template>
       <!-- 状态列 -->
       <template #status="{ record }">
         <a-switch
@@ -33,6 +37,13 @@
 
   const changeStatus = async (status, id) => {
     const response = await post.changeStatus({ id, status })
+    if (response.success) {
+      Message.success(response.message)
+    }
+  }
+
+  const changeSort = async (value, id) => {
+    const response = await post.numberOperation({ id, numberName: 'sort', numberValue: value })
     if (response.success) {
       Message.success(response.message)
     }
@@ -66,7 +77,7 @@
       title: '岗位标识', dataIndex: 'code', search: true, rules: [{ required: true, message: '岗位标识必填' }],
     },
     {
-      title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1,
+      title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1, width: 180,
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',

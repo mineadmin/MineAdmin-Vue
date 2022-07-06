@@ -224,7 +224,6 @@
       width: 180,
       search: true,
       formType: 'range',
-      showTime: true,
       addDisplay: false,
       editDisplay: false 
     },

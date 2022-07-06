@@ -171,7 +171,7 @@
     recovery: { show: true, api: user.recoverys, auth: ['system:user:recovery']},
     import: { show: true, url: 'system/user/import', templateUrl: 'system/user/downloadTemplate' },
     export: { show: true, url: 'system/user/export' },
-    viewLayoutSetting: { layout: 'customer', width: 800, cols: 2 },
+    viewLayoutSetting: { layout: 'customer', width: 800 },
     isDbClickEdit: false
   })
 

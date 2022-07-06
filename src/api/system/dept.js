@@ -95,6 +95,18 @@ export default {
       data: params
     })
   },
+  
+  /**
+   * 数字运算操作
+   * @returns
+   */
+   numberOperation(data = {}) {
+    return request({
+      url: 'system/dept/numberOperation',
+      method: 'put',
+      data
+    })
+  },
 
   /**
    * 更改部门状态

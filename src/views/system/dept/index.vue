@@ -11,6 +11,10 @@
   <div class="ma-content-block lg:h-full lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
     <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+      <!-- 排序列 -->
+      <template #sort="{ record }">
+        <a-input-number :default-value="record.sort" mode="button" @change="changeSort($event, record.id)" />
+      </template>
       <!-- 状态列 -->
       <template #status="{ record }">
         <a-switch
@@ -25,7 +29,7 @@
 </template>
 
 <script setup>
-  import { ref, reactive } from 'vue'
+  import { ref, reactive, onMounted } from 'vue'
   import dept from '@/api/system/dept'
   import { Message } from '@arco-design/web-vue'
 
@@ -33,6 +37,14 @@
 
   const changeStatus = async (status, id) => {
     const response = await dept.changeStatus({ id, status })
+    if (response.success) {
+      Message.success(response.message)
+    }
+  }
+
+
+  const changeSort = async (value, id) => {
+    const response = await dept.numberOperation({ id, numberName: 'sort', numberValue: value })
     if (response.success) {
       Message.success(response.message)
     }
@@ -46,7 +58,6 @@
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 200,
-    searchLabelCols: 4,
     add: { show: true, api: dept.save, auth: ['system:dept:add'] },
     edit: { show: true, api: dept.update, auth: ['system:dept:edit'] },
     delete: {
@@ -55,6 +66,7 @@
       realApi: dept.realDeletes, realAuth: ['system:dept:realDeletes']
     },
     recovery: { show: true, api: dept.recoverys, auth: ['system:dept:recovery']},
+    isExpand: true,
   })
 
   const columns = reactive([
@@ -75,7 +87,7 @@
       addRules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
     },
     {
-      title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1,
+      title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1, width: 180,
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',

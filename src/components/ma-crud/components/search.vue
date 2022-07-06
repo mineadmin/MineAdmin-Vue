@@ -16,7 +16,7 @@
       ref="search"
       @submit="handlerSearch"
     >
-      <div :class="`grid grid-cols-1 lg:grid-cols-${props.searchLabelCols} w-full`">
+      <div :class="`grid grid-cols-1 lg:grid-cols-4 w-full`">
         <template v-for="(item, index) in props.columns" :key="index">
           <a-form-item
             :field="item.dataIndex"
@@ -94,7 +94,7 @@
         <a-space size="medium">
           <a-button type="primary" html-type="submit"><icon-search /> 提交</a-button>
           <a-button @click="reset"><icon-delete /> 清空</a-button>
-          <slot name="buttons" />
+          <slot name="searchButtons" />
         </a-space>
       </div>
     </a-form>

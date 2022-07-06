@@ -20,8 +20,8 @@
         class="__search-panel"
         ref="searchRef"
       >
-        <template #buttons>
-          <slot name="buttons"></slot>
+        <template #searchButtons>
+          <slot name="searchButtons"></slot>
         </template>
       </ma-search>
     </div>
@@ -91,7 +91,13 @@
             @click="exportAction"
             class="w-full lg:w-auto mt-2 lg:mt-0"
           ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
-          <slot name="operation"></slot>
+
+          <a-button type="secondary" @click="handlerExpand" v-if="defaultCrud.isExpand">
+            <icon-expand v-if="! expandState" />
+            <icon-shrink v-else />
+            {{ expandState ? ' 折叠' : ' 展开' }}
+          </a-button>
+          <slot name="tableButtons"></slot>
         </a-space>
         <a-space class="lg:mt-0 mt-2">
           <a-tooltip
@@ -271,6 +277,7 @@ const requestParams = ref({})
 const columns = ref([])
 const showSearch = ref(true)
 const isRecovery = ref(false)
+const expandState = ref(false)
 const searchRef = ref(null)
 const crudHeader = ref(null)
 const selecteds = ref([])
@@ -303,6 +310,8 @@ const defaultCrud = ref({
   size: 'large',
   // 是否开启双击编辑数据
   isDbClickEdit: true,
+  // 是否显示展开/折叠按钮
+  isExpand: false,
   // 新增和编辑显示设置
   viewLayoutSetting: {
     // 布局方式, 支持 auto（自动） 和 customer（自定义）两种
@@ -452,7 +461,7 @@ const requestData = async () => {
     columns.value.unshift({ title: defaultCrud.value.indexLabel, dataIndex: '__index', width: 70, fixed: 'left' })
   }
   if (defaultCrud.value.operationColumn && columns.value.length > 0 && columns.value[columns.value.length - 1].dataIndex !== '__operation') {
-    columns.value.push({ title: defaultCrud.value.operationColumnText, dataIndex: '__operation', width: defaultCrud.value.operationWidth, align: 'center', fixed: 'right' })
+    columns.value.push({ title: defaultCrud.value.operationColumnText, dataIndex: '__operation', width: defaultCrud.value.operationWidth, align: 'right', fixed: 'right' })
   }
   showSearch.value = true
   initRequestParams()
@@ -640,6 +649,11 @@ const switchDataType = () => {
   requestData()
 }
 
+const handlerExpand = () => {
+  expandState.value = ! expandState.value
+  expandState.value ? tableRef.value.expandAll(true) : tableRef.value.expandAll(false)
+}
+
 const settingProps = defineProps({
 
   // 表格数据
@@ -683,7 +697,7 @@ if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.aut
 
 onMounted(() => document.querySelector('.arco-table-body').className += ' customer-scrollbar' )
 
-defineExpose({ refresh, requestParams, requestData, isRecovery })
+defineExpose({ refresh, requestParams, requestData, isRecovery, tableRef })
 
 </script>
 

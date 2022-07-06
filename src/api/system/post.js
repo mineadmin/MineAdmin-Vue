@@ -98,6 +98,18 @@ export default {
   },
 
   /**
+   * 数字运算操作
+   * @returns
+   */
+   numberOperation(data = {}) {
+    return request({
+      url: 'system/post/numberOperation',
+      method: 'put',
+      data
+    })
+  },
+
+  /**
    * 更改岗位状态
    * @returns
    */
