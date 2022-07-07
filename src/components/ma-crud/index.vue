@@ -130,6 +130,7 @@
         :size="defaultCrud.size"
         :hide-expand-button-on-empty="defaultCrud.hideExpandButtonOnEmpty"
         :default-expand-all-rows="defaultCrud.expandAllRows"
+        :summary="defaultCrud.customerSummary || defaultCrud.showSummary"
         @selection-change="selectChange"
       >
         <template #tr="{ record }">
@@ -212,11 +213,11 @@
                   <template v-else>{{ record[row.dataIndex] }}</template>
                 </slot>
               </template>
-              <template #summary-cell="{ column,record,rowIndex }">
-                <slot name="summary-cell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
-              </template>
             </a-table-column>
           </template>
+        </template>
+        <template #summary-cell="{ column, record, rowIndex }" v-if="defaultCrud.customerSummary || showSummary">
+          <slot name="summary-cell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
         </template>
       </a-table>
     </div>
@@ -312,6 +313,10 @@ const defaultCrud = ref({
   isDbClickEdit: true,
   // 是否显示展开/折叠按钮
   isExpand: false,
+  // 是否显示总结行
+  showSummary: false,
+  // 自定义总结行，要传入函数
+  customerSummary: false,
   // 新增和编辑显示设置
   viewLayoutSetting: {
     // 布局方式, 支持 auto（自动） 和 customer（自定义）两种
