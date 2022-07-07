@@ -482,7 +482,7 @@ const requestHandle = async () => {
 
   loading.value = true
 
-  isFunction(settingProps.crud.before) && settingProps.crud.before(requestParams.value)
+  isFunction(settingProps.crud.beforeRequest) && settingProps.crud.beforeRequest(requestParams.value)
 
   if (isFunction(currentApi.value)) {
     const response = config.parseResponseData(await currentApi.value(requestParams.value))
@@ -499,7 +499,7 @@ const requestHandle = async () => {
     console.error(`ma-crud error：crud.api not is Function.`)
   }
 
-  isFunction(settingProps.crud.after) && settingProps.crud.after(tableData.value)
+  isFunction(settingProps.crud.afterRequest) && settingProps.crud.afterRequest(tableData.value)
 
   loading.value = false
 }
@@ -673,9 +673,9 @@ const settingProps = defineProps({
         // 请求回收站api方法
         recycleApi: undefined,
         // 请求前置处理
-        before: () => {},
+        beforeRequest: () => {},
         // 请求后置处理
-        after: () => {},
+        afterRequest: () => {},
         // 请求参数
         requestParams: {},
         // 是否自动请求

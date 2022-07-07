@@ -133,6 +133,7 @@
                   :disabled="item.disabled"
                   :show-time="item.showTime"
                   :readonly="item.readonly"
+                  :mode="item.mode"
                   allow-clear
                   style="width: 100%;"
                   @change="item.changeEvent"
@@ -237,7 +238,18 @@ const submit = (done) => {
       done(false)
       return
     }
-    const response = currentAction.value === 'add' ? await props.crud.add.api(form.value) : await props.crud.edit.api(form.value[props.crud.pk], form.value)
+    
+    let response
+    if (currentAction.value === 'add') {
+      _.isFunction(props.crud.beforeAdd) && props.crud.beforeAdd(form.value)
+      response = await props.crud.add.api(form.value)
+      _.isFunction(props.crud.afterAdd) && props.crud.afterAdd(response, form.value)
+    } else {
+      _.isFunction(props.crud.beforeEdit) && props.crud.beforeEdit(form.value)
+      response = await props.crud.edit.api(form.value[props.crud.pk], form.value)
+      _.isFunction(props.crud.afterEdit) && props.crud.afterEdit(response, form.value)
+    }
+
     if ( response.code === 200 ) {
       Message.success(response.message || `${actionTitle.value}成功！`)
       emit('success', response)

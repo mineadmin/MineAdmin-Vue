@@ -9,7 +9,7 @@
 -->
 <template>
   <a-modal v-model:visible="visible" @cancel="close" @before-ok="submit">
-    <template #title>菜单权限</template>
+    <template #title>数据权限</template>
     <a-form :model="form">
       <a-form-item label="角色名称" field="name">
         <a-input disabled v-model="form.name" />
@@ -17,11 +17,19 @@
       <a-form-item label="角色标识" field="code">
         <a-input disabled v-model="form.code" />
       </a-form-item>
-      <a-form-item label="数据边界" field="scope">
-        <a-select v-model="form.code" />
+      <a-form-item label="数据边界" field="data_scope">
+        <a-select v-model="form.data_scope">
+          <a-option
+            v-for="item in scopeList"
+            :key="item"
+            :value="item.value"
+          >
+            {{ item.label }}
+          </a-option>
+        </a-select>
       </a-form-item>
-      <a-form-item label="菜单列表" field="menu_ids">
-        <a-spin :loading="loading" tip="菜单加载中..." class="w-full">
+      <a-form-item label="部门列表" field="dept_ids" v-show="form.data_scope == '2'">
+        <a-spin :loading="loading" tip="部门加载中..." class="w-full">
           <div class="w-full">
             <a-space class="mt-1.5" size="large">
               <a-checkbox @change="handlerExpand">展开/折叠</a-checkbox>
@@ -60,10 +68,20 @@
   const selectKeys = ref([])
   const cancelLinkage = ref(false)
   const tree = ref()
-  const form = ref({ name: undefined, code: undefined })
+  const form = ref({ name: undefined, code: undefined, data_scope: 1 })
+  const scopeList = ref([
+    { value: 1, label: "全部数据权限" },
+    { value: 2, label: "自定义数据权限" },
+    { value: 3, label: "本部门数据权限" },
+    { value: 4, label: "本部门及以下数据权限" },
+    { value: 5, label: "本人数据权限" },
+  ])
+
+  const emit = defineEmits(['success'])
 
   const open = (row) => {
-    form.value = { id: row.id, name: row.name, code: row.code }
+    form.value = { id: row.id, name: row.name, code: row.code, data_scope: row.data_scope }
+    console.log(form.value)
     setData(row.id)
     visible.value = true
   }
@@ -97,8 +115,9 @@
   const submit = async (done) => {
     const nodes = tree.value.maTree.getCheckedNodes()
     const ids = nodes.map( item => item.id )
-    const response = await role.updateMenuPermission(form.value.id, { dept_ids: ids })
+    const response = await role.updateDataPermission(form.value.id, { data_scope: form.value.data_scope, dept_ids: ids })
     response.success && Message.success(response.message)
+    emit('success')
     done(true)
   } 
 

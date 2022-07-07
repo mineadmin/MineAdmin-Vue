@@ -59,6 +59,8 @@
   const tree = ref()
   const form = ref({ name: undefined, code: undefined })
 
+  const emit = defineEmits(['success'])
+
   const open = (row) => {
     form.value = { id: row.id, name: row.name, code: row.code }
     setData(row.id)
@@ -96,6 +98,7 @@
     const ids = nodes.map( item => item.id )
     const response = await role.updateMenuPermission(form.value.id, { menu_ids: ids })
     response.success && Message.success(response.message)
+    emit('success')
     done(true)
   } 
 

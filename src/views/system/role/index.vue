@@ -36,21 +36,21 @@
       </template>
       <!-- 操作前置插槽 -->
       <template #operationBeforeExtend="{ record }">
-        <a-space size="mini" v-if="record.code !== 'superAdmin'">
+        <a-space size="mini" v-if="record.code !== 'superAdmin' && ! isRecovery">
             <a-link @click="openMenuList(record)"><icon-menu /> 菜单权限</a-link>
             <a-link @click="openDataScopeList(record)"><icon-layers /> 数据权限</a-link>
         </a-space>
       </template>
     </ma-crud>
 
-    <menu-permission ref="mpRef" />
+    <menu-permission ref="mpRef" @success="() => crudRef.refresh()" />
 
-    <data-permission ref="dpRef" />
+    <data-permission ref="dpRef" @success="() => crudRef.refresh()" />
   </div>
 </template>
 
 <script setup>
-  import { ref, reactive } from 'vue'
+  import { ref, reactive, computed } from 'vue'
   import role from '@/api/system/role'
   import { Message } from '@arco-design/web-vue'
   import MenuPermission from './components/menuPermission.vue'
@@ -59,6 +59,8 @@
   const crudRef = ref()
   const mpRef = ref()
   const dpRef = ref()
+
+  let isRecovery = computed(() => crudRef.value.isRecovery )
 
   const openMenuList = (record) => {
     mpRef.value.open(record)

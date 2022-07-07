@@ -76,6 +76,7 @@
               "
               :show-time="item.showTime"
               :format="item.format || ''"
+              :mode="item.mode"
               allow-clear
               style="width: 100%;"
             />
