@@ -130,7 +130,7 @@
         :size="defaultCrud.size"
         :hide-expand-button-on-empty="defaultCrud.hideExpandButtonOnEmpty"
         :default-expand-all-rows="defaultCrud.expandAllRows"
-        :summary="defaultCrud.customerSummary || defaultCrud.showSummary"
+        :summary="defaultCrud.customerSummary || __summary || defaultCrud.showSummary"
         @selection-change="selectChange"
       >
         <template #tr="{ record }">
@@ -216,7 +216,7 @@
             </a-table-column>
           </template>
         </template>
-        <template #summary-cell="{ column, record, rowIndex }" v-if="defaultCrud.customerSummary || showSummary">
+        <template #summary-cell="{ column, record, rowIndex }" v-if="defaultCrud.customerSummary || defaultCrud.showSummary">
           <slot name="summary-cell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
         </template>
       </a-table>
@@ -658,6 +658,33 @@ const switchDataType = () => {
 const handlerExpand = () => {
   expandState.value = ! expandState.value
   expandState.value ? tableRef.value.expandAll(true) : tableRef.value.expandAll(false)
+}
+
+const __summary = ({ data }) => {
+  if (defaultCrud.value.showSummary && isArray(defaultCrud.value.summary)) {
+    const summary = defaultCrud.value.summary
+    let summaryData = {}
+    let length = data.length || 0
+    summary.map( item => {
+      summaryData[item.dataIndex] = 0
+      data.map(record => {
+        if (record[item.dataIndex]) {
+          if (item.action && item.action == 'sum') {
+            summaryData[item.dataIndex] += parseFloat(record[item.dataIndex])
+          }
+          if (item.action && item.action == 'avg') {
+            summaryData[item.dataIndex] += parseFloat(record[item.dataIndex]) / length
+          }
+        }
+      })
+    })
+
+    for (let i in summaryData) {
+      summaryData[i] = tool.groupSeparator(summaryData[i].toFixed(2))
+    }
+
+    return [ summaryData ]
+  }
 }
 
 const settingProps = defineProps({

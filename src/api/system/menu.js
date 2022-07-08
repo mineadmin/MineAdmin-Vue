@@ -96,4 +96,28 @@ export default {
       data
     })
   },
+
+  /**
+   * 数字运算操作
+   * @returns
+   */
+  numberOperation(data = {}) {
+    return request({
+      url: 'system/menu/numberOperation',
+      method: 'put',
+      data
+    })
+  },
+
+  /**
+   * 更改菜单状态
+   * @returns
+   */
+  changeStatus(data = {}) {
+    return request({
+      url: 'system/menu/changeStatus',
+      method: 'put',
+      data
+    })
+  },
 }
