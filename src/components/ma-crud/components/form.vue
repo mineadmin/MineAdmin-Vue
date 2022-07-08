@@ -207,7 +207,6 @@ import { isArray } from '@vue/shared'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { handlerProps } from '../js/common'
-import tool from '@/utils/tool'
 import _ from 'lodash'
 
 const componentName = ref('a-modal')
