@@ -8,7 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <a-layout-content class="flex flex-col lg:h-full relative">
+  <a-layout-content class="flex flex-col lg:h-full relative w-full">
     <div class="_crud-header flex flex-col mb-2" ref="crudHeader">
       <ma-search
         :columns="settingProps.columns"
