@@ -32,7 +32,11 @@
           <template v-for="(item, index) in columns" :key="index">
             <a-col :span="parseInt(setting.layout === 'customer' ? ( item.span || 24 ) : 24)">
               <a-form-item
-                v-if="formItemShow(item) && ! ['__index', '__operation'].includes(item.dataIndex)"
+                v-if="
+                  formItemShow(item) &&
+                  ! ['__index', '__operation'].includes(item.dataIndex) &&
+                  (typeof item.display == 'undefined' || item.display === true)
+                "
                 :label="item.title"
                 :field="item.dataIndex"
                 label-col-flex="auto"
@@ -74,6 +78,7 @@
                   v-model="form[item.dataIndex]"
                   :disabled="item.disabled"
                   :readonly="item.readonly"
+                  :type="item.type"
                   @change="handlerCascader($event, item)"
                 >
                   <a-radio
@@ -196,12 +201,13 @@
 </template>
 
 <script setup>
-import { ref, nextTick, reactive, watch } from 'vue'
+import { ref, nextTick, watch } from 'vue'
 import { request } from '@/utils/request'
 import { isArray } from '@vue/shared'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { handlerProps } from '../js/common'
+import tool from '@/utils/tool'
 import _ from 'lodash'
 
 const componentName = ref('a-modal')
@@ -228,7 +234,32 @@ setting.value = props.crud.viewLayoutSetting
 watch(
   () => props.crud.viewLayoutSetting,
   vl => setting.value = vl,
-  { deep: true}
+  { deep: true }
+)
+
+watch(
+  () => form,
+  vl => {
+    const tempForm = vl.value
+    const obj = []
+    for (let name in tempForm) {
+      columns.value.map( item => {
+        if (item.dataIndex === name && item.control && _.isFunction(item.control)) {
+          obj.push(item.control(tempForm[name], tempForm))
+        }
+      })
+    }
+    obj.map(changItem => {
+      columns.value.map( (item, idx) => {
+        for (let name in changItem) {
+          if (name == item.dataIndex) {
+            columns.value[idx] = Object.assign(item, changItem[name] || {})
+          }
+        }
+      })
+    })
+  },
+  { deep: true }
 )
 
 const submit = (done) => {

@@ -23,7 +23,7 @@
       </template>
       <!-- 图标列 -->
       <template #icon="{ record }">
-        <component :is="record.icon" style="width: 1em;"/>
+        <component :is="record.icon" v-if="record.icon" />
       </template>
       <!-- 状态列 -->
       <template #status="{ record }">
@@ -44,6 +44,12 @@
   import { Message } from '@arco-design/web-vue'
 
   const crudRef = ref()
+  const menuType = [
+    { label: '菜单', code: 'M' },
+    { label: '按钮', code: 'B' },
+    { label: '外链', code: 'L' },
+    { label: 'iFrame', code: 'I' },
+  ]
 
   const changeStatus = async (status, id) => {
     const response = await menu.changeStatus({ id, status })
@@ -91,6 +97,23 @@
     { 
       title: '菜单名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '菜单名称必填' }], width: 150,
     },
+    { 
+      title: '菜单类型', dataIndex: 'type', hide: true, formType: 'radio', addDefaultValue: 'M', 
+      dict: { data: menuType, props: { label: 'label', value: 'code' } },
+      control: (value) => {
+        if ( value == 'B') {
+          return {
+            'icon': { title: '图标哈哈' },
+            'component': { display: false }
+          }
+        } else {
+          return {
+            'icon': { title: '图标' },
+            'component': { display: true }
+          }
+        }
+      },
+    },
     {  title: '图标', dataIndex: 'icon', width: 80, },
     { 
       title: '菜单标识', dataIndex: 'code', search: true, rules: [{ required: true, message: '菜单标识必填' }], width: 150,
@@ -120,5 +143,7 @@ export default { name: 'system:menu' }
 </script>
 
 <style scoped>
-
+.icon {
+  width: 1em;
+}
 </style>
