@@ -117,7 +117,7 @@
                   v-else-if="item.formType === 'treeSelect' || item.formType === 'tree-select'"
                   v-model="form[item.dataIndex]"
                   :treeProps="{ virtualListProps: { height: 240 } }"
-                  :placeholder="item.placeholder || `请选择${item.title}`"
+                  :placeholder="item.placeholder || `请选择${item.title}，可通过 key 搜索`"
                   :disabled="item.disabled"
                   :readonly="item.readonly"
                   allow-clear
@@ -296,7 +296,7 @@ const submit = (done) => {
 
 const open = () => {
   nextTick(() =>{
-    componentName.value = setting.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
+    componentName.value = setting.value.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
     dataVisible.value = true
     columns.value = props.modelValue
     init()

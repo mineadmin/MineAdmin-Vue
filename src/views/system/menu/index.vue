@@ -82,6 +82,7 @@
       realApi: menu.realDeletes, realAuth: ['system:menu:realDeletes']
     },
     recovery: { show: true, api: menu.recoverys, auth: ['system:menu:recovery']},
+    viewLayoutSetting: { viewType: 'drawer', width: 800 },
     isExpand: true,
   })
 
@@ -89,7 +90,7 @@
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     {
       title: '上级菜单', dataIndex: 'parent_id', hide: true, formType: 'tree-select', 
-      dict: { url: 'system/menu/tree' },
+      dict: { url: 'system/menu/tree' }, addDefaultValue: 0,
       editDefaultValue: (record) => {
         return record.parent_id == 0 ? undefined : record.parent_id
       }
@@ -103,13 +104,33 @@
       control: (value) => {
         if ( value == 'B') {
           return {
-            'icon': { title: '图标哈哈' },
-            'component': { display: false }
+            'icon': { display: false },
+            'route': { display: false },
+            'component': { display: false },
+            'redirect': { display: false },
+            'sort': { display: false },
+            'is_hidden': { display: false },
+            'restful': { display: false },
+          }
+        } else if ( value == 'I' || value == 'L') {
+          return {
+            'icon': { display: true },
+            'route': { display: true },
+            'component': { display: false },
+            'redirect': { display: false },
+            'sort': { display: true },
+            'is_hidden': { display: true },
+            'restful': { display: false },
           }
         } else {
           return {
-            'icon': { title: '图标' },
-            'component': { display: true }
+            'icon': { display: true },
+            'route': { display: true },
+            'component': { display: true },
+            'redirect': { display: true },
+            'sort': { display: true },
+            'is_hidden': { display: true },
+            'restful': { display: true },
           }
         }
       },
@@ -118,15 +139,34 @@
     { 
       title: '菜单标识', dataIndex: 'code', search: true, rules: [{ required: true, message: '菜单标识必填' }], width: 150,
     },
+    { title: '路由地址', dataIndex: 'route', width: 220,},
     { title: '视图组件', dataIndex: 'component', width: 220,},
+    { title: '重定向', dataIndex: 'redirect', hide: true},
     {
       title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1, width: 180,
       min: 0, max: 1000
     },
     {
+      title: '隐藏', dataIndex: 'is_hidden', search: true, formType: 'radio',
+      dict: {
+        data: [ { title: '是', key: '1' }, { title: '否', key: '2' } ],
+        props: { label: 'title', value: 'key' },
+        translation: true
+      },
+      addDefaultValue: '2', width: 120,
+    },
+    {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',
       dict: { name: 'data_status', props: { label: 'title', value: 'key' } },
       addDefaultValue: '1', width: 120,
+    },
+    {
+      title: '生成按钮', dataIndex: 'restful', hide: true, formType: 'radio',
+      dict: {
+        data: [ { title: '是', key: '1' }, { title: '否', key: '2' } ],
+        props: { label: 'title', value: 'key' },
+      },
+      addDefaultValue: '2', editDisplay: false
     },
     {
       title: '备注', dataIndex: 'remark', hide: true, formType: 'textarea',

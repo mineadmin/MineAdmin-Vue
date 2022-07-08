@@ -123,9 +123,9 @@ const filterAsyncRouter = (routerMap) => {
   routerMap.forEach(item => {
     if (item.meta.type !== 'B') {
       const route = {
-        path: item.path[0] !== '/' ? '/' + item.path : item.path,
+        path: item.path[0] !== '/' && ! /^(http|https)/g.test(item.path) ? '/' + item.path : item.path,
         name: item.name,
-        hidden: item.hidden,
+        hidden: item.hidden == 1,
         meta: item.meta,
         children: item.children ? filterAsyncRouter(item.children) : null,
         component: loadComponent(item.component)

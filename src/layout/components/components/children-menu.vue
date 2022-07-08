@@ -48,8 +48,12 @@
   const tagStore = useTagStore()
 
   const routerPush = (menu) => {
-    router.push(menu.path)
-    tagStore.addTag({ title: menu.meta.title, path: menu.path })
+    if (menu.meta && menu.meta.type === 'L') {
+      window.open(menu.path)
+    } else {
+      router.push(menu.path)
+      tagStore.addTag({ title: menu.meta.title, path: menu.path })
+    }
   }
 </script>
 
