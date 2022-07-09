@@ -16,7 +16,7 @@ export default {
   'system:post': '岗位管理',
 
   'dataCenter': '数据',
-  'system:dictType': '数据字典',
+  'system:dict': '数据字典',
   'system:attachment': '附件管理',
   'system:dataMaintain': '数据表维护',
   'system:notice': '系统公告',

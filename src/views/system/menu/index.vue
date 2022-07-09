@@ -173,7 +173,7 @@
     },
     {
       title: '创建时间', dataIndex: 'created_at', addDisplay: false, editDisplay: false,
-      search: true, formType: 'range', width: 150,
+      search: true, formType: 'range', width: 180,
     },
   ])
 </script>

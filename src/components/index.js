@@ -17,6 +17,7 @@ import MaResource from './ma-resource/index.vue'
 import MaResourceButton from './ma-resource/button.vue'
 import MaUser from './ma-user/index.vue'
 import MaEditor from './ma-editor/index.vue'
+import MaIcon from './ma-icon/index.vue'
 
 use([
   CanvasRenderer,
@@ -41,5 +42,6 @@ export default {
     Vue.component('MaResourceButton', MaResourceButton)
     Vue.component('MaUser', MaUser)
     Vue.component('MaEditor', MaEditor)
+    Vue.component('MaIcon', MaIcon)
   }
 }

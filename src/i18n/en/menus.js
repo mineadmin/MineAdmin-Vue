@@ -16,7 +16,7 @@ export default {
   'system:post': 'Post Manage',
 
   'dataCenter': 'Data Center',
-  'system:dictType': 'Dictionary',
+  'system:dict': 'Dictionary',
   'system:attachment': 'Attached',
   'system:dataMaintain': 'Table Maintenance',
   'system:notice': 'Notice',
