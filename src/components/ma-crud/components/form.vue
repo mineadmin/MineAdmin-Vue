@@ -53,8 +53,8 @@
                   allow-clear
                   allow-search
                   :max-tag-count="item.maxTagCount || 1"
-                  :disabled="item.disabled"
-                  :readonly="item.readonly"
+                  :disabled="formItemDisabled(item) || item.disabled"
+                  :readonly="formItemReadonly(item) || item.readonly"
                   :options="formDictData[item.dataIndex]"
                   :multiple="item.multiple"
                   @change="handlerCascader($event, item)"
@@ -63,8 +63,8 @@
                 <a-checkbox-group
                   v-else-if="item.formType === 'checkbox'"
                   v-model="form[item.dataIndex]"
-                  :disabled="item.disabled"
-                  :readonly="item.readonly"
+                  :disabled="formItemDisabled(item) || item.disabled"
+                  :readonly="formItemReadonly(item) || item.readonly"
                   @change="handlerCascader($event, item)"
                 >
                   <a-checkbox
@@ -76,8 +76,8 @@
                 <a-radio-group
                   v-else-if="item.formType === 'radio'"
                   v-model="form[item.dataIndex]"
-                  :disabled="item.disabled"
-                  :readonly="item.readonly"
+                  :disabled="formItemDisabled(item) || item.disabled"
+                  :readonly="formItemReadonly(item) || item.readonly"
                   :type="item.type"
                   @change="handlerCascader($event, item)"
                 >
@@ -92,7 +92,8 @@
                   :title="['源数据', '目标数据']"
                   v-model="form[item.dataIndex]"
                   :show-search="item.showSearch"
-                  :disabled="item.disabled"
+                  :disabled="formItemDisabled(item) || item.disabled"
+                  :readonly="formItemReadonly(item) || item.readonly"
                   :expand-trigger="item.trigger || 'click'"
                   :data="formDictData[item.dataIndex]"
                   :multiple="item.multiple"
@@ -105,8 +106,8 @@
                   :placeholder="item.placeholder || `请选择${item.title}`"
                   allow-clear
                   allow-search
-                  :disabled="item.disabled"
-                  :readonly="item.readonly"
+                  :disabled="formItemDisabled(item) || item.disabled"
+                  :readonly="formItemReadonly(item) || item.readonly"
                   :expand-trigger="item.trigger || 'click'"
                   :options="formDictData[item.dataIndex]"
                   :multiple="item.multiple"
@@ -118,8 +119,8 @@
                   v-model="form[item.dataIndex]"
                   :treeProps="{ virtualListProps: { height: 240 } }"
                   :placeholder="item.placeholder || `请选择${item.title}，可通过 key 搜索`"
-                  :disabled="item.disabled"
-                  :readonly="item.readonly"
+                  :disabled="formItemDisabled(item) || item.disabled"
+                  :readonly="formItemReadonly(item) || item.readonly"
                   allow-clear
                   allow-search
                   :field-names="item.dict.props || { key: 'value', title: 'label' }"
@@ -135,9 +136,9 @@
                   v-model="form[item.dataIndex]"
                   :placeholder="item.placeholder || `请选择${item.title}`"
                   :format="item.format || ''"
-                  :disabled="item.disabled"
+                  :disabled="formItemDisabled(item) || item.disabled"
+                  :readonly="formItemReadonly(item) || item.readonly"
                   :show-time="item.showTime"
-                  :readonly="item.readonly"
                   :mode="item.mode"
                   allow-clear
                   style="width: 100%;"
@@ -149,7 +150,8 @@
                   :is="getComponent(item)"
                   v-model="form[item.dataIndex]"
                   :placeholder="item.placeholder || `请输入${item.title}`"
-                  :disabled="item.disabled"
+                  :disabled="formItemDisabled(item) || item.disabled"
+                  :readonly="formItemReadonly(item) || item.readonly"
                   :split="item.split"
                   :type="item.type"
                   allow-clear
@@ -162,8 +164,8 @@
                   :is="getComponent(item)"
                   v-model="form[item.dataIndex]"
                   :placeholder="item.placeholder || `请输入${item.title}`"
-                  :disabled="item.disabled"
-                  :readonly="item.readonly"
+                  :disabled="formItemDisabled(item) || item.disabled"
+                  :readonly="formItemReadonly(item) || item.readonly"
                   :max-length="item.maxLength || 0"
                   :max="item.max"
                   :min="item.min"
@@ -421,6 +423,26 @@ const formItemShow = (item) => {
     return true
   }
   if (currentAction.value === 'edit' && typeof item.editDisplay == 'undefined' || item.editDisplay) {
+    return true
+  }
+  return false
+}
+
+const formItemDisabled = (item) => {
+  if (currentAction.value === 'add' && item.addDisabled) {
+    return true
+  }
+  if (currentAction.value === 'edit' && item.editDisabled) {
+    return true
+  }
+  return false
+}
+
+const formItemReadonly = (item) => {
+  if (currentAction.value === 'add' && item.addReadonly) {
+    return true
+  }
+  if (currentAction.value === 'edit' && item.editReadonly) {
     return true
   }
   return false
