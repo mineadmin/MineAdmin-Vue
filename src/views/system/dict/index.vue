@@ -9,6 +9,13 @@
 -->
 <template>
   <div class="ma-content-block p-3">
-    <div><ma-icon /></div>
+    <div><ma-icon v-model="icon" /></div>
+
+    {{ icon }}
   </div>
 </template>
+
+<script setup>
+  import { ref } from 'vue'
+  const icon = ref()
+</script>

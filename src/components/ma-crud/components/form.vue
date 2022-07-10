@@ -192,6 +192,7 @@
                   :mode="item.formType === 'input-number' ? 'button' : undefined"
                   allow-clear
                   @change="item.changeEvent"
+                  :style="item.style"
                 />
               </a-form-item>
             </a-col>
@@ -471,6 +472,7 @@ const getComponent = (item) => {
     case 'upload': return 'ma-upload'
     case 'select-user': return 'ma-user'
     case 'editor': return 'ma-editor'
+    case 'icon': return 'ma-icon'
     default: return `a-${item.formType}`
   }
 }
