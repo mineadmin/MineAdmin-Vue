@@ -24,7 +24,7 @@
           <span
             class="mt-0.5"
             :style="appStore.language === 'en' ? 'font-size: 10px' : ''"
-          >{{ $t(`menus.${bigMenu.name}`).replace(' ', '') }}</span>
+          >{{ $t(`menus.${bigMenu.name}`).indexOf('.') > 0 ? bigMenu.meta.title : $t(`menus.${bigMenu.name}`) }}</span>
         </li>
       </template>
     </ul>
@@ -47,7 +47,7 @@
   import maMenu from '../ma-menu.vue'
 
   import { useAppStore, useUserStore } from '@/store'
-import router from '../../../router';
+
   const route = useRoute()
 
   const MaMenu = ref(null)
@@ -56,7 +56,7 @@ import router from '../../../router';
   
   const title = ref('')
 
-  const classStyle = ref('flex flex-col parent-menu items-center rounded mt-1 text-gray-200 hover:bg-gray-700 hover:text-white dark:hover:text-gray-50 dark:hover:bg-blackgray-1')
+  const classStyle = ref('flex flex-col parent-menu items-center rounded mt-1 text-gray-200 hover:bg-gray-700 dark:hover:text-gray-50 dark:hover:bg-blackgray-1')
 
   onMounted(() => {
     initMenu()
@@ -79,6 +79,10 @@ import router from '../../../router';
   }
 
   const loadMenu = (bigMenu, index) => {
+    if (bigMenu.meta.type === 'L') {
+      window.open(bigMenu.path)
+      return
+    }
     MaMenu.value.loadChildMenu(bigMenu)
     title.value = MaMenu.value.title
     document.querySelectorAll('.parent-menu').forEach( (item, id) => {

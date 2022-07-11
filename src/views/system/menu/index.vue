@@ -11,6 +11,7 @@
   <div class="ma-content-block lg:h-full lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
     <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+      
       <!-- 排序列 -->
       <template #sort="{ record }">
         <a-input-number
@@ -34,6 +35,11 @@
           :default-checked="record.status == 1"
         />
       </template>
+
+      <!-- 操作前置扩展 -->
+      <template #operationBeforeExtend="{ record }">
+        <a-link @click="openAdd(record.id)" v-if=" record.type === 'M' "><icon-plus /> 新增</a-link>
+      </template>
     </ma-crud>
   </div>
 </template>
@@ -44,6 +50,8 @@
   import { Message } from '@arco-design/web-vue'
 
   const crudRef = ref()
+  const currentParentId = ref()
+
   const menuType = [
     { label: '菜单', code: 'M' },
     { label: '按钮', code: 'B' },
@@ -58,6 +66,10 @@
     }
   }
 
+  const openAdd = (id) => {
+    columns[1].addDefaultValue = id
+    crudRef.value.maCrudForm.add()
+  }
 
   const changeSort = async (value, id) => {
     const response = await menu.numberOperation({ id, numberName: 'sort', numberValue: value })
@@ -84,6 +96,7 @@
     recovery: { show: true, api: menu.recoverys, auth: ['system:menu:recovery']},
     viewLayoutSetting: { viewType: 'drawer', width: 600 },
     isExpand: true,
+    beforeOpenAdd: () => columns[1].addDefaultValue = 0
   })
 
   const columns = reactive([
@@ -96,7 +109,7 @@
       }
     },
     { 
-      title: '菜单名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '菜单名称必填' }], width: 150,
+      title: '菜单名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '菜单名称必填' }], width: 180,
     },
     { 
       title: '菜单类型', dataIndex: 'type', hide: true, formType: 'radio', addDefaultValue: 'M', 
@@ -139,8 +152,8 @@
     { 
       title: '菜单标识', dataIndex: 'code', search: true, rules: [{ required: true, message: '菜单标识必填' }], width: 150,
     },
-    { title: '路由地址', dataIndex: 'route', width: 220,},
-    { title: '视图组件', dataIndex: 'component', width: 220,},
+    { title: '路由地址', dataIndex: 'route', width: 150,},
+    { title: '视图组件', dataIndex: 'component', width: 200,},
     { title: '重定向', dataIndex: 'redirect', hide: true},
     {
       title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1, width: 180,

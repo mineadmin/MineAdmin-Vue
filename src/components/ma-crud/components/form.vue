@@ -378,6 +378,24 @@ const init = () => {
         }
       }
     })
+
+    const obj = []
+    for (let name in form.value) {
+      columns.value.map( item => {
+        if (item.dataIndex === name && item.control && _.isFunction(item.control)) {
+          obj.push(item.control(form.value[name], form.value))
+        }
+      })
+    }
+    obj.map(changItem => {
+      columns.value.map( (item, idx) => {
+        for (let name in changItem) {
+          if (name == item.dataIndex) {
+            columns.value[idx] = Object.assign(item, changItem[name] || {})
+          }
+        }
+      })
+    })
   }
   dataLoading.value = false
 }

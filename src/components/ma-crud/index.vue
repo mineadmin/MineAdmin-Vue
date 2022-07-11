@@ -18,7 +18,7 @@
         :search-col="settingProps.crud.searchCol"
         @search="searchHandler"
         class="__search-panel"
-        ref="searchRef"
+        ref="maCrudSearch"
       >
         <template #searchButtons>
           <slot name="searchButtons"></slot>
@@ -136,6 +136,10 @@
         <template #tr="{ record }">
           <tr class="ma-crud-table-tr" @dblclick="dbClickOpenEdit(record)" />
         </template>
+
+        <template #expand-row="record" v-if="defaultCrud.showExpandRow">
+          <slot name="expand-row" v-bind="record"></slot>
+        </template>
         <template #columns>
           <template v-for="row in columns" :key="row[defaultCrud.pk]">
             <a-table-column
@@ -207,7 +211,7 @@
                 <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else >
                   <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
                   <template v-if="row.dict && row.dict.translation">
-                    {{ searchRef.dictTrans(row.dataIndex, record[row.dataIndex]) }}
+                    {{ maCrudSearch.dictTrans(row.dataIndex, record[row.dataIndex]) }}
                   </template>
                   <template v-else-if="row.dataIndex && row.dataIndex.indexOf('.') !== -1">{{ _.get(record, row.dataIndex) }}</template>
                   <template v-else>{{ record[row.dataIndex] }}</template>
@@ -236,20 +240,20 @@
     </div>
 
     <ma-setting
-      ref="mas"
+      ref="maCrudSetting"
       v-model="columns"
       v-model:crud="defaultCrud"
     />
 
     <ma-form
-      ref="maf"
+      ref="maCrudForm"
       v-model="columns"
       v-model:crud="defaultCrud"
       @success="requestSuccess"
     />
 
     <ma-import
-      ref="mai"
+      ref="maCrudImport"
       v-model="defaultCrud.import"
     />
 
@@ -279,16 +283,17 @@ const columns = ref([])
 const showSearch = ref(true)
 const isRecovery = ref(false)
 const expandState = ref(false)
-const searchRef = ref(null)
 const crudHeader = ref(null)
 const selecteds = ref([])
 
 const tableData = ref([])
 const tableRef = ref()
 const currentApi = ref()
-const mas = ref(null)
-const maf = ref(null)
-const mai = ref(null)
+
+const maCrudSearch = ref(null)
+const maCrudSetting = ref(null)
+const maCrudForm = ref(null)
+const maCrudImport = ref(null)
 
 const defaultCrud = ref({
   // 主键名称
@@ -313,6 +318,8 @@ const defaultCrud = ref({
   isDbClickEdit: true,
   // 是否显示展开/折叠按钮
   isExpand: false,
+  // 是否显示自定义
+  showExpandRow: false,
   // 是否显示总结行
   showSummary: false,
   // 自定义总结行，要传入函数
@@ -557,7 +564,7 @@ const toggleSearch = () => {
 }
 
 const tableSetting = () => {
-  mas.value.open()
+  maCrudSetting.value.open()
 }
 
 const requestSuccess = response => {
@@ -572,9 +579,27 @@ const getIndex = (rowIndex) => {
   }
 }
 
-const addAction = () => maf.value.add()
+const addAction = () => {
+  isFunction(defaultCrud.value.beforeOpenAdd) && defaultCrud.value.beforeOpenAdd()
+  maCrudForm.value.add()
+}
 
-const importAction = () => mai.value.open()
+const editAction = (record) => {
+  isFunction(defaultCrud.value.beforeOpenEdit) && defaultCrud.value.beforeOpenEdit()
+  maCrudForm.value.edit(record)
+}
+
+const dbClickOpenEdit = (record) => {
+  if (defaultCrud.value.isDbClickEdit) {
+    if (isRecovery.value) {
+      Message.error('回收站数据不可编辑')
+      return
+    }
+    maCrudForm.value.edit(record)
+  }
+}
+
+const importAction = () => maCrudImport.value.open()
 
 const exportAction = () => {
   Message.info('请求服务器下载文件中...')
@@ -588,18 +613,6 @@ const exportAction = () => {
     Message.error('请求服务器错误，下载失败')
   })
 }
-
-const dbClickOpenEdit = (record) => {
-  if (defaultCrud.value.isDbClickEdit) {
-    if (isRecovery.value) {
-      Message.error('回收站数据不可编辑')
-      return
-    }
-    maf.value.edit(record)
-  }
-}
-
-const editAction = (record) => maf.value.edit(record)
 
 const deleteAction = async (record) => {
   const api = isRecovery.value ? defaultCrud.value.delete.realApi : defaultCrud.value.delete.api
@@ -730,7 +743,11 @@ if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.aut
 
 onMounted(() => document.querySelector('.arco-table-body').className += ' customer-scrollbar' )
 
-defineExpose({ refresh, requestParams, requestData, isRecovery, tableRef })
+defineExpose({
+  refresh, requestData, addAction, editAction,
+  requestParams, isRecovery, tableRef,
+  maCrudForm, maCrudSearch, maCrudImport, maCrudSetting
+})
 
 </script>
 
