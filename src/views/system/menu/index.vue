@@ -166,7 +166,7 @@
         props: { label: 'title', value: 'key' },
         translation: true
       },
-      addDefaultValue: '2', width: 120,
+      addDefaultValue: '2', width: 80,
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',

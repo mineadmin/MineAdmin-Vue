@@ -8,20 +8,26 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <a-layout-content class="work-area customer-scrollbar relative p-3">
-    <router-view v-slot="{ Component }">
-    <transition name="fade" mode="out-in">
-      <keep-alive :include="keepStore.keepAlives">
-        <component :is="Component" :key="$route.name" v-if="keepStore.show" />
-      </keep-alive>
-    </transition>
-  </router-view>
+  <a-layout-content class="work-area customer-scrollbar relative">
+    <div class="p-3" v-if="$route.meta.type !== 'I'">
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <keep-alive :include="keepStore.keepAlives">
+            <component :is="Component" :key="$route.name" v-if="keepStore.show" />
+          </keep-alive>
+        </transition>
+      </router-view>
+    </div>
+    <iframe-view v-else />
+    {{ $route.meta.type }}
+
   </a-layout-content>
 </template>
 
 <script setup>
-import { useKeepAliveStore } from '@/store'
-const keepStore = useKeepAliveStore()
+  import { useKeepAliveStore } from '@/store'
+  import iframeView from './components/iframe-view.vue'
+  const keepStore = useKeepAliveStore()
 </script>
 
 <style scoped>

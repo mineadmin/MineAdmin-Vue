@@ -122,6 +122,12 @@ const filterAsyncRouter = (routerMap) => {
   const accessedRouters = []
   routerMap.forEach(item => {
     if (item.meta.type !== 'B') {
+
+      if(item.meta.type === 'I'){
+        item.meta.url = item.path
+        item.path = `/iframe/${item.name}`
+      }
+
       const route = {
         path: item.path[0] !== '/' && ! /^(http|https)/g.test(item.path) ? '/' + item.path : item.path,
         name: item.name,
@@ -155,6 +161,8 @@ const removeButtonMenu = (routers) => {
 const loadComponent = (component) => {
   if(component){
     return () => import(`../../views/${component}.vue`)
+  } else {
+    return () => import(`../../layout/empty.vue`)
   }
 }
 

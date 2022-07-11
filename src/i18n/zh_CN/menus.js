@@ -46,4 +46,6 @@ export default {
   'setting:crontab': '定时任务',
   'setting:table': '数据表设计器',
   'systemInterface': '系统接口',
+
+  'baidu': '百度'
 }
