@@ -125,11 +125,11 @@ const filterAsyncRouter = (routerMap) => {
 
       if(item.meta.type === 'I'){
         item.meta.url = item.path
-        item.path = `/iframe/${item.name}`
+        item.path = `iframe/${item.name}`
       }
 
       const route = {
-        path: item.path[0] !== '/' && ! /^(http|https)/g.test(item.path) ? '/' + item.path : item.path,
+        path: item.path[0] !== '/' || ! /^[http|https]/g.test(item.path) ? '/' + item.path : item.path,
         name: item.name,
         hidden: item.hidden == 1,
         meta: item.meta,

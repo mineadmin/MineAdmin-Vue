@@ -18,9 +18,11 @@
         </transition>
       </router-view>
     </div>
-    <iframe-view v-else />
-    {{ $route.meta.type }}
-
+    <div v-else class="h-full">
+      <transition name="fade" mode="out-in">
+        <iframe-view />
+      </transition>
+    </div>
   </a-layout-content>
 </template>
 

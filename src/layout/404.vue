@@ -14,7 +14,7 @@
       <img src="@/assets/404.svg" />
       <div class="mt-2">{{ $t('sys.notFoundPage') }}</div>
     </div>
-    <div class="mt-5"><a-button type="primary" @click="$router.push('/')">{{ $t('sys.goHome') }}</a-button></div>
+    <div class="mt-5"><a-button type="primary" @click="$router.push({ name: 'dashboard' })">{{ $t('sys.goHome') }}</a-button></div>
   </div>
 </template>
 
