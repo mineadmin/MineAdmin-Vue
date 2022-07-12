@@ -2,9 +2,9 @@
   <div class="w-full h-full" v-show="$route.meta.type === 'I'">
     <iframe
       v-for="item in iframeStore.iframes"
-      v-show="item == $route.name"
-      :src="$route.meta.url"
-      :key="item"
+      v-show="item.meta.url === $route.meta.url"
+      :src="item.meta.url"
+      :key="item.name"
       frameborder="0"
       class="w-full h-full"
     />
@@ -32,7 +32,7 @@
 
   const pushRoute = (r) => {
     if (r.meta.type === 'I') {
-      iframeStore.addIframe(route.name)
+      iframeStore.addIframe(r)
     }
   }
 </script>

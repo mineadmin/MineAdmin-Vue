@@ -33,7 +33,7 @@
       <a-checkbox v-model="crud.stripe" class="ml-3">斑马纹</a-checkbox>
     </a-space>
 
-    <a-alert type="warning" class="mt-2">排序：本页是指当前页排序；服务器是指后台排序，需要 <a-tag>@sorterChange</a-tag> 事件来实现</a-alert>
+    <a-alert type="warning" class="mt-2">排序：本页是指当前页排序；服务器是指后台排序，若自定义服务器排序可用 <a-tag>@sorterChange</a-tag> 事件来实现</a-alert>
     <a-table
       :data="data"
       :pagination="false"

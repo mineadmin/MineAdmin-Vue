@@ -132,6 +132,7 @@
         :default-expand-all-rows="defaultCrud.expandAllRows"
         :summary="defaultCrud.customerSummary || __summary || defaultCrud.showSummary"
         @selection-change="selectChange"
+        @sorter-change="handlerSort"
       >
         <template #tr="{ record }">
           <tr class="ma-crud-table-tr" @dblclick="dbClickOpenEdit(record)" />
@@ -269,6 +270,8 @@ import maSearch from './components/search.vue'
 import maForm from './components/form.vue'
 import maSetting from './components/setting.vue'
 import maImport from './components/import.vue'
+import checkAuth from '@/directives/auth/auth'
+import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
@@ -595,6 +598,12 @@ const dbClickOpenEdit = (record) => {
       Message.error('回收站数据不可编辑')
       return
     }
+
+    if (! checkAuth(defaultCrud.value.edit.auth || [])) {
+      Message.error('没有编辑数据的权限')
+      return
+    }
+
     maCrudForm.value.edit(record)
   }
 }
@@ -671,6 +680,20 @@ const switchDataType = () => {
 const handlerExpand = () => {
   expandState.value = ! expandState.value
   expandState.value ? tableRef.value.expandAll(true) : tableRef.value.expandAll(false)
+}
+
+const handlerSort = (name, type) => {
+  const col = columns.value.find(item => name == item.dataIndex)
+  if (col.sortable && col.sortable.sorter) {
+    if (type) {
+      requestParams.value.orderBy = name
+      requestParams.value.orderType = type === 'ascend' ? 'asc' : 'desc'
+    } else {
+      requestParams.value.orderBy = undefined
+      requestParams.value.orderType = undefined
+    }
+    requestData()
+  }
 }
 
 const __summary = ({ data }) => {
@@ -754,5 +777,8 @@ defineExpose({
 <style scoped lang="less">
 .__search-panel {
   transition: display 1s; overflow: hidden;
+}
+._crud-footer {
+  z-index: 10;
 }
 </style>
