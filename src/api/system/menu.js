@@ -17,7 +17,7 @@ export default {
    * 从回收站获取菜单树
    * @returns
    */
-  getRecycle(params = {}) {
+  getRecycleList(params = {}) {
     return request({
       url: 'system/menu/recycle',
       method: 'get',
