@@ -9,7 +9,7 @@
 -->
 <template>
   <a-layout-content class="work-area customer-scrollbar relative">
-    <div class="p-3" v-if="$route.meta.type !== 'I'">
+    <div class="p-3 h-full" v-if="$route.meta.type !== 'I'">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <keep-alive :include="keepStore.keepAlives">
