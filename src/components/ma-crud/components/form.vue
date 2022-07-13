@@ -194,6 +194,8 @@
                   @change="item.changeEvent"
                   :style="item.style"
                 />
+
+                <template #extra v-if="item.formExtra">{{ item.formExtra }}</template>
               </a-form-item>
             </a-col>
           </template>

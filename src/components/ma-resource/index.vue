@@ -14,15 +14,17 @@
       <a-input v-model="networkImg" class="mb-3" :placeholder="$t('maResource.networkImageNotice')" allow-clear />
       <a-image :src="networkImg" width="100%" style="min-height: 150px;" />
     </a-modal>
-    <ma-tree-slider
-      v-model="sliderData"
-      :search-placeholder="$t('maResource.searchResource')"
-      @click="handlerClick"
-      class="lg:w-1/5 w-full"
-      icon="icon-folder"
-      :selected-keys="['all']"
-    />
-    <div class="w-full lg:ml-3 mt-3 lg:mt-0 flex flex-col">
+    <div class="lg:w-1/5 w-full p-2 shadow">
+      <ma-tree-slider
+        v-model="sliderData"
+        :search-placeholder="$t('maResource.searchResource')"
+        :field-names="{ title: 'title', key: 'key' }"
+        @click="handlerClick"
+        icon="icon-folder"
+        :selected-keys="['all']"
+      />
+    </div>
+    <div class="w-full lg:ml-3 mt-3 lg:mt-2 flex flex-col">
       
       <div class="lg:flex lg:justify-between">
         <div>
@@ -39,7 +41,7 @@
         />
       </div>
       <a-spin :loading="resourceLoading" :tip="$t('maResource.loadingText')" class="h-full">
-        <div class="resource-list mt-2" ref="rl">
+        <div class="resource-list mt-2" ref="rl" v-if="attachmentList && attachmentList.length > 0">
           <div
             class="item rounded-sm"
             v-for="(item, index) in attachmentList"
@@ -48,7 +50,7 @@
           >
             <img
               :src="
-                ! /^[http|https]/g.test(item.url)
+                ! /^(http|https)/g.test(item.url)
                 ? $tool.attachUrl(item.url, getStoreMode(item.storage_mode))
                 : item.url
               "
@@ -71,6 +73,7 @@
             </a-tooltip>
           </div>
         </div>
+        <a-empty class="mt-10" />
       </a-spin>
       <div class="lg:flex lg:justify-between">
         <a-pagination
@@ -168,7 +171,7 @@
 
     const children = rl.value.children
     const className = 'item rounded-sm'
-    if (! /^[http|https]/g.test(item.url)) {
+    if (! /^(http|https)/g.test(item.url)) {
       item.url = tool.attachUrl(item.url, getStoreMode(item.storage_mode))
     }
     if (children[index].className.indexOf('active') !== -1) {
@@ -192,9 +195,11 @@
   }
 
   const clearSelecteds = () => {
-    const children = rl.value.children
-    for (let i = 0; i < children.length; i++) {
-      children[i].className = 'item rounded-sm'
+    if (rl.value && rl.value.children) {
+      const children = rl.value.children
+      for (let i = 0; i < children.length; i++) {
+        children[i].className = 'item rounded-sm'
+      }
     }
     if (props.multiple) {
       selecteds.value = []

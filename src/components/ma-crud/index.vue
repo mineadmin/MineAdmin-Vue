@@ -99,7 +99,7 @@
           </a-button>
           <slot name="tableButtons"></slot>
         </a-space>
-        <a-space class="lg:mt-0 mt-2">
+        <a-space class="lg:mt-0 mt-2" v-if="defaultCrud.showTools">
           <a-tooltip
             :content="isRecovery ? '显示正常数据' : '显示回收站数据'"
             v-if="defaultCrud.recycleApi && isFunction(defaultCrud.recycleApi)"
@@ -327,6 +327,8 @@ const defaultCrud = ref({
   showSummary: false,
   // 自定义总结行，要传入函数
   customerSummary: false,
+  // 是否显示工具栏
+  showTools: true,
   // 新增和编辑显示设置
   viewLayoutSetting: {
     // 布局方式, 支持 auto（自动） 和 customer（自定义）两种
@@ -604,7 +606,9 @@ const dbClickOpenEdit = (record) => {
       return
     }
 
-    maCrudForm.value.edit(record)
+    if (defaultCrud.value.edit.api && isFunction(defaultCrud.value.edit.api)) {
+      maCrudForm.value.edit(record)
+    }
   }
 }
 

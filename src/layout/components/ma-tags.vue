@@ -135,7 +135,7 @@
   const contextMenuCloseOtherTag = () => {
     const currentTag = contextMenuItem.value
     if (route.name != currentTag.name) {
-      router.push({ name: currentTag.path, query: currentTag.query || {} })
+      router.push({ name: currentTag.name, query: currentTag.query || {} })
     }
     const list = [...tagStore.tags]
     list.forEach(tag => {
