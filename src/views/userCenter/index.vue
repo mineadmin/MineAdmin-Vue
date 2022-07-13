@@ -12,7 +12,11 @@
     <div class="user-header rounded-sm text-center">
       <ma-upload v-model="userInfo.avatar" rounded class="mt-2.5" />
       
-      <div><a-tag size="large" class="mt-3 rounded-full" color="#165dff">{{ userStore.user && userStore.user.nickname || userStore.user && userStore.user.username }}</a-tag></div>
+      <div>
+        <a-tag size="large" class="mt-3 rounded-full" color="#165dff">
+          {{ userStore.user && userStore.user.nickname || userStore.user && userStore.user.username }}
+        </a-tag>
+      </div>
     </div>
 
     <a-layout-content class="block lg:flex lg:justify-between">
@@ -81,11 +85,11 @@
   })
 
   onMounted(() => {
-    loginLog.getPageList(requestParams).then(res => {
+    loginLog.getPageList( Object.assign(requestParams, { orderBy: 'login_time', orderType: 'desc' }) ).then(res => {
       loginLogList.value = res.data.items
     })
 
-    operLog.getPageList(requestParams).then(res => {
+    operLog.getPageList( Object.assign(requestParams, { orderBy: 'created_at', orderType: 'desc' }) ).then(res => {
       operationLogList.value = res.data.items
     })
   })
