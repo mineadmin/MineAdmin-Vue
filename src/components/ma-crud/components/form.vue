@@ -172,9 +172,9 @@
                 <a-button
                   v-else-if="item.formType === 'button'"
                   :disabled="formItemDisabled(item) || item.disabled"
-                  :split="item.split"
                   :type="item.type"
                   :status="item.status"
+                  :style="item.style"
                   @click="item.click && item.click($event, item)"
                   @blur="item.blur && item.blur($event, item)"
                 >
