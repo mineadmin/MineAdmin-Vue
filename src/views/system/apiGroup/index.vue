@@ -26,35 +26,35 @@
 
 <script setup>
   import { ref, reactive } from 'vue'
-  import appGroup from '@/api/system/appGroup'
+  import apiGroup from '@/api/system/apiGroup'
   import { Message } from '@arco-design/web-vue'
 
   const crudRef = ref()
 
   const changeStatus = async (status, id) => {
-    const response = await appGroup.changeStatus({ id, status })
+    const response = await apiGroup.changeStatus({ id, status })
     if (response.success) {
       Message.success(response.message)
     }
   }
 
   const crud = reactive({
-    api: appGroup.getList,
-    recycleApi: appGroup.getRecycleList,
+    api: apiGroup.getList,
+    recycleApi: apiGroup.getRecycleList,
     showIndex: false,
     searchLabelWidth: '75px',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 200,
     searchLabelCols: 4,
-    add: { show: true, api: appGroup.save, auth: ['system:appGroup:add'] },
-    edit: { show: true, api: appGroup.update, auth: ['system:appGroup:edit'] },
+    add: { show: true, api: apiGroup.save, auth: ['system:apiGroup:add'] },
+    edit: { show: true, api: apiGroup.update, auth: ['system:apiGroup:edit'] },
     delete: {
       show: true,
-      api: appGroup.deletes, auth: ['system:appGroup:delete'],
-      realApi: appGroup.realDeletes, realAuth: ['system:appGroup:realDeletes']
+      api: apiGroup.deletes, auth: ['system:apiGroup:delete'],
+      realApi: apiGroup.realDeletes, realAuth: ['system:apiGroup:realDeletes']
     },
-    recovery: { show: true, api: appGroup.recoverys, auth: ['system:appGroup:recovery']},
+    recovery: { show: true, api: apiGroup.recoverys, auth: ['system:apiGroup:recovery']},
   })
 
   const columns = reactive([

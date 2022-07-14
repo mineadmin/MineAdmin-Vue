@@ -97,7 +97,9 @@
                   :expand-trigger="item.trigger || 'click'"
                   :data="formDictData[item.dataIndex]"
                   :multiple="item.multiple"
-                  @change="item.changeEvent"
+                  @change="item.change && item.change($event, item)"
+                  @click="item.click && item.click($event, item)"
+                  @blur="item.blur && item.blur($event, item)"
                 />
 
                 <a-cascader
@@ -111,7 +113,9 @@
                   :expand-trigger="item.trigger || 'click'"
                   :options="formDictData[item.dataIndex]"
                   :multiple="item.multiple"
-                  @change="item.changeEvent"
+                  @change="item.change && item.change($event, item)"
+                  @click="item.click && item.click($event, item)"
+                  @blur="item.blur && item.blur($event, item)"
                 />
 
                 <a-tree-select
@@ -127,7 +131,9 @@
                   :tree-checkable="item.multiple"
                   :multiple="item.multiple"
                   :data="formDictData[item.dataIndex]"
-                  @change="item.changeEvent"
+                  @change="item.change && item.change($event, item)"
+                  @click="item.click && item.click($event, item)"
+                  @blur="item.blur && item.blur($event, item)"
                 />
 
                 <component
@@ -142,7 +148,9 @@
                   :mode="item.mode"
                   allow-clear
                   style="width: 100%;"
-                  @change="item.changeEvent"
+                  @change="item.change && item.change($event, item)"
+                  @click="item.click && item.click($event, item)"
+                  @blur="item.blur && item.blur($event, item)"
                 />
 
                 <component
@@ -156,8 +164,25 @@
                   :type="item.type"
                   allow-clear
                   :prefix="item.prefix"
-                  @change="item.changeEvent"
+                  @change="item.change && item.change($event, item)"
+                  @click="item.click && item.click($event, item)"
+                  @blur="item.blur && item.blur($event, item)"
                 />
+
+                <a-button
+                  v-else-if="item.formType === 'button'"
+                  :disabled="formItemDisabled(item) || item.disabled"
+                  :split="item.split"
+                  :type="item.type"
+                  :status="item.status"
+                  @click="item.click && item.click($event, item)"
+                  @blur="item.blur && item.blur($event, item)"
+                >
+                  <template #icon v-if="item.icon" >
+                    <component :is="item.icon" />
+                  </template>
+                  {{ item.text || ''}}
+                </a-button>
 
                 <component
                   v-else
@@ -191,7 +216,9 @@
                   :is-echo="item.isEcho"
                   :mode="item.formType === 'input-number' ? 'button' : undefined"
                   allow-clear
-                  @change="item.changeEvent"
+                  @change="item.change && item.change($event, item)"
+                  @click="item.click && item.click($event, item)"
+                  @blur="item.blur && item.blur($event, item)"
                   :style="item.style"
                 />
 
