@@ -8,7 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div class="ma-content-block lg:h-full lg:flex justify-between p-4">
+  <div class="ma-content-block lg:flex justify-between p-4">
 
     <div class="lg:w-2/12 w-full h-full p-2 shadow">
       <ma-tree-slider

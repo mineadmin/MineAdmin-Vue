@@ -8,7 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div class="ma-content-block lg:h-full lg:flex justify-between p-4">
+  <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
     <ma-crud :crud="crud" :columns="columns" ref="crudRef" @selection-change="selectChange">
       <!-- 表格操作按钮 -->
