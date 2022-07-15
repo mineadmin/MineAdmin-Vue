@@ -22,7 +22,7 @@
       </template>
       <!-- 操作前置扩展 -->
       <template #operationBeforeExtend="{ record }">
-        <a-link @click="openDoc"><icon-book /> 文档</a-link>
+        <a-link @click="openDoc(record)"><icon-book /> 文档</a-link>
         <a-link @click="bindApi(record.id)"><icon-pushpin /> 绑定</a-link>
       </template>
     </ma-crud>
@@ -40,8 +40,10 @@
   const crudRef = ref()
   const bindRef = ref()
 
-  const openDoc = () => {
-    window.open(window.location.origin + '/#/mineDoc')
+  const openDoc = (row) => {
+    window.open(
+      window.location.origin + '/#/mineDoc?app_id=' + row.app_id + '&app_secret=' + row.app_secret
+    )
   }
 
   const bindApi = (id) => {
