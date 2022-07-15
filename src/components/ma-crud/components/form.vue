@@ -57,7 +57,7 @@
                   :readonly="formItemReadonly(item) || item.readonly"
                   :options="formDictData[item.dataIndex]"
                   :multiple="item.multiple"
-                  @change="handlerCascader($event, item)"
+                  @change="handlerCascader($event, { form, item, currentAction, index })"
                 />
 
                 <a-checkbox-group
@@ -65,7 +65,7 @@
                   v-model="form[item.dataIndex]"
                   :disabled="formItemDisabled(item) || item.disabled"
                   :readonly="formItemReadonly(item) || item.readonly"
-                  @change="handlerCascader($event, item)"
+                  @change="handlerCascader($event, { form, item, currentAction, index })"
                 >
                   <a-checkbox
                     v-for="option in formDictData[item.dataIndex]"
@@ -79,7 +79,7 @@
                   :disabled="formItemDisabled(item) || item.disabled"
                   :readonly="formItemReadonly(item) || item.readonly"
                   :type="item.type"
-                  @change="handlerCascader($event, item)"
+                  @change="handlerCascader($event, { form, item, currentAction, index })"
                 >
                   <a-radio
                     v-for="option in formDictData[item.dataIndex]"
@@ -97,9 +97,9 @@
                   :expand-trigger="item.trigger || 'click'"
                   :data="formDictData[item.dataIndex]"
                   :multiple="item.multiple"
-                  @change="item.change && item.change($event, item)"
-                  @click="item.click && item.click($event, item)"
-                  @blur="item.blur && item.blur($event, item)"
+                  @change="item.change && item.change($event, { form, item, currentAction, index })"
+                  @click="item.click && item.click($event, { form, item, currentAction, index })"
+                  @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
                 />
 
                 <a-cascader
@@ -113,9 +113,9 @@
                   :expand-trigger="item.trigger || 'click'"
                   :options="formDictData[item.dataIndex]"
                   :multiple="item.multiple"
-                  @change="item.change && item.change($event, item)"
-                  @click="item.click && item.click($event, item)"
-                  @blur="item.blur && item.blur($event, item)"
+                  @change="item.change && item.change($event, { form, item, currentAction, index })"
+                  @click="item.click && item.click($event, { form, item, currentAction, index })"
+                  @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
                 />
 
                 <a-tree-select
@@ -131,9 +131,9 @@
                   :tree-checkable="item.multiple"
                   :multiple="item.multiple"
                   :data="formDictData[item.dataIndex]"
-                  @change="item.change && item.change($event, item)"
-                  @click="item.click && item.click($event, item)"
-                  @blur="item.blur && item.blur($event, item)"
+                  @change="item.change && item.change($event, { form, item, currentAction, index })"
+                  @click="item.click && item.click($event, { form, item, currentAction, index })"
+                  @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
                 />
 
                 <component
@@ -148,9 +148,9 @@
                   :mode="item.mode"
                   allow-clear
                   style="width: 100%;"
-                  @change="item.change && item.change($event, item)"
-                  @click="item.click && item.click($event, item)"
-                  @blur="item.blur && item.blur($event, item)"
+                  @change="item.change && item.change($event, { form, item, currentAction, index })"
+                  @click="item.click && item.click($event, { form, item, currentAction, index })"
+                  @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
                 />
 
                 <component
@@ -164,9 +164,9 @@
                   :type="item.type"
                   allow-clear
                   :prefix="item.prefix"
-                  @change="item.change && item.change($event, item)"
-                  @click="item.click && item.click($event, item)"
-                  @blur="item.blur && item.blur($event, item)"
+                  @change="item.change && item.change($event, { form, item, currentAction, index })"
+                  @click="item.click && item.click($event, { form, item, currentAction, index })"
+                  @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
                 />
 
                 <a-button
@@ -175,8 +175,8 @@
                   :type="item.type"
                   :status="item.status"
                   :style="item.style"
-                  @click="item.click && item.click($event, item)"
-                  @blur="item.blur && item.blur($event, item)"
+                  @click="item.click && item.click($event, { form, item, currentAction, index })"
+                  @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
                 >
                   <template #icon v-if="item.icon" >
                     <component :is="item.icon" />
@@ -216,9 +216,9 @@
                   :is-echo="item.isEcho"
                   :mode="item.formType === 'input-number' ? 'button' : undefined"
                   allow-clear
-                  @change="item.change && item.change($event, item)"
-                  @click="item.click && item.click($event, item)"
-                  @blur="item.blur && item.blur($event, item)"
+                  @change="item.change && item.change($event, { form, item, currentAction, index })"
+                  @click="item.click && item.click($event, { form, item, currentAction, index })"
+                  @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
                   :style="item.style"
                 />
 

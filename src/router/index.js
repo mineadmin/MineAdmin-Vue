@@ -8,7 +8,7 @@ import routes from './webRouter.js'
 
 const title = import.meta.env.VITE_APP_TITLE
 const defaultRoutePath = '/'
-const whiteRoute = ['login']
+const whiteRoute = ['login', 'mineDoc']
 
 const router = createRouter({
   history: createWebHashHistory(),

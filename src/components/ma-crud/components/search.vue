@@ -103,7 +103,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch } from 'vue'
+import { ref, reactive, onMounted, watch, nextTick } from 'vue'
 import { request } from '@/utils/request'
 import { isArray, isFunction } from '@vue/shared'
 import { Message } from '@arco-design/web-vue'
@@ -232,10 +232,11 @@ const props = defineProps({
 })
 
 const dictTrans = (dataIndex, value) => {
-  if (! formDictData.value[dataIndex] && ! formDictData.value[dataIndex].tran && ! formDictData.value[dataIndex].tran[value]) {
+  if (formDictData.value[dataIndex] && formDictData.value[dataIndex].tran) {
+    return formDictData.value[dataIndex].tran[value]
+  } else {
     return value
   }
-  return formDictData.value[dataIndex].tran[value]
 }
 
 defineExpose({ dictTrans })

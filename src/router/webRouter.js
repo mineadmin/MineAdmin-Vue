@@ -12,6 +12,11 @@ const routes = [
     path: '/login',
     component: () => import('@/views/login.vue'),
     meta: { title: '登录' }
+  }, {
+    name: 'mineDoc',
+    path: '/mineDoc',
+    component: () => import('@/views/mineDoc/index.vue'),
+    meta: { title: '接口文档' }
   }
   , {
     path: "/:pathMatch(.*)*",
