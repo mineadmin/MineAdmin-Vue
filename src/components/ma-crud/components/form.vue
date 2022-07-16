@@ -215,6 +215,8 @@
                   :show-word-limit="['input', 'textarea'].includes(item.formType) ? true : false"
                   :is-echo="item.isEcho"
                   :mode="item.formType === 'input-number' ? 'button' : undefined"
+                  :height="item.height || undefined"
+                  :language="item.language || 'javascript'"
                   allow-clear
                   @change="item.change && item.change($event, { form, item, currentAction, index })"
                   @click="item.click && item.click($event, { form, item, currentAction, index })"
@@ -519,6 +521,7 @@ const getComponent = (item) => {
     case 'upload': return 'ma-upload'
     case 'select-user': return 'ma-user'
     case 'editor': return 'ma-editor'
+    case 'code-editor': return 'ma-code-editor'
     case 'icon': return 'ma-icon'
     default: return `a-${item.formType}`
   }

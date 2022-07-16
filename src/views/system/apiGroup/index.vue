@@ -80,7 +80,7 @@
 </script>
 
 <script>
-export default { name: 'system:appGroup' }
+export default { name: 'system:apiGroup' }
 </script>
 
 <style scoped>

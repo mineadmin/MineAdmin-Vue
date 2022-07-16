@@ -27,7 +27,6 @@
       </template>
     </ma-crud>
 
-    <bind ref="bindRef" />
   </div>
 </template>
 
@@ -35,7 +34,6 @@
   import { ref, reactive } from 'vue'
   import app from '@/api/system/app'
   import { Message, Modal } from '@arco-design/web-vue'
-  import bind from './bind.vue'
 
   const crudRef = ref()
   const bindRef = ref()
@@ -56,6 +54,13 @@
       Message.success(response.message)
     }
   }
+
+  const defaultResponse = `{
+  code: 200,
+  success: true,
+  message: '请求成功',
+  data: []
+}`
 
   const crud = reactive({
     api: app.getList,
@@ -82,76 +87,48 @@
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
     { 
       title: '所属组', dataIndex: 'group_id', search: true, rules: [{ required: true, message: '所属组必选' }],
-      formType: 'select', dict: { url: 'system/appGroup/list', props: { label: 'name', value: 'id' }, translation: true },
-      span: 12, labelWidth: '140px', width: 140,
+      formType: 'select', dict: { url: 'system/apiGroup/list', props: { label: 'name', value: 'id' }, translation: true },
+      span: 12, width: 140,
     },
     { 
-      title: '应用名称', dataIndex: 'app_name', search: true, rules: [{ required: true, message: '应用名称必填' }],
-      span: 12, labelWidth: '120px', width: 150,
+      title: '接口名称', dataIndex: 'app_name', search: true, rules: [{ required: true, message: '应用名称必填' }],
+      span: 12, width: 150,
     },
     { 
-      title: 'APP ID', dataIndex: 'app_id', search: true, rules: [{ required: true, message: 'APP ID必填' }],
-      labelWidth: '120px', span: 19, disabled: true, width: 120,
-      addDefaultValue: async () => {
-        const res = await app.getAppId()
-        return res.data.app_id
-      }
+      title: '访问名称', dataIndex: 'access_name', search: true, span: 12, width: 140,
+      rules: [{ required: true, message: '访问名称必填' }],
+      formExtra: '接口实际访问的路由，可以使用"."来区分层级，不支持"/"'
     },
     { 
-      labelWidth: '0px', span: 5, formType: 'button', type: 'primary', text: '刷新APP ID',
-      click: async (ev, props) => {
-        if (props.currentAction === 'edit') {
-          Modal.info({
-            simple: false,
-            hideCancel: false,
-            title: '提示',
-            content: '此操作会造成已使用的应用验证失败，确定执行吗？',
-            onOk: async () => {
-              const res = await app.getAppId()
-              props.form.app_id = res.data.app_id
-            }
-          })
-          return
-        }
-        const res = await app.getAppId()
-        props.form.app_id = res.data.app_id
-      }
+      title: '请求模式', dataIndex: 'request_mode', search: true, formType: 'select',
+      rules: [{ required: true, message: '请求模式必选' }],
+      dict: { name: 'request_mode', props: { label: 'title', value: 'key' }, translation: true },
+      span: 12, width: 140,
     },
     { 
-      title: 'APP SECRET', dataIndex: 'app_secret', rules: [{ required: true, message: 'APP SECRET必填' }],
-      labelWidth: '120px', disabled: true, span: 19, width: 500,
-      addDefaultValue: async () => {
-        const res = await app.getAppSecret()
-        return res.data.app_secret
-      }
+      title: '类名称', dataIndex: 'class_name', rules: [{ required: true, message: '类名称必填' }],
+      span: 12, width: 150,
     },
     { 
-      labelWidth: '0px', span: 5, formType: 'button', type: 'primary', text: '刷新APP SECRET',
-      click: async (ev, props) => {
-        if (props.currentAction === 'edit') {
-          Modal.info({
-            simple: false,
-            hideCancel: false,
-            title: '提示',
-            content: '此操作会造成已使用的应用验证失败，确定执行吗？',
-            onOk: async () => {
-              const res = await app.getAppSecret()
-              props.form.app_secret = res.data.app_secret
-            }
-          })
-          return
-        }
-        const res = await app.getAppSecret()
-        props.form.app_secret = res.data.app_secret
-      }
+      title: '方法名称', dataIndex: 'method_name', rules: [{ required: true, message: '方法名称必填' }],
+      span: 12, width: 150,
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',
       dict: { name: 'data_status', props: { label: 'title', value: 'key' } },
-      addDefaultValue: '1', width: 80,
+      addDefaultValue: '1', width: 80, span: 12,
+    },
+    {
+      title: '认证模式', dataIndex: 'auth_mode', formType: 'radio',
+      dict: { data: [{ label: '简易模式', code: 1 }, { label: '复杂模式', code: 2 }], translation: true },
+      addDefaultValue: 1, width: 130, span: 12,
     },
     {
       title: '应用介绍', dataIndex: 'description', hide: true, formType: 'editor',
+    },
+    {
+      title: '返回示例', dataIndex: 'response', hide: true, formType: 'code-editor', height: 300,
+      addDefaultValue: defaultResponse, readonly: true
     },
     {
       title: '备注', dataIndex: 'remark', hide: true, formType: 'textarea',
@@ -164,7 +141,7 @@
 </script>
 
 <script>
-export default { name: 'system:app' }
+export default { name: 'system:api' }
 </script>
 
 <style scoped>
