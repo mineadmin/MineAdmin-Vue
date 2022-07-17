@@ -60,7 +60,7 @@
   const mpRef = ref()
   const dpRef = ref()
 
-  let isRecovery = computed(() => crudRef.value.isRecovery )
+  let isRecovery = computed(() => crudRef.value ? crudRef.value.isRecovery : false )
 
   const openMenuList = (record) => {
     mpRef.value.open(record)

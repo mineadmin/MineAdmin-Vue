@@ -10,7 +10,7 @@ export default {
    * 获取接口管理分页列表
    * @returns
    */
-  getList (params = {}) {
+  getList(params = {}) {
     return request({
       url: 'system/api/index',
       method: 'get',
@@ -22,7 +22,7 @@ export default {
    * 获取模块列表
    * @returns
    */
-  getModuleList () {
+  getModuleList() {
     return request({
       url: 'system/api/getModuleList',
       method: 'get'
@@ -33,7 +33,7 @@ export default {
    * 从回收站获取接口管理数据列表
    * @returns
    */
-  getRecycleList (params = {}) {
+  getRecycleList(params = {}) {
     return request({
       url: 'system/api/recycle',
       method: 'get',
@@ -45,7 +45,7 @@ export default {
    * 添加接口管理
    * @returns
    */
-  save (data = {}) {
+  save(data = {}) {
     return request({
       url: 'system/api/save',
       method: 'post',
@@ -57,7 +57,7 @@ export default {
    * 读取接口管理
    * @returns
    */
-  read (data = {}) {
+  read(data = {}) {
     return request({
       url: 'system/api/read',
       method: 'post',
@@ -69,7 +69,7 @@ export default {
    * 将接口管理移到回收站
    * @returns
    */
-  deletes (data) {
+  deletes(data) {
     return request({
       url: 'system/api/delete',
       method: 'delete',
@@ -81,7 +81,7 @@ export default {
    * 恢复接口管理数据
    * @returns
    */
-  recoverys (data) {
+  recoverys(data) {
     return request({
       url: 'system/api/recovery',
       method: 'put',
@@ -93,7 +93,7 @@ export default {
    * 真实删除接口管理
    * @returns
    */
-  realDeletes (data) {
+  realDeletes(data) {
     return request({
       url: 'system/api/realDelete',
       method: 'delete',
@@ -105,12 +105,24 @@ export default {
    * 更新接口管理数据
    * @returns
    */
-  update (id, data = {}) {
+  update(id, data = {}) {
     return request({
       url: 'system/api/update/' + id,
       method: 'put',
       data
     })
-  }
+  },
+
+  /**
+   * 更改部门状态
+   * @returns
+   */
+  changeStatus(data = {}) {
+    return request({
+      url: 'system/api/changeStatus',
+      method: 'put',
+      data
+    })
+  },
 
 }

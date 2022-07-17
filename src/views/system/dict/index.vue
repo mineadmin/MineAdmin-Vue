@@ -13,9 +13,10 @@
     <ma-crud :crud="crud" :columns="columns" ref="crudRef">
       <!-- 字典标识列 -->
       <template #code="{ record }">
-        <a-tooltip content="点击查看字典数据">
+        <a-tooltip content="点击查看字典数据" v-if="! isRecovery">
           <a-link @click="openDictList(record)">{{ record.code }}</a-link>
         </a-tooltip>
+        <span v-else>{{ record.code }}</span>
       </template>
       <!-- 状态列 -->
       <template #status="{ record }">
@@ -26,7 +27,7 @@
           :default-checked="record.status == 1"
         />
       </template>
-      <template #operationBeforeExtend="{ record }">
+      <template #operationBeforeExtend="{ record }" v-if="! isRecovery">
         <a-link @click="openDictList(record)"><icon-list /> 字典数据</a-link>
       </template>
     </ma-crud>
@@ -36,13 +37,15 @@
 </template>
 
 <script setup>
-  import { ref, reactive } from 'vue'
+  import { ref, reactive, computed } from 'vue'
   import { dictType } from '@/api/system/dict'
   import { Message } from '@arco-design/web-vue'
   import dataList from './dataList.vue'
 
   const crudRef = ref()
   const datalist = ref()
+
+  let isRecovery = computed(() => crudRef.value ? crudRef.value.isRecovery : false )
 
   const changeStatus = async (status, id) => {
     const response = await dictType.changeStatus({ id, status })

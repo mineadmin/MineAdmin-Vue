@@ -21,7 +21,7 @@
         />
       </template>
       <!-- 操作前置扩展 -->
-      <template #operationBeforeExtend="{ record }">
+      <template #operationBeforeExtend="{ record }" v-if="! isRecovery">
         <a-link @click="openDoc(record)"><icon-book /> 文档</a-link>
         <a-link @click="bindApi(record.id)"><icon-pushpin /> 绑定</a-link>
       </template>
@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-  import { ref, reactive } from 'vue'
+  import { ref, reactive, computed, nextTick } from 'vue'
   import app from '@/api/system/app'
   import { Message, Modal } from '@arco-design/web-vue'
   import bind from './bind.vue'
@@ -56,6 +56,8 @@
       Message.success(response.message)
     }
   }
+
+  let isRecovery = computed(() => crudRef.value ? crudRef.value.isRecovery : false )
 
   const crud = reactive({
     api: app.getList,

@@ -38,19 +38,21 @@
 
       <!-- 操作前置扩展 -->
       <template #operationBeforeExtend="{ record }">
-        <a-link @click="openAdd(record.id)" v-if=" record.type === 'M' "><icon-plus /> 新增</a-link>
+        <a-link @click="openAdd(record.id)" v-if=" record.type === 'M' && ! isRecovery "><icon-plus /> 新增</a-link>
       </template>
     </ma-crud>
   </div>
 </template>
 
 <script setup>
-  import { ref, reactive, onMounted } from 'vue'
+  import { ref, reactive, computed } from 'vue'
   import menu from '@/api/system/menu'
   import { Message } from '@arco-design/web-vue'
 
   const crudRef = ref()
   const currentParentId = ref()
+
+  let isRecovery = computed(() => crudRef.value ? crudRef.value.isRecovery : false )
 
   const menuType = [
     { label: '菜单', code: 'M' },

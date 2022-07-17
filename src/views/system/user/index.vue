@@ -99,7 +99,7 @@
     commonApi.getDict('dashboard').then(res => homePageList.value = res.data )
   })
 
-  let isRecovery = computed(() => crudRef.value.isRecovery )
+  let isRecovery = computed(() => crudRef.value ? crudRef.value.isRecovery : false )
 
   const switchDept = (id) => {
     crud.requestParams = id[0] === 'all' ? { dept_id: undefined } : { dept_id: id[0] }

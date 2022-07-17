@@ -21,9 +21,9 @@
         />
       </template>
       <!-- 操作前置扩展 -->
-      <template #operationBeforeExtend="{ record }">
-        <a-link @click="openDoc(record)"><icon-book /> 文档</a-link>
-        <a-link @click="bindApi(record.id)"><icon-pushpin /> 绑定</a-link>
+      <template #operationBeforeExtend="{ record }" v-if="! isRecovery">
+        <a-link @click="openParamsList(record, 'request')"><icon-left /> 出参</a-link>
+        <a-link @click="openParamsList(record, 'response')"><icon-right /> 入参</a-link>
       </template>
     </ma-crud>
 
@@ -31,29 +31,23 @@
 </template>
 
 <script setup>
-  import { ref, reactive } from 'vue'
-  import app from '@/api/system/app'
-  import { Message, Modal } from '@arco-design/web-vue'
+  import { ref, reactive, computed } from 'vue'
+  import api from '@/api/system/api'
+  import { Message } from '@arco-design/web-vue'
 
   const crudRef = ref()
-  const bindRef = ref()
+  const paramsRef = ref()
 
-  const openDoc = (row) => {
-    window.open(
-      window.location.origin + '/#/mineDoc?app_id=' + row.app_id + '&app_secret=' + row.app_secret
-    )
-  }
-
-  const bindApi = (id) => {
-    bindRef.value.open(id)
-  }
+  let isRecovery = computed(() => crudRef.value ? crudRef.value.isRecovery : false )
 
   const changeStatus = async (status, id) => {
-    const response = await app.changeStatus({ id, status })
+    const response = await api.changeStatus({ id, status })
     if (response.success) {
       Message.success(response.message)
     }
   }
+
+  const openParamsList = (row, type) => {}
 
   const defaultResponse = `{
   code: 200,
@@ -63,21 +57,21 @@
 }`
 
   const crud = reactive({
-    api: app.getList,
-    recycleApi: app.getRecycleList,
+    api: api.getList,
+    recycleApi: api.getRecycleList,
     showIndex: false,
     searchLabelWidth: '75px',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 280,
-    add: { show: true, api: app.save, auth: ['system:app:add'] },
-    edit: { show: true, api: app.update, auth: ['system:app:edit'] },
+    operationWidth: 260,
+    add: { show: true, api: api.save, auth: ['system:api:add'] },
+    edit: { show: true, api: api.update, auth: ['system:api:edit'] },
     delete: {
       show: true,
-      api: app.deletes, auth: ['system:app:delete'],
-      realApi: app.realDeletes, realAuth: ['system:app:realDeletes']
+      api: api.deletes, auth: ['system:api:delete'],
+      realApi: api.realDeletes, realAuth: ['system:api:realDeletes']
     },
-    recovery: { show: true, api: app.recoverys, auth: ['system:app:recovery']},
+    recovery: { show: true, api: api.recoverys, auth: ['system:api:recovery']},
     viewLayoutSetting: {
       layout: 'customer', width: '850px'
     }
@@ -91,11 +85,11 @@
       span: 12, width: 140,
     },
     { 
-      title: '接口名称', dataIndex: 'app_name', search: true, rules: [{ required: true, message: '应用名称必填' }],
+      title: '接口名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '应用名称必填' }],
       span: 12, width: 150,
     },
     { 
-      title: '访问名称', dataIndex: 'access_name', search: true, span: 12, width: 140,
+      title: '访问名称', dataIndex: 'access_name', span: 12, width: 140,
       rules: [{ required: true, message: '访问名称必填' }],
       formExtra: '接口实际访问的路由，可以使用"."来区分层级，不支持"/"'
     },
