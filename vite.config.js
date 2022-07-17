@@ -5,7 +5,7 @@ import { resolve } from 'path'
 export default ({ mode }) => {
 
   const env = loadEnv(mode, process.cwd())
-  const proxyPrefix = env.VITE_PROXY_PREFIX
+  const proxyPrefix = env.VITE_APP_PROXY_PREFIX
 
   return defineConfig({
     plugins: [vue()],
@@ -24,7 +24,7 @@ export default ({ mode }) => {
       port: env.VITE_APP_PORT || process.env.port,
       proxy:{
         [ proxyPrefix ]: {
-          target: env.VITE_BASE_URL,
+          target: env.VITE_APP_BASE_URL,
           changeOrigin: true,
           ws: true,
           toProxy: true,

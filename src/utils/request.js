@@ -84,7 +84,8 @@ function stringify (data) {
  */
 function createRequest (service) {
   return function (config) {
-    const token = tool.local.get(import.meta.env.VITE_TOKEN_PREFIX)
+    const env = import.meta.env
+    const token = tool.local.get(env.VITE_APP_TOKEN_PREFIX)
     const setting = tool.local.get('setting')
     const configDefault = {
       headers: {
@@ -94,9 +95,10 @@ function createRequest (service) {
       },
 
       timeout: 10000,
-      baseURL: import.meta.env.VITE_PROXY_PREFIX,
+      baseURL: env.VITE_APP_OPEN_PROXY === 'true' ? env.VITE_APP_PROXY_PREFIX : env.VITE_APP_BASE_URL,
       data: {}
     }
+    console.log(env.VITE_APP_OPEN_PROXY)
     const option = Object.assign(configDefault, config)
 
     // json

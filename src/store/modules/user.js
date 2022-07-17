@@ -24,15 +24,15 @@ const useUserStore = defineStore('user', {
   actions: {
 
     setToken(token) {
-      tool.local.set(import.meta.env.VITE_TOKEN_PREFIX, token)
+      tool.local.set(import.meta.env.VITE_APP_TOKEN_PREFIX, token)
     },
 
     getToken() {
-      return tool.local.get(import.meta.env.VITE_TOKEN_PREFIX)
+      return tool.local.get(import.meta.env.VITE_APP_TOKEN_PREFIX)
     },
 
     clearToken() {
-      tool.local.remove(import.meta.env.VITE_TOKEN_PREFIX)
+      tool.local.remove(import.meta.env.VITE_APP_TOKEN_PREFIX)
     },
 
     setInfo(data) {
