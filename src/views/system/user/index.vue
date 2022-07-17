@@ -9,7 +9,6 @@
 -->
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
-
     <div class="lg:w-2/12 w-full h-full p-2 shadow">
       <ma-tree-slider
         v-model="depts"

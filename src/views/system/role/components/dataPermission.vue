@@ -81,7 +81,6 @@
 
   const open = (row) => {
     form.value = { id: row.id, name: row.name, code: row.code, data_scope: row.data_scope }
-    console.log(form.value)
     setData(row.id)
     visible.value = true
   }

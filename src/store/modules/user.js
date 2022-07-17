@@ -117,6 +117,8 @@ const flatAsyncRoutes = (routes, breadcrumb=[]) => {
   return res
 }
 
+const views = import.meta.glob('../../views/**/**.vue')
+
 // 菜单转换路由
 const filterAsyncRouter = (routerMap) => {
   const accessedRouters = []
@@ -134,7 +136,7 @@ const filterAsyncRouter = (routerMap) => {
         hidden: item.hidden == 1,
         meta: item.meta,
         children: item.children ? filterAsyncRouter(item.children) : null,
-        component: loadComponent(item.component)
+        component: views[`../../views/${item.component}.vue`]
       }
       accessedRouters.push(route)
     }
@@ -156,14 +158,4 @@ const removeButtonMenu = (routers) => {
   })
   return handlerAfterRouters
 }
-
-// 载入组件
-const loadComponent = (component) => {
-  if(component){
-    return () => import(`../../views/${component}.vue`)
-  } else {
-    return () => import(`../../layout/empty.vue`)
-  }
-}
-
 export default useUserStore
