@@ -22,11 +22,12 @@
       </template>
       <!-- 操作前置扩展 -->
       <template #operationBeforeExtend="{ record }" v-if="! isRecovery">
-        <a-link @click="openParamsList(record, 'request')"><icon-left /> 出参</a-link>
-        <a-link @click="openParamsList(record, 'response')"><icon-right /> 入参</a-link>
+        <a-link @click="openParamsList(record, 'response')"><icon-left /> 出参</a-link>
+        <a-link @click="openParamsList(record, 'request')"><icon-right /> 入参</a-link>
       </template>
     </ma-crud>
 
+    <params ref="paramsRef" />
   </div>
 </template>
 
@@ -34,6 +35,7 @@
   import { ref, reactive, computed } from 'vue'
   import api from '@/api/system/api'
   import { Message } from '@arco-design/web-vue'
+  import params from './params.vue'
 
   const crudRef = ref()
   const paramsRef = ref()
@@ -47,7 +49,9 @@
     }
   }
 
-  const openParamsList = (row, type) => {}
+  const openParamsList = (row, type) => {
+    paramsRef.value.open(row, type)
+  }
 
   const defaultResponse = `{
   code: 200,
@@ -78,7 +82,6 @@
   })
 
   const columns = reactive([
-    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
     { 
       title: '所属组', dataIndex: 'group_id', search: true, rules: [{ required: true, message: '所属组必选' }],
       formType: 'select', dict: { url: 'system/apiGroup/list', props: { label: 'name', value: 'id' }, translation: true },
@@ -122,7 +125,7 @@
     },
     {
       title: '返回示例', dataIndex: 'response', hide: true, formType: 'code-editor', height: 300,
-      addDefaultValue: defaultResponse, readonly: true
+      addDefaultValue: defaultResponse,
     },
     {
       title: '备注', dataIndex: 'remark', hide: true, formType: 'textarea',

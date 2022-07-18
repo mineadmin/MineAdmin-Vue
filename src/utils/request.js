@@ -98,7 +98,6 @@ function createRequest (service) {
       baseURL: env.VITE_APP_OPEN_PROXY === 'true' ? env.VITE_APP_PROXY_PREFIX : env.VITE_APP_BASE_URL,
       data: {}
     }
-    console.log(env.VITE_APP_OPEN_PROXY)
     const option = Object.assign(configDefault, config)
 
     // json
