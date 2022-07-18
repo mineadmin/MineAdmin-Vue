@@ -34,9 +34,9 @@
               <a-form-item
                 v-if="
                   formItemShow(item) &&
-                  ! ['__index', '__operation'].includes(item.dataIndex) &&
-                  (typeof item.display == 'undefined' || item.display === true)
+                  ! ['__index', '__operation'].includes(item.dataIndex)
                 "
+                v-show="(typeof item.display == 'undefined' || item.display === true)"
                 :label="item.title"
                 :field="item.dataIndex"
                 label-col-flex="auto"

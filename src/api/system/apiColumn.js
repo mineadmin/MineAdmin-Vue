@@ -10,7 +10,7 @@ export default {
    * 获取接口字段管理分页列表
    * @returns
    */
-  getList (params = {}) {
+  getList(params = {}) {
     return request({
       url: 'system/apiColumn/index',
       method: 'get',
@@ -22,7 +22,7 @@ export default {
    * 从回收站获取接口字段管理数据列表
    * @returns
    */
-  getRecycleList (params = {}) {
+  getRecycleList(params = {}) {
     return request({
       url: 'system/apiColumn/recycle',
       method: 'get',
@@ -34,11 +34,11 @@ export default {
    * 添加接口字段管理
    * @returns
    */
-  save (params = {}) {
+  save(data = {}) {
     return request({
       url: 'system/apiColumn/save',
       method: 'post',
-      data: params
+      data
     })
   },
 
@@ -46,7 +46,7 @@ export default {
    * 读取接口字段管理
    * @returns
    */
-  read (data = {}) {
+  read(data = {}) {
     return request({
       url: 'system/apiColumn/read',
       method: 'post',
@@ -58,7 +58,7 @@ export default {
    * 将接口字段管理移到回收站
    * @returns
    */
-  deletes (data) {
+  deletes(data) {
     return request({
       url: 'system/apiColumn/delete',
       method: 'delete',
@@ -70,7 +70,7 @@ export default {
    * 恢复接口字段管理数据
    * @returns
    */
-  recoverys (data) {
+  recoverys(data) {
     return request({
       url: 'system/apiColumn/recovery',
       method: 'put',
@@ -82,7 +82,7 @@ export default {
    * 真实删除接口字段管理
    * @returns
    */
-  realDeletes (data) {
+  realDeletes(data) {
     return request({
       url: 'system/apiColumn/realDelete',
       method: 'delete',
@@ -94,7 +94,7 @@ export default {
    * 更新接口字段管理数据
    * @returns
    */
-  update (id, data = {}) {
+  update(id, data = {}) {
     return request({
       url: 'system/apiColumn/update/' + id,
       method: 'put',
@@ -102,41 +102,15 @@ export default {
     })
   },
 
-	/**
-	 * 导出
-	 * @returns
-	 */
-	exportExcel (params = {}) {
-		return request({
-			url: 'system/apiColumn/export',
-			method: 'post',
-			responseType: 'blob',
-			params
-		})
-	},
-
-	/**
-	 * 导入
-	 * @returns
-	 */
-	importExcel (data = {}) {
-		return request({
-			url: 'system/apiColumn/import',
-			method: 'post',
-			data
-		})
-	},
-
-	/**
-	 * 下载模板
-	 * @returns
-	 */
-	downloadTemplate () {
-		return request({
-			url: 'system/apiColumn/downloadTemplate',
-			method: 'post',
-			responseType: 'blob'
-		})
-	},
-
+  /**
+   * 更改部门状态
+   * @returns
+   */
+  changeStatus(data = {}) {
+    return request({
+      url: 'system/apiColumn/changeStatus',
+      method: 'put',
+      data
+    })
+  },
 }

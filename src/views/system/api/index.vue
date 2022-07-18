@@ -27,7 +27,7 @@
       </template>
     </ma-crud>
 
-    <params ref="paramsRef" />
+    <params-list ref="paramslist" />
   </div>
 </template>
 
@@ -35,10 +35,10 @@
   import { ref, reactive, computed } from 'vue'
   import api from '@/api/system/api'
   import { Message } from '@arco-design/web-vue'
-  import params from './params.vue'
+  import paramsList from './paramsList.vue'
 
   const crudRef = ref()
-  const paramsRef = ref()
+  const paramslist = ref()
 
   let isRecovery = computed(() => crudRef.value ? crudRef.value.isRecovery : false )
 
@@ -50,7 +50,7 @@
   }
 
   const openParamsList = (row, type) => {
-    paramsRef.value.open(row, type)
+    paramslist.value.open(row, type)
   }
 
   const defaultResponse = `{
