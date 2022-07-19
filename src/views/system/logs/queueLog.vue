@@ -111,6 +111,10 @@ export default { name: 'system:queueLog' }
 </script>
 
 <style scoped>
+:deep(.arco-collapse-item-content) {
+  padding-left: 10px;
+  padding-right: 10px;
+}
 pre {
   font-size: 12px;
   color: #ccc;

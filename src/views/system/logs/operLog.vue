@@ -124,5 +124,8 @@ export default { name: 'system:operLog' }
 </script>
 
 <style scoped>
-
+:deep(.arco-collapse-item-content) {
+  padding-left: 10px;
+  padding-right: 10px;
+}
 </style>

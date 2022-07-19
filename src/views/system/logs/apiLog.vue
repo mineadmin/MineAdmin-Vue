@@ -115,5 +115,8 @@ export default { name: 'system:apiLog' }
 </script>
 
 <style scoped>
-
+:deep(.arco-collapse-item-content) {
+  padding-left: 10px;
+  padding-right: 10px;
+}
 </style>
