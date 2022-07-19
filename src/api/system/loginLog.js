@@ -18,10 +18,11 @@ export default {
    * 删除
    * @returns
    */
-  deletes(ids) {
+  deletes(data) {
     return request({
-      url: 'system/logs/deleteLoginLog/' + ids,
-      method: 'delete'
+      url: 'system/logs/deleteLoginLog',
+      method: 'delete',
+      data
     })
   }
 }

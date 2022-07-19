@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useAppStore } from '@/store'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution'
@@ -41,7 +41,7 @@ let instance
 
 onMounted(() => {
   instance = monaco.editor.create(dom.value, {
-    model: monaco.editor.createModel(props.modelValue, props.language),
+    value: props.modelValue,
     tabSize: 2,
     automaticLayout: true,
     scrollBeyondLastLine: false,
@@ -60,6 +60,12 @@ onMounted(() => {
     emit('update:modelValue', instance.getValue())
   })
 })
+
+watch(
+  () => props.modelValue,
+  vl => instance.setValue(vl)
+)
+
 </script>
 
 <style scoped lang="less">
