@@ -628,6 +628,13 @@ const exportAction = () => {
 }
 
 const deleteAction = async (record) => {
+  if (
+    defaultCrud.value.beforeDelete
+    && isFunction(defaultCrud.value.beforeDelete)
+    && ! defaultCrud.value.beforeDelete(record)
+  ) {
+    return
+  }
   const api = isRecovery.value ? defaultCrud.value.delete.realApi : defaultCrud.value.delete.api
   const response = await api({ ids: [ record[ defaultCrud.value.pk ] ] })
   response.code === 200 

@@ -39,7 +39,7 @@ const homePageRoutes = [
       type: 'M',
       hidden: false,
     },
-    component: () => import('@/views/setting/index.vue'),
+    component: () => import('@/views/setting/config/index.vue'),
   }, {
     name: 'demo',
     path: '/demo',
