@@ -11,7 +11,7 @@
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
     <ma-crud :crud="crud" :columns="columns" ref="crudRef">
-      <template #operationBeforeExtend="{ record }">
+      <template #operationCell="{ record }">
 
         <a-popconfirm
           @ok="handleInstall(record)"
@@ -26,20 +26,39 @@
           :content="`确定要${ record.enabled ? '停用' : '启用'}${record.label}吗?`"
           position="bottom"
         >
-          <a-link v-auth="['setting:module:delete']" v-if="record.enabled"><icon-info-circle /> 停用</a-link>
-          <a-link v-auth="['setting:module:delete']" v-else><icon-check-circle /> 启用</a-link>
+          <a-link v-auth="['setting:module:status']" v-if="record.enabled"><icon-info-circle /> 停用</a-link>
+          <a-link v-auth="['setting:module:status']" v-else><icon-check-circle /> 启用</a-link>
         </a-popconfirm>
+
+        <a-link
+          @click="openDeleteModal(record)"
+          v-auth="['setting:module:delete']"
+        ><icon-delete /> 删除</a-link>
       </template>
     </ma-crud>
+
+    <a-modal v-model:visible="visible" type="warning" :on-before-ok="deleteModule">
+      <template #title>危险操作</template>
+      <div class="mb-2">
+        确定要删除 <span class="text-red-500 underline font-black">{{ currentModule.label }}</span> 模块吗？
+      </div>
+      <div>
+        此操作会删除文件和数据表，如果执行请在下面输入框输入：<span class="text-red-500">{{ currentModule.name }}</span>
+      </div>
+      <a-input :placeholder="`请输入 ${currentModule.name}`" class="mt-2" v-model="name" />
+    </a-modal>
   </div>
 </template>
 
 <script setup>
-  import { ref, reactive } from 'vue'
+  import { ref, reactive, h } from 'vue'
   import module from '@/api/setting/module'
   import { Message } from '@arco-design/web-vue'
 
   const crudRef = ref()
+  const name = ref()
+  const visible = ref(false)
+  const currentModule = ref({})
 
   const switchEnbaled = async (record) => {
     if (record.name == 'System' || record.name == 'Setting') {
@@ -61,6 +80,31 @@
     response.success && Message.success(response.message)
   }
 
+  const deleteModule = async (done) => {
+    if (name.value !== currentModule.value.name) {
+      Message.error(`输入错误，验证失败`)
+      done(false)
+      return
+    }
+
+    const response = await module.deletes({ name: name.value })
+    if (response.success) {
+      Message.success('模块删除成功')
+      crudRef.value.refresh()
+      currentModule.value = {}
+      done(true)
+    }
+  }
+
+  const openDeleteModal = async (record) => {
+    if (record.name == 'System' || record.name == 'Setting') {
+      Message.info(record.label + ' 是系统核心模块，不能删除')
+      return false
+    }
+    currentModule.value = record
+    visible.value = true
+  }
+
   const crud = reactive({
     pk: 'name',
     api: module.getPageList,
@@ -69,14 +113,6 @@
     operationColumn: true,
     operationWidth: 240,
     add: { show: true, api: module.save, auth: ['setting:module:save'] },
-    delete: { show: true, api: module.deletes, auth: ['setting:module:delete'] },
-    beforeDelete: (record) => {
-      if (record.name == 'System' || record.name == 'Setting') {
-        Message.info(record.label + ' 是系统核心模块，无法删除')
-        return false
-      }
-      return true
-    }
   })
 
   const columns = reactive([

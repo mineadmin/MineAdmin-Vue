@@ -237,12 +237,10 @@
 <script setup>
 import { ref, nextTick, watch } from 'vue'
 import { request } from '@/utils/request'
-import { isArray } from '@vue/shared'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { handlerProps } from '../js/common'
-import _ from 'lodash'
-
+import { isArray, isFunction } from 'lodash'
 const componentName = ref('a-modal')
 const columns = ref([])
 const currentAction = ref('')
@@ -250,26 +248,20 @@ const dataVisible = ref(false)
 const form = ref({})
 const crudForm = ref(null)
 const actionTitle = ref('')
-
 const dataLoading = ref(true)
 const formDictData = ref({})
 const setting = ref({})
-
 const emit = defineEmits(['success', 'error'])
-
 const props = defineProps({
   modelValue: Array,
-  options: { type: Object }
+  crud: { type: Object }
 })
-
-setting.value = props.options.viewLayoutSetting
-
+setting.value = props.crud.viewLayoutSetting
 watch(
-  () => props.options.viewLayoutSetting,
+  () => props.crud.viewLayoutSetting,
   vl => setting.value = vl,
   { deep: true }
 )
-
 watch(
   () => form,
   vl => {
@@ -277,7 +269,7 @@ watch(
     const obj = []
     for (let name in tempForm) {
       columns.value.map( item => {
-        if (item.dataIndex === name && item.control && _.isFunction(item.control)) {
+        if (item.dataIndex === name && item.control && isFunction(item.control)) {
           obj.push(item.control(tempForm[name], tempForm))
         }
       })
@@ -294,7 +286,6 @@ watch(
   },
   { deep: true }
 )
-
 const submit = (done) => {
   crudForm.value.validate()
   .then(async result => {
@@ -305,15 +296,14 @@ const submit = (done) => {
     
     let response
     if (currentAction.value === 'add') {
-      _.isFunction(props.options.beforeAdd) && props.options.beforeAdd(form.value)
-      response = await props.options.add.api(form.value)
-      _.isFunction(props.options.afterAdd) && props.options.afterAdd(response, form.value)
+      isFunction(props.crud.beforeAdd) && props.crud.beforeAdd(form.value)
+      response = await props.crud.add.api(form.value)
+      isFunction(props.crud.afterAdd) && props.crud.afterAdd(response, form.value)
     } else {
-      _.isFunction(props.options.beforeEdit) && props.options.beforeEdit(form.value)
-      response = await props.options.edit.api(form.value[props.options.pk], form.value)
-      _.isFunction(props.options.afterEdit) && props.options.afterEdit(response, form.value)
+      isFunction(props.crud.beforeEdit) && props.crud.beforeEdit(form.value)
+      response = await props.crud.edit.api(form.value[props.crud.pk], form.value)
+      isFunction(props.crud.afterEdit) && props.crud.afterEdit(response, form.value)
     }
-
     if ( response.code === 200 ) {
       Message.success(response.message || `${actionTitle.value}成功！`)
       emit('success', response)
@@ -327,7 +317,6 @@ const submit = (done) => {
   .catch()
   //.finally( done(false) )
 }
-
 const open = () => {
   nextTick(() =>{
     componentName.value = setting.value.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
@@ -336,28 +325,23 @@ const open = () => {
     init()
   })
 }
-
 const close = () => {
   dataVisible.value = false
   columns.value = []
   form.value = {}
 }
-
 const add = () => {
   actionTitle.value = '新增'
   currentAction.value = 'add'
   open()
 }
-
 const edit = (data) => {
   actionTitle.value = '编辑'
   currentAction.value = 'edit'
   for (let i in data) form.value[i] = data[i]
   open()
 }
-
 const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
-
 const init = () => {
   dataLoading.value = true
   const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
@@ -366,11 +350,10 @@ const init = () => {
   if (columns.value.length > 0) {
     columns.value.map(async item => {
       if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
-
       // add 默认值处理
       if (currentAction.value === 'add') {
         form.value[item.dataIndex] = undefined
-        if (item.addDefaultValue && _.isFunction(item.addDefaultValue)) {
+        if (item.addDefaultValue && isFunction(item.addDefaultValue)) {
           form.value[item.dataIndex] = await item.addDefaultValue(form.value)
         } else if (item.addDefaultValue) {
           form.value[item.dataIndex] = item.addDefaultValue
@@ -378,16 +361,14 @@ const init = () => {
           form.value[item.dataIndex] = []
         }
       }
-
       // edit 默认值处理
       if (currentAction.value === 'edit') {
-        if (item.editDefaultValue && _.isFunction(item.editDefaultValue)) {
+        if (item.editDefaultValue && isFunction(item.editDefaultValue)) {
           form.value[item.dataIndex] = await item.editDefaultValue(form.value)
         } else if (typeof item.editDefaultValue != 'undefined') {
           form.value[item.dataIndex] = item.editDefaultValue
         }
       }
-
       if (allowRequestFormType.includes(item.formType) && item.dict) {
         if (item.dict.name) {
           const response = await commonApi.getDict(item.dict.name)
@@ -409,11 +390,10 @@ const init = () => {
         }
       }
     })
-
     const obj = []
     for (let name in form.value) {
       columns.value.map( item => {
-        if (item.dataIndex === name && item.control && _.isFunction(item.control)) {
+        if (item.dataIndex === name && item.control && isFunction(item.control)) {
           obj.push(item.control(form.value[name], form.value))
         }
       })
@@ -430,7 +410,6 @@ const init = () => {
   }
   dataLoading.value = false
 }
-
 const handlerCascader = (val, column) => {
   if (column.cascaderItem && isArray(column.cascaderItem) && column.cascaderItem.length > 0 && val) {
     dataLoading.value = true
@@ -453,7 +432,6 @@ const handlerCascader = (val, column) => {
           Message.error('字典联动请求失败：' + name)
           console.error(response)
         }
-
         if (response.data && response.code === 200) {
           formDictData.value[name] = response.data.map(dicItem => {
             return {
@@ -467,7 +445,6 @@ const handlerCascader = (val, column) => {
     dataLoading.value = false
   }
 }
-
 const formItemShow = (item) => {
   if (currentAction.value === 'add' && typeof item.addDisplay == 'undefined' || item.addDisplay) {
     return true
@@ -477,7 +454,6 @@ const formItemShow = (item) => {
   }
   return false
 }
-
 const formItemDisabled = (item) => {
   if (currentAction.value === 'add' && item.addDisabled) {
     return true
@@ -487,7 +463,6 @@ const formItemDisabled = (item) => {
   }
   return false
 }
-
 const formItemReadonly = (item) => {
   if (currentAction.value === 'add' && item.addReadonly) {
     return true
@@ -497,22 +472,18 @@ const formItemReadonly = (item) => {
   }
   return false
 }
-
 const getRules = (item) => {
   if (currentAction.value === 'add') {
     return item.addRules ? item.addRules : item.rules || []
   }
-
   if (currentAction.value === 'edit') {
     return item.editRules ? item.editRules : item.rules || []
   }
 }
-
 const getComponent = (item) => {
   if (! item.formType) {
     return `a-input`
   }
-
   if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)) {
     return `a-${item.formType}-picker`
   }
@@ -526,6 +497,5 @@ const getComponent = (item) => {
     default: return `a-${item.formType}`
   }
 }
-
 defineExpose({ add, edit })
 </script>
