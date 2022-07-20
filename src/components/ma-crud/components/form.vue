@@ -259,13 +259,13 @@ const emit = defineEmits(['success', 'error'])
 
 const props = defineProps({
   modelValue: Array,
-  crud: { type: Object }
+  options: { type: Object }
 })
 
-setting.value = props.crud.viewLayoutSetting
+setting.value = props.options.viewLayoutSetting
 
 watch(
-  () => props.crud.viewLayoutSetting,
+  () => props.options.viewLayoutSetting,
   vl => setting.value = vl,
   { deep: true }
 )
@@ -305,13 +305,13 @@ const submit = (done) => {
     
     let response
     if (currentAction.value === 'add') {
-      _.isFunction(props.crud.beforeAdd) && props.crud.beforeAdd(form.value)
-      response = await props.crud.add.api(form.value)
-      _.isFunction(props.crud.afterAdd) && props.crud.afterAdd(response, form.value)
+      _.isFunction(props.options.beforeAdd) && props.options.beforeAdd(form.value)
+      response = await props.options.add.api(form.value)
+      _.isFunction(props.options.afterAdd) && props.options.afterAdd(response, form.value)
     } else {
-      _.isFunction(props.crud.beforeEdit) && props.crud.beforeEdit(form.value)
-      response = await props.crud.edit.api(form.value[props.crud.pk], form.value)
-      _.isFunction(props.crud.afterEdit) && props.crud.afterEdit(response, form.value)
+      _.isFunction(props.options.beforeEdit) && props.options.beforeEdit(form.value)
+      response = await props.options.edit.api(form.value[props.options.pk], form.value)
+      _.isFunction(props.options.afterEdit) && props.options.afterEdit(response, form.value)
     }
 
     if ( response.code === 200 ) {
