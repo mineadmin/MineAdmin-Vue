@@ -10,7 +10,6 @@
 <template>
   <div class="ma-content-block p-4">
     <ma-form v-model="form" v-model:columns="columns" @submit="submit">
-
     </ma-form>
     {{ form }}
   </div>

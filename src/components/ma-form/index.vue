@@ -206,13 +206,15 @@
                   :options="item.childrenOptions"
                   :columns="item.children"
                 >
-                  <template v-for="(groupItem, groupIndex) in item.children" :key="groupIndex">
-                    <template :v-slot="`group-${groupItem.dataIndex}`">
-                      <slot
-                        :name="`formGroup-${item.dataIndex}-${groupItem.dataIndex}`"
-                        v-bind="{ form, groupItem, index, groupIndex }"
-                      />
-                    </template>
+                  <template
+                    v-for="(groupItem, groupIndex) in item.children"
+                    :key="groupIndex"
+                    #[groupItem.dataIndex]="{ data }"
+                  >
+                    <slot
+                      :name="`${item.dataIndex}-${groupItem.dataIndex}`"
+                      v-bind="{ data, groupItem, groupIndex }"
+                    />
                   </template>
                 </ma-form-group>
                 <template #extra v-if="item.formExtra">{{ item.formExtra }}</template>
