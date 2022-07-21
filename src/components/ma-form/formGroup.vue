@@ -242,7 +242,7 @@ const formDictData = ref({})
 
 const props = defineProps({
   modelValue: { type: Object },
-  options: { type: Object, default: { layout: 'auto', cols: 3 } },
+  options: { type: Object, default: { layout: 'auto' } },
   columns: { type: Array }
 })
 
