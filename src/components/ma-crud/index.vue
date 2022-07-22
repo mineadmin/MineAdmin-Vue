@@ -100,6 +100,7 @@
           <slot name="tableButtons"></slot>
         </a-space>
         <a-space class="lg:mt-0 mt-2" v-if="defaultCrud.showTools">
+          <slot name="tools"></slot>
           <a-tooltip
             :content="isRecovery ? '显示正常数据' : '显示回收站数据'"
             v-if="defaultCrud.recycleApi && isFunction(defaultCrud.recycleApi)"
@@ -112,119 +113,120 @@
           <a-tooltip content="刷新表格"><a-button shape="circle" @click="refresh"><icon-refresh /></a-button></a-tooltip>
           <a-tooltip content="显隐搜索"><a-button shape="circle" @click="toggleSearch"><icon-search /></a-button></a-tooltip>
           <a-tooltip content="设置"><a-button shape="circle" @click="tableSetting"><icon-settings /></a-button></a-tooltip>
-          <slot name="tools"></slot>
         </a-space>
       </div>
-      <a-table
-        v-bind="$attrs"
-        ref="tableRef"
-        :data="tableData"
-        :loading="loading"
-        :pagination="settingProps.pagination"
-        :stripe="defaultCrud.stripe"
-        :bordered="defaultCrud.bordered"
-        :rowSelection="defaultCrud.rowSelection || undefined"
-        :row-key="defaultCrud.rowSelection && defaultCrud.rowSelection.key || 'id'"
-        :scroll="defaultCrud.scroll"
-        :column-resizable="defaultCrud.resizable"
-        :size="defaultCrud.size"
-        :hide-expand-button-on-empty="defaultCrud.hideExpandButtonOnEmpty"
-        :default-expand-all-rows="defaultCrud.expandAllRows"
-        :summary="defaultCrud.customerSummary || __summary || defaultCrud.showSummary"
-        @selection-change="selectChange"
-        @sorter-change="handlerSort"
-      >
-        <template #tr="{ record }">
-          <tr class="ma-crud-table-tr" @dblclick="dbClickOpenEdit(record)" />
-        </template>
-
-        <template #expand-row="record" v-if="defaultCrud.showExpandRow">
-          <slot name="expand-row" v-bind="record"></slot>
-        </template>
-        <template #columns>
-          <template v-for="row in columns" :key="row[defaultCrud.pk]">
-            <a-table-column
-              :title="row.title" :data-index="row.dataIndex" :width="row.width"
-              :ellipsis="true" :tooltip="row.dataIndex === '__operation' ? false : true" :align="row.align || 'left'" :fixed="row.fixed"
-              :sortable="row.sortable"
-              v-if="! row.hide"
-            >
-              
-              <template #cell="{ record, column, rowIndex }">
-                <template v-if="row.dataIndex === '__operation'">
-                  <a-space size="mini">
-                    <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
-                    <slot name="operationCell" v-bind="{ record, column, rowIndex }">
-                      <!-- <a-link
-                        v-if="
-                          defaultCrud.see.show
-                          && ($common.auth(defaultCrud.see.auth || [])
-                          || (defaultCrud.see.role || []))
-                        "
-                        type="primary"
-                      ><icon-eye /> {{ defaultCrud.see.text || '查看' }}</a-link> -->
-
-                      <a-link
-                        v-if="
-                          defaultCrud.edit.show
-                          && ! isRecovery
-                          && ($common.auth(defaultCrud.edit.auth || [])
-                          || (defaultCrud.edit.role || []))
-                        "
-                        type="primary"
-                        @click="editAction(record)"
-                      ><icon-edit /> {{ defaultCrud.edit.text || '编辑' }}</a-link>
-
-                      <a-popconfirm
-                        content="确定要恢复该数据吗?"
-                        position="bottom"
-                        @ok="recoveryAction(record)"
-                        v-if="
-                          defaultCrud.recovery.show
-                          && isRecovery
-                          && ($common.auth(defaultCrud.recovery.auth || [])
-                          || (defaultCrud.recovery.role || []))
-                        "
-                      >
-                        <a-link
-                          type="primary"
-                        ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-link>
-                      </a-popconfirm>
-
-                      <a-popconfirm
-                        content="确定要删除该数据吗?"
-                        position="bottom"
-                        @ok="deleteAction(record)"
-                        v-if="
-                          defaultCrud.delete.show
-                          && ($common.auth(defaultCrud.delete.auth || [])
-                          || (defaultCrud.delete.role || []))
-                        "
-                      >
-                        <a-link
-                          type="primary"
-                        ><icon-delete /> {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-link>
-                      </a-popconfirm>
-                    </slot>
-                    <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
-                  </a-space>
-                </template>
-                <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else >
-                  <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
-                  <template v-if="row.dict && row.dict.translation">
-                    {{ maCrudSearch.dictTrans(row.dataIndex, record[row.dataIndex]) }}
-                  </template>
-                  <template v-else-if="row.dataIndex && row.dataIndex.indexOf('.') !== -1">{{ _.get(record, row.dataIndex) }}</template>
-                  <template v-else>{{ record[row.dataIndex] }}</template>
-                </slot>
-              </template>
-            </a-table-column>
+      <slot name="content" v-bind="tableData">
+        <a-table
+          v-bind="$attrs"
+          ref="tableRef"
+          :data="tableData"
+          :loading="loading"
+          :pagination="settingProps.pagination"
+          :stripe="defaultCrud.stripe"
+          :bordered="defaultCrud.bordered"
+          :rowSelection="defaultCrud.rowSelection || undefined"
+          :row-key="defaultCrud.rowSelection && defaultCrud.rowSelection.key || 'id'"
+          :scroll="defaultCrud.scroll"
+          :column-resizable="defaultCrud.resizable"
+          :size="defaultCrud.size"
+          :hide-expand-button-on-empty="defaultCrud.hideExpandButtonOnEmpty"
+          :default-expand-all-rows="defaultCrud.expandAllRows"
+          :summary="defaultCrud.customerSummary || __summary || defaultCrud.showSummary"
+          @selection-change="selectChange"
+          @sorter-change="handlerSort"
+        >
+          <template #tr="{ record }">
+            <tr class="ma-crud-table-tr" @dblclick="dbClickOpenEdit(record)" />
           </template>
-        </template>
-        <template #summary-cell="{ column, record, rowIndex }" v-if="defaultCrud.customerSummary || defaultCrud.showSummary">
-          <slot name="summary-cell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
-        </template>
-      </a-table>
+
+          <template #expand-row="record" v-if="defaultCrud.showExpandRow">
+            <slot name="expand-row" v-bind="record"></slot>
+          </template>
+          <template #columns>
+            <template v-for="row in columns" :key="row[defaultCrud.pk]">
+              <a-table-column
+                :title="row.title" :data-index="row.dataIndex" :width="row.width"
+                :ellipsis="true" :tooltip="row.dataIndex === '__operation' ? false : true" :align="row.align || 'left'" :fixed="row.fixed"
+                :sortable="row.sortable"
+                v-if="! row.hide"
+              >
+                
+                <template #cell="{ record, column, rowIndex }">
+                  <template v-if="row.dataIndex === '__operation'">
+                    <a-space size="mini">
+                      <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
+                      <slot name="operationCell" v-bind="{ record, column, rowIndex }">
+                        <!-- <a-link
+                          v-if="
+                            defaultCrud.see.show
+                            && ($common.auth(defaultCrud.see.auth || [])
+                            || (defaultCrud.see.role || []))
+                          "
+                          type="primary"
+                        ><icon-eye /> {{ defaultCrud.see.text || '查看' }}</a-link> -->
+
+                        <a-link
+                          v-if="
+                            defaultCrud.edit.show
+                            && ! isRecovery
+                            && ($common.auth(defaultCrud.edit.auth || [])
+                            || (defaultCrud.edit.role || []))
+                          "
+                          type="primary"
+                          @click="editAction(record)"
+                        ><icon-edit /> {{ defaultCrud.edit.text || '编辑' }}</a-link>
+
+                        <a-popconfirm
+                          content="确定要恢复该数据吗?"
+                          position="bottom"
+                          @ok="recoveryAction(record)"
+                          v-if="
+                            defaultCrud.recovery.show
+                            && isRecovery
+                            && ($common.auth(defaultCrud.recovery.auth || [])
+                            || (defaultCrud.recovery.role || []))
+                          "
+                        >
+                          <a-link
+                            type="primary"
+                          ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-link>
+                        </a-popconfirm>
+
+                        <a-popconfirm
+                          content="确定要删除该数据吗?"
+                          position="bottom"
+                          @ok="deleteAction(record)"
+                          v-if="
+                            defaultCrud.delete.show
+                            && ($common.auth(defaultCrud.delete.auth || [])
+                            || (defaultCrud.delete.role || []))
+                          "
+                        >
+                          <a-link
+                            type="primary"
+                          ><icon-delete /> {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-link>
+                        </a-popconfirm>
+                      </slot>
+                      <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
+                    </a-space>
+                  </template>
+                  <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else >
+                    <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
+                    <template v-if="row.dict && row.dict.translation">
+                      {{ maCrudSearch.dictTrans(row.dataIndex, record[row.dataIndex]) }}
+                    </template>
+                    <template v-else-if="row.dataIndex && row.dataIndex.indexOf('.') !== -1">{{ _.get(record, row.dataIndex) }}</template>
+                    <template v-else>{{ record[row.dataIndex] }}</template>
+                  </slot>
+                </template>
+              </a-table-column>
+            </template>
+          </template>
+          <template #summary-cell="{ column, record, rowIndex }" v-if="defaultCrud.customerSummary || defaultCrud.showSummary">
+            <slot name="summary-cell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
+          </template>
+        </a-table>
+      </slot>
     </div>
     <div class="_crud-footer mt-3 text-right">
       <a-pagination

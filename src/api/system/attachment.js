@@ -30,10 +30,11 @@ export default {
    * 移到回收站
    * @returns
    */
-  deletes (ids) {
+  deletes (data) {
     return request({
-      url: 'system/attachment/delete/' + ids,
-      method: 'delete'
+      url: 'system/attachment/delete',
+      method: 'delete',
+      data
     })
   },
 
@@ -41,10 +42,11 @@ export default {
    * 恢复数据
    * @returns
    */
-  recoverys (ids) {
+  recoverys (data) {
     return request({
-      url: 'system/attachment/recovery/' + ids,
-      method: 'put'
+      url: 'system/attachment/recovery',
+      method: 'put',
+      data
     })
   },
 
@@ -52,10 +54,11 @@ export default {
    * 真实删除
    * @returns
    */
-  realDeletes (ids) {
+  realDeletes (data) {
     return request({
-      url: 'system/attachment/realDelete/' + ids,
-      method: 'delete'
+      url: 'system/attachment/realDelete',
+      method: 'delete',
+      data
     })
   }
 }
