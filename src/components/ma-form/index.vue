@@ -117,7 +117,7 @@
                     :readonly="item.readonly"
                     allow-clear
                     allow-search
-                    :field-names="item.dict.props || { key: 'value', title: 'label' }"
+                    :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
                     :tree-checkable="item.multiple"
                     :multiple="item.multiple"
                     :data="formDictData[item.dataIndex]"

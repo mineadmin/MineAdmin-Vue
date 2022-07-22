@@ -48,11 +48,11 @@ const columns = ref([
       {
         title: '图片',
         dataIndex: 'img',
-        formType: 'upload',
+        formType: 'select-user',
         span: 12,
       },
       {
-        title: '图片',
+        title: '演示例子',
         dataIndex: 'ate',
         formType: 'select',
         span: 24,
