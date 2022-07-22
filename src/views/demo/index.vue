@@ -55,6 +55,7 @@ const columns = ref([
         title: '图片',
         dataIndex: 'ate',
         formType: 'select',
+        span: 24,
       }
     ]
   }
