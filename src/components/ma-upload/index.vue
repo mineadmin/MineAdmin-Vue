@@ -360,6 +360,10 @@ const chunkUpload = async (options) => {
   try {
     const file = options.fileItem.file
     const hash = await file2md5(file)
+    if (! file.type) {
+      Message.error('获取文件类型失败，无法上传')
+      return
+    }
     const chunks = Math.ceil(file.size / props.chunkSize)
     for (let currentChunk = 0; currentChunk < chunks; currentChunk++) {
       const start = currentChunk * props.chunkSize

@@ -89,7 +89,10 @@
   const columns = reactive([
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
     { 
-      title: '存储名称', dataIndex: 'object_name', width: 200,
+      title: '预览', dataIndex: 'object_name', width: 220,
+    },
+    { 
+      title: '存储名称', dataIndex: 'object_name', width: 220,
     },
     { 
       title: '原文件名', dataIndex: 'origin_name', width: 150, search: true,

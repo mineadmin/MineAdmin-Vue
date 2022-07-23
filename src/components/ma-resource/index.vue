@@ -73,7 +73,7 @@
             </a-tooltip>
           </div>
         </div>
-        <a-empty class="mt-10" />
+        <a-empty v-else class="mt-10" />
       </a-spin>
       <div class="lg:flex lg:justify-between">
         <a-pagination
@@ -133,10 +133,10 @@
 
   const getStoreMode = (mode) => {
     switch(mode) {
-      case '1': return 'LOCAL'
-      case '2': return 'OSS'
-      case '3': return 'COS'
-      case '4': return 'QINIU'
+      case 1: return 'LOCAL'
+      case 2: return 'OSS'
+      case 3: return 'COS'
+      case 4: return 'QINIU'
     }
   }
 
