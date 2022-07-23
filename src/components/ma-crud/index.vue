@@ -132,7 +132,7 @@
           :hide-expand-button-on-empty="defaultCrud.hideExpandButtonOnEmpty"
           :default-expand-all-rows="defaultCrud.expandAllRows"
           :summary="defaultCrud.customerSummary || __summary || defaultCrud.showSummary"
-          @selection-change="selectChange"
+          @selection-change="setSelecteds"
           @sorter-change="handlerSort"
         >
           <template #tr="{ record }">
@@ -678,7 +678,7 @@ const recoverysMultipleAction = async() => {
   }
 }
 
-const selectChange = (key) => {
+const setSelecteds = (key) => {
   selecteds.value = key
 }
 
@@ -707,6 +707,10 @@ const handlerSort = (name, type) => {
     }
     requestData()
   }
+}
+
+const getTableData = () => {
+  return tableData.value
 }
 
 const __summary = ({ data }) => {
@@ -780,7 +784,7 @@ if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.aut
 onMounted(() => document.querySelector('.arco-table-body').className += ' customer-scrollbar' )
 
 defineExpose({
-  refresh, requestData, addAction, editAction,
+  refresh, requestData, addAction, editAction, getTableData, setSelecteds,
   requestParams, isRecovery, tableRef,
   maCrudForm, maCrudSearch, maCrudImport, maCrudSetting
 })
