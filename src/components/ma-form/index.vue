@@ -18,7 +18,7 @@
         @submit="submit"
       >
         <a-row>
-          <template v-for="(item, index) in props.columns" :key="index">
+          <template v-for="(item, index) in columns" :key="index">
             <a-col :span="parseInt(props.options.layout === 'customer' ? ( item.span || 24 ) : 24)">
               <a-form-item
                 v-show="(typeof item.display == 'undefined' || item.display === true)"
@@ -259,12 +259,19 @@ const props = defineProps({
   options: { type: Object, default: () =>
     {
       return {
+        autoInit: true,
         layout: 'auto',
         labelAlign: 'right',
       }
     } 
   },
 })
+
+watch(
+  () => props.columns,
+  vl => columns.value = vl,
+  { deep : true }
+)
 
 watch(
   () => props.modelValue,
@@ -284,17 +291,17 @@ watch(
     const tempForm = vl.value
     const obj = []
     for (let name in tempForm) {
-      props.columns.map( item => {
+      columns.value.map( item => {
         if (item.dataIndex === name && item.control && isFunction(item.control)) {
           obj.push(item.control(tempForm[name], tempForm))
         }
       })
     }
     obj.map(changItem => {
-      props.columns.map( (item, idx) => {
+      columns.value.map( (item, idx) => {
         for (let name in changItem) {
           if (name == item.dataIndex) {
-            props.columns[idx] = Object.assign(item, changItem[name] || {})
+            columns.value[idx] = Object.assign(item, changItem[name] || {})
           }
         }
       })
@@ -317,8 +324,8 @@ const init = () => {
   const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
   const arrayDefault = ['checkbox', 'user-select', 'form-group']
-  if (props.columns.length > 0) {
-    props.columns.map(async item => {
+  if (columns.value.length > 0) {
+    columns.value.map(async item => {
 
       form.value[item.dataIndex] = undefined
       if (arrayDefault.includes(item.formType)) {
@@ -348,14 +355,14 @@ const init = () => {
     })
     const obj = []
     for (let name in form.value) {
-      props.columns.map( item => {
+      columns.value.map( item => {
         if (item.dataIndex === name && item.control && isFunction(item.control)) {
           obj.push(item.control(form.value[name], form.value))
         }
       })
     }
     obj.map(changItem => {
-      props.columns.map( (item, idx) => {
+      columns.value.map( (item, idx) => {
         for (let name in changItem) {
           if (name == item.dataIndex) {
             columns.value[idx] = Object.assign(item, changItem[name] || {})
@@ -388,7 +395,7 @@ const handlerCascader = (val, column) => {
   if (column.cascaderItem && isArray(column.cascaderItem) && column.cascaderItem.length > 0 && val) {
     formLoading.value = true
     column.cascaderItem.map(async name => {
-      const dict = props.columns.filter(col => col.dataIndex === name && col.dict )[0].dict
+      const dict = columns.value.filter(col => col.dataIndex === name && col.dict )[0].dict
       if (dict && dict.url && dict.props) {
         let response
         if (dict && dict.url.indexOf('{{key}}') > 0) {
@@ -438,5 +445,7 @@ const getComponent = (item) => {
   }
 }
 
-init()
+props.options.autoInit && init()
+
+defineExpose({ init })
 </script>

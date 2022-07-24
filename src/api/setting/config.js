@@ -3,35 +3,14 @@ import { request } from '@/utils/request.js'
 export default {
 
   /**
-   * 获取系统组配置 （不验证身份和权限）
+   * 获取配置列表
    * @returns
    */
-  getSysConfig () {
+  getConfigList(params) {
     return request({
-      url: 'setting/config/getSysConfig',
+      url: 'setting/config/index',
       method: 'get',
-    })
-  },
-
-  /**
-   * 获取系统组配置
-   * @returns
-   */
-  getSystemConfig () {
-    return request({
-      url: 'setting/config/getSystemConfig',
-      method: 'get',
-    })
-  },
-
-  /**
-   * 获取扩展组配置
-   * @returns
-   */
-  getExtendConfig () {
-    return request({
-      url: 'setting/config/getExtendConfig',
-      method: 'get',
+      params
     })
   },
 
@@ -39,23 +18,11 @@ export default {
    * 清除缓存
    * @returns
    */
-  clearCache (params = {}) {
+  clearCache(data = {}) {
     return request({
       url: 'setting/config/clearCache',
       method: 'post',
-      data: params
-    })
-  },
-
-  /**
-   * 保存系统组配置
-   * @returns
-   */
-  saveSystemConfig (params = {}) {
-    return request({
-      url: 'setting/config/saveSystemConfig',
-      method: 'post',
-      data: params
+      data
     })
   },
 
@@ -63,10 +30,11 @@ export default {
    * 删除配置
    * @returns
    */
-  delete (key) {
+  delete(data) {
     return request({
-      url: 'setting/config/delete/' + key,
+      url: 'setting/config/delete',
       method: 'delete',
+      data
     })
   },
 
@@ -74,11 +42,11 @@ export default {
    * 保存配置
    * @returns
    */
-  save (params = {}) {
+  save(data = {}) {
     return request({
       url: 'setting/config/save',
       method: 'post',
-      data: params
+      data
     })
   },
 
@@ -86,22 +54,58 @@ export default {
    * 保存配置
    * @returns
    */
-  update (params = {}) {
+  update(data = {}) {
     return request({
       url: 'setting/config/update',
       method: 'post',
-      data: params
+      data
     })
   },
 
   /**
-   * 删除配置
+   * 获取组列表
    * @returns
    */
-  getConfigByKey (data) {
+  getConfigGroupList(params = {}) {
     return request({
-      url: 'setting/config/getConfigByKey',
+      url: 'setting/configGroup/index',
+      method: 'get',
+      params
+    })
+  },
+
+  /**
+   * 保存配置组
+   * @returns
+   */
+  saveConfigGroup(data = {}) {
+    return request({
+      url: 'setting/configGroup/save',
       method: 'post',
+      data
+    })
+  },
+
+  /**
+   * 更新配置组
+   * @returns
+   */
+  updateConfigGroup(data = {}) {
+    return request({
+      url: 'setting/configGroup/update',
+      method: 'post',
+      data
+    })
+  },
+
+  /**
+   * 删除配置组
+   * @returns
+   */
+   deleteConfigGroup(data = {}) {
+    return request({
+      url: 'setting/configGroup/delete',
+      method: 'delete',
       data
     })
   },
