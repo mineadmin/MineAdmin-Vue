@@ -267,6 +267,8 @@ const props = defineProps({
   },
 })
 
+columns.value = props.columns
+
 watch(
   () => props.columns,
   vl => columns.value = vl,
