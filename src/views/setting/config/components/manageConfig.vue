@@ -48,7 +48,8 @@ const crud = reactive({
   operationWidth: 200,
   edit: { show: true, api: config.update, auth: ['setting:config:update'] },
   delete: { show: true, api: config.delete, auth: ['setting:config:delete'] },
-  beforeRequest: (params) => params.group_id = groupId.value
+  beforeRequest: (params) => params.group_id = groupId.value,
+  viewLayoutSetting: { width: '700px' }
 })
 
 const columns = reactive([
