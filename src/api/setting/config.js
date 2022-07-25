@@ -51,12 +51,24 @@ export default {
   },
 
   /**
-   * 保存配置
+   * 更新配置
    * @returns
    */
-  update(key, data = {}) {
+  update(key = '', data = {}) {
     return request({
-      url: 'setting/config/update/' + key,
+      url: 'setting/config/update',
+      method: 'post',
+      data
+    })
+  },
+
+  /**
+   * 按 keys 更新配置
+   * @returns 
+   */
+  updateByKeys(data) {
+    return request({
+      url: 'setting/config/updateByKeys',
       method: 'post',
       data
     })

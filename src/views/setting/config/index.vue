@@ -74,6 +74,7 @@
   import { nextTick, ref } from 'vue'
   import config from '@/api/setting/config'
   import { Message } from '@arco-design/web-vue'
+  import { auth } from '@/utils/common'
   import addGroup from './components/addGroup.vue'
   import AddConfig from './components/addConfig.vue'
   import ManageConfig from './components/manageConfig.vue'
@@ -173,8 +174,16 @@
     }
   }
 
-  const submit = (data, done) => {
-    
+  const submit = async (data, done) => {
+    if (! auth(['setting:config:update'])) {
+      Message.info('没有权限修改配置')
+    }
+    done(true)
+    const response = await config.updateByKeys(data)
+    if (response.success) {
+      Message.success(response.message)
+    }
+    done(false)
   }
 
   getConfigGroupList()

@@ -47,7 +47,7 @@ const crud = reactive({
   operationColumn: true,
   operationWidth: 200,
   edit: { show: true, api: config.update, auth: ['setting:config:update'] },
-  delete: { show: true, api: config.deletes, auth: ['setting:config:delete'] },
+  delete: { show: true, api: config.delete, auth: ['setting:config:delete'] },
   beforeRequest: (params) => params.group_id = groupId.value
 })
 
@@ -63,12 +63,15 @@ const columns = reactive([
   {
     title: '配置标题',
     dataIndex: 'name',
+    search: true,
     rules: [{ required: true, message: '配置标题必填' }]
   },
   {
     title: '配置标识',
     dataIndex: 'key',
-    rules: [{ required: true, message: '配置标识必填' }]
+    search: true,
+    rules: [{ required: true, message: '配置标识必填' }],
+    disabled: true,
   },
   {
     title: '配置值',
