@@ -11,7 +11,7 @@
   <div class="w-full">
     <a-spin :loading="formLoading" tip="加载中..." class="w-full">
       <a-form
-        ref="crudForm"
+        ref="formRef"
         :model="form"
         :class="`grid grid-cols-1 lg:grid-cols-${ (props.options.layout ||  props.options.layout === 'auto') ? ( props.options.cols || 1 ) : 1}`"
         :label-align="props.options.labelAlign || 'right'"
@@ -192,6 +192,7 @@
                     :mode="item.formType === 'input-number' ? 'button' : undefined"
                     :height="item.height || undefined"
                     :language="item.language || 'javascript'"
+                    :isBind="item.language || false"
                     allow-clear
                     @change="item.change && item.change($event, { form, item, index })"
                     @click="item.click && item.click($event, { form, item, index })"
@@ -227,7 +228,7 @@
             <a-button html-type="submit" type="primary">
               <icon-check /> {{ props.options.submitText || '提交' }}
             </a-button>
-            <a-button @click="crudForm.resetFields()">
+            <a-button @click="formRef.resetFields()">
               <icon-refresh /> 重置
             </a-button>
             <slot name="buttons"></slot>
@@ -249,7 +250,7 @@ import MaFormGroup from './formGroup.vue'
 
 const columns = ref([])
 const form = ref({})
-const crudForm = ref(null)
+const formRef = ref(null)
 const formLoading = ref(true)
 const formDictData = ref({})
 const emit = defineEmits(['submit', 'update:modelValue'])
@@ -268,6 +269,7 @@ const props = defineProps({
 })
 
 columns.value = props.columns
+form.value = props.modelValue
 
 watch(
   () => props.columns,
@@ -314,7 +316,15 @@ watch(
 )
 
 const submit = (data) => {
-  emit('submit', data.values, done)
+  if (! data.errors) {
+    emit('submit', data.values, done)
+  } else {
+    emit('submit', undefined, done)
+  }
+}
+
+const reset = () => {
+  formRef.value.resetFields()
 }
 
 const done = (status) => formLoading.value = status
@@ -329,9 +339,11 @@ const init = () => {
   if (columns.value.length > 0) {
     columns.value.map(async item => {
 
-      form.value[item.dataIndex] = undefined
-      if (arrayDefault.includes(item.formType)) {
-        form.value[item.dataIndex] = []
+      if (! form.value[item.dataIndex] && typeof form.value[item.dataIndex] == 'undefined') {
+        form.value[item.dataIndex] = undefined
+        if (arrayDefault.includes(item.formType)) {
+          form.value[item.dataIndex] = []
+        }
       }
       
       if (allowRequestFormType.includes(item.formType) && item.dict) {
@@ -449,5 +461,5 @@ const getComponent = (item) => {
 
 props.options.autoInit && init()
 
-defineExpose({ init })
+defineExpose({ init, reset })
 </script>

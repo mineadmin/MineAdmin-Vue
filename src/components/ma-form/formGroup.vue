@@ -211,6 +211,7 @@
                     :mode="item.formType === 'input-number' ? 'button' : undefined"
                     :height="item.height || undefined"
                     :language="item.language || 'javascript'"
+                    :isBind="item.language || false"
                     allow-clear
                     @change="item.change && item.change($event, { data, item, index })"
                     @click="item.click && item.click($event, { data, item, index })"

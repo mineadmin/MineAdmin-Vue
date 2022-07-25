@@ -31,8 +31,9 @@ const homePageRoutes = [
     },
     component: () => import('@/views/userCenter/message.vue'),
   }, {
-    name: 'system',
+    name: 'setting:config',
     path: '/system',
+    auth: true,
     meta: {
       title: '系统配置',
       icon: 'icon-settings',

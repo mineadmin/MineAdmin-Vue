@@ -50,7 +50,7 @@
         class="mt-3"
       >
         <a-collapse-item header="队列数据" key="request">
-          <ma-code-editor v-model="currentRow.queue_content" :height="150" readonly />
+          <ma-code-editor v-model="currentRow.queue_content" is-bind :height="150" readonly />
         </a-collapse-item>
         <a-collapse-item header="队列日志" key="response">
           <pre>{{ currentRow.log_content == null ? "无日志数据" : currentRow.log_content }}</pre>

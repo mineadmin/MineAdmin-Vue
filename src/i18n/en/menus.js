@@ -4,7 +4,7 @@ export default {
   'dashboard': 'Dashboard',
   'userCenter': 'User Center',
   'message': 'Message Center',
-  'system': 'System Setting',
+  'setting:config': 'System Setting',
   'demo': 'Component Demo',
 
   // 权限

@@ -54,9 +54,9 @@ export default {
    * 保存配置
    * @returns
    */
-  update(data = {}) {
+  update(key, data = {}) {
     return request({
-      url: 'setting/config/update',
+      url: 'setting/config/update/' + key,
       method: 'post',
       data
     })

@@ -4,7 +4,7 @@ export default {
   'dashboard': '仪表盘',
   'userCenter': '个人中心',
   'message': '消息中心',
-  'system': '系统配置',
+  'setting:config': '系统配置',
   'demo': '组件演示',
 
   // 权限
@@ -46,6 +46,4 @@ export default {
   'setting:crontab': '定时任务',
   'setting:table': '数据表设计器',
   'systemInterface': '系统接口',
-
-  'baidu': '百度'
 }

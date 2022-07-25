@@ -218,6 +218,7 @@
                     :mode="item.formType === 'input-number' ? 'button' : undefined"
                     :height="item.height || undefined"
                     :language="item.language || 'javascript'"
+                    :isBind="item.language || false"
                     allow-clear
                     @change="item.change && item.change($event, { form, item, currentAction, index })"
                     @click="item.click && item.click($event, { form, item, currentAction, index })"
@@ -315,7 +316,7 @@ const submit = (done) => {
       done(false)
       return
     }
-    
+    console.log(props.crud)
     let response
     if (currentAction.value === 'add') {
       isFunction(props.crud.beforeAdd) && props.crud.beforeAdd(form.value)

@@ -20,6 +20,10 @@ const props = defineProps({
     type: String,
     default: () => {}
   },
+  isBind: {
+    type: Boolean,
+    default: false
+  },
   height: {
     type: Number,
     default: 400
@@ -61,10 +65,12 @@ onMounted(() => {
   })
 })
 
-watch(
-  () => props.modelValue,
-  vl => instance.setValue(vl)
-)
+if (props.isBind) {
+  watch(
+    () => props.modelValue,
+    vl => instance.setValue(vl)
+  )
+}
 
 </script>
 

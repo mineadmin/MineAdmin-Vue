@@ -19,11 +19,19 @@
         auto-switch
       >
         <template #extra>
-          <a-tooltip content="添加组">
-            <a-button shape="round" @click="addGroupModal" type="primary">
-              <template #icon><icon-plus /></template>
-            </a-button>
-          </a-tooltip>
+          <a-space>
+            <a-tooltip content="添加组">
+              <a-button shape="round" @click="addGroupModal" type="primary" v-auth="['setting:config:save']">
+                <template #icon><icon-plus /></template>
+              </a-button>
+            </a-tooltip>
+
+            <a-tooltip content="管理该组配置">
+              <a-button shape="round" @click="manageConfigModal" type="primary" v-auth="['setting:config:index']">
+                <template #icon><icon-settings /></template>
+              </a-button>
+            </a-tooltip>
+          </a-space>
         </template>
         <a-tab-pane
           v-for="item in configGroupData"
@@ -40,8 +48,9 @@
         </a-tab-pane>
       </a-tabs>
     </div>
-    <div class="ma-content-block p-5 h-full lg:w-1/2 lg:ml-3 mt-3 lg:mt-0">
-      
+
+    <div class="ma-content-block p-5 h-full lg:w-1/2 lg:ml-3 mt-3 lg:mt-0" v-if="$common.auth(['setting:config:save'])">
+      <add-config @success="addConfigSuccess" />
     </div>
 
     <a-modal v-model:visible="deleteVisible" type="warning" :on-before-ok="deleteConfigGroup">
@@ -54,6 +63,10 @@
       </div>
       <a-input :placeholder="`请输入 ${deleteGroupData.name}`" class="mt-2" v-model="name" />
     </a-modal>
+
+    <add-group ref="addGroupRef" @success="addGroupSuccess" />
+
+    <manage-config ref="manageConfigRef" />
   </div>
 </template>
 
@@ -61,17 +74,26 @@
   import { nextTick, ref } from 'vue'
   import config from '@/api/setting/config'
   import { Message } from '@arco-design/web-vue'
+  import addGroup from './components/addGroup.vue'
+  import AddConfig from './components/addConfig.vue'
+  import ManageConfig from './components/manageConfig.vue'
 
   const active = ref(0)
   const name = ref('')
   const deleteGroupData = ref({ name: '' })
   const maFormRef = ref()
+  const manageConfigRef = ref()
+  const addGroupRef = ref()
   const formArray = ref({})
   const optionsArray = ref([])
   const configGroupData = ref([])
   const deleteVisible = ref(false)
 
   const openDeleteModal = (id) => {
+    if (id == 1 || id == 2) {
+      Message.info('该配置为系统核心配置，无法删除')
+      return
+    }
     deleteGroupData.value = configGroupData.value.find(item => item.id == id)
     deleteVisible.value = true
   }
@@ -110,12 +132,29 @@
     })
   }
 
-  const handlerChangeTabs = (id) => {
-    setActiveTabs(id)
+  const handlerChangeTabs = (id) => setActiveTabs(id)
+
+  const manageConfigModal = () => {
+    manageConfigRef.value.open(active.value)
   }
 
-  const addGroupModal = () => {
+  const addGroupModal = () => addGroupRef.value.open()
+  const addGroupSuccess = (result) => {
+    if (result) {
+      Message.success('配置组保存成功')
+      getConfigGroupList(active.value)
+      return
+    }
+    Message.success('配置组保存失败')
+  }
 
+  const addConfigSuccess = (result) => {
+    if (result) {
+      Message.success('配置添加成功')
+      getConfigGroupList(active.value)
+      return
+    }
+    Message.success('配置添加失败')
   }
 
   const deleteConfigGroup = async (done) => {
@@ -129,6 +168,7 @@
     if (response.success) {
       Message.success('配置删除成功')
       deleteGroupData.value = {}
+      getConfigGroupList()
       done(true)
     }
   }
@@ -140,7 +180,7 @@
   getConfigGroupList()
 </script>
 <script>
-export default { name: 'system' }
+export default { name: 'setting:config' }
 </script>
 
 <style scoped>
