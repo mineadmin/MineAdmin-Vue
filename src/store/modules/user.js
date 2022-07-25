@@ -55,7 +55,7 @@ const useUserStore = defineStore('user', {
           this.routers = removeButtonMenu(this.routers)
           this.setMenu(this.routers)
           homePage.children = webRouter[0].children
-          if (! this.codes.includes('setting:config')) 
+          if (! this.codes.includes('setting:config')) {
             // todo...
           }
           this.routers.unshift(homePage)
