@@ -26,18 +26,22 @@
         <a-popconfirm content="确定立刻执行一次?" position="bottom" @ok="run(record)" >
           <a-link v-auth="['setting:crontab:run']"><icon-caret-right /> 执行一次</a-link>
         </a-popconfirm>
-        <a-link><icon-history /> 日志 </a-link>
+        <a-link @click="openLogModal(record)"><icon-history /> 日志 </a-link>
       </template>
     </ma-crud>
+
+    <log-list ref="logsRef" />
   </div>
 </template>
 
 <script setup>
   import { ref, reactive } from 'vue'
   import crontab from '@/api/setting/crontab'
+  import logList from './logList.vue'
   import { Message } from '@arco-design/web-vue'
 
   const crudRef = ref()
+  const logsRef = ref()
 
   const types = [
     { label: '命令任务', code: 1 },
@@ -58,19 +62,22 @@
     response.success && Message.success(response.message)
   }
 
+  const openLogModal = (row) => {
+    logsRef.value.open(row.id)
+  }
+
   const crud = reactive({
     api: crontab.getPageList,
-    recycleApi: crontab.getRecyclePageList,
     showIndex: false,
     searchLabelWidth: '75px',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 240,
-    add: { show: true, api: crontab.save, auth: ['system:crontab:add'] },
-    edit: { show: true, api: crontab.update, auth: ['system:crontab:edit'] },
+    add: { show: true, api: crontab.save, auth: ['setting:crontab:add'] },
+    edit: { show: true, api: crontab.update, auth: ['setting:crontab:edit'] },
     delete: {
       show: true,
-      api: crontab.deletes, auth: ['system:crontab:delete'],
+      api: crontab.deletes, auth: ['setting:crontab:delete'],
     },
   })
 
