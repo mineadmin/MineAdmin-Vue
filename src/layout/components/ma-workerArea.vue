@@ -11,11 +11,11 @@
   <a-layout-content class="work-area customer-scrollbar relative">
     <div class="p-3 h-full" v-if="$route.meta.type !== 'I'">
       <router-view v-slot="{ Component }">
-        <!-- <transition name="fade" mode="out-in"> -->
+        <transition name="fade" mode="out-in">
           <keep-alive :include="keepStore.keepAlives">
             <component :is="Component" :key="$route.name" v-if="keepStore.show" />
           </keep-alive>
-        <!-- </transition> -->
+        </transition>
       </router-view>
     </div>
     <div v-else class="h-full">

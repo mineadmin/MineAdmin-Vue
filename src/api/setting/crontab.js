@@ -29,10 +29,11 @@ export default {
    * 删除定时任务日志
    * @returns
    */
-  deleteLog (ids) {
+  deleteLog (data) {
     return request({
-      url: 'setting/crontab/deleteCrontabLog/' + ids,
-      method: 'delete'
+      url: 'setting/crontab/deleteCrontabLog',
+      method: 'delete',
+      data
     })
   },
 
@@ -40,11 +41,11 @@ export default {
    * 立刻执行一次定时任务
    * @returns
    */
-   run (params = {}) {
+  run (data = {}) {
     return request({
       url: 'setting/crontab/run',
       method: 'post',
-      data: params
+      data
     })
   },
 
@@ -52,11 +53,11 @@ export default {
    * 添加
    * @returns
    */
-  save (params = {}) {
+  save (data = {}) {
     return request({
       url: 'setting/crontab/save',
       method: 'post',
-      data: params
+      data
     })
   },
 
@@ -64,10 +65,11 @@ export default {
    * 删除
    * @returns
    */
-  deletes (ids) {
+  deletes (data) {
     return request({
-      url: 'setting/crontab/delete/' + ids,
-      method: 'delete'
+      url: 'setting/crontab/delete',
+      method: 'delete',
+      data
     })
   },
 
@@ -81,6 +83,18 @@ export default {
       method: 'put',
       data: params
     })
-  }
+  },
+
+  /**
+   * 更改状态
+   * @returns
+   */
+  changeStatus(data = {}) {
+    return request({
+      url: 'setting/crontab/changeStatus',
+      method: 'put',
+      data
+    })
+  },
 
 }

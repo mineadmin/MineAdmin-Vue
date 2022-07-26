@@ -159,7 +159,7 @@
 </script>
 
 <script>
-export default { name: 'system:module' }
+export default { name: 'setting:module' }
 </script>
 
 <style scoped>
