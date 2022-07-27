@@ -27,9 +27,14 @@ const submit = (data, done) => {
 
 const columns = ref([
   {
-    title: '用户',
+    title: '用户信息',
     dataIndex: 'username',
     formType: 'user-info'
+  },
+  {
+    title: '地区',
+    dataIndex: 'area',
+    formType: 'city-linkage',
   },
   {
     title: '子表单',

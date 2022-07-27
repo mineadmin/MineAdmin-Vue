@@ -218,7 +218,7 @@
                     :file-type="item.fileType || 'button'"
                     :show-word-limit="['input', 'textarea'].includes(item.formType) ? true : false"
                     :is-echo="item.isEcho"
-                    :mode="item.formType === 'input-number' ? 'button' : undefined"
+                    :mode="item.formType === 'input-number' ? 'button' : item.mode"
                     :height="item.height || undefined"
                     :language="item.language || 'javascript'"
                     :isBind="item.language || false"
@@ -521,6 +521,7 @@ const getComponent = (item) => {
     case 'code-editor': return 'ma-code-editor'
     case 'icon': return 'ma-icon'
     case 'user-info': return 'ma-user-info'
+    case 'city-linkage': return 'ma-city-linkage'
     default: return `a-${item.formType}`
   }
 }

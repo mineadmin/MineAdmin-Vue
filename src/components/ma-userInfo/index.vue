@@ -77,7 +77,7 @@ watch(
 
 watch(
   () => val.value,
-  vl => emit('update:modelValue', val.value)
+  vl => emit('update:modelValue', vl)
 )
 
 </script>
