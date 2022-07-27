@@ -28,7 +28,7 @@
               v-if="['select', 'radio', 'checkbox', 'transfer'].includes(item.formType)"
               v-model="searchForm[item.dataIndex]"
               :virtual-list-props="{ height:200 }"
-              :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`"
+              :placeholder="item.searchPlaceholder || `请选择${item.title}`"
               allow-clear
               allow-search
               :max-tag-count="1"
@@ -40,7 +40,7 @@
             <a-cascader
               v-else-if="item.formType === 'cascader'"
               v-model="searchForm[item.dataIndex]"
-              :placeholder="item.placeholder || `请选择${item.title}`"
+              :placeholder="item.searchPlaceholder || `请选择${item.title}`"
               allow-clear
               allow-search
               :disabled="item.disabled"
@@ -54,7 +54,7 @@
               v-else-if="item.formType === 'treeSelect' || item.formType === 'tree-select'"
               v-model="searchForm[item.dataIndex]"
               :treeProps="{ virtualListProps: { height: 240 } }"
-              :placeholder="item.placeholder || `请选择${item.title}`"
+              :placeholder="item.searchPlaceholder || `请选择${item.title}`"
               :disabled="item.disabled"
               :readonly="item.readonly"
               allow-clear
