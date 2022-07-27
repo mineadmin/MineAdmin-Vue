@@ -520,6 +520,7 @@ const getComponent = (item) => {
     case 'editor': return 'ma-editor'
     case 'code-editor': return 'ma-code-editor'
     case 'icon': return 'ma-icon'
+    case 'user-info': return 'ma-user-info'
     default: return `a-${item.formType}`
   }
 }

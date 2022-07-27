@@ -20,6 +20,7 @@ import MaUser from './ma-user/index.vue'
 import MaEditor from './ma-editor/index.vue'
 import MaIcon from './ma-icon/index.vue'
 import MaCodeEditor from './ma-codeEditor/index.vue'
+import MaUserInfo from './ma-userInfo/index.vue'
 
 use([
   CanvasRenderer,
@@ -47,5 +48,6 @@ export default {
     Vue.component('MaEditor', MaEditor)
     Vue.component('MaIcon', MaIcon)
     Vue.component('MaCodeEditor', MaCodeEditor)
+    Vue.component('MaUserInfo', MaUserInfo)
   }
 }

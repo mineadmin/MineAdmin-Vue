@@ -8,7 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <script setup>
-  import { reactive, ref } from 'vue'
+  import { reactive, ref, onMounted } from 'vue'
   import verifyCode from '@cps/ma-verifyCode/index.vue'
   import { Message } from '@arco-design/web-vue'
   import { useUserStore } from '@/store'
@@ -41,17 +41,16 @@
     }
     loading.value = false
   }
-
 </script>
 <template>
   <div class="login-container">
-    <div class="w-full md:w-1/2 mx-auto flex justify-between h-full items-center">
+    <div class="login-width mx-auto flex justify-between h-full items-center">
       <div class="w-6/12 mx-auto left-panel rounded-l pl-5 pr-5 hidden md:block bg-blue-50">
         <div class="logo"><img src="/logo.svg" width="45"><span>MineAdmin</span></div>
-        <div class="slogan flex justify-between text-gray-500"><span>高性能 / 精致 / 优雅</span><span>基于Hyperf + Vue3开发</span></div>
+        <div class="slogan flex justify-end"><span>---- {{ $t('sys.login.slogan') }}</span></div>
       </div>
 
-      <div class="md:w-6/12 w-11/12 rounded-r mx-auto pl-5 pr-5 pb-10 bg-white">
+      <div class="md:w-6/12 w-11/12 md:rounded-r mx-auto pl-5 pr-5 pb-10 bg-white">
         <h2 class="mt-10 text-3xl pb-0 mb-10">{{ $t('sys.login.title') }}</h2>
         <a-form :model="form" @submit="handleSubmit">
           <a-form-item
@@ -133,6 +132,10 @@
   position: absolute;
   background-image: url(@/assets/BingWallpaper.jpg);
   background-size: cover;
+
+  .login-width {
+    max-width: 950px;
+  }
 
   .left-panel {
     height: 491px;

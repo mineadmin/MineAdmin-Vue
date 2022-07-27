@@ -12,6 +12,8 @@
     <ma-form v-model="form" v-model:columns="columns" @submit="submit">
     </ma-form>
     {{ form }}
+
+
   </div>
 </template>
 
@@ -26,7 +28,8 @@ const submit = (data, done) => {
 const columns = ref([
   {
     title: '用户',
-    dataIndex: 'username'
+    dataIndex: 'username',
+    formType: 'user-info'
   },
   {
     title: '子表单',
