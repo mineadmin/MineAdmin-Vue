@@ -27,7 +27,7 @@
     "tailwindcss": "^3.0.24",
     "tinymce": "^6.1.0",
     "vue": "^3.2.37",
-    "vue-clipboard3": "^1.0.1",
+    "vue-clipboard3": "^2.0.0",
     "vue-echarts": "^6.0.2",
     "vue-i18n": "^9.1.10",
     "vue-router": "^4.1.2"
