@@ -19,7 +19,7 @@
 
 <script setup>
 import { ref } from 'vue'
-const form = ref({})
+const form = ref({ area: { province: '北京市' }})
 
 const submit = (data, done) => {
   console.log(data)

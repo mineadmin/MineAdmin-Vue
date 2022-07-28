@@ -56,6 +56,7 @@
 <script setup>
 import jsonData from './lib/city.json'
 import { ref, watch } from 'vue'
+import { isObject } from 'lodash'
 
 const val = ref()
 const selectData = ref({ province: '', city: '', area: '' })
@@ -100,18 +101,24 @@ const cityChange = (val) => {
 
 const setSelectData = () => {
   if (props.type === 'select') {
-    selectData.value.province = val.value?.province
-    selectData.value.city = val.value?.city
-    selectData.value.area = val.value?.area
+    if (val.value && isObject(val.value)) {
+      selectData.value.province = val.value.province ? val.value.province : ''
+      selectData.value.city = val.value.city ? val.value.city : ''
+      selectData.value.area = val.value.area ? val.value.area : ''
+      selectData.value.province && provinceChange(selectData.value.province)
+      selectData.value.city && selectData.value.province && cityChange(selectData.value.city)
+    }
   }
 }
+
+val.value = props.modelValue
 
 watch(
   () => props.modelValue,
   vl => () => {
     val.value = vl
     setSelectData()
-  }
+  }, { deep: true }
 )
 
 watch(
