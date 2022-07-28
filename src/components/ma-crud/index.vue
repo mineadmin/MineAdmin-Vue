@@ -550,6 +550,9 @@ const searchHandler = (formData) => {
   } else {
     requestParams.value = Object.assign(requestParams.value, formData)
   }
+  if (settingProps.crud.beforeSearch && isFunction(settingProps.crud.beforeSearch)) {
+    settingProps.crud.beforeSearch(requestParams.value)
+  }
   refresh()
 }
 
