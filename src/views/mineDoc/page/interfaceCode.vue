@@ -8,5 +8,5 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  doc
+  interface code
 </template>

@@ -16,7 +16,27 @@ const routes = [
     name: 'mineDoc',
     path: '/mineDoc',
     component: () => import('@/views/mineDoc/index.vue'),
-    meta: { title: '接口文档' }
+    meta: { title: '接口文档' },
+    children: [
+      {
+        path: '/interfaceList',
+        name: 'interfaceList',
+        meta: { title: '接口列表' },
+        component: () => import('@/views/mineDoc/page/interfaceList'),
+      },
+      {
+        path: '/interfaceCode',
+        name: 'interfaceCode',
+        meta: { title: '代码释义' },
+        component: () => import('@/views/mineDoc/page/interfaceCode'),
+      },
+      {
+        path: '/signature',
+        name: 'signature',
+        meta: { title: '签名算法' },
+        component: () => import('@/views/mineDoc/page/signature'),
+      }
+    ]
   }
   , {
     path: "/:pathMatch(.*)*",
