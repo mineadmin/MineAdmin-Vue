@@ -8,16 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div class="h-full">
-    <main v-if="docStore.auth" />
-    <auth v-else  />
+  <div>
+    main
   </div>
 </template>
-
-<script setup>
-import { useDocStore } from '@/store'
-import Auth from './components/auth.vue'
-import Main from './components/main.vue'
-
-const docStore = useDocStore()
-</script>
