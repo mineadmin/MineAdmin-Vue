@@ -8,6 +8,7 @@
           :searchRef="props.searchRef"
           :formRef="props.formRef"
           :isRecovery="props.isRecovery"
+          :params="props.params"
           @refresh="() => refresh()"
         >
           <template
@@ -90,7 +91,7 @@
 <script setup>
 import { Message } from '@arco-design/web-vue'
 import config from '@/config/crud'
-import _ from 'lodash'
+import { isFunction } from 'lodash'
 
 const emit = defineEmits(['refresh'])
 const props = defineProps({
@@ -98,19 +99,21 @@ const props = defineProps({
   searchRef: Object,
   formRef: Object,
   columns: Array,
+  params: Object,
   isRecovery: Boolean,
 })
 
 const getIndex = (rowIndex) => {
-  if (props.options.requestParams[config.request.page] == 1) {
-    return rowIndex + 1
+  const index = rowIndex + 1
+  if (props.params[config.request.page] == 1) {
+    return index
   } else {
-    return props.options.requestParams[config.request.page] * props.options.requestParams[config.request.pageSize] + rowIndex
+    return ( props.params[config.request.page] - 1 ) * props.params[config.request.pageSize] + index
   }
 }
 
 const editAction = (record) => {
-  _.isFunction(props.options.beforeOpenEdit) && props.options.beforeOpenEdit()
+  isFunction(props.options.beforeOpenEdit) && props.options.beforeOpenEdit()
   formRef.value.edit(record)
 }
 
@@ -125,7 +128,7 @@ const recoveryAction = async (record) => {
 const deleteAction = async (record) => {
   if (
     props.options.beforeDelete
-    && _.isFunction(props.options.beforeDelete)
+    && isFunction(props.options.beforeDelete)
     && ! props.options.beforeDelete(record)
   ) {
     return

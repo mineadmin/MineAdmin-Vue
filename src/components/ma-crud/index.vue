@@ -149,6 +149,7 @@
               :searchRef="maCrudSearch"
               :formRef="maCrudForm"
               :isRecovery="isRecovery"
+              :params="requestParams"
               @refresh="() => refresh()"
             >
               <template #operationBeforeExtend="{ record, column, rowIndex }">
