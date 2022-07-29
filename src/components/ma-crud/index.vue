@@ -143,84 +143,34 @@
             <slot name="expand-row" v-bind="record"></slot>
           </template>
           <template #columns>
-            <template v-for="row in columns" :key="row[defaultCrud.pk]">
-              <a-table-column
-                :title="row.title" :data-index="row.dataIndex" :width="row.width"
-                :ellipsis="true" :tooltip="row.dataIndex === '__operation' ? false : true" :align="row.align || 'left'" :fixed="row.fixed"
-                :sortable="row.sortable"
-                v-if="! row.hide"
+            <ma-column
+              :options="defaultCrud"
+              :columns="columns"
+              :searchRef="maCrudSearch"
+              :formRef="maCrudForm"
+              :isRecovery="isRecovery"
+              @refresh="() => refresh()"
+            >
+              <template #operationBeforeExtend="{ record, column, rowIndex }">
+                <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
+              </template>
+
+              <template #operationCell="{ record, column, rowIndex }">
+                <slot name="operationCell" v-bind="{ record, column, rowIndex }"></slot>
+              </template>
+
+              <template #operationAfterExtend="{ record, column, rowIndex }">
+                <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
+              </template>
+
+              <template
+                v-for="(slot, slotIndex) in slots"
+                :key="slotIndex"
+                #[slot]="{ record, column, rowIndex }"
               >
-                
-                <template #cell="{ record, column, rowIndex }">
-                  <template v-if="row.dataIndex === '__operation'">
-                    <a-space size="mini">
-                      <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
-                      <slot name="operationCell" v-bind="{ record, column, rowIndex }">
-                        <!-- <a-link
-                          v-if="
-                            defaultCrud.see.show
-                            && ($common.auth(defaultCrud.see.auth || [])
-                            || (defaultCrud.see.role || []))
-                          "
-                          type="primary"
-                        ><icon-eye /> {{ defaultCrud.see.text || '查看' }}</a-link> -->
-
-                        <a-link
-                          v-if="
-                            defaultCrud.edit.show
-                            && ! isRecovery
-                            && ($common.auth(defaultCrud.edit.auth || [])
-                            || (defaultCrud.edit.role || []))
-                          "
-                          type="primary"
-                          @click="editAction(record)"
-                        ><icon-edit /> {{ defaultCrud.edit.text || '编辑' }}</a-link>
-
-                        <a-popconfirm
-                          content="确定要恢复该数据吗?"
-                          position="bottom"
-                          @ok="recoveryAction(record)"
-                          v-if="
-                            defaultCrud.recovery.show
-                            && isRecovery
-                            && ($common.auth(defaultCrud.recovery.auth || [])
-                            || (defaultCrud.recovery.role || []))
-                          "
-                        >
-                          <a-link
-                            type="primary"
-                          ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-link>
-                        </a-popconfirm>
-
-                        <a-popconfirm
-                          content="确定要删除该数据吗?"
-                          position="bottom"
-                          @ok="deleteAction(record)"
-                          v-if="
-                            defaultCrud.delete.show
-                            && ($common.auth(defaultCrud.delete.auth || [])
-                            || (defaultCrud.delete.role || []))
-                          "
-                        >
-                          <a-link
-                            type="primary"
-                          ><icon-delete /> {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-link>
-                        </a-popconfirm>
-                      </slot>
-                      <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
-                    </a-space>
-                  </template>
-                  <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else >
-                    <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
-                    <template v-if="row.dict && row.dict.translation">
-                      {{ maCrudSearch.dictTrans(row.dataIndex, record[row.dataIndex]) }}
-                    </template>
-                    <template v-else-if="row.dataIndex && row.dataIndex.indexOf('.') !== -1">{{ _.get(record, row.dataIndex) }}</template>
-                    <template v-else>{{ record[row.dataIndex] }}</template>
-                  </slot>
-                </template>
-              </a-table-column>
-            </template>
+                <slot :name="`${slot}`" v-bind="{ record, column, rowIndex }" />
+              </template>
+            </ma-column>
           </template>
           <template #summary-cell="{ column, record, rowIndex }" v-if="defaultCrud.customerSummary || defaultCrud.showSummary">
             <slot name="summary-cell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
@@ -272,6 +222,7 @@ import maSearch from './components/search.vue'
 import maForm from './components/form.vue'
 import maSetting from './components/setting.vue'
 import maImport from './components/import.vue'
+import maColumn from './components/column.vue'
 import checkAuth from '@/directives/auth/auth'
 import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
@@ -285,6 +236,7 @@ const pageSizeOption = ref([10, 20, 30, 50, 100])
 const total = ref(0)
 const requestParams = ref({})
 const columns = ref([])
+const slots = ref([])
 const showSearch = ref(true)
 const isRecovery = ref(false)
 const expandState = ref(false)
@@ -473,6 +425,21 @@ watch(() => settingProps.api, () => {
   requestData()
 }, { deep: true })
 
+const getSlot = (cls = []) => {
+  let sls = []
+  cls.map(item => {
+    if (item.children && item.children.length > 0) {
+      let tmp = getSlot(item.children)
+      sls.push(...tmp)
+    } else if (item.dataIndex) {
+      sls.push(item.dataIndex)
+    }
+  })
+  return sls
+}
+
+slots.value = getSlot(settingProps.columns)
+
 const requestData = async () => {
   defaultCrud.value = Object.assign(defaultCrud.value, settingProps.crud)
   columns.value = Object.assign(settingProps.columns, {})
@@ -632,41 +599,17 @@ const exportAction = () => {
   })
 }
 
-const deleteAction = async (record) => {
-  if (
-    defaultCrud.value.beforeDelete
-    && isFunction(defaultCrud.value.beforeDelete)
-    && ! defaultCrud.value.beforeDelete(record)
-  ) {
-    return
-  }
-  const api = isRecovery.value ? defaultCrud.value.delete.realApi : defaultCrud.value.delete.api
-  const response = await api({ ids: [ record[ defaultCrud.value.pk ] ] })
-  response.code === 200 
-  ? Message.success(response.message || `删除成功！`)
-  : Message.error(response.message || `删除失败！`)
-  refresh()
-}
-
 const deletesMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
     const api = isRecovery.value ? defaultCrud.value.delete.realApi : defaultCrud.value.delete.api
     const response = await api({ ids: selecteds.value })
     response.code === 200 
-    ? Message.success(response.message || `恢复成功！`)
-    : Message.error(response.message || `恢复失败！`)
+    ? Message.success(response.message || `删除成功！`)
+    : Message.error(response.message || `删除失败！`)
     refresh()
   } else {
     Message.error('至少选择一条数据')
   }
-}
-
-const recoveryAction = async (record) => {
-  const response = await defaultCrud.value.recovery.api({ ids: [ record[ defaultCrud.value.pk ] ] })
-  response.code === 200 
-  ? Message.success(response.message || `删除成功！`)
-  : Message.error(response.message || `删除失败！`)
-  refresh()
 }
 
 const recoverysMultipleAction = async() => {
