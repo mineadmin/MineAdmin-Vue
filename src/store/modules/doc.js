@@ -6,9 +6,7 @@ const useDocStore = defineStore('doc', {
     auth: undefined,
     appId: undefined,
     appSecret: undefined,
-    globalQuery: undefined,
-    globalHeader: undefined,
-    globalBody: undefined,
+    globalParams: undefined,
   }),
 
   getters: {

@@ -1,6 +1,7 @@
 import checkAuth from '@/directives/auth/auth'
 import checkRole from '@/directives/role/role'
-import { Notification } from '@arco-design/web-vue'
+import useClipboard from 'vue-clipboard3'
+import { Notification, Message } from '@arco-design/web-vue'
 
 export const success = (title, content) => {
   Notification.success({ title, content, closable: true })
@@ -19,6 +20,16 @@ export const auth = name => checkAuth(name)
 
 // 检查角色函数
 export const role = name => checkRole(name)
+
+// 复制
+export const copy = (text) => {
+  try {
+    useClipboard().toClipboard(text)
+    Message.success('已成功复制到剪切板')
+  } catch(e) {
+    Message.error('复制失败')
+  }
+}
 
 function transitionJsonToString(jsonObj, callback) {
   // 转换后的jsonObj受体对象

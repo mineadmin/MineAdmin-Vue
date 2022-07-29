@@ -20,6 +20,4 @@ import Auth from './components/auth.vue'
 import docMain from './components/docMain.vue'
 
 const docStore = useDocStore()
-
-console.log(docStore)
 </script>
