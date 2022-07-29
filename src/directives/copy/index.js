@@ -15,7 +15,6 @@ const copy = (el, binding) => {
       throw new Error(`need for copy content! Like v-copy="Hello World"`)
     }
   })
-  
 }
 
 export default {

@@ -1,13 +1,11 @@
 import { defineStore } from 'pinia'
-import apiDoc from '@/api/apiDoc'
-import tool from '@/utils/tool'
 
 const useDocStore = defineStore('doc', {
 
   state: () => ({
     auth: undefined,
-    appid: undefined,
-    appsecret: undefined,
+    appId: undefined,
+    appSecret: undefined,
     globalQuery: undefined,
     globalHeader: undefined,
     globalBody: undefined,

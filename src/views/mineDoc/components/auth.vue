@@ -8,26 +8,31 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div class="auth-container flex justify-center items-center">
+  <div
+    class="auth-container flex justify-center items-center"
+    :style="`background-color: ${appStore.mode == 'light' ? '#ebedf1' : '#242424'}`"
+  >
     <div class="auth-panel">
-      <div class="flex text-2xl justify-center mt-5">
+      <div class="flex text-2xl justify-center mt-5 title">
         <img src="logo.svg" width="56" class="mr-2" />
         <div class="mt-0.5">Api Document</div>
       </div>
-      <a-form :model="form" layout="vertical" class="mt-3 p-5" @submit="submit">
+      <a-form :model="form" layout="vertical" class="mt-3 p-5" @submit="submit" ref="formRef">
         <a-form-item
           label="APP ID"
+          field="app_id"
           :rules="[{ required: true, message: 'APP ID必填' }]"
         >
-          <a-input placeholder="请输入 APP ID" />
+          <a-input v-model="form.app_id" placeholder="请输入 APP ID" />
         </a-form-item>
         <a-form-item
           label="APP SECRET"
+          field="app_secret"
           :rules="[{ required: true, message: 'APP SECRET必填' }]"
         >
-          <a-input placeholder="请输入 APP SECRET" />
+          <a-input-password v-model="form.app_secret" placeholder="请输入 APP SECRET" />
         </a-form-item>
-        <a-form-item>
+        <a-form-item class="mt-2">
           <a-button long type="primary" size="large" html-type="submit">登录文档</a-button>
         </a-form-item>
       </a-form>
@@ -36,26 +41,51 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const form = ref({})
+import { nextTick, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAppStore, useDocStore } from '@/store'
+import doc from '@/api/doc'
 
-const submit = (data) => {
+const appStore = useAppStore()
+const docStore = useDocStore()
+const router = useRouter()
+const form = ref({ app_id: '6a9dcf6b9a', app_secret: 'OGZjMGI5ZDFiODhlYTc2NWQ4MzYzMTBiNDZjNjAwOTZmNWRkMmJjMzc2MmZlNWZlNDU0NDMxOGU2MDFjNWM1Zg==' })
+const formRef = ref()
 
+const submit = ({ values, errors }) => {
+
+  if(errors) return false
+
+  formRef.value.validate().then(() => {
+    doc.login(values).then(res => {
+      if (res.success && res.code == 200) {
+        docStore.appId = values.app_id
+        docStore.appSecret = values.app_secret
+        docStore.auth = true
+        nextTick(() => {
+          router.push({ name: 'interfaceList' })
+        })
+      }
+    })
+  })
 }
 </script>
 
 <style scoped>
 .auth-container {
-  background: var(--color-fill-4);
+  background-image: url(auth-bg.svg);
   background-size: cover;
   height: 100%;
 }
 .auth-panel {
   width: 380px;
-  background: #fff;
+  background: var(--color-bg-2);
   backdrop-filter: blur(10px);
   height: 355px; border-radius: 6px;
   padding: 10px;
   box-shadow: 0 0 5px var(--color-fill-4);
+}
+.title { 
+  color: var(--color-text-1);
 }
 </style>

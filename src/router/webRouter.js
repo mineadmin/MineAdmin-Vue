@@ -22,19 +22,19 @@ const routes = [
         path: '/interfaceList',
         name: 'interfaceList',
         meta: { title: '接口列表' },
-        component: () => import('@/views/mineDoc/page/interfaceList'),
+        component: () => import('@/views/mineDoc/page/interfaceList.vue'),
       },
       {
         path: '/interfaceCode',
         name: 'interfaceCode',
         meta: { title: '代码释义' },
-        component: () => import('@/views/mineDoc/page/interfaceCode'),
+        component: () => import('@/views/mineDoc/page/interfaceCode.vue'),
       },
       {
         path: '/signature',
         name: 'signature',
         meta: { title: '签名算法' },
-        component: () => import('@/views/mineDoc/page/signature'),
+        component: () => import('@/views/mineDoc/page/signature.vue'),
       }
     ]
   }

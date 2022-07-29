@@ -8,11 +8,11 @@ export default {
    * 登录接口文档
    * @returns
    */
-  login (params = {}) {
+  login (data = {}) {
     return request({
       url: 'apiDoc/login',
       method: 'post',
-      data: params
+      data
     })
   },
 

@@ -9,7 +9,7 @@
 -->
 <template>
   <div class="h-full">
-    <main v-if="docStore.auth" />
+    <doc-main v-if="docStore.auth" />
     <auth v-else  />
   </div>
 </template>
@@ -17,7 +17,9 @@
 <script setup>
 import { useDocStore } from '@/store'
 import Auth from './components/auth.vue'
-import Main from './components/main.vue'
+import docMain from './components/docMain.vue'
 
 const docStore = useDocStore()
+
+console.log(docStore)
 </script>
