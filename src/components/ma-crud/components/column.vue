@@ -114,7 +114,7 @@ const getIndex = (rowIndex) => {
 
 const editAction = (record) => {
   isFunction(props.options.beforeOpenEdit) && props.options.beforeOpenEdit()
-  formRef.value.edit(record)
+  props.formRef.edit(record)
 }
 
 const recoveryAction = async (record) => {

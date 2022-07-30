@@ -42,7 +42,7 @@
               <a-tag color="red" size="large" bordered v-if="item.request_mode === 'P'">PUT</a-tag>
               <a-tag color="orangered" size="large" bordered v-if="item.request_mode === 'D'">DELETE</a-tag>
             </a-tooltip>
-            <a-button type="primary">测试接口 / 查看详情</a-button>
+            <a-button type="primary" @click="() => sliderRef.open(item)">测试接口 / 查看详情</a-button>
           </a-space>
           <div class="mt-5"></div>
           <div>
@@ -54,6 +54,8 @@
     </div>
 
     <global-params ref="globalParamsRef" />
+
+    <slider-drawer ref="sliderRef" />
   </div>
 </template>
 
@@ -66,11 +68,13 @@ import { copy } from '@/utils/common'
 import { request } from '@/utils/request.js'
 import { Message } from '@arco-design/web-vue'
 import globalParams from './components/globalParams.vue'
+import sliderDrawer from './components/sliderDrawer.vue'
 
 const docStore = useDocStore()
 const appInfo = ref({})
 
 const globalParamsRef = ref()
+const sliderRef = ref()
 
 const getAppInfo = async () => {
   const response = await doc.getAppAndInterfaceList(docStore.appId)

@@ -8,13 +8,20 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <a-modal v-model:visible="visible" :on-before-ok="save" width="700px" draggable :align-center="false" top="50">
-    <template #title>设置全局参数</template>
-    <a-tabs type="rounded" v-model:active-key="activeTab">
-      <a-tab-pane key="query" title="设置全局Query">
+  <div class="pl-2 pr-2">
+    <a-form :model="form">
+      <a-input-group>
+        <div class="mr-3 w-28">请求地址</div>
+        <a-select :options="methods" style="width: 130px" v-model="form.mode" />
+        <a-input v-model="form.url" placeholder="请输入接口地址" />
+        <a-button type="primary" @click="requestServer"><icon-send /> 发送请求</a-button>
+      </a-input-group>
+    </a-form>
+    <a-tabs v-model:active-key="activeTab" class="mt-5">
+      <a-tab-pane key="query" title="设置Query">
         <div class="pl-2 pr-2">
           <a-button type="primary" class="mb-3" @click="add" ><icon-plus /> 新增</a-button>
-          <a-table :data="globalParams.query" :pagination="false">
+          <a-table :data="params.query" :pagination="false">
             <template #columns>
               <a-table-column title="#">
                 <template #cell="{rowIndex}">
@@ -35,10 +42,10 @@
           </a-table>
         </div>
       </a-tab-pane>
-      <a-tab-pane key="body" title="设置全局Body">
+      <a-tab-pane key="body" title="设置Body">
         <div class="pl-2 pr-2">
           <a-button type="primary" class="mb-3" @click="add" ><icon-plus /> 新增</a-button>
-          <a-table :data="globalParams.body" :pagination="false">
+          <a-table :data="params.body" :pagination="false">
             <template #columns>
               <a-table-column title="#">
                 <template #cell="{rowIndex}">
@@ -59,10 +66,10 @@
           </a-table>
         </div>
       </a-tab-pane>
-      <a-tab-pane key="header" title="设置全局Header">
+      <a-tab-pane key="header" title="设置Header">
         <div class="pl-2 pr-2">
           <a-button type="primary" class="mb-3" @click="add" ><icon-plus /> 新增</a-button>
-          <a-table :data="globalParams.header" :pagination="false">
+          <a-table :data="params.header" :pagination="false">
             <template #columns>
               <a-table-column title="#">
                 <template #cell="{rowIndex}">
@@ -84,72 +91,97 @@
         </div>
       </a-tab-pane>
     </a-tabs>
-  </a-modal>
+
+    <a-divider orientation="left">服务器响应</a-divider>
+    <ma-code-editor v-model="response" :height="240" :readonly="true" :isBind="true" />
+  </div>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
 import { useDocStore } from '@/store'
+import { formatJson } from '@/utils/common'
+import { request } from '@/utils/request.js'
 import { Message } from '@arco-design/web-vue'
 
 const docStore = useDocStore()
+const response = ref('')
+
+const props = defineProps({ row: Object })
 const activeTab = ref('query')
-const visible = ref(false)
-const globalParams = reactive({
+const methods = ref([
+  { label: '所有模式', value: 'A'},
+  { label: 'GET', value: 'G'},
+  { label: 'POST', value: 'P'},
+  { label: 'PUT', value: 'U'},
+  { label: 'DELETE', value: 'D'},
+])
+
+const params = reactive({
   header: [],
   query: [],
   body: []
 })
 
-const open = () => {
-  init()
-  visible.value = true
-}
-
 const add = () => {
-  globalParams[activeTab.value].push({ name: '', value: '' })
+  params[activeTab.value].push({ name: '', value: '' })
 }
 
 const del = (idx) => {
-  globalParams[activeTab.value].splice(idx, 1)
+  params[activeTab.value].splice(idx, 1)
 }
 
-const save = (done) => {
+const form = ref({
+  mode: props.row.request_mode,
+  url: `/api/v1/${props.row.access_name}`
+})
+
+const requestServer = async () => {
+  if (form.value.url === '') {
+    Message.info('请输入请求地址')
+    return
+  }
+
+  let mode
+  switch (form.value.mode) {
+    case 'P': {
+      mode = 'POST'
+      break
+    }
+    case 'D': {
+      mode = 'DELETE'
+      break
+    }
+    case 'U': {
+      mode = 'PUT'
+      break
+    }
+    default: mode = 'GET'
+  }
+
   let header = {}
   let query  = {}
   let body   = {}
 
-  globalParams.header.map(item => {
+  params.header.map(item => {
     header[item.name] = item.value
   })
-  globalParams.query.map(item => {
+  params.query.map(item => {
     query[item.name] = item.value
   })
-  globalParams.body.map(item => {
+  params.body.map(item => {
     body[item.name] = item.value
   })
-  docStore.globalParams = { header, query, body }
-  Message.success('设置成功')
-  done(true)
-}
 
-const init = () => {
-  if (docStore.globalParams) {
-    globalParams.query = []
-    globalParams.body = []
-    globalParams.header = []
-
-    for (let name in docStore.globalParams.header) {
-      globalParams.header.push({ 'name': name, value: docStore.globalParams.header[name] })
-    }
-    for (let name in docStore.globalParams.query) {
-      globalParams.query.push({ 'name': name, value: docStore.globalParams.query[name] })
-    }
-    for (let name in docStore.globalParams.body) {
-      globalParams.body.push({ 'name': name, value: docStore.globalParams.body[name] })
-    }
+  const config = {
+    header: Object.assign(header, docStore.globalParams?.header),
+    params: Object.assign(query, docStore.globalParams?.query),
+    data  : Object.assign(body, docStore.globalParams?.body),
+    url: form.value.url,
+    method: mode,
   }
-}
 
-defineExpose({ open })
+  const res = await request(config)
+  response.value = formatJson(res)
+}
 </script>

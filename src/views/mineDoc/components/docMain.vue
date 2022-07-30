@@ -79,7 +79,7 @@ const logoutDoc = () => {
 }
 .footer {
   position: absolute; bottom: 0;
-  height: 38px; background: rgba(255, 255, 255, 0.9);
+  height: 38px; background: rgba(255, 255, 255, 1);
   backdrop-filter: blur(5px);
   border-top: 1px solid var(--color-neutral-3);
   width: 100%; z-index: 2;
