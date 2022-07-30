@@ -49,7 +49,7 @@ import doc from '@/api/doc'
 const appStore = useAppStore()
 const docStore = useDocStore()
 const router = useRouter()
-const form = ref({ app_id: '8d0d0cd215', app_secret: 'Y2JjMjQxOThkZWZmM2ExMWM1MWNlOWFkNTMwNzM3YzQzMjgxNzczZjBhNjNiMmJkZTc5MzMxYjE1NzUwMTNiNw==' })
+const form = ref({ app_id: '', app_secret: '' })
 const formRef = ref()
 
 const submit = ({ values, errors }) => {
