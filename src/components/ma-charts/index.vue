@@ -44,8 +44,8 @@ const props = defineProps({
 
 const appStore = useAppStore()
 
-const mode = computed(() => {
-  return (appStore.mode === 'dark') ? 'dark' : ''
+let mode = computed(() => {
+  return (appStore.mode === 'dark') ? 'dark' : 'auto'
 })
 
 const renderChart = ref(false)

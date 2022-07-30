@@ -78,7 +78,7 @@
               {{ props.searchRef.dictTrans(row.dataIndex, record[row.dataIndex]) }}
             </template>
             <template v-else-if="row.dataIndex && row.dataIndex.indexOf('.') !== -1">
-              {{ _.get(record, row.dataIndex) }}
+              {{ get(record, row.dataIndex) }}
             </template>
             <template v-else>{{ record[row.dataIndex] }}</template>
           </slot>
@@ -91,7 +91,7 @@
 <script setup>
 import { Message } from '@arco-design/web-vue'
 import config from '@/config/crud'
-import { isFunction } from 'lodash'
+import { isFunction, get } from 'lodash'
 
 const emit = defineEmits(['refresh'])
 const props = defineProps({

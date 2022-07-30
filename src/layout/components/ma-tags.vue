@@ -33,6 +33,8 @@
   import { ref, watch, onMounted, nextTick } from 'vue'
   import { useAppStore, useTagStore, useKeepAliveStore } from '@/store'
   import { useRoute, useRouter } from 'vue-router'
+  import NProgress from 'nprogress'
+  import 'nprogress/nprogress.css'
 
   import Sortable from "sortablejs"
 
@@ -114,15 +116,14 @@
     if (route.name != tag.name) {
       router.push({ name: tag.name, query: tag.query || {} })
     }
-    
-    // setTimeout(() => {
-      keepStore.removeKeepAlive(tag.name)
-      keepStore.hidden()
-      nextTick(() => {
-        keepStore.addKeepAlive(tag.name)
-        keepStore.display()
-      })
-    // }, 0)
+    NProgress.start()
+    keepStore.removeKeepAlive(tag.name)
+    keepStore.hidden()
+    nextTick(() => {
+      keepStore.addKeepAlive(tag.name)
+      keepStore.display()
+      NProgress.done()
+    })
   }
 
   const contextMenuCloseTag = () => {

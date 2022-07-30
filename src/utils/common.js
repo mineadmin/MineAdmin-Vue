@@ -2,6 +2,24 @@ import checkAuth from '@/directives/auth/auth'
 import checkRole from '@/directives/role/role'
 import useClipboard from 'vue-clipboard3'
 import { Notification, Message } from '@arco-design/web-vue'
+import { nextTick } from 'vue'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import router from '@/router'
+import { useKeepAliveStore } from '@/store'
+
+export const refreshTag = () => {
+  const route = router.currentRoute.value
+  const keepStore = useKeepAliveStore()
+  NProgress.start()
+  keepStore.removeKeepAlive(route.name)
+  keepStore.hidden()
+  nextTick(() => {
+    keepStore.addKeepAlive(route.name)
+    keepStore.display()
+    NProgress.done()
+  })
+}
 
 export const success = (title, content) => {
   Notification.success({ title, content, closable: true })
