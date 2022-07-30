@@ -11,11 +11,10 @@
 <template>
   <a-drawer
     class="backend-setting"
-    :visible="visible"
-    @ok="save"
+    v-model:visible="visible"
+    :on-before-ok="save"
     width="350px"
     :ok-text="$t('sys.saveToBackend')"
-    :ok-loading="okLoading"
     @cancel="close"
     unmountOnClose
   >
@@ -61,6 +60,8 @@
 <script setup>
 import { ref, reactive, watch } from 'vue'
 import { useAppStore, useUserStore } from '@/store'
+import { Message } from '@arco-design/web-vue'
+import user from '@/api/system/user'
 import Skin from './skin.vue'
 import skins from '@/config/skins'
 import { useI18n } from 'vue-i18n'
@@ -104,8 +105,21 @@ const handleMenuWidth = (val) => appStore.changeMenuWidth(val)
 
 watch(() => appStore.menuCollapse, val => form.menuCollapse = val)
 
-const save = () => {
+const save = async (done) => {
+  const data = {
+    mode: appStore.mode,
+    tag: appStore.tag,
+    menuCollapse: appStore.menuCollapse,
+    menuWidth: appStore.menuWidth,
+    layout: appStore.layout,
+    skin: appStore.skin,
+    language: appStore.language
+  }
 
+  user.updateInfo({ id: userStore.user.id, backend_setting: data }).then(res => {
+    res.success && Message.success(res.message)
+  })
+  done(true)
 }
 
 defineExpose({ open })

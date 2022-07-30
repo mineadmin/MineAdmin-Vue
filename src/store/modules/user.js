@@ -4,6 +4,7 @@ import tool from '@/utils/tool'
 import router from '@/router'
 import webRouter from '@/router/webRouter'
 import { homePage } from '@/router/homePageRoutes'
+import { useAppStore } from '@/store'
 
 const useUserStore = defineStore('user', {
 
@@ -61,6 +62,7 @@ const useUserStore = defineStore('user', {
             })
           }
           this.routers.unshift(homePage)
+          this.setApp()
           resolve(response.data)
         }).catch(error => {
           this.clearToken()
@@ -91,6 +93,19 @@ const useUserStore = defineStore('user', {
       await loginApi.logout()
       this.clearToken()
       this.resetUserInfo()
+    },
+
+    async setApp() {
+      const appStore = useAppStore()
+      const setting = this.user.backend_setting
+      if (setting) {
+        appStore.toggleMode(setting.mode)
+        appStore.toggleMenu(setting.menuCollapse)
+        appStore.toggleTag(setting.tag)
+        appStore.changeMenuWidth(setting.menuWidth)
+        appStore.changeLayout(setting.layout)
+        appStore.useSkin(setting.skin)
+      }
     }
   }
 
