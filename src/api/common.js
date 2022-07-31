@@ -62,6 +62,18 @@ export default {
   },
 
   /**
+   * 获取公告列表
+   * @returns
+   */
+  getNoticeList(params = {}) {
+    return request({
+      url: 'system/common/getNoticeList',
+      method: 'get',
+      params
+    })
+  },
+
+  /**
    * 清除所有缓存
    * @returns
    */
