@@ -7,26 +7,41 @@
 </p>
 
 ## 简介
-`MineAdmin Vue` 是一个开源免费专门适配于 `MineAdmin` 后台权限管理系统的前端中后台模板，使用了 `vue3`, `vite2`, `pinia`, `arco design`, `javascript` 等主流开发技术，未使用`Typescript`，我们选择了简单。
+`MineAdmin Vue` 是一个开源免费专门适配于 `MineAdmin` 后台权限管理系统的前端中后台模板，使用了 `vue3`, `vite3`, `pinia`, `arco design`, `javascript` 等主流开发技术，未使用`Typescript`，我们选择了简单。
 
 ## 特性
 
-- 最新技术栈：vue3, vite2, pinia
+- 最新技术栈：vue3, vite3, pinia
 - UI库：arco design
 - 国际化：完善的多语言解决方案
 - 权限：由于适配 `MineAdmin` 系统，内置完善的权限、动/静态路由解决方案
 - 主题：可扩展主题
 - 布局：支持三种布局方式
 - 组件：内置大量基于日常开发锤炼出的组件。
-- CRUD表格系统：基于JSON化配置 + Vue3 经典开发模式的CRUD配置化表格系统，大大减少前端开发CRUD时间
-
-## 环境要求
-
-待完善
+- 指令：封装了常用指令，如权限控制、角色控制等
+- CRUD表格系统：基于json方式配置，快速对接后台接口，实现增删改查
+- FROM表单系统：基于json方式配置，快速搭建出想要的表单系统，快速完成需求。
 
 ## 安装使用
 
-待完善
+- 获取代码
+```
+git clone https://github.com/kanyxmo/MineAdmin-Vue.git
+OR
+git clone https://gitee.com/xmo/mineadmin-vue.git
+```
+- 安装依赖
+```
+cd MineAdmin-Vue && yarn install
+```
+- 运行
+```
+yarn dev
+```
+- 打包
+```
+yarn build
+```
 
 ## 免责声明
 本软件不得用于开发违反国家有关政策的相关软件和应用，若因使用本软件造成的一切法律责任均与 `MineAdmin Vue` 无关

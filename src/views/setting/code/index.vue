@@ -8,7 +8,9 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div>aaa</div>
+  <div class="ma-content-block">
+    待开发
+  </div>
 </template>
 
 <script>export default { name: 'setting:code' }</script>
