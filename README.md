@@ -58,3 +58,19 @@ All rights reserved。
 <a href="https://www.oscs1024.com/project/oscs/kanyxmo/MineAdmin-Vue?ref=badge_large" alt="OSCS Status"><img src="https://www.oscs1024.com/platform/badge/kanyxmo/MineAdmin-Vue.svg?size=large"/></a>
 
 ## 系统截图
+<img src="https://s1.ax1x.com/2022/07/31/vklKzR.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklGdO.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkl8eK.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkl1L6.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklwQI.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkldSA.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklNJH.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklJoD.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkllsx.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklZoF.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklUWd.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkl0yt.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkltFe.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkluW9.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklnJJ.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklmi4.jpg" />
