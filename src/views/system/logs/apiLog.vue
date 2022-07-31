@@ -75,18 +75,8 @@
 
   const openDetails = (record) => {
     currentRow.value = record
-    if (record.request_data.length > 0) {
-      currentRow.value.request_data = 
-        ! /\\\\/g.test(record.request_data)
-        ? formatJson(currentRow.value.request_data)
-        : currentRow.value.request_data.replace(/,/g, ",\n")
-    }
-    if (record.response_data.length > 0) {
-      currentRow.value.response_data =
-        ! /\\\\/g.test(record.response_data)
-        ? formatJson(currentRow.value.response_data)
-        : currentRow.value.response_data.replace(/,/g, "\n")
-    }
+    currentRow.value.request_data = formatJson(record.request_data)
+    currentRow.value.response_data = formatJson(record.response_data)
     visible.value = true
   }
 
