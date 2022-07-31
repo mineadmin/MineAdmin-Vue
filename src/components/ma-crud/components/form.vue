@@ -319,7 +319,6 @@ const submit = (done) => {
       done(false)
       return
     }
-    console.log(props.crud)
     let response
     if (currentAction.value === 'add') {
       isFunction(props.crud.beforeAdd) && props.crud.beforeAdd(form.value)

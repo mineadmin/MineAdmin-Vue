@@ -3,7 +3,7 @@
  * @author X.Mo <root@imoi.cn>
  */
 
- class Wscoket
+ class Wsocket
  {
    /**
     * websocket 连接句柄
@@ -191,5 +191,5 @@
    }
  }
  
- export default webSocket
+ export default Wsocket
  

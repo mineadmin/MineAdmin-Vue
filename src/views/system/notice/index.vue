@@ -76,7 +76,8 @@
       formExtra: '如不选择，默认将为所有用户发送'
     },
     {
-      title: '公告内容', dataIndex: 'content', formType: 'editor', rules: [{ required: true, message: '公告内容必填' }]
+      title: '公告内容', dataIndex: 'content', formType: 'editor', hide: true,
+      rules: [{ required: true, message: '公告内容必填' }]
     },
     {
       title: '备注', dataIndex: 'remark', hide: true, formType: 'textarea',

@@ -30,9 +30,15 @@
       <a-trigger trigger="click">
         <a-button :shape="'circle'">
           <template #icon>
-            <a-badge :count="5" dot :dotStyle="{ width: '5px', height: '5px',}">
+            <a-badge
+              :count="5"
+              dot
+              :dotStyle="{ width: '5px', height: '5px' }"
+              v-if="messageStore.messageList.length > 0"
+            >
               <icon-notification />
             </a-badge>
+            <icon-notification v-else />
           </template>
         </a-button>
 
@@ -79,16 +85,20 @@
 
 <script setup>
   import { ref } from 'vue'
-  import { useAppStore, useUserStore } from '@/store'
+  import { useAppStore, useUserStore, useMessageStore } from '@/store'
   import tool from '@/utils/tool'
   import Setting from './components/setting.vue'
   import messageNotification from './components/message-notification.vue'
   import { useRouter } from 'vue-router'
   import { success } from '@/utils/common'
   import { useI18n } from 'vue-i18n'
-  import commonApi from '@/api/common'
+  import { Message } from '@arco-design/web-vue'
+  import WsMessage from '@/ws-serve/message'
+  import { info } from '@/utils/common'
+import { DatasetComponent } from 'echarts/components'
 
   const { t } = useI18n()
+  const messageStore = useMessageStore()
   const userStore = useUserStore()
   const appStore  = useAppStore()
   const setting = ref(null)
@@ -102,7 +112,7 @@
     }
     if (name === 'clearCache') {
       const res = await commonApi.clearAllCache()
-      res.success && success(t('sys.noticeTitle'), res.message)
+      res.success && Message.success(res.message)
     }
     if (name === 'logout') {
       showLogoutModal.value = true
@@ -124,6 +134,17 @@
     tool.screen(document.documentElement)
     isFullScreen.value = !isFullScreen.value
   }
+
+  const Wsm = new WsMessage()
+  Wsm.connection()
+  Wsm.getMessage()
+
+  Wsm.ws.on("ev_new_message", (msg, data) => {
+    if (data.length > messageStore.messageList.length) {
+      info('新消息提示', '您有新的消息，请注意查收！')
+    }
+    messageStore.messageList = data
+  });
   
 </script>
 <style scoped>
