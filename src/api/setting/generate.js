@@ -17,10 +17,11 @@ export default {
    * 删除
    * @returns
    */
-  deletes (params) {
+  deletes (data) {
     return request({
-      url: 'setting/code/delete/' + params,
-      method: 'delete'
+      url: 'setting/code/delete',
+      method: 'delete',
+      data
     })
   },
 
@@ -48,11 +49,12 @@ export default {
    * 生成代码
    * @returns
    */
-  generate (ids = {}) {
+  generate (data = {}) {
     return request({
-      url: 'setting/code/generate/' + ids,
+      url: 'setting/code/generate/',
       method: 'post',
       responseType: 'blob',
+      data,
     })
   },
 
@@ -80,7 +82,7 @@ export default {
   },
 
   /**
-   * 同步数据表
+   * 预览代码
    * @returns
    */
   preview (params = {}) {

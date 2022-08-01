@@ -27,7 +27,9 @@
 - 获取代码
 ```
 git clone https://github.com/kanyxmo/MineAdmin-Vue.git
-OR
+```
+或
+```
 git clone https://gitee.com/xmo/mineadmin-vue.git
 ```
 - 安装依赖

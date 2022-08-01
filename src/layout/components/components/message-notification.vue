@@ -11,7 +11,7 @@
             v-if="messageStore.messageList.length > 0"
           > </a-badge>
         </template>
-        <a-list :max-height="230" class="h-full">
+        <a-list :max-height="230" class="h-full" v-if="messageStore.messageList.length > 0">
           <a-list-item
             v-for="item in messageStore.messageList" :key="item.id" class="cursor-pointer"
             @click="viewMessage(item)"
@@ -31,6 +31,7 @@
             </a-list-item-meta>
           </a-list-item>
         </a-list>
+        <a-empty v-else class="h-full" />
       </a-tab-pane>
       <a-tab-pane key="todo">
         <template #title>{{ $t('sys.operationMessage.todo') }}</template>
