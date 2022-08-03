@@ -35,7 +35,7 @@ router.beforeEach(async (to, from, next) => {
         userStore.clearToken()
         next({ name: 'login', query: { redirect: to.fullPath } })
       } else {
-        next({ path: to.path })
+        next({ path: to.path, query: to.query })
       }
     } else {
       next()

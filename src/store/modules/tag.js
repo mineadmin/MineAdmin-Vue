@@ -48,12 +48,13 @@ const useTagStore = defineStore('tag', {
       this.updateTagsToLocal()
     },
 
-    updateTagTitle(tag, title) {
-      state.viewTags.map(item => {
-        if (item.name == tag.name) {
+    updateTagTitle(name, title) {
+      this.tags.map(item => {
+        if (item.name == name) {
           item.customeTitle = title
         }
       })
+      this.updateTagsToLocal()
     },
 
     updateTagsToLocal() {

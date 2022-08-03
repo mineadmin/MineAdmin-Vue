@@ -167,7 +167,7 @@
  
      this.reconnectConfig.timer = setTimeout(_ => {
        this.connection()
-       this.reconnectConfig.isReconnect = false
+       this.reconnectConfig.isReconnect = true
        this.reconnectConfig.retry--
        console.log( `网络连接已断开，正在尝试重新连接(${this.reconnectConfig.retry})...`)
      }, reconnect.interval)

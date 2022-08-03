@@ -43,6 +43,7 @@ export default {
   'devTools': '工具',
   'setting:module': '模块管理',
   'setting:code': '代码生成器',
+  'setting:code:update': '编辑生成信息',
   'setting:crontab': '定时任务',
   'setting:table': '数据表设计器',
   'systemInterface': '系统接口',

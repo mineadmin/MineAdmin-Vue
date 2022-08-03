@@ -18,34 +18,60 @@
           type="outline"
         ><icon-code /> 生成代码</a-button>
         <a-button
-          @click="() => loadTableRef.open()"
           v-auth="['setting:code:loadTable']"
+          @click="() => loadTableRef.open()"
           type="outline"
           status="success"
         ><icon-export /> 装载数据表</a-button>
       </template>
       <!-- 操作前置扩展 -->
-      <template #operationBeforeExtend>
-        <a-link><icon-eye /> 预览</a-link>
-        <a-link><icon-sync /> 同步</a-link>
-        <a-link><icon-edit /> 编辑</a-link>
-        <a-link><icon-code /> 生成代码</a-link>
+      <template #operationBeforeExtend="{ record }">
+        <a-link 
+          v-auth="['setting:code:preview']"
+          @click="previewRef.open(record.id)"
+        ><icon-eye /> 预览</a-link>
+        <a-popconfirm content="同步会重置字段配置生成信息，确定同步吗?" position="bottom" @ok="sync(record.id)">
+          <a-link 
+            v-auth="['setting:code:sync']"
+          ><icon-sync /> 同步</a-link>
+        </a-popconfirm>
+        <a-link 
+          v-auth="['setting:code:edit']"
+          @click="() => editRef.open(record.id)"
+        ><icon-edit /> 编辑</a-link>
+        <a-link 
+          v-auth="['setting:code:generate']"
+          @click="generateCode(record.id)"
+        ><icon-code /> 生成代码</a-link>
       </template>
     </ma-crud>
 
     <load-table ref="loadTableRef" @success="selectSuccess" />
+
+    <preview ref="previewRef" />
+
+    <edit-info ref="editRef" />
+    
   </div>
 </template>
 
 <script setup>
   import { ref, reactive } from 'vue'
   import generate from '@/api/setting/generate'
+  import { useRouter } from 'vue-router'
   import { Message } from '@arco-design/web-vue'
+  import tool from '@/utils/tool'
 
   import LoadTable from './components/loadTable.vue'
+  import preview from './components/preview.vue'
+  import editInfo from './components/editInfo.vue'
 
   const crudRef = ref()
+  const editRef = ref()
+  const previewRef = ref()
   const loadTableRef = ref()
+
+  const router = useRouter()
 
   const types = [
     { label: '单表CRUD', code: 'single' },
@@ -56,13 +82,29 @@
     result && crudRef.value.refresh()
   }
 
+  const sync = async (id) => {
+    const response = await generate.sync(id)
+    response.success && Message.success(response.message)
+  }
+  
+  const generateCode = async (ids) => {
+    Message.info('代码生成下载中，请稍后')
+    const response = await generate.generateCode({ ids: ids.toString().split(',') })
+    if (response.message && ! response.success) {
+      Message.error(response.message)
+    } else {
+      tool.download(response)
+      Message.success('代码生成成功，开始下载')
+    }
+  }
+
   const crud = reactive({
     api: generate.getPageList,
     showIndex: false,
     searchLabelWidth: '75px',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 270,
+    operationWidth: 350,
     delete: {
       show: true,
       api: generate.deletes, auth: ['setting:code:delete'],
@@ -76,7 +118,7 @@
       title: '生成类型', dataIndex: 'type', formType: 'select', width: 120,
       dict: { data: types, translation: true },
     },
-    { title: '创建时间', dataIndex: 'created_at', width: 160 },
+    { title: '创建时间', dataIndex: 'created_at', width: 180 },
   ])
 </script>
 

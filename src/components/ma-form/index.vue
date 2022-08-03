@@ -226,7 +226,7 @@
             </a-col>
           </template>
         </a-row>
-        <div class="text-center mt-5">
+        <div class="text-center mt-5" v-if="props.options.showButtons">
           <a-space size="large">
             <a-button html-type="submit" type="primary">
               <icon-check /> {{ props.options.submitText || '提交' }}
@@ -260,10 +260,11 @@ const emit = defineEmits(['submit', 'update:modelValue'])
 const props = defineProps({
   modelValue: Object,
   columns: { type: Array },
+  autoInit: { type: Boolean, default: true},
   options: { type: Object, default: () =>
     {
       return {
-        autoInit: true,
+        showButtons: true,
         layout: 'auto',
         labelAlign: 'right',
       }
@@ -339,7 +340,7 @@ const init = () => {
   const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
   const arrayDefault = ['checkbox', 'user-select', 'form-group']
-  if (columns.value.length > 0) {
+  if (columns.value && columns.value.length > 0) {
     columns.value.map(async item => {
 
       if (! form.value[item.dataIndex] && typeof form.value[item.dataIndex] == 'undefined') {
@@ -464,7 +465,7 @@ const getComponent = (item) => {
   }
 }
 
-props.options.autoInit && init()
+props.autoInit && init()
 
 defineExpose({ init, reset })
 </script>

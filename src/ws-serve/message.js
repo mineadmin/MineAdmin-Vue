@@ -29,7 +29,7 @@ class Message {
 
   getMessage() {
     this.timer = setInterval(() => {
-      this.ws.send({ event: 'get_unread_message' })
+      this.ws && this.ws.send({ event: 'get_unread_message' })
     }, this.interval)
   }
 

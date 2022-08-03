@@ -5,7 +5,7 @@
         v-for="tag in tagStore.tags" :key="tag.name"
         @contextmenu.prevent="openContextMenu($event, tag)"
         :class="route.name == tag.name ? 'active' : ''"
-        @click="$router.push({ name: tag.name })"
+        @click="$router.push({ name: tag.name, query: tag.query || {} })"
       >
         {{ tag.customTitle ? tag.customTitle : $t('menus.' + tag.name).indexOf('.') > 0 ? tag.title : $t('menus.' + tag.name) }}
         <icon-close class="tag-icon" v-if="! tag.affix" @click.stop="closeTag(tag)" />

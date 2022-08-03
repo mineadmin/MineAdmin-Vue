@@ -43,6 +43,7 @@ export default {
   'devTools': 'Tools',
   'setting:module': 'Module Manage',
   'setting:code': 'Code Generator',
+  'setting:code:update': 'Edit the build information',
   'setting:crontab': 'Crontab',
   'setting:table': 'Table Designer',
   'systemInterface': 'System Apis',

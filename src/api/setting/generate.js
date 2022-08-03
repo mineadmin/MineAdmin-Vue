@@ -49,7 +49,7 @@ export default {
    * 生成代码
    * @returns
    */
-  generate (data = {}) {
+  generateCode (data = {}) {
     return request({
       url: 'setting/code/generate/',
       method: 'post',

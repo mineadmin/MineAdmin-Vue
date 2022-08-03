@@ -6,7 +6,7 @@ import { nextTick } from 'vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import router from '@/router'
-import { useKeepAliveStore } from '@/store'
+import { useTagStore, useKeepAliveStore } from '@/store'
 
 export const refreshTag = () => {
   const route = router.currentRoute.value
@@ -19,6 +19,13 @@ export const refreshTag = () => {
     keepStore.display()
     NProgress.done()
   })
+}
+
+export const closeTag = (tag) => {
+  const tagStore  = useTagStore()
+  const keepStore = useKeepAliveStore()
+  tagStore.removeTag(tag)
+  keepStore.removeKeepAlive(tag.name)
 }
 
 export const success = (title, content) => {
