@@ -180,4 +180,14 @@ export default {
       method: 'get'
     })
   },
+
+  /**
+   * 获取模块列表
+   */
+  getModuleList() {
+    return request({
+      url: 'setting/common/getModuleList',
+      method: 'get'
+    })
+  }
 }
