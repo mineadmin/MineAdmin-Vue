@@ -90,12 +90,11 @@
   import Setting from './components/setting.vue'
   import messageNotification from './components/message-notification.vue'
   import { useRouter } from 'vue-router'
-  import { success } from '@/utils/common'
   import { useI18n } from 'vue-i18n'
   import { Message } from '@arco-design/web-vue'
   import WsMessage from '@/ws-serve/message'
   import { info } from '@/utils/common'
-import { DatasetComponent } from 'echarts/components'
+  import commonApi from '@/api/common'
 
   const { t } = useI18n()
   const messageStore = useMessageStore()
