@@ -313,7 +313,7 @@
             <template #viewType="{ record }">
               <a-space>
                 <a-select v-model="record.view_type" :style="{ width: '180px' }" :options="vars.viewComponent" allow-clear></a-select>
-                <a-link>设置</a-link>
+                <a-link @click="openSettingComponent(record)">设置</a-link>
               </a-space>
             </template>
             <!-- 字典 -->
@@ -323,6 +323,7 @@
                 :options="dicts"
                 allow-clear
                 :field-names="{ label: 'name', value: 'code' }"
+                placeholder="选择数据字典"
               ></a-select>
             </template>
             <!-- 允许角色 -->
@@ -334,6 +335,7 @@
                 :max-tag-count="1"
                 allow-clear
                 :field-names="{ label: 'name', value: 'code' }"
+                placeholder="选择允许查看字段的角色"
               ></a-select>
             </template>
           </a-table>
@@ -479,6 +481,8 @@
         </a-tab-pane>
       </a-tabs>
     </a-form>
+
+    <setting-component ref="settingComponentRef" />
   </a-modal>
 </template>
 
@@ -494,12 +498,15 @@ import menuApi from '@/api/system/menu'
 import roleApi from '@/api/system/role'
 import { dictType } from '@/api/system/dict'
 
+import SettingComponent from './settingComponent.vue'
+
 // 导入变量
 import * as vars from '../js/vars.js'
 
 const record = ref({})
 const visible = ref(false)
 const activeTab = ref('base_config')
+const settingComponentRef = ref()
 
 const form = ref({
   generate_menus: ['save', 'update' , 'read', 'delete' , 'recycle', 'changeStatus', 'numberOperation', 'import', 'export'],
@@ -527,6 +534,15 @@ const open = async (id) => {
   const response = await generate.readTable({ id })
   record.value = response.data
   init()
+}
+
+const openSettingComponent = (record) => {
+  const notNeedSettingComponents = ['text', 'password', 'textarea']
+  if (notNeedSettingComponents.includes(record.view_type)) {
+    Message.info('该组件无需设置')
+    return
+  }
+  settingComponentRef.value.open(record)
 }
 
 const save = (done) => {
