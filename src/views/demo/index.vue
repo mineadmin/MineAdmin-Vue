@@ -32,6 +32,11 @@ const columns = ref([
     formType: 'user-info'
   },
   {
+    title: '图片',
+    dataIndex: 'url',
+    formType: 'select-resource'
+  },
+  {
     title: '地区',
     dataIndex: 'area',
     formType: 'city-linkage',

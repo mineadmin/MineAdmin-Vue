@@ -29,7 +29,7 @@
     modelValue: { type: [ String, Array ] },
     multiple: { type: Boolean, default: true },
     onlyUrl: { type: Boolean, default: true },
-    width: { type: String, default: '910px' },
+    width: { type: Number, default: 1080 },
   })
 
   onMounted(() => list.value = props.modelValue )

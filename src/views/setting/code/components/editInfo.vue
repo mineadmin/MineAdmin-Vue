@@ -207,7 +207,7 @@
                     >
                       <a-option
                         class="w-full"
-                        v-for="(item, index) in columns"
+                        v-for="(item, index) in form.columns"
                         :label="item.column_name + ' - ' + item.column_comment"
                         :value="item.column_name"
                         :key="index"
@@ -237,7 +237,7 @@
                     >
                       <a-option
                         class="w-full"
-                        v-for="(item, index) in columns"
+                        v-for="(item, index) in form.columns"
                         :label="item.column_name + ' - ' + item.column_comment"
                         :value="item.column_name"
                         :key="index"
@@ -267,7 +267,7 @@
                     >
                       <a-option
                         class="w-full"
-                        v-for="(item, index) in columns"
+                        v-for="(item, index) in form.columns"
                         :label="item.column_name + ' - ' + item.column_comment"
                         :value="item.column_name"
                         :key="index"
@@ -313,7 +313,10 @@
             <template #viewType="{ record }">
               <a-space>
                 <a-select v-model="record.view_type" :style="{ width: '180px' }" :options="vars.viewComponent" allow-clear></a-select>
-                <a-link @click="openSettingComponent(record)">设置</a-link>
+                <a-link
+                  v-if="! notNeedSettingComponents.includes(record.view_type)"
+                  @click="settingComponentRef.open(record)"
+                >设置</a-link>
               </a-space>
             </template>
             <!-- 字典 -->
@@ -415,7 +418,7 @@
                   >
                     <a-option
                       class="w-full"
-                      v-for="(item, index) in columns"
+                      v-for="(item, index) in form.columns"
                       :label="item.column_name + ' - ' + item.column_comment"
                       :value="item.column_name"
                       :key="index"
@@ -440,7 +443,7 @@
                 >
                   <a-select
                     style="width: 100%"
-                    v-model="item.localKey"
+                    v-model="item.table"
                     allow-clear
                     allow-search
                     placeholder="请选择中间表，可输入关键字过滤"
@@ -482,7 +485,7 @@
       </a-tabs>
     </a-form>
 
-    <setting-component ref="settingComponentRef" />
+    <setting-component ref="settingComponentRef" @confrim="confrimSetting" />
   </a-modal>
 </template>
 
@@ -507,6 +510,11 @@ const record = ref({})
 const visible = ref(false)
 const activeTab = ref('base_config')
 const settingComponentRef = ref()
+
+const notNeedSettingComponents = ref([
+  'text', 'password', 'textarea', 'formGroup', 'inputTag', 'mention', 'rate',
+  'userInfo'
+])
 
 const form = ref({
   generate_menus: ['save', 'update' , 'read', 'delete' , 'recycle', 'changeStatus', 'numberOperation', 'import', 'export'],
@@ -536,13 +544,14 @@ const open = async (id) => {
   init()
 }
 
-const openSettingComponent = (record) => {
-  const notNeedSettingComponents = ['text', 'password', 'textarea']
-  if (notNeedSettingComponents.includes(record.view_type)) {
-    Message.info('该组件无需设置')
-    return
-  }
-  settingComponentRef.value.open(record)
+const confrimSetting = (name, value) => {
+  form.value.columns.find((item, idx) => {
+    if (item.column_name == name) {
+      form.value.columns[idx].options = value
+    }
+  })
+  Message.success('组件设置成功')
+  console.log(form.value.columns)
 }
 
 const save = (done) => {

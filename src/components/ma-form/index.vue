@@ -173,6 +173,9 @@
                     :max="item.max"
                     :min="item.min"
                     :step="item.step"
+                    :precision="item.precision"
+                    :checked-value="item.checkedValue"
+                    :unchecked-value="item.uncheckedValue"
                     :show-ticks="item.showTicks"
                     :allow-half="item.half"
                     :type="item.type"
@@ -461,6 +464,7 @@ const getComponent = (item) => {
     case 'icon': return 'ma-icon'
     case 'user-info': return 'ma-user-info'
     case 'city-linkage': return 'ma-city-linkage'
+    case 'select-resource': return 'ma-resource-button'
     default: return `a-${item.formType}`
   }
 }
