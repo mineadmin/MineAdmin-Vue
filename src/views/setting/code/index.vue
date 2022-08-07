@@ -10,12 +10,13 @@
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+    <ma-crud :crud="crud" :columns="columns" ref="crudRef" @selection-change="selectionChange">
       <!-- 操作前置扩展 -->
       <template #tableButtons>
         <a-button
           v-auth="['setting:code:generate']"
           type="outline"
+          @click="batchGenerate"
         ><icon-code /> 生成代码</a-button>
         <a-button
           v-auth="['setting:code:loadTable']"
@@ -70,6 +71,7 @@
   const editRef = ref()
   const previewRef = ref()
   const loadTableRef = ref()
+  const selections = ref([])
 
   const router = useRouter()
 
@@ -97,6 +99,16 @@
       Message.success('代码生成成功，开始下载')
     }
   }
+
+  const batchGenerate = () => {
+    if (selections.value.length === 0) {
+      Message.error('至少要选择一条数据')
+      return
+    }
+    generateCode(selections.value.join(','))
+  }
+
+  const selectionChange = (row) => selections.value = row
 
   const crud = reactive({
     api: generate.getPageList,

@@ -51,7 +51,7 @@ export default {
    */
   generateCode (data = {}) {
     return request({
-      url: 'setting/code/generate/',
+      url: 'setting/code/generate',
       method: 'post',
       responseType: 'blob',
       data,
