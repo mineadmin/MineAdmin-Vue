@@ -53,14 +53,14 @@ const useUserStore = defineStore('user', {
       return new Promise((resolve, reject) => {
         loginApi.getInfo().then(async response => {
           await this.setInfo(response.data)
-          this.setMenu(this.routers)
-          this.routers = removeButtonMenu(this.routers)
           homePage.children = webRouter[0].children
           if (this.codes[0] !== '*' && ! this.codes.includes('setting:config')) {
             homePage.children.find((item,idx) => {
               if (item.name === 'setting:config') homePage.children.splice(idx, 1)
             })
           }
+          this.setMenu(this.routers)
+          this.routers = removeButtonMenu(this.routers)
           this.routers.unshift(homePage)
           this.setApp()
           resolve(response.data)

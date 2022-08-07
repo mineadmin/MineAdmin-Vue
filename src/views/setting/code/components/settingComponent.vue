@@ -122,6 +122,172 @@
         该组件涉及多层数据嵌套，请看 <a-tag color="blue">Arco Design</a-tag> 官方文档
         <a-link class="mt-2">https://arco.design/vue/docs/start</a-link>
       </div>
+      <!-- 编辑器相关 -->
+      <div v-if="['codeEditor', 'editor'].includes(row.view_type)">
+        <a-form-item
+          label="编辑器高度"
+          field="height"
+          label-col-flex="auto"
+          :label-col-style="{ width: '120px' }"
+        >
+          <a-input-number v-model="form.height" :max="1000" :min="100"/>
+        </a-form-item>
+        <a-form-item
+          label="双向绑定数据"
+          field="isBind"
+          label-col-flex="auto"
+          :label-col-style="{ width: '120px' }"
+          v-if="row.view_type == 'codeEditor'"
+        >
+          <a-radio-group v-model="form.isBind">
+            <a-radio :value="true">是</a-radio>
+            <a-radio :value="false">否</a-radio>
+          </a-radio-group>
+        </a-form-item>
+      </div>
+      <!-- 上传、资源选择器相关 -->
+      <div v-if="['upload', 'selectResource'].includes(row.view_type)">
+        <a-form-item
+          label="返回数据"
+          field="onlyUrl"
+          label-col-flex="auto"
+          :label-col-style="{ width: '120px' }"
+        >
+          <a-radio-group v-model="form.onlyUrl">
+            <a-radio :value="true">仅url地址</a-radio>
+            <a-radio :value="false">全量数据</a-radio>
+          </a-radio-group>
+        </a-form-item>
+        <a-form-item
+          label="是否可多选"
+          field="multiple"
+          label-col-flex="auto"
+          :label-col-style="{ width: '120px' }"
+        >
+          <a-radio-group v-model="form.multiple">
+            <a-radio :value="true">是</a-radio>
+            <a-radio :value="false">否</a-radio>
+          </a-radio-group>
+        </a-form-item>
+        <a-form-item
+          label="是否分片上传"
+          field="chunk"
+          label-col-flex="auto"
+          :label-col-style="{ width: '120px' }"
+          extra="分片上传不限制文件类型，选择分片上传后，上传文件类型则失效"
+          v-if="row.view_type == 'upload'"
+        >
+          <a-radio-group v-model="form.chunk">
+            <a-radio :value="true">是</a-radio>
+            <a-radio :value="false">否</a-radio>
+          </a-radio-group>
+        </a-form-item>
+        <a-form-item
+          label="上传类型"
+          field="type"
+          label-col-flex="auto"
+          :label-col-style="{ width: '100px' }"
+          v-if="row.view_type == 'upload' && !form.chunk"
+          :extra="`可在 系统配置 -> 上传配置 里修改允许格式`"
+        >
+          <a-select v-model="form.type" placeholder="默认为图片类型">
+            <a-option value="image">图片格式类型</a-option>
+            <a-option value="file">非图片格式类型</a-option>
+          </a-select>
+        </a-form-item>
+      </div>
+      <!-- 用户选择器 -->
+      <div v-if="row.view_type == 'selectUser'">
+        <a-form-item
+          label="返回数据"
+          field="onlyId"
+          label-col-flex="auto"
+          :label-col-style="{ width: '100px' }"
+        >
+          <a-radio-group v-model="form.onlyId">
+            <a-radio :value="true">仅用户ID</a-radio>
+            <a-radio :value="false">全量数据</a-radio>
+          </a-radio-group>
+        </a-form-item>
+      </div>
+      <!-- 省市区联动 -->
+      <div v-if="row.view_type == 'cityLinkage'">
+        <a-alert title="提示">
+          <p>级联选择器返回的数据类型为 String</p>
+          <p>下拉框联动返回的数据类型为 Array</p>
+        </a-alert>
+        <a-form-item
+          class="mt-3"
+          label="组件类型"
+          field="type"
+          label-col-flex="auto"
+          :label-col-style="{ width: '100px' }"
+        >
+          <a-select v-model="form.type" placeholder="默认为下拉框联动" allow-clear>
+            <a-option value="select">下拉框联动</a-option>
+            <a-option value="cascader">级联选择器</a-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item
+          class="mt-3"
+          label="返回数据"
+          field="mode"
+          label-col-flex="auto"
+          :label-col-style="{ width: '100px' }"
+        >
+          <a-select v-model="form.mode" placeholder="默认为省市名称" allow-clear>
+            <a-option value="name">省市名称</a-option>
+            <a-option value="code">省市编码</a-option>
+          </a-select>
+        </a-form-item>
+      </div>
+      <!-- 日期、时间选择器 -->
+      <div v-if="['time', 'date'].includes(row.view_type)">
+        <a-form-item
+          class="mt-3"
+          label="选择器类型"
+          field="formType"
+          label-col-flex="auto"
+          :label-col-style="{ width: '120px' }"
+          v-if="row.view_type == 'date'"
+        >
+          <a-select v-model="form.formType" allow-clear>
+            <a-option value="date">日期选择器</a-option>
+            <a-option value="week">周选择器</a-option>
+            <a-option value="month">月选择器</a-option>
+            <a-option value="quarter">季度选择器</a-option>
+            <a-option value="year">年选择器</a-option>
+          </a-select>
+        </a-form-item>
+
+        <a-form-item
+          class="mt-3"
+          label="是否显示时间"
+          field="showTime"
+          label-col-flex="auto"
+          :label-col-style="{ width: '120px' }"
+          v-if="form.formType == 'date'"
+        >
+          <a-radio-group v-model="form.showTime">
+            <a-radio :value="true">是</a-radio>
+            <a-radio :value="false">否</a-radio>
+          </a-radio-group>
+        </a-form-item>
+
+        <a-form-item
+          class="mt-3"
+          label="是否范围选择"
+          field="range"
+          label-col-flex="auto"
+          :label-col-style="{ width: '120px' }"
+        >
+          <a-radio-group v-model="form.range">
+            <a-radio :value="true">是</a-radio>
+            <a-radio :value="false">否</a-radio>
+          </a-radio-group>
+        </a-form-item>
+        
+      </div>
     </a-form>
   </a-modal>
 </template>
@@ -138,9 +304,7 @@ const form = ref({
 
 const open = (record) => {
   row.value = record
-  form.value = {
-    collection: []
-  }
+  form.value = record.options ? record.options : { collection: [] }
   visible.value = true
 }
 

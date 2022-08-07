@@ -127,7 +127,7 @@
                   />
 
                   <component
-                    v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
+                    v-else-if="['date', 'range', 'time'].includes(item.formType)"
                     :is="getComponent(item)"
                     v-model="form[item.dataIndex]"
                     :placeholder="item.formType === 'range'
@@ -138,7 +138,23 @@
                     :disabled="item.disabled"
                     :readonly="item.readonly"
                     :show-time="item.showTime"
+                    :type="item.type"
                     :mode="item.mode"
+                    allow-clear
+                    style="width: 100%;"
+                    @change="item.change && item.change($event, { form, item, index })"
+                    @click="item.click && item.click($event, { form, item, index })"
+                    @blur="item.blur && item.blur($event, { form, item, index })"
+                  />
+
+                  <component
+                    v-else-if="['month', 'year', 'week', 'quarter'].includes(item.formType)"
+                    :is="getComponent(item)"
+                    v-model="form[item.dataIndex]"
+                    :placeholder="item.placeholder || `请选择${item.title}`"
+                    :format="item.format || ''"
+                    :disabled="item.disabled"
+                    :readonly="item.readonly"
                     allow-clear
                     style="width: 100%;"
                     @change="item.change && item.change($event, { form, item, index })"

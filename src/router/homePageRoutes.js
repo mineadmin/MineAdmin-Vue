@@ -6,7 +6,6 @@ const homePageRoutes = [
       title: '仪表盘',
       icon: 'icon-dashboard',
       type: 'M',
-      hidden: false,
       affix: true
     },
     component: () => import('@/views/dashboard/index.vue'),
@@ -17,7 +16,6 @@ const homePageRoutes = [
       title: '个人信息',
       icon: 'icon-user',
       type: 'M',
-      hidden: false,
     },
     component: () => import('@/views/userCenter/index.vue'),
   }, {
@@ -27,18 +25,15 @@ const homePageRoutes = [
       title: '消息中心',
       icon: 'icon-message',
       type: 'M',
-      hidden: false,
     },
     component: () => import('@/views/userCenter/message.vue'),
   }, {
     name: 'setting:config',
     path: '/system',
-    auth: true,
     meta: {
       title: '系统配置',
       icon: 'icon-settings',
       type: 'M',
-      hidden: false,
     },
     component: () => import('@/views/setting/config/index.vue'),
   }, {
@@ -48,7 +43,6 @@ const homePageRoutes = [
       title: '组件演示',
       icon: 'icon-trophy',
       type: 'M',
-      hidden: false,
     },
     component: () => import('@/views/demo/index.vue'),
   }
