@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite serve --mode development",
     "build": "vite build",
-    "serve": "vite preview"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@arco-design/web-vue": "^2.34.1",

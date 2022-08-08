@@ -301,12 +301,6 @@ watch(
 )
 
 watch(
-  () => props.modelValue,
-  vl => form.value = vl,
-  { deep: true }
-)
-
-watch(
   () => form.value,
   vl => emit('update:modelValue', vl),
   { deep: true }
