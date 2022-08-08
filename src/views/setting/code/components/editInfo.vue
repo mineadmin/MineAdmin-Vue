@@ -588,6 +588,7 @@ const init = () => {
 
   // 请求表字段
   generate.getTableColumns({ table_id: record.value.id }).then( res => {
+    form.value.columns = []
     res.data.map(item => {
       item.is_required = item.is_required === 2
       item.is_insert = item.is_insert === 2
@@ -596,7 +597,6 @@ const init = () => {
       item.is_query = item.is_query === 2
       form.value.columns.push(item)
     })
-    console.log()
   })
   // 模块列表
   commonApi.getModuleList().then( res => modules.value = res.data )
