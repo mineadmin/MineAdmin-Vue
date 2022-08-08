@@ -1,14 +1,14 @@
 export default [
   {
     name: 'mine',
-    thumb: '/src/style/skins/mine/thumb.jpg',
+    thumb: '/skins-thumb/mine/thumb.jpg',
   },
   {
     name: 'businessGray',
-    thumb: '/src/style/skins/businessGray/thumb.jpg',
+    thumb: '/skins-thumb/businessGray/thumb.jpg',
   },
   {
     name: 'city',
-    thumb: '/src/style/skins/city/thumb.jpg',
+    thumb: '/skins-thumb/city/thumb.jpg',
   }
 ]
