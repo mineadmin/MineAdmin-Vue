@@ -14,6 +14,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import { useAppStore } from '@/store'
+import { formatJson } from '@/utils/common'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution'
 import 'monaco-editor/esm/vs/basic-languages/php/php.contribution'
@@ -26,8 +27,8 @@ const appStore = useAppStore()
 
 const props = defineProps({
   modelValue: {
-    type: String,
-    default: () => {}
+    type: [String, Object, Array],
+    default: () => ''
   },
   isBind: {
     type: Boolean,
@@ -54,7 +55,7 @@ let instance
 
 onMounted(() => {
   instance = monaco.editor.create(dom.value, {
-    value: props.modelValue,
+    value: (typeof props.modelValue === 'string') ? props.modelValue : formatJson(props.modelValue),
     tabSize: 2,
     automaticLayout: true,
     scrollBeyondLastLine: false,
@@ -77,7 +78,7 @@ onMounted(() => {
 if (props.isBind) {
   watch(
     () => props.modelValue,
-    vl => instance.setValue(vl)
+    vl => instance.setValue((typeof vl === 'string') ? vl : formatJson(vl))
   )
 }
 
