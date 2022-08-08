@@ -8,7 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <a-modal v-model:visible="visible" :on-before-ok="save" fullscreen>
+  <a-modal v-model:visible="visible" :on-before-ok="save" fullscreen unmount-on-close>
     <template #title>编辑生成信息 - {{ record?.table_comment }}</template>
 
     <a-spin :loading="loading" tip="加载数据中..." class="w-full">
