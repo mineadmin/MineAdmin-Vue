@@ -90,6 +90,8 @@
   }
   
   const generateCode = async (ids) => {
+    Message.info('请下载部署使用此功能')
+    return
     Message.info('代码生成下载中，请稍后')
     const response = await generate.generateCode({ ids: ids.toString().split(',') })
     if (response.message && ! response.success) {

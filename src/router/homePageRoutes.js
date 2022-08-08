@@ -36,16 +36,17 @@ const homePageRoutes = [
       type: 'M',
     },
     component: () => import('@/views/setting/config/index.vue'),
-  }, {
-    name: 'demo',
-    path: '/demo',
-    meta: {
-      title: '组件演示',
-      icon: 'icon-trophy',
-      type: 'M',
-    },
-    component: () => import('@/views/demo/index.vue'),
   }
+  // , {
+  //   name: 'demo',
+  //   path: '/demo',
+  //   meta: {
+  //     title: '组件演示',
+  //     icon: 'icon-trophy',
+  //     type: 'M',
+  //   },
+  //   component: () => import('@/views/demo/index.vue'),
+  // }
 ]
 
 export const homePage = {
