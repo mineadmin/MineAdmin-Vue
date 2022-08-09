@@ -96,11 +96,11 @@
     { title: '队列名称', dataIndex: 'queue_name', width: 150 }, 
     {
       title: '生产状态', dataIndex: 'produce_status', width: 150, search: true, formType: 'select',
-      dict: { name: 'queue_produce_status', props: { label: 'title', value: 'key'}, transltion: true },
+      dict: { name: 'queue_produce_status', props: { label: 'title', value: 'key'}, translation: true },
     },
     {
       title: '消费状态', dataIndex: 'consume_status', width: 150, search: true, formType: 'select',
-      dict: { name: 'queue_consume_status', props: { label: 'title', value: 'key'}, transltion: true },
+      dict: { name: 'queue_consume_status', props: { label: 'title', value: 'key'}, translation: true },
     },
     { title: '延迟时间（秒）', dataIndex: 'delay_time', width: 150 },
   ])
