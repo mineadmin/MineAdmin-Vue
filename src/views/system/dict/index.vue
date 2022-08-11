@@ -68,7 +68,7 @@
     operationWidth: 300,
     searchLabelCols: 4,
     add: { show: true, api: dictType.save, auth: ['system:dict:add'] },
-    edit: { show: true, api: dictType.update, auth: ['system:dict:edit'] },
+    edit: { show: true, api: dictType.update, auth: ['system:dict:update'] },
     delete: {
       show: true,
       api: dictType.deletes, auth: ['system:dict:delete'],

@@ -71,7 +71,7 @@ const crud = reactive({
   operationWidth: 300,
   searchLabelCols: 4,
   add: { show: true, api: dict.saveDictData, auth: ['system:dict:add'] },
-  edit: { show: true, api: dict.updateDictData, auth: ['system:dict:edit'] },
+  edit: { show: true, api: dict.updateDictData, auth: ['system:dict:update'] },
   delete: {
     show: true,
     api: dict.deletesDictData, auth: ['system:dict:delete'],

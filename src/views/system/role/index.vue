@@ -98,7 +98,7 @@
     operationColumn: true,
     operationWidth: 320,
     add: { show: true, api: role.save, auth: ['system:role:add'] },
-    edit: { show: true, api: role.update, auth: ['system:role:edit'] },
+    edit: { show: true, api: role.update, auth: ['system:role:update'] },
     delete: {
       show: true,
       api: role.deletes, auth: ['system:role:delete'],
