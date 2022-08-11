@@ -179,7 +179,7 @@
         </a-table>
       </slot>
     </div>
-    <div class="_crud-footer ma-content-block p-3 text-right">
+    <div class="_crud-footer mt-3 text-right">
       <a-pagination
         :total="total"
         v-if="total > 0 && openPagination && !settingProps.pagination"
