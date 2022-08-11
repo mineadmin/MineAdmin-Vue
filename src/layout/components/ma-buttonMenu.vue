@@ -23,7 +23,7 @@
 import { ref } from 'vue'
 import { useAppStore, useUserStore } from '@/store'
 
-import childrenMenu from './components/children-menu.vue'
+import ChildrenMenu from './components/children-menu.vue'
 
 const userStore = useUserStore()
 const popupVisible = ref(false)

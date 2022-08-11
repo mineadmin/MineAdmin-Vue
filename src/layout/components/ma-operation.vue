@@ -54,7 +54,7 @@
           </template>
         </a-button>
       </a-tooltip>
-      
+
     </a-space>
     <a-dropdown @select="handleSelect" trigger="hover">
 
@@ -88,7 +88,7 @@
   import { useAppStore, useUserStore, useMessageStore } from '@/store'
   import tool from '@/utils/tool'
   import Setting from './components/setting.vue'
-  import messageNotification from './components/message-notification.vue'
+  import MessageNotification from './components/message-notification.vue'
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   import { Message } from '@arco-design/web-vue'
@@ -144,7 +144,7 @@
     }
     messageStore.messageList = data
   });
-  
+
 </script>
 <style scoped>
 :deep(.arco-avatar-text) {

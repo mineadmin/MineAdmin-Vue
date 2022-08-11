@@ -22,8 +22,8 @@
   </a-layout-content>
 </template>
 <script setup>
-  import maColumnsHeader from './ma-columns-header.vue'
-  import maColumnsMenu from './ma-columns-menu.vue'
+  import MaColumnsHeader from './ma-columns-header.vue'
+  import MaColumnsMenu from './ma-columns-menu.vue'
 
-  import maWorkerArea from '../ma-workerArea.vue'
+  import MaWorkerArea from '../ma-workerArea.vue'
 </script>

@@ -16,8 +16,8 @@
 
 <script setup>
 import { useUserStore } from '@/store'
-import statistics from './components/statistics.vue'
-import workPanel from './components/work-panel.vue'
+import Statistics from './components/statistics.vue'
+import WorkPanel from './components/work-panel.vue'
 const userStore = useUserStore()
 </script>
 <script>

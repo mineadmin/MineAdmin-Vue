@@ -20,10 +20,10 @@
 </template>
 
 <script setup>
-  import stCount from './components/st-count.vue'
-  import stWelcome from './components/st-welcome.vue'
-  import stLoginChart from './components/st-loginChart.vue'
-  import stMineadmin from './components/st-mineadmin.vue'
-  import stAnnounced from './components/st-announced.vue'
+  import StCount from './components/st-count.vue'
+  import StWelcome from './components/st-welcome.vue'
+  import StLoginChart from './components/st-loginChart.vue'
+  import StMineadmin from './components/st-mineadmin.vue'
+  import StAnnounced from './components/st-announced.vue'
 </script>
 

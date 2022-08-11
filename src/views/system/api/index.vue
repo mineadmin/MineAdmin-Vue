@@ -14,7 +14,7 @@
       <!-- 状态列 -->
       <template #status="{ record }">
         <a-switch
-          :checked-value="1" 
+          :checked-value="1"
           unchecked-value="2"
           @change="changeStatus($event, record.id)"
           :default-checked="record.status == 1"
@@ -35,7 +35,7 @@
   import { ref, reactive, computed } from 'vue'
   import api from '@/api/system/api'
   import { Message } from '@arco-design/web-vue'
-  import paramsList from './paramsList.vue'
+  import ParamsList from './paramsList.vue'
 
   const crudRef = ref()
   const paramslist = ref()
@@ -82,31 +82,31 @@
   })
 
   const columns = reactive([
-    { 
+    {
       title: '所属组', dataIndex: 'group_id', search: true, rules: [{ required: true, message: '所属组必选' }],
       formType: 'select', dict: { url: 'system/apiGroup/list', props: { label: 'name', value: 'id' }, translation: true },
       span: 12, width: 140,
     },
-    { 
+    {
       title: '接口名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '应用名称必填' }],
       span: 12, width: 150,
     },
-    { 
+    {
       title: '访问名称', dataIndex: 'access_name', span: 12, width: 140,
       rules: [{ required: true, message: '访问名称必填' }],
       formExtra: '接口实际访问的路由，可以使用"."来区分层级，不支持"/"'
     },
-    { 
+    {
       title: '请求模式', dataIndex: 'request_mode', search: true, formType: 'select',
       rules: [{ required: true, message: '请求模式必选' }],
       dict: { name: 'request_mode', props: { label: 'title', value: 'key' }, translation: true },
       span: 12, width: 140,
     },
-    { 
+    {
       title: '类名称', dataIndex: 'class_name', rules: [{ required: true, message: '类名称必填' }],
       span: 12, width: 150,
     },
-    { 
+    {
       title: '方法名称', dataIndex: 'method_name', rules: [{ required: true, message: '方法名称必填' }],
       span: 12, width: 150,
     },

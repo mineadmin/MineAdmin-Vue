@@ -28,7 +28,7 @@
 
 <script setup>
   import { useKeepAliveStore } from '@/store'
-  import iframeView from './components/iframe-view.vue'
+  import IframeView from './components/iframe-view.vue'
   const keepStore = useKeepAliveStore()
 </script>
 

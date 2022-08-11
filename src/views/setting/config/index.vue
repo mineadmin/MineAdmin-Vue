@@ -75,7 +75,7 @@
   import config from '@/api/setting/config'
   import { Message } from '@arco-design/web-vue'
   import { auth } from '@/utils/common'
-  import addGroup from './components/addGroup.vue'
+  import AddGroup from './components/addGroup.vue'
   import AddConfig from './components/addConfig.vue'
   import ManageConfig from './components/manageConfig.vue'
 
