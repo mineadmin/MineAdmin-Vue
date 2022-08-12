@@ -27,32 +27,27 @@
     </div>
     <div class="_crud-content">
       <div class="opartion-tools lg:flex justify-between mb-3">
-        <a-space class="lg:flex block lg:inline-block" >
-
+        <a-space class="lg:flex block lg:inline-block">
           <a-button
-            v-if="
-              defaultCrud.add.show
-              && ($common.auth(defaultCrud.add.auth || [])
-              || (defaultCrud.add.role || []))
-            "
-            @click="addAction" type="primary"
+            v-if="defaultCrud.add.show && ($common.auth(defaultCrud.add.auth || []) || defaultCrud.add.role || [])"
+            @click="addAction"
+            type="primary"
             class="w-full lg:w-auto mt-2 lg:mt-0"
-          ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
+            ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button
+          >
 
           <a-popconfirm
             content="确定要删除数据吗?"
             position="bottom"
             @ok="deletesMultipleAction"
             v-if="
-              defaultCrud.delete.show
-              && ($common.auth(defaultCrud.delete.auth || [])
-              || (defaultCrud.delete.role || []))
+              defaultCrud.delete.show && ($common.auth(defaultCrud.delete.auth || []) || defaultCrud.delete.role || [])
             "
           >
-            <a-button
-              type="primary" status="danger"
-              class="w-full lg:w-auto mt-2 lg:mt-0"
-            ><icon-delete /> {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-button>
+            <a-button type="primary" status="danger" class="w-full lg:w-auto mt-2 lg:mt-0"
+              ><icon-delete />
+              {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-button
+            >
           </a-popconfirm>
 
           <a-popconfirm
@@ -60,40 +55,36 @@
             position="bottom"
             @ok="recoverysMultipleAction"
             v-if="
-              defaultCrud.recovery.show
-              && isRecovery
-              && ($common.auth(defaultCrud.recovery.auth || [])
-              || (defaultCrud.recovery.role || []))
+              defaultCrud.recovery.show &&
+              isRecovery &&
+              ($common.auth(defaultCrud.recovery.auth || []) || defaultCrud.recovery.role || [])
             "
           >
-            <a-button
-              type="primary" status="success"
-              class="w-full lg:w-auto mt-2 lg:mt-0"
-            ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-button>
+            <a-button type="primary" status="success" class="w-full lg:w-auto mt-2 lg:mt-0"
+              ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-button
+            >
           </a-popconfirm>
 
           <a-button
             v-if="
-              defaultCrud.import.show
-              && ($common.auth(defaultCrud.import.auth || [])
-              || (defaultCrud.import.role || []))
+              defaultCrud.import.show && ($common.auth(defaultCrud.import.auth || []) || defaultCrud.import.role || [])
             "
             @click="importAction"
             class="w-full lg:w-auto mt-2 lg:mt-0"
-          ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
+            ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button
+          >
 
           <a-button
             v-if="
-              defaultCrud.export.show
-              && ($common.auth(defaultCrud.export.auth || [])
-              || (defaultCrud.export.role || []))
+              defaultCrud.export.show && ($common.auth(defaultCrud.export.auth || []) || defaultCrud.export.role || [])
             "
             @click="exportAction"
             class="w-full lg:w-auto mt-2 lg:mt-0"
-          ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
+            ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button
+          >
 
           <a-button type="secondary" @click="handlerExpand" v-if="defaultCrud.isExpand">
-            <icon-expand v-if="! expandState" />
+            <icon-expand v-if="!expandState" />
             <icon-shrink v-else />
             {{ expandState ? ' 折叠' : ' 展开' }}
           </a-button>
@@ -105,14 +96,17 @@
             :content="isRecovery ? '显示正常数据' : '显示回收站数据'"
             v-if="defaultCrud.recycleApi && isFunction(defaultCrud.recycleApi)"
           >
-            <a-button
-              shape="circle"
-              @click="switchDataType"
-            ><icon-swap /></a-button>
+            <a-button shape="circle" @click="switchDataType"><icon-swap /></a-button>
           </a-tooltip>
-          <a-tooltip content="刷新表格"><a-button shape="circle" @click="refresh"><icon-refresh /></a-button></a-tooltip>
-          <a-tooltip content="显隐搜索"><a-button shape="circle" @click="toggleSearch"><icon-search /></a-button></a-tooltip>
-          <a-tooltip content="设置"><a-button shape="circle" @click="tableSetting"><icon-settings /></a-button></a-tooltip>
+          <a-tooltip content="刷新表格"
+            ><a-button shape="circle" @click="refresh"><icon-refresh /></a-button
+          ></a-tooltip>
+          <a-tooltip content="显隐搜索"
+            ><a-button shape="circle" @click="toggleSearch"><icon-search /></a-button
+          ></a-tooltip>
+          <a-tooltip content="设置"
+            ><a-button shape="circle" @click="tableSetting"><icon-settings /></a-button
+          ></a-tooltip>
         </a-space>
       </div>
       <slot name="content" v-bind="tableData">
@@ -125,7 +119,7 @@
           :stripe="defaultCrud.stripe"
           :bordered="defaultCrud.bordered"
           :rowSelection="defaultCrud.rowSelection || undefined"
-          :row-key="defaultCrud.rowSelection && defaultCrud.rowSelection.key || 'id'"
+          :row-key="(defaultCrud.rowSelection && defaultCrud.rowSelection.key) || 'id'"
           :scroll="defaultCrud.scroll"
           :column-resizable="defaultCrud.resizable"
           :size="defaultCrud.size"
@@ -164,16 +158,15 @@
                 <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
               </template>
 
-              <template
-                v-for="(slot, slotIndex) in slots"
-                :key="slotIndex"
-                #[slot]="{ record, column, rowIndex }"
-              >
+              <template v-for="(slot, slotIndex) in slots" :key="slotIndex" #[slot]="{ record, column, rowIndex }">
                 <slot :name="`${slot}`" v-bind="{ record, column, rowIndex }" />
               </template>
             </ma-column>
           </template>
-          <template #summary-cell="{ column, record, rowIndex }" v-if="defaultCrud.customerSummary || defaultCrud.showSummary">
+          <template
+            #summary-cell="{ column, record, rowIndex }"
+            v-if="defaultCrud.customerSummary || defaultCrud.showSummary"
+          >
             <slot name="summary-cell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
           </template>
         </a-table>
@@ -183,7 +176,9 @@
       <a-pagination
         :total="total"
         v-if="total > 0 && openPagination && !settingProps.pagination"
-        show-total show-jumper show-page-size
+        show-total
+        show-jumper
+        show-page-size
         :page-size-options="pageSizeOption"
         @page-size-change="pageSizeChangeHandler"
         @change="pageChangeHandler"
@@ -193,24 +188,11 @@
       />
     </div>
 
-    <ma-setting
-      ref="maCrudSetting"
-      v-model="columns"
-      v-model:crud="defaultCrud"
-    />
+    <ma-setting ref="maCrudSetting" v-model="columns" v-model:crud="defaultCrud" />
 
-    <ma-form
-      ref="maCrudForm"
-      v-model="columns"
-      v-model:crud="defaultCrud"
-      @success="requestSuccess"
-    />
+    <ma-form ref="maCrudForm" v-model="columns" v-model:crud="defaultCrud" @success="requestSuccess" />
 
-    <ma-import
-      ref="maCrudImport"
-      v-model="defaultCrud.import"
-    />
-
+    <ma-import ref="maCrudImport" v-model="defaultCrud.import" />
   </a-layout-content>
 </template>
 
@@ -259,7 +241,7 @@ const defaultCrud = ref({
   // 设置选择列
   rowSelection: undefined,
   // 是否显示边框
-  bordered: { wrapper: true, cell: false },
+  bordered: { wrapper: false, cell: true },
   // 是否开启拖拽排序
   dragSort: false,
   // 子节点为空隐藏节点按钮
@@ -297,7 +279,7 @@ const defaultCrud = ref({
     // 表单设置一行多少列，会自适应，在布局为 auto 下生效
     cols: 1,
     // 标签对齐方式
-    labelAlign: 'right'
+    labelAlign: 'right',
   },
   add: {
     // 新增api
@@ -324,7 +306,6 @@ const defaultCrud = ref({
     show: false,
   },
   delete: {
-
     // 删除api
     api: undefined,
     // 显示删除按钮的权限
@@ -410,21 +391,35 @@ const defaultCrud = ref({
   operationColumnText: '操作',
 })
 
-watch(() => settingProps.pageSizeOption, (val) => {
-  pageSizeOption.value = val
-})
+watch(
+  () => settingProps.pageSizeOption,
+  val => {
+    pageSizeOption.value = val
+  },
+)
 
-watch(() => settingProps.crud.requestParams, (val) => {
-  requestParams.value = val
-}, { deep: true })
+watch(
+  () => settingProps.crud.requestParams,
+  val => {
+    requestParams.value = val
+  },
+  { deep: true },
+)
 
-watch(() => settingProps.columns, () => {
-  requestData()
-})
+watch(
+  () => settingProps.columns,
+  () => {
+    requestData()
+  },
+)
 
-watch(() => settingProps.api, () => {
-  requestData()
-}, { deep: true })
+watch(
+  () => settingProps.api,
+  () => {
+    requestData()
+  },
+  { deep: true },
+)
 
 const getSlot = (cls = []) => {
   let sls = []
@@ -447,8 +442,18 @@ const requestData = async () => {
   if (defaultCrud.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {
     columns.value.unshift({ title: defaultCrud.value.indexLabel, dataIndex: '__index', width: 70, fixed: 'left' })
   }
-  if (defaultCrud.value.operationColumn && columns.value.length > 0 && columns.value[columns.value.length - 1].dataIndex !== '__operation') {
-    columns.value.push({ title: defaultCrud.value.operationColumnText, dataIndex: '__operation', width: defaultCrud.value.operationWidth, align: 'right', fixed: 'right' })
+  if (
+    defaultCrud.value.operationColumn &&
+    columns.value.length > 0 &&
+    columns.value[columns.value.length - 1].dataIndex !== '__operation'
+  ) {
+    columns.value.push({
+      title: defaultCrud.value.operationColumnText,
+      dataIndex: '__operation',
+      width: defaultCrud.value.operationWidth,
+      align: 'right',
+      fixed: 'right',
+    })
   }
   showSearch.value = true
   initRequestParams()
@@ -466,7 +471,6 @@ const initRequestParams = () => {
 }
 
 const requestHandle = async () => {
-
   loading.value = true
 
   isFunction(settingProps.crud.beforeRequest) && settingProps.crud.beforeRequest(requestParams.value)
@@ -494,7 +498,9 @@ const requestHandle = async () => {
 const refresh = async () => {
   if (settingProps.data) {
     loading.value = true
-    const data = Array.isArray(settingProps.data) ? settingProps.data : config.parseResponseData(await settingProps.data(requestParams.value))
+    const data = Array.isArray(settingProps.data)
+      ? settingProps.data
+      : config.parseResponseData(await settingProps.data(requestParams.value))
     if (data.rows) {
       tableData.value = data.rows
       openPagination.value = true
@@ -503,16 +509,20 @@ const refresh = async () => {
     }
     loading.value = false
   } else {
-    currentApi.value = isRecovery.value && defaultCrud.value.recycleApi && isFunction(defaultCrud.value.recycleApi)
-    ? defaultCrud.value.recycleApi
-    : defaultCrud.value.api
+    currentApi.value =
+      isRecovery.value && defaultCrud.value.recycleApi && isFunction(defaultCrud.value.recycleApi)
+        ? defaultCrud.value.recycleApi
+        : defaultCrud.value.api
     await requestHandle()
   }
 }
 
-const searchHandler = (formData) => {
+const searchHandler = formData => {
   if (settingProps.crud.requestParamsLabel && requestParams.value[settingProps.crud.requestParamsLabel]) {
-    requestParams.value[settingProps.crud.requestParamsLabel] = Object.assign(requestParams.value[settingProps.crud.requestParamsLabel], formData)
+    requestParams.value[settingProps.crud.requestParamsLabel] = Object.assign(
+      requestParams.value[settingProps.crud.requestParamsLabel],
+      formData,
+    )
   } else if (settingProps.crud.requestParamsLabel) {
     requestParams.value[settingProps.crud.requestParamsLabel] = Object.assign({}, formData)
   } else {
@@ -524,13 +534,13 @@ const searchHandler = (formData) => {
   refresh()
 }
 
-const pageSizeChangeHandler = (pageSize) => {
+const pageSizeChangeHandler = pageSize => {
   requestParams.value[config.request.page] = 1
   requestParams.value[config.request.pageSize] = pageSize
   refresh()
 }
 
-const pageChangeHandler = (currentPage) => {
+const pageChangeHandler = currentPage => {
   requestParams.value[config.request.page] = currentPage
   refresh()
 }
@@ -538,7 +548,7 @@ const pageChangeHandler = (currentPage) => {
 const toggleSearch = () => {
   const dom = crudHeader.value.style
   dom.display = showSearch.value ? 'none' : 'block'
-  showSearch.value = ! showSearch.value
+  showSearch.value = !showSearch.value
 }
 
 const tableSetting = () => {
@@ -549,7 +559,7 @@ const requestSuccess = response => {
   defaultCrud.value.dataCompleteRefresh && refresh()
 }
 
-const getIndex = (rowIndex) => {
+const getIndex = rowIndex => {
   if (requestParams.value[config.request.page] == 1) {
     return rowIndex + 1
   } else {
@@ -562,19 +572,19 @@ const addAction = () => {
   maCrudForm.value.add()
 }
 
-const editAction = (record) => {
+const editAction = record => {
   isFunction(defaultCrud.value.beforeOpenEdit) && defaultCrud.value.beforeOpenEdit()
   maCrudForm.value.edit(record)
 }
 
-const dbClickOpenEdit = (record) => {
+const dbClickOpenEdit = record => {
   if (defaultCrud.value.isDbClickEdit) {
     if (isRecovery.value) {
       Message.error('回收站数据不可编辑')
       return
     }
 
-    if (! checkAuth(defaultCrud.value.edit.auth || [])) {
+    if (!checkAuth(defaultCrud.value.edit.auth || [])) {
       Message.error('没有编辑数据的权限')
       return
     }
@@ -589,15 +599,19 @@ const importAction = () => maCrudImport.value.open()
 
 const exportAction = () => {
   Message.info('请求服务器下载文件中...')
-  const data = settingProps.crud.requestParamsLabel ? requestParams.value[settingProps.crud.requestParamsLabel] : requestParams.value
-  const download = (url) => request({ url, data, method: 'post', timeout: 60 * 1000, responseType: 'blob' })
+  const data = settingProps.crud.requestParamsLabel
+    ? requestParams.value[settingProps.crud.requestParamsLabel]
+    : requestParams.value
+  const download = url => request({ url, data, method: 'post', timeout: 60 * 1000, responseType: 'blob' })
 
-  download(defaultCrud.value.export.url).then(res => {
-    tool.download(res)
-    Message.success('请求成功，文件开始下载')
-  }).catch(e => {
-    Message.error('请求服务器错误，下载失败')
-  })
+  download(defaultCrud.value.export.url)
+    .then(res => {
+      tool.download(res)
+      Message.success('请求成功，文件开始下载')
+    })
+    .catch(e => {
+      Message.error('请求服务器错误，下载失败')
+    })
 }
 
 const deletesMultipleAction = async () => {
@@ -605,40 +619,41 @@ const deletesMultipleAction = async () => {
     const api = isRecovery.value ? defaultCrud.value.delete.realApi : defaultCrud.value.delete.api
     const response = await api({ ids: selecteds.value })
     response.code === 200
-    ? Message.success(response.message || `删除成功！`)
-    : Message.error(response.message || `删除失败！`)
+      ? Message.success(response.message || `删除成功！`)
+      : Message.error(response.message || `删除失败！`)
     refresh()
   } else {
     Message.error('至少选择一条数据')
   }
 }
 
-const recoverysMultipleAction = async() => {
+const recoverysMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
     const response = await defaultCrud.value.recovery.api({ ids: selecteds.value })
     response.code === 200
-    ? Message.success(response.message || `恢复成功！`)
-    : Message.error(response.message || `恢复失败！`)
+      ? Message.success(response.message || `恢复成功！`)
+      : Message.error(response.message || `恢复失败！`)
     refresh()
   } else {
     Message.error('至少选择一条数据')
   }
 }
 
-const setSelecteds = (key) => {
+const setSelecteds = key => {
   selecteds.value = key
 }
 
 const switchDataType = () => {
-  isRecovery.value = ! isRecovery.value
-  currentApi.value = isRecovery.value && defaultCrud.value.recycleApi && isFunction(defaultCrud.value.recycleApi)
-    ? defaultCrud.value.recycleApi
-    : defaultCrud.value.api
+  isRecovery.value = !isRecovery.value
+  currentApi.value =
+    isRecovery.value && defaultCrud.value.recycleApi && isFunction(defaultCrud.value.recycleApi)
+      ? defaultCrud.value.recycleApi
+      : defaultCrud.value.api
   requestData()
 }
 
 const handlerExpand = () => {
-  expandState.value = ! expandState.value
+  expandState.value = !expandState.value
   expandState.value ? tableRef.value.expandAll(true) : tableRef.value.expandAll(false)
 }
 
@@ -665,7 +680,7 @@ const __summary = ({ data }) => {
     const summary = defaultCrud.value.summary
     let summaryData = {}
     let length = data.length || 0
-    summary.map( item => {
+    summary.map(item => {
       summaryData[item.dataIndex] = 0
       data.map(record => {
         if (record[item.dataIndex]) {
@@ -683,14 +698,13 @@ const __summary = ({ data }) => {
       summaryData[i] = tool.groupSeparator(summaryData[i].toFixed(2))
     }
 
-    return [ summaryData ]
+    return [summaryData]
   }
 }
 
 const settingProps = defineProps({
-
   // 表格数据
-  data: { type: [ Function, Array ], default: () => null },
+  data: { type: [Function, Array], default: () => null },
   // 是否开启表格分页
   pagination: { type: Boolean, default: false },
   // 设置每页记录数
@@ -699,7 +713,8 @@ const settingProps = defineProps({
   // 增删改查设置
   crud: {
     type: Object,
-    default: () => { return {
+    default: () => {
+      return {
         // 请求api方法
         api: () => {},
         // 请求回收站api方法
@@ -713,14 +728,14 @@ const settingProps = defineProps({
         // 是否自动请求
         autoRequest: true,
       }
-    }
+    },
   },
 
   // 字段列设置
   columns: {
     type: Object,
-    default: () => {}
-  }
+    default: () => {},
+  },
 })
 
 if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.autoRequest) {
@@ -728,19 +743,29 @@ if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.aut
   requestData()
 }
 
-onMounted(() => document.querySelector('.arco-table-body').className += ' customer-scrollbar' )
+onMounted(() => (document.querySelector('.arco-table-body').className += ' customer-scrollbar'))
 
 defineExpose({
-  refresh, requestData, addAction, editAction, getTableData, setSelecteds,
-  requestParams, isRecovery, tableRef,
-  maCrudForm, maCrudSearch, maCrudImport, maCrudSetting
+  refresh,
+  requestData,
+  addAction,
+  editAction,
+  getTableData,
+  setSelecteds,
+  requestParams,
+  isRecovery,
+  tableRef,
+  maCrudForm,
+  maCrudSearch,
+  maCrudImport,
+  maCrudSetting,
 })
-
 </script>
 
 <style scoped lang="less">
 .__search-panel {
-  transition: display 1s; overflow: hidden;
+  transition: display 1s;
+  overflow: hidden;
 }
 ._crud-footer {
   z-index: 10;

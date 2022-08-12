@@ -8,8 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <a-drawer :visible="visible" unmountOnClose :footer="false" :width="900" @cancel="onCancel" >
-
+  <a-drawer :visible="visible" unmountOnClose :footer="false" :width="900" @cancel="onCancel">
     <template #title>设置</template>
 
     <a-alert>表格总宽度是配合固定列使用，默认100%，支持px</a-alert>
@@ -33,7 +32,10 @@
       <a-checkbox v-model="crud.stripe" class="ml-3">斑马纹</a-checkbox>
     </a-space>
 
-    <a-alert type="warning" class="mt-2">排序：本页是指当前页排序；服务器是指后台排序，若自定义服务器排序可用 <a-tag>@sorterChange</a-tag> 事件来实现</a-alert>
+    <a-alert type="warning" class="mt-2"
+      >排序：本页是指当前页排序；服务器是指后台排序，若自定义服务器排序可用
+      <a-tag>@sorterChange</a-tag> 事件来实现</a-alert
+    >
     <a-table
       :data="data"
       :pagination="false"
@@ -49,36 +51,50 @@
         </a-table-column>
         <a-table-column title="宽度" data-index="width" align="center">
           <template #cell="{ record }">
-              <a-input-number
-                v-if="! ['__index', '__operation'].includes(record.dataIndex)"
-                style="width: 150px;"
-                placeholder="列宽度"
-                v-model="record.width"
-                mode="button"
-                @change="changeColumn($event, 'width', record.dataIndex)"
-              />
-              <span v-else> / </span>
+            <a-input-number
+              v-if="!['__index', '__operation'].includes(record.dataIndex)"
+              style="width: 150px"
+              placeholder="列宽度"
+              v-model="record.width"
+              mode="button"
+              @change="changeColumn($event, 'width', record.dataIndex)"
+            />
+            <span v-else> / </span>
           </template>
         </a-table-column>
         <a-table-column title="隐藏" data-index="hide" align="center">
-          <template #cell="{ record }"><a-checkbox v-model="record.hide" @change="changeColumn($event, 'hide', record.dataIndex)" /></template>
+          <template #cell="{ record }"
+            ><a-checkbox v-model="record.hide" @change="changeColumn($event, 'hide', record.dataIndex)"
+          /></template>
         </a-table-column>
         <a-table-column title="固定" data-index="fixed" align="center">
           <template #cell="{ record }">
-            <a-space v-if="! ['__index', '__operation'].includes(record.dataIndex)">
-              <a-radio v-model="record.fixed" value="" @change="changeColumn($event, 'fixed', record.dataIndex)">无</a-radio>
-              <a-radio v-model="record.fixed" value="left" @change="changeColumn($event, 'fixed', record.dataIndex)">左</a-radio>
-              <a-radio v-model="record.fixed" value="right" @change="changeColumn($event, 'fixed', record.dataIndex)">右</a-radio>
+            <a-space v-if="!['__index', '__operation'].includes(record.dataIndex)">
+              <a-radio v-model="record.fixed" value="" @change="changeColumn($event, 'fixed', record.dataIndex)"
+                >无</a-radio
+              >
+              <a-radio v-model="record.fixed" value="left" @change="changeColumn($event, 'fixed', record.dataIndex)"
+                >左</a-radio
+              >
+              <a-radio v-model="record.fixed" value="right" @change="changeColumn($event, 'fixed', record.dataIndex)"
+                >右</a-radio
+              >
             </a-space>
             <span v-else> / </span>
           </template>
         </a-table-column>
         <a-table-column title="排序" data-index="order" align="center">
           <template #cell="{ record }">
-            <a-space v-if="! ['__index', '__operation'].includes(record.dataIndex)" >
-              <a-radio v-model="record.__order" value="" @change="changeColumn($event, 'order', record.dataIndex)">无</a-radio>
-              <a-radio v-model="record.__order" value="page" @change="changeColumn($event, 'order', record.dataIndex)">本页</a-radio>
-              <a-radio v-model="record.__order" value="serve" @change="changeColumn($event, 'order', record.dataIndex)">服务器</a-radio>
+            <a-space v-if="!['__index', '__operation'].includes(record.dataIndex)">
+              <a-radio v-model="record.__order" value="" @change="changeColumn($event, 'order', record.dataIndex)"
+                >无</a-radio
+              >
+              <a-radio v-model="record.__order" value="page" @change="changeColumn($event, 'order', record.dataIndex)"
+                >本页</a-radio
+              >
+              <a-radio v-model="record.__order" value="serve" @change="changeColumn($event, 'order', record.dataIndex)"
+                >服务器</a-radio
+              >
             </a-space>
             <span v-else> / </span>
           </template>
@@ -93,7 +109,7 @@ import { ref, watch } from 'vue'
 
 const props = defineProps({
   modelValue: Array,
-  crud: Object
+  crud: Object,
 })
 
 const visible = ref(false)
@@ -101,22 +117,22 @@ const data = ref([])
 const crud = ref([])
 const sourceScroll = ref({})
 const tableWidth = ref('100%')
-const bordered = ref('column')
+const bordered = ref('row')
 
 const emits = defineEmits(['update:modelValue', 'update:crud'])
 
 watch(
   () => data.value,
-  (val) => {
+  val => {
     emits('update:modelValue', val)
-  }
+  },
 )
 
 watch(
   () => crud.value,
-  (val) => {
+  val => {
     emits('update:crud', val)
-  }
+  },
 )
 
 const open = () => {
@@ -132,7 +148,9 @@ const onCancel = () => {
 
 const changeColumn = (ev, type, name) => {
   let index
-  data.value.map((item, idx) => { if (item.dataIndex === name) index = idx })
+  data.value.map((item, idx) => {
+    if (item.dataIndex === name) index = idx
+  })
   switch (type) {
     case 'order':
       if (ev === 'page') {
@@ -146,12 +164,12 @@ const changeColumn = (ev, type, name) => {
   }
 }
 
-const changeTableWidth = (val) => {
+const changeTableWidth = val => {
   tableWidth.value = val
   crud.value.scroll.x = val
 }
 
-const changeBordered = (v) => {
+const changeBordered = v => {
   if (v === 'hide') {
     crud.value.bordered = { wrapper: false, cell: false }
   }
@@ -166,7 +184,7 @@ const changeBordered = (v) => {
   }
 }
 
-const onTableChange = (_data) => {
+const onTableChange = _data => {
   data.value = _data
 }
 
