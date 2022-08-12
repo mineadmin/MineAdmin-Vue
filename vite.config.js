@@ -8,8 +8,7 @@ export default ({ mode }) => {
   const proxyPrefix = env.VITE_APP_PROXY_PREFIX
 
   return defineConfig({
-    plugins: [vue()],
-
+    plugins: [ vue() ],
     resolve: {
       alias: {
         '@': resolve(__dirname, 'src'),

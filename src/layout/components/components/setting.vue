@@ -27,14 +27,14 @@
         </a-button>
       </a-form-item>
       <a-form-item :label="$t('sys.layouts')" :help="$t('sys.layoutsHelp')">
-        <a-select v-model="form.layout" size="mini" @change="handleLayout">
+        <a-select v-model="form.layout" @change="handleLayout">
           <a-option value="classic">{{ $t('sys.layout.classic') }}</a-option>
           <a-option value="columns">{{ $t('sys.layout.columns') }}</a-option>
           <a-option value="banner">{{ $t('sys.layout.banner') }}</a-option>
         </a-select>
       </a-form-item>
       <a-form-item :label="$t('sys.language')" :help="$t('sys.languageHelp')">
-        <a-select v-model="form.language" size="mini" @change="handleLanguage">
+        <a-select v-model="form.language" @change="handleLanguage">
           <a-option value="zh_CN">{{ $t('sys.chinese') }}</a-option>
           <a-option value="en">{{ $t('sys.english') }}</a-option>
         </a-select>
@@ -49,7 +49,7 @@
         <a-switch v-model="form.menuCollapse" @change="handleMenuCollapse" />
       </a-form-item>
       <a-form-item v-if="form.layout !== 'banner'" :label="$t('sys.menuWidth')" :help="$t('sys.menuWidthHelp')">
-        <a-input-number size="mini" v-model="form.menuWidth" mode="button" @change="handleMenuWidth" />
+        <a-input-number v-model="form.menuWidth" mode="button" @change="handleMenuWidth" />
       </a-form-item>
     </a-form>
   </a-drawer>

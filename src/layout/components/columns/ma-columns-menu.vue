@@ -29,7 +29,7 @@
       </template>
     </ul>
   </div>
-  <div class="layout-menu shadow flex flex-col">
+  <div class="layout-menu shadow flex flex-col" v-show="showMenu">
     <div class="menu-title flex items-center" v-show="! appStore.menuCollapse">{{ title }}</div>
     <a-layout-sider
       :style="
@@ -49,13 +49,14 @@
   import { useAppStore, useUserStore } from '@/store'
 
   const route = useRoute()
+  const router = useRouter()
 
   const MaMenu = ref(null)
   const userStore = useUserStore()
   const appStore = useAppStore()
+  const showMenu = ref(false)
   
   const title = ref('')
-
   const classStyle = ref('flex flex-col parent-menu items-center rounded mt-1 text-gray-200 hover:bg-gray-700 dark:hover:text-gray-50 dark:hover:bg-blackgray-1')
 
   onMounted(() => {
@@ -83,8 +84,14 @@
       window.open(bigMenu.path)
       return
     }
-    MaMenu.value.loadChildMenu(bigMenu)
-    title.value = MaMenu.value.title
+    if (bigMenu.children.length > 0) {
+      MaMenu.value.loadChildMenu(bigMenu)
+      showMenu.value = true
+    } else {
+      showMenu.value = false
+      router.push(bigMenu.path)
+    }
+    title.value = MaMenu.value?.title
     document.querySelectorAll('.parent-menu').forEach( (item, id) => {
       index !== id ? item.classList.remove('active') : item.classList.add('active')
     })

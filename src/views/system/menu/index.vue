@@ -89,7 +89,7 @@
     operationColumn: true,
     operationWidth: 200,
     add: { show: true, api: menu.save, auth: ['system:menu:add'] },
-    edit: { show: true, api: menu.update, auth: ['system:menu:edit'] },
+    edit: { show: true, api: menu.update, auth: ['system:menu:update'] },
     delete: {
       show: true,
       api: menu.deletes, auth: ['system:menu:delete'],

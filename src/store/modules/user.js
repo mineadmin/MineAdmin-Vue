@@ -6,6 +6,9 @@ import webRouter from '@/router/webRouter'
 import { homePage } from '@/router/homePageRoutes'
 import { useAppStore } from '@/store'
 
+// import { getPresetColors, getRgbStr, generate } from '@arco-design/color'
+// document.body.style.setProperty('--primary-6', getRgbStr(getPresetColors().gold.primary))
+
 const useUserStore = defineStore('user', {
 
   state: () => ({

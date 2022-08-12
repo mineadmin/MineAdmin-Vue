@@ -48,7 +48,7 @@
     operationWidth: 200,
     searchLabelCols: 4,
     add: { show: true, api: appGroup.save, auth: ['system:appGroup:add'] },
-    edit: { show: true, api: appGroup.update, auth: ['system:appGroup:edit'] },
+    edit: { show: true, api: appGroup.update, auth: ['system:appGroup:update'] },
     delete: {
       show: true,
       api: appGroup.deletes, auth: ['system:appGroup:delete'],

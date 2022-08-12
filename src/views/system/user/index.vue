@@ -164,7 +164,7 @@
     operationColumn: true,
     operationWidth: 200,
     add: { show: true, api: user.save, auth: ['system:user:add'] },
-    edit: { show: true, api: user.update, auth: ['system:user:edit'] },
+    edit: { show: true, api: user.update, auth: ['system:user:update'] },
     delete: {
       show: true,
       api: user.deletes, auth: ['system:user:delete'],
