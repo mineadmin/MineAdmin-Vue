@@ -57,7 +57,6 @@
   const showMenu = ref(false)
   
   const title = ref('')
-  console.log(route.matched[1].children)
   const classStyle = ref('flex flex-col parent-menu items-center rounded mt-1 text-gray-200 hover:bg-gray-700 dark:hover:text-gray-50 dark:hover:bg-blackgray-1')
 
   onMounted(() => {
