@@ -9,13 +9,20 @@
 -->
 <template>
   <div class="flex flex-col w-full h-full">
-    <a-input
-      class="mb-2"
-      :placeholder="props?.searchPlaceholder"
-      allow-clear
-      @input="changeKeyword"
-      @clear="resetData"
-    />
+    <a-space class="mb-2" size="mini">
+      <a-input
+        :placeholder="props?.searchPlaceholder"
+        allow-clear
+        @input="changeKeyword"
+        @clear="resetData"
+      />
+      <a-button
+        @click="() => {
+          isExpand ? maTree.expandAll(false) : maTree.expandAll(true)
+          isExpand = ! isExpand
+        }"
+      >{{ isExpand ? '折叠' : '展开' }}</a-button>
+    </a-space>
     <a-tree
       blockNode
       :data="treeData"
@@ -37,6 +44,7 @@
   const treeData = ref([])
   const selectedKeys = ref([])
   const maTree = ref()
+  const isExpand = ref(false)
 
   const emit = defineEmits(['click'])
 
