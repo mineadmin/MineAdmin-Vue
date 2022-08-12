@@ -5,7 +5,8 @@ let defaultSetting = {
   menuWidth: 230,
   layout: 'classic',
   skin: 'mine',
-  language: 'zh_CN'
+  language: 'zh_CN',
+  color: '',
 }
 
 import { defineStore } from 'pinia'
