@@ -74,7 +74,7 @@
     operationColumn: true,
     operationWidth: 240,
     add: { show: true, api: crontab.save, auth: ['setting:crontab:add'] },
-    edit: { show: true, api: crontab.update, auth: ['setting:crontab:edit'] },
+    edit: { show: true, api: crontab.update, auth: ['setting:crontab:update'] },
     delete: {
       show: true,
       api: crontab.deletes, auth: ['setting:crontab:delete'],

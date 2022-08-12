@@ -37,7 +37,7 @@
           ><icon-sync /> 同步</a-link>
         </a-popconfirm>
         <a-link
-          v-auth="['setting:code:edit']"
+          v-auth="['setting:code:update']"
           @click="() => editRef.open(record.id)"
         ><icon-edit /> 编辑</a-link>
         <a-link

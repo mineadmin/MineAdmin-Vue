@@ -68,7 +68,7 @@
     operationColumn: true,
     operationWidth: 280,
     add: { show: true, api: app.save, auth: ['system:app:add'] },
-    edit: { show: true, api: app.update, auth: ['system:app:edit'] },
+    edit: { show: true, api: app.update, auth: ['system:app:update'] },
     delete: {
       show: true,
       api: app.deletes, auth: ['system:app:delete'],

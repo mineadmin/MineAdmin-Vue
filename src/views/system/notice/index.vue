@@ -51,7 +51,7 @@
     operationWidth: 200,
     searchLabelCols: 4,
     add: { show: true, api: notice.save, auth: ['system:notice:add'] },
-    edit: { show: true, api: notice.update, auth: ['system:notice:edit'] },
+    edit: { show: true, api: notice.update, auth: ['system:notice:update'] },
     delete: {
       show: true,
       api: notice.deletes, auth: ['system:notice:delete'],

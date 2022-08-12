@@ -65,7 +65,7 @@
     operationWidth: 200,
     searchLabelCols: 4,
     add: { show: true, api: post.save, auth: ['system:post:add'] },
-    edit: { show: true, api: post.update, auth: ['system:post:edit'] },
+    edit: { show: true, api: post.update, auth: ['system:post:update'] },
     delete: {
       show: true,
       api: post.deletes, auth: ['system:post:delete'],

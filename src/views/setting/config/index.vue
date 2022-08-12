@@ -14,7 +14,7 @@
         type="rounded"
         v-model:active-key="active"
         @delete="openDeleteModal"
-        :editable="true"
+        :updateable="true"
         @change="handlerChangeTabs"
         auto-switch
       >
