@@ -124,7 +124,7 @@
           tmp += `<img src=${img} width="100%" />`
         }
       })
-      content.value += tmp
+      content.value = content.value ? content.value + tmp : tmp
       resource.value.clearSelecteds()
       resourceVisible.value = false
     }
