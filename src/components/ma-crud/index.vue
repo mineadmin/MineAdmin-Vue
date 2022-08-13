@@ -568,7 +568,7 @@ const addAction = () => {
 }
 
 const editAction = (record) => {
-  isFunction(defaultCrud.value.beforeOpenEdit) && defaultCrud.value.beforeOpenEdit()
+  isFunction(defaultCrud.value.beforeOpenEdit) && defaultCrud.value.beforeOpenEdit(record)
   maCrudForm.value.edit(record)
 }
 
@@ -585,7 +585,7 @@ const dbClickOpenEdit = (record) => {
     }
 
     if (defaultCrud.value.edit.api && isFunction(defaultCrud.value.edit.api)) {
-      maCrudForm.value.edit(record)
+      editAction(record)
     }
   }
 }

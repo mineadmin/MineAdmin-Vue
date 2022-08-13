@@ -113,7 +113,7 @@ const getIndex = (rowIndex) => {
 }
 
 const editAction = (record) => {
-  isFunction(props.options.beforeOpenEdit) && props.options.beforeOpenEdit()
+  isFunction(props.options.beforeOpenEdit) && props.options.beforeOpenEdit(record)
   props.formRef.edit(record)
 }
 
