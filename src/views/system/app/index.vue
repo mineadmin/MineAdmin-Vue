@@ -66,7 +66,7 @@
     searchLabelWidth: '75px',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 280,
+    operationWidth: 270,
     add: { show: true, api: app.save, auth: ['system:app:add'] },
     edit: { show: true, api: app.update, auth: ['system:app:update'] },
     delete: {
@@ -81,7 +81,7 @@
   })
 
   const columns = reactive([
-    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
+    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { 
       title: '所属组', dataIndex: 'group_id', search: true, rules: [{ required: true, message: '所属组必选' }],
       formType: 'select', dict: { url: 'system/appGroup/list', props: { label: 'name', value: 'id' }, translation: true },

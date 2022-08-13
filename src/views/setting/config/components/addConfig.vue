@@ -40,6 +40,11 @@ const inputComponent = [
 const submit = async (data, done) => {
   if (data) {
     done(true)
+    if (data.config_select_data) {
+      data.config_select_data = data.config_select_data.replace(/\r|\n|\s/g, '')
+      data.config_select_data = data.config_select_data.replace(',]', ']')
+      data.config_select_data = JSON.parse(data.config_select_data)
+    }
     const response = await config.save(data)
     emit('success', response.success)
     response.success && formRef.value.reset()
@@ -52,28 +57,33 @@ const columns = reactive([
     title: '所属组',
     dataIndex: 'group_id',
     formType: 'select',
+    labelWidth: '120px',
     dict: { url: 'setting/configGroup/index', props: { label: 'name', value: 'id' }},
     rules: [{ required: true, message: '所属组必选' }]
   },
   {
     title: '配置标题',
     dataIndex: 'name',
+    labelWidth: '120px',
     rules: [{ required: true, message: '配置标题必填' }]
   },
   {
     title: '配置标识',
     dataIndex: 'key',
+    labelWidth: '120px',
     rules: [{ required: true, message: '配置标识必填' }]
   },
   {
     title: '配置值',
     dataIndex: 'value',
+    labelWidth: '120px',
     rules: [{ required: true, message: '配置值必填' }]
   },
   {
     title: '排序',
     dataIndex: 'sort',
     formType: 'input-number',
+    labelWidth: '120px',
     min: 0,
     max: 999,
   },
@@ -82,6 +92,7 @@ const columns = reactive([
     dataIndex: 'input_type',
     formType: 'select',
     rules: [{ required: true, message: '输入组件必选' }],
+    labelWidth: '120px',
     dict: { data: inputComponent },
     control: (val) => {
       const temp = ['select', 'radio', 'checkbox']
@@ -92,6 +103,7 @@ const columns = reactive([
     title: '配置选择数据',
     dataIndex: 'config_select_data',
     formType: 'code-editor',
+    labelWidth: '120px',
     height: 200,
     formExtra: '用于配置下拉、单选、复选的数据，格式例子：[{"label":"数据一", "code":"shuju1"},...]',
   }

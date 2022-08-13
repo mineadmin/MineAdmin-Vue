@@ -48,8 +48,7 @@
     searchLabelWidth: '75px',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 200,
-    searchLabelCols: 4,
+    operationWidth: 160,
     add: { show: true, api: notice.save, auth: ['system:notice:add'] },
     edit: { show: true, api: notice.update, auth: ['system:notice:update'] },
     delete: {
@@ -62,12 +61,14 @@
   })
 
   const columns = reactive([
-    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
+    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { 
-      title: '公告标题', dataIndex: 'title', search: true, rules: [{ required: true, message: '公告标题必填' }],
+      title: '公告标题', dataIndex: 'title', search: true, width: 500,
+      rules: [{ required: true, message: '公告标题必填' }],
     },
     { 
-      title: '公告类型', dataIndex: 'type', search: true, rules: [{ required: true, message: '公告类型必选' }], formType: 'radio',
+      title: '公告类型', dataIndex: 'type', search: true, width: 180,
+      rules: [{ required: true, message: '公告类型必选' }], formType: 'radio',
       dict: { name: 'backend_notice_type', props: { label: 'title', value: 'key' }, translation: true },
       addDefaultValue: 1
     },
@@ -84,7 +85,7 @@
     },
     {
       title: '创建时间', dataIndex: 'created_at', addDisplay: false, editDisplay: false,
-      search: true, formType: 'range'
+      search: true, formType: 'range', width: 180,
     },
   ])
 </script>

@@ -68,8 +68,7 @@ const crud = reactive({
   searchLabelWidth: '75px',
   rowSelection: { showCheckedAll: true },
   operationColumn: true,
-  operationWidth: 300,
-  searchLabelCols: 4,
+  operationWidth: 160,
   add: { show: true, api: dict.saveDictData, auth: ['system:dict:add'] },
   edit: { show: true, api: dict.updateDictData, auth: ['system:dict:update'] },
   delete: {
@@ -82,12 +81,14 @@ const crud = reactive({
 })
 
 const columns = reactive([
-  { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
+  { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
   {
-    title: '字典标签', dataIndex: 'label', search: true, rules: [{ required: true, message: '字典标签必填' }],
+    title: '字典标签', dataIndex: 'label', search: true, width: 220,
+    rules: [{ required: true, message: '字典标签必填' }],
   },
   {
-    title: '字典键值', dataIndex: 'value', search: true, rules: [{ required: true, message: '字典键值必填' }],
+    title: '字典键值', dataIndex: 'value', search: true, width: 220,
+    rules: [{ required: true, message: '字典键值必填' }],
   },
   {
     title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1, width: 180,
@@ -96,14 +97,14 @@ const columns = reactive([
   {
     title: '状态', dataIndex: 'status', search: true, formType: 'radio',
     dict: { name: 'data_status', props: { label: 'title', value: 'key' } },
-    addDefaultValue: '1',
+    addDefaultValue: '1', width: 180,
   },
   {
     title: '备注', dataIndex: 'remark', hide: true, formType: 'textarea',
   },
   {
     title: '创建时间', dataIndex: 'created_at', addDisplay: false, editDisplay: false,
-    search: true, formType: 'range'
+    search: true, formType: 'range', width: 180,
   }
 ])
 

@@ -56,7 +56,6 @@ const crud = reactive({
   rowSelection: { showCheckedAll: true },
   operationColumn: true,
   operationWidth: 300,
-  searchLabelCols: 4,
   add: { show: true, api: apiColumn.save, auth: ['system:api:add'] },
   edit: { show: true, api: apiColumn.update, auth: ['system:api:update'] },
   delete: {

@@ -63,7 +63,6 @@
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 200,
-    searchLabelCols: 4,
     add: { show: true, api: post.save, auth: ['system:post:add'] },
     edit: { show: true, api: post.update, auth: ['system:post:update'] },
     delete: {
@@ -75,12 +74,14 @@
   })
 
   const columns = reactive([
-    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
+    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { 
-      title: '岗位名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '岗位名称必填' }],
+      title: '岗位名称', dataIndex: 'name', search: true, width: 150,
+      rules: [{ required: true, message: '岗位名称必填' }],
     },
     { 
-      title: '岗位标识', dataIndex: 'code', search: true, rules: [{ required: true, message: '岗位标识必填' }],
+      title: '岗位标识', dataIndex: 'code', search: true, width: 150,
+      rules: [{ required: true, message: '岗位标识必填' }],
     },
     {
       title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1, width: 180,
@@ -89,14 +90,14 @@
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',
       dict: { name: 'data_status', props: { label: 'title', value: 'key' } },
-      addDefaultValue: '1',
+      addDefaultValue: '1', width: 150,
     },
     {
       title: '备注', dataIndex: 'remark', hide: true, formType: 'textarea',
     },
     {
       title: '创建时间', dataIndex: 'created_at', addDisplay: false, editDisplay: false,
-      search: true, formType: 'range'
+      search: true, formType: 'range', width: 180,
     },
   ])
 </script>

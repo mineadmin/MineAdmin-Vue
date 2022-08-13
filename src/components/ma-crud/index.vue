@@ -92,7 +92,12 @@
             class="w-full lg:w-auto mt-2 lg:mt-0"
           ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
 
-          <a-button type="secondary" @click="handlerExpand" v-if="defaultCrud.isExpand">
+          <a-button
+            type="secondary"
+            @click="handlerExpand"
+            v-if="defaultCrud.isExpand"
+            class="w-full lg:w-auto mt-2 lg:mt-0"
+          >
             <icon-expand v-if="! expandState" />
             <icon-shrink v-else />
             {{ expandState ? ' 折叠' : ' 展开' }}
@@ -563,7 +568,7 @@ const addAction = () => {
 }
 
 const editAction = (record) => {
-  isFunction(defaultCrud.value.beforeOpenEdit) && defaultCrud.value.beforeOpenEdit()
+  isFunction(defaultCrud.value.beforeOpenEdit) && defaultCrud.value.beforeOpenEdit(record)
   maCrudForm.value.edit(record)
 }
 
@@ -580,7 +585,7 @@ const dbClickOpenEdit = (record) => {
     }
 
     if (defaultCrud.value.edit.api && isFunction(defaultCrud.value.edit.api)) {
-      maCrudForm.value.edit(record)
+      editAction(record)
     }
   }
 }

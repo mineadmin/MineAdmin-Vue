@@ -49,6 +49,12 @@ const crud = reactive({
   edit: { show: true, api: config.update, auth: ['setting:config:update'] },
   delete: { show: true, api: config.delete, auth: ['setting:config:delete'] },
   beforeRequest: (params) => params.group_id = groupId.value,
+  beforeEdit: (record) => {
+    if (record.config_select_data) {
+      record.config_select_data = record.config_select_data.replace(/\r|\n|\s/g, '')
+      record.config_select_data = record.config_select_data.replace(',]', ']')
+    }
+  },
   viewLayoutSetting: { width: '700px' }
 })
 

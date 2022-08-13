@@ -109,7 +109,7 @@
   })
 
   const columns = reactive([
-    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
+    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { 
       title: '角色名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '角色名称必填' }], width: 220
     },
