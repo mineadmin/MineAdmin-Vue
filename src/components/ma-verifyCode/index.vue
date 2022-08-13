@@ -18,7 +18,7 @@ const verfiyCanvas = ref(null)
 const canvasSetting = reactive({
   pool: 'abcdefghjkmnpqrstuvwxyz23456789',
   width: 120,
-  height: 40,
+  height: 36,
   size: 4
 })
 
