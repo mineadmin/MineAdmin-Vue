@@ -57,7 +57,7 @@
       </a-card>
     </div>
     <div class="w-11/12 mx-auto mt-3">
-      <a-tag class="ml-0.5">MineAdmin v{{ config.version }} Beta</a-tag>
+      <a-tag class="ml-0.5">MineAdmin v{{ config.version }} Beta.2</a-tag>
     </div>
   </div>
 </template>
