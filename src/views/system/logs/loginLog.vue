@@ -32,7 +32,7 @@
   })
 
   const columns = reactive([
-    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
+    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { title: '登录用户', dataIndex: 'username', search: true, width: 150 }, 
     { 
       title: '登录状态', dataIndex: 'status', search: true, width: 120, formType: 'select',

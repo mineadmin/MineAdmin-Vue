@@ -108,7 +108,7 @@
   })
 
   const columns = reactive([
-    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
+    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { title: '登录用户', dataIndex: 'username', search: true, width: 150 }, 
     { title: '业务名称', dataIndex: 'service_name', search: true, width: 150 }, 
     { title: '路由', dataIndex: 'router', width: 240 }, 

@@ -87,11 +87,11 @@ const crud = reactive({
 
 const columns = reactive([
   { title: '表名称', dataIndex: 'name', search: true, width: 200 },
-  { title: '表引擎', dataIndex: 'engine' },
-  { title: '总行数', dataIndex: 'rows' },
-  { title: '碎片大小', dataIndex: 'data_free' },
-  { title: '数据大小', dataIndex: 'data_length' },
-  { title: '索引大小', dataIndex: 'index_length' },
+  { title: '表引擎', dataIndex: 'engine', width: 150 },
+  { title: '总行数', dataIndex: 'rows', width: 150 },
+  { title: '碎片大小', dataIndex: 'data_free', width: 150 },
+  { title: '数据大小', dataIndex: 'data_length', width: 150 },
+  { title: '索引大小', dataIndex: 'index_length', width: 150 },
   { title: '字符集', dataIndex: 'collation', width: 180 },
   { title: '创建时间', dataIndex: 'create_time', width: 180 },
   { title: '表注释', dataIndex: 'comment', width: 180 },
