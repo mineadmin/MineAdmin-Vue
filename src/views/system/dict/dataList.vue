@@ -35,7 +35,6 @@
 import { ref, reactive } from 'vue'
 import { dict } from '@/api/system/dict'
 import { Message } from '@arco-design/web-vue'
-import { current } from 'tailwindcss/colors'
 
 const crudRef = ref()
 const visible = ref(false)
