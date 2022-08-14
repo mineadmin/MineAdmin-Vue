@@ -410,7 +410,7 @@ const defaultCrud = ref({
   // 是否显示操作列
   operationColumn: false,
   // 操作列宽度
-  operationWidth: 140,
+  operationWidth: 160,
   // 操作列名称
   operationColumnText: '操作',
 })
