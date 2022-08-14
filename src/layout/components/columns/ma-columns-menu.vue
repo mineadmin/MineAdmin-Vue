@@ -36,7 +36,7 @@
         `width: ${appStore.menuCollapse ? '50px' : appStore.menuWidth + 'px'};
         height: ${appStore.menuCollapse ? '100%' : 'calc(100% - 51px)'};`"
       >
-      <ma-menu ref="maMenu" :class="appStore.menuCollapse ? 'ml-0.5' : ''" />
+      <ma-menu ref="MaMenuRef" :class="appStore.menuCollapse ? 'ml-0.5' : ''" />
     </a-layout-sider>
   </div>
 </template>
@@ -51,7 +51,7 @@
   const route = useRoute()
   const router = useRouter()
 
-  const maMenu = ref(null)
+  const MaMenuRef = ref(null)
   const userStore = useUserStore()
   const appStore = useAppStore()
   const showMenu = ref(false)
@@ -85,13 +85,13 @@
       return
     }
     if (bigMenu.children.length > 0) {
-      maMenu.value.loadChildMenu(bigMenu)
+      MaMenuRef.value.loadChildMenu(bigMenu)
       showMenu.value = true
     } else {
       showMenu.value = false
       router.push(bigMenu.path)
     }
-    title.value = maMenu.value?.title
+    title.value = MaMenuRef.value?.title
     document.querySelectorAll('.parent-menu').forEach( (item, id) => {
       index !== id ? item.classList.remove('active') : item.classList.add('active')
     })

@@ -16,7 +16,7 @@
       </div>
       <div class="flex justify-between w-full layout-banner">
         <a-menu
-          ref="MaMenu"
+          ref="MaMenuRef"
           mode="horizontal"
           class="layout-banner-menu hidden lg:flex"
           :popup-max-height="360"
@@ -43,7 +43,7 @@
 
   const route = useRoute()
 
-  const MaMenu = ref(null)
+  const MaMenuRef = ref(null)
   const userStore = useUserStore()
   const appStore = useAppStore()
   const actives = ref([])
