@@ -9,7 +9,7 @@
 -->
 <template>
   <div class="flex flex-col w-full h-full">
-    <a-space class="mb-2" size="mini">
+    <a-input-group class="mb-2 w-full" size="mini">
       <a-input
         :placeholder="props?.searchPlaceholder"
         allow-clear
@@ -22,7 +22,7 @@
           isExpand = ! isExpand
         }"
       >{{ isExpand ? '折叠' : '展开' }}</a-button>
-    </a-space>
+    </a-input-group>
     <a-tree
       blockNode
       :data="treeData"

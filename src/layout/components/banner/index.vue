@@ -9,7 +9,7 @@
 -->
 <template>
   <a-layout class="layout flex flex-col h-full">
-    <a-layout-header class="flex justify-between h-50 layout-banner-header">
+    <a-layout-header class="flex justify-between h-50 layout-banner-header operation-area">
       <div class="flex justify-between md:justify-center logo">
         <a-avatar class="mt-1 ml-2 md:ml-0" :size="40"><img src="/logo.svg" class="bg-white" /></a-avatar>
         <span class="ml-2 text-xl mt-2.5 hidden md:block">MineAdmin</span>
