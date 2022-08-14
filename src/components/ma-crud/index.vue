@@ -184,7 +184,7 @@
         </a-table>
       </slot>
     </div>
-    <div class="_crud-footer mt-3 text-right">
+    <div class="_crud-footer ma-content-block p-3 text-right">
       <a-pagination
         :total="total"
         v-if="total > 0 && openPagination && !settingProps.pagination"
@@ -224,11 +224,11 @@ import config from '@/config/crud'
 import { isFunction } from '@vue/shared'
 import { ref, watch, nextTick, onMounted } from 'vue'
 
-import maSearch from './components/search.vue'
-import maForm from './components/form.vue'
-import maSetting from './components/setting.vue'
-import maImport from './components/import.vue'
-import maColumn from './components/column.vue'
+import MaSearch from './components/search.vue'
+import MaForm from './components/form.vue'
+import MaSetting from './components/setting.vue'
+import MaImport from './components/import.vue'
+import MaColumn from './components/column.vue'
 import checkAuth from '@/directives/auth/auth'
 import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
@@ -295,9 +295,9 @@ const defaultCrud = ref({
     layout: 'auto',
     // 显示方式支持模态框和抽屉: modal drawer
     viewType: 'modal',
-    // 显示宽度 
+    // 显示宽度
     width: 600,
-    // 是否全屏，只有modal有效    
+    // 是否全屏，只有modal有效
     isFull: false,
     // 表单设置一行多少列，会自适应，在布局为 auto 下生效
     cols: 1,
@@ -609,7 +609,7 @@ const deletesMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
     const api = isRecovery.value ? defaultCrud.value.delete.realApi : defaultCrud.value.delete.api
     const response = await api({ ids: selecteds.value })
-    response.code === 200 
+    response.code === 200
     ? Message.success(response.message || `删除成功！`)
     : Message.error(response.message || `删除失败！`)
     refresh()
@@ -621,7 +621,7 @@ const deletesMultipleAction = async () => {
 const recoverysMultipleAction = async() => {
   if (selecteds.value && selecteds.value.length > 0) {
     const response = await defaultCrud.value.recovery.api({ ids: selecteds.value })
-    response.code === 200 
+    response.code === 200
     ? Message.success(response.message || `恢复成功！`)
     : Message.error(response.message || `恢复失败！`)
     refresh()
@@ -720,7 +720,7 @@ const settingProps = defineProps({
       }
     }
   },
-  
+
   // 字段列设置
   columns: {
     type: Object,

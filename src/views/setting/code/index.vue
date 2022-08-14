@@ -27,20 +27,20 @@
       </template>
       <!-- 操作前置扩展 -->
       <template #operationBeforeExtend="{ record }">
-        <a-link 
+        <a-link
           v-auth="['setting:code:preview']"
           @click="previewRef.open(record.id)"
         ><icon-eye /> 预览</a-link>
         <a-popconfirm content="同步会重置字段配置生成信息，确定同步吗?" position="bottom" @ok="sync(record.id)">
-          <a-link 
+          <a-link
             v-auth="['setting:code:sync']"
           ><icon-sync /> 同步</a-link>
         </a-popconfirm>
-        <a-link 
+        <a-link
           v-auth="['setting:code:update']"
           @click="() => editRef.open(record.id)"
         ><icon-edit /> 编辑</a-link>
-        <a-link 
+        <a-link
           v-auth="['setting:code:generate']"
           @click="generateCode(record.id)"
         ><icon-code /> 生成代码</a-link>
@@ -52,7 +52,7 @@
     <preview ref="previewRef" />
 
     <edit-info ref="editRef" />
-    
+
   </div>
 </template>
 
@@ -64,8 +64,8 @@
   import tool from '@/utils/tool'
 
   import LoadTable from './components/loadTable.vue'
-  import preview from './components/preview.vue'
-  import editInfo from './components/editInfo.vue'
+  import Preview from './components/preview.vue'
+  import EditInfo from './components/editInfo.vue'
 
   const crudRef = ref()
   const editRef = ref()
@@ -88,7 +88,7 @@
     const response = await generate.sync(id)
     response.success && Message.success(response.message)
   }
-  
+
   const generateCode = async (ids) => {
     Message.info('代码生成下载中，请稍后')
     const response = await generate.generateCode({ ids: ids.toString().split(',') })

@@ -17,7 +17,7 @@
 <script setup>
 import { useDocStore } from '@/store'
 import Auth from './components/auth.vue'
-import docMain from './components/docMain.vue'
+import DocMain from './components/docMain.vue'
 
 const docStore = useDocStore()
 </script>

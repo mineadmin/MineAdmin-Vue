@@ -36,7 +36,7 @@
         `width: ${appStore.menuCollapse ? '50px' : appStore.menuWidth + 'px'};
         height: ${appStore.menuCollapse ? '100%' : 'calc(100% - 51px)'};`"
       >
-      <ma-menu ref="MaMenu" :class="appStore.menuCollapse ? 'ml-0.5' : ''" />
+      <ma-menu ref="maMenu" :class="appStore.menuCollapse ? 'ml-0.5' : ''" />
     </a-layout-sider>
   </div>
 </template>
@@ -44,18 +44,18 @@
 <script setup>
   import { ref, onMounted, watch } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import maMenu from '../ma-menu.vue'
+  import MaMenu from '../ma-menu.vue'
 
   import { useAppStore, useUserStore } from '@/store'
 
   const route = useRoute()
   const router = useRouter()
 
-  const MaMenu = ref(null)
+  const maMenu = ref(null)
   const userStore = useUserStore()
   const appStore = useAppStore()
   const showMenu = ref(false)
-  
+
   const title = ref('')
   const classStyle = ref('flex flex-col parent-menu items-center rounded mt-1 text-gray-200 hover:bg-gray-700 dark:hover:text-gray-50 dark:hover:bg-blackgray-1')
 
@@ -85,13 +85,13 @@
       return
     }
     if (bigMenu.children.length > 0) {
-      MaMenu.value.loadChildMenu(bigMenu)
+      maMenu.value.loadChildMenu(bigMenu)
       showMenu.value = true
     } else {
       showMenu.value = false
       router.push(bigMenu.path)
     }
-    title.value = MaMenu.value?.title
+    title.value = maMenu.value?.title
     document.querySelectorAll('.parent-menu').forEach( (item, id) => {
       index !== id ? item.classList.remove('active') : item.classList.add('active')
     })

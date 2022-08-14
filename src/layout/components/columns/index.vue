@@ -24,10 +24,10 @@
 <script setup>
   import { onMounted, ref } from 'vue'
   import ResizeObserver from 'resize-observer-polyfill'
-  import maColumnsHeader from './ma-columns-header.vue'
-  import maColumnsMenu from './ma-columns-menu.vue'
+  import MaColumnsHeader from './ma-columns-header.vue'
+  import MaColumnsMenu from './ma-columns-menu.vue'
 
-  import maWorkerArea from '../ma-workerArea.vue'
+  import MaWorkerArea from '../ma-workerArea.vue'
 
   const containerWidth = ref(0)
 

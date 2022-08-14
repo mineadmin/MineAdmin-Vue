@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-  import maBreadcrumb from '../ma-breadcrumb.vue'
-  import maOperation from '../ma-operation.vue'
-  import maTags from '../ma-tags.vue'
+  import MaBreadcrumb from '../ma-breadcrumb.vue'
+  import MaOperation from '../ma-operation.vue'
+  import MaTags from '../ma-tags.vue'
 </script>

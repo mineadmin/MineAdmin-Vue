@@ -21,7 +21,7 @@
       <!-- 状态列 -->
       <template #status="{ record }">
         <a-switch
-          :checked-value="1" 
+          :checked-value="1"
           unchecked-value="2"
           @change="changeStatus($event, record.id)"
           :default-checked="record.status == 1"
@@ -40,7 +40,7 @@
   import { ref, reactive, computed } from 'vue'
   import { dictType } from '@/api/system/dict'
   import { Message } from '@arco-design/web-vue'
-  import dataList from './dataList.vue'
+  import DataList from './dataList.vue'
 
   const crudRef = ref()
   const datalist = ref()
@@ -78,11 +78,11 @@
 
   const columns = reactive([
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
-    { 
+    {
       title: '字典名称', dataIndex: 'name', search: true, width: 220,
       rules: [{ required: true, message: '字典名称必填' }],
     },
-    { 
+    {
       title: '字典标识', dataIndex: 'code', search: true, width: 260,
       rules: [{ required: true, message: '字典标识必填' }],
     },
