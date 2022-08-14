@@ -72,7 +72,7 @@
 
   const changeStatus = async (status, record) => {
     if (record.code === 'superAdmin') {
-      Message.error('超级管理员角色不能禁用')
+      Message.info('超级管理员角色不能禁用')
       return
     }
     const response = await role.changeStatus({ id: record.id, status })
@@ -82,7 +82,10 @@
   }
 
   const changeSort = async (value, id) => {
-    
+    if (id === 1) {
+      Message.info('超级管理员不能修改')
+      return
+    }
     const response = await role.numberOperation({ id, numberName: 'sort', numberValue: value })
     if (response.success) {
       Message.success(response.message)

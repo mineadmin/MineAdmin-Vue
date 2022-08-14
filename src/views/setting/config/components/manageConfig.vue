@@ -45,7 +45,7 @@ const crud = reactive({
   rowSelection: { showCheckedAll: true, key: 'key' },
   showIndex: false,
   operationColumn: true,
-  operationWidth: 200,
+  operationWidth: 160,
   edit: { show: true, api: config.update, auth: ['setting:config:update'] },
   delete: { show: true, api: config.delete, auth: ['setting:config:delete'] },
   beforeRequest: (params) => params.group_id = groupId.value,
@@ -65,13 +65,15 @@ const columns = reactive([
     formType: 'select',
     hide: true,
     dict: { url: 'setting/configGroup/index', props: { label: 'name', value: 'id' } },
-    rules: [{ required: true, message: '所属组必选' }]
+    rules: [{ required: true, message: '所属组必选' }],
+    width: 180,
   },
   {
     title: '配置标题',
     dataIndex: 'name',
     search: true,
-    rules: [{ required: true, message: '配置标题必填' }]
+    rules: [{ required: true, message: '配置标题必填' }],
+    width: 220,
   },
   {
     title: '配置标识',
@@ -79,16 +81,19 @@ const columns = reactive([
     search: true,
     rules: [{ required: true, message: '配置标识必填' }],
     disabled: true,
+    width: 180,
   },
   {
     title: '配置值',
     dataIndex: 'value',
-    rules: [{ required: true, message: '配置值必填' }]
+    rules: [{ required: true, message: '配置值必填' }],
+    width: 200,
   },
   {
     title: '排序',
     dataIndex: 'sort',
     formType: 'input-number',
+    width: 200,
     min: 0,
     max: 999,
   },
@@ -101,7 +106,8 @@ const columns = reactive([
     control: (val) => {
       const temp = ['select', 'radio', 'checkbox']
       return { config_select_data: { display: temp.includes(val) } }
-    }
+    },
+    width: 180,
   },
   {
     title: '配置选择数据',

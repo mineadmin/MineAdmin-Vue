@@ -127,6 +127,18 @@ export default {
     })
   },
 
+  /**
+   * 数字运算操作
+   * @returns
+   */
+  numberOperation(data = {}) {
+    return request({
+      url: 'system/role/numberOperation',
+      method: 'put',
+      data
+    })
+  },
+
   updateDataPermission(id, data) {
     return request({
       url: 'system/role/dataPermission/' + id,
