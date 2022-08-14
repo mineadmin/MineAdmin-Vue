@@ -35,6 +35,7 @@
 import { ref, reactive } from 'vue'
 import { dict } from '@/api/system/dict'
 import { Message } from '@arco-design/web-vue'
+import { current } from 'tailwindcss/colors'
 
 const crudRef = ref()
 const visible = ref(false)
@@ -69,6 +70,10 @@ const crud = reactive({
   rowSelection: { showCheckedAll: true },
   operationColumn: true,
   operationWidth: 160,
+  beforeAdd: (form) => {
+    form.code = currentRow.value?.code
+    form.type_id = currentRow.value?.id
+  },
   add: { show: true, api: dict.saveDictData, auth: ['system:dict:add'] },
   edit: { show: true, api: dict.updateDictData, auth: ['system:dict:update'] },
   delete: {
