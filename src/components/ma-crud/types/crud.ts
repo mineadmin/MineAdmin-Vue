@@ -7,9 +7,20 @@ export interface BasicCrud {
   rowSelection?:
     | undefined
     | {
+        // 选择值的标识，默认id
         key?: string;
         // 选择列是否显示全选
         showCheckedAll?: boolean;
+        // 行选择器类型
+        type?: 'checkbox' | 'radio';
+        // 选择器列标题
+        title?: string | '#';
+        // 列宽度
+        width?: number | 60;
+        // 是否固定
+        fixed?: boolean | false;
+        // 是否仅展示当前页的keys
+        onlyCurrent?: boolean | true;
       };
   // 搜索label宽度
   searchLabelWidth?: string | "auto";
@@ -62,6 +73,10 @@ export interface BasicCrud {
   beforeAdd?: (form) => void;
   //新增确定之后调用,返回接口response和form值
   afterAdd?: (response, form) => void;
+  //编辑确定之前修改form值
+  beforeEdit?: (form) => void;
+  //编辑确定之后调用,返回接口response和form值
+  afterEdit?: (response, form) => void;
   add?: {
     // 新增api
     api?: undefined | any;

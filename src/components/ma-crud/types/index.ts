@@ -1,2 +1,2 @@
-export * from "./columns";
-export * from "./crud";
+export * from "./columns"
+export * from "./crud"

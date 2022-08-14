@@ -8,7 +8,6 @@ export type FormDateType =
   | 'checkbox'
   | 'select'
   | 'transfer'
-  | 'treeSelect'
   | 'tree-select'
   | 'cascader'
   | 'date'
@@ -21,6 +20,14 @@ export type FormDateType =
   | 'input'
   | 'password'
   | 'textarea'
+  | 'upload'
+  | 'select-user'
+  | 'editor'
+  | 'code-editor'
+  | 'icon'
+  | 'user-info'
+  | 'city-linkage'
+  | 'select-resource'
 /**
  * 列字典
  */
@@ -35,6 +42,10 @@ export interface ColumnDict {
   params?: object
   // 直接设置字典值
   data?: object
+  // 表格列的值是否翻译为字典对应标签
+  translation?: boolean,
+  // 表格key 和 value的props设置
+  props?: object
 }
 
 export interface BasicColumn {
@@ -52,10 +63,26 @@ export interface BasicColumn {
   width?: number | 'auto'
   // 表格列是否隐藏
   hide?: boolean
+  // 编辑|创建 通用是否显示字段
+  display?: boolean
   // 添加弹窗是否显示字段
   addDisplay?: boolean
   // 编辑弹窗是否显示字段
   editDisplay?: boolean
+  // 编辑|创建 通用是否禁用字段
+  disabled?: boolean
+  // 添加弹窗是否禁用字段
+  addDisabled?: boolean
+  // 编辑弹窗是否禁用字段
+  editDisabled?: boolean
+  // 编辑|创建 通用是否只读字段
+  readonly?: boolean
+  // 添加弹窗是否只读字段
+  addReadonly?: boolean
+  // 编辑弹窗是否只读字段
+  editReadonly?: boolean
+  // 字段新增时默认值
+  addDefaultValue?: number | string | boolean | undefined | ((record) => number | string | boolean | undefined)
   // 字段编辑时默认值
   editDefaultValue?: number | string | boolean | undefined | ((record) => number | string | boolean | undefined)
   // select,radio,treeSelect,下拉字典配置
@@ -70,4 +97,6 @@ export interface BasicColumn {
   addRules?: FieldRule | FieldRule[]
   // 编辑时规则
   editRules?: FieldRule | FieldRule[]
+  // 子表单数据
+  children?: BasicColumn[]
 }
