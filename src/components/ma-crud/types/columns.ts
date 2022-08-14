@@ -27,6 +27,7 @@ export type FormDateType =
   | 'icon'
   | 'user-info'
   | 'city-linkage'
+  | 'form-group'
   | 'select-resource'
 /**
  * 列字典
