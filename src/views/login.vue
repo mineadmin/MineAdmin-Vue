@@ -46,7 +46,7 @@
   <div class="login-container">
     <div class="login-width mx-auto flex justify-between h-full items-center">
       <div class="w-6/12 mx-auto left-panel rounded-l pl-5 pr-5 hidden md:block bg-blue-50">
-        <div class="logo"><img src="/logo.svg" width="45"><span>MineAdmin</span><i class="text-red-500 mt-4 ml-2">Beta.2</i></div>
+        <div class="logo"><img src="/logo.svg" width="45"><span>MineAdmin</span><i class="text-red-500 mt-4 ml-2">RC</i></div>
         <div class="slogan flex justify-end"><span>---- {{ $t('sys.login.slogan') }}</span></div>
       </div>
 
