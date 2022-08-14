@@ -36,7 +36,7 @@
               <a-checkbox @change="handlerSelect">全选/全不选</a-checkbox>
               <a-checkbox v-model="cancelLinkage" @change="handlerLinkage">关闭父子级联动</a-checkbox>
             </a-space>
-            <div class="tree-container">
+            <div class="tree-container p-2">
               <ma-tree-slider
                 ref="tree"
                 v-model="deptList"
