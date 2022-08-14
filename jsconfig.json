@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"],
+            "@cps/*": ["src/components/*"],
+            "vue-i18n": ["vue-i18n/dist/vue-i18n.cjs.js"]
+        },
+        "jsx": "preserve"
+    },
+    "exclude": ["node_modules", "dist", "build"]
+}

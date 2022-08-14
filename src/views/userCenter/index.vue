@@ -11,7 +11,7 @@
   <div class="block">
     <div class="user-header rounded-sm text-center">
       <ma-upload v-model="userInfo.avatar" rounded class="mt-2.5" />
-      
+
       <div>
         <a-tag size="large" class="mt-3 rounded-full" color="#165dff">
           {{ userStore.user && userStore.user.nickname || userStore.user && userStore.user.username }}
@@ -68,8 +68,8 @@
   import loginLog from '@/api/system/loginLog'
   import operLog from '@/api/system/operLog'
 
-  import modifyPassword from './components/modifyPassword.vue'
-  import userInfomation from './components/userInfomation.vue'
+  import ModifyPassword from './components/modifyPassword.vue'
+  import UserInfomation from './components/userInfomation.vue'
 
   const userStore = useUserStore()
   const userInfo = reactive({

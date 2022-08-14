@@ -36,10 +36,10 @@
   import { ref, watch, onMounted } from 'vue'
   import { useAppStore, useUserStore } from '@/store'
   import { useRoute } from 'vue-router'
-  import maOperation from '../ma-operation.vue'
-  import maWorkerArea from '../ma-workerArea.vue'
-  import maTags from '../ma-tags.vue'
-  import childrenMenu from '../components/children-menu.vue'
+  import MaOperation from '../ma-operation.vue'
+  import MaWorkerArea from '../ma-workerArea.vue'
+  import MaTags from '../ma-tags.vue'
+  import ChildrenMenu from '../components/children-menu.vue'
 
   const route = useRoute()
 

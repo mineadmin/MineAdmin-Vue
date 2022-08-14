@@ -67,8 +67,8 @@ import tool from '@/utils/tool'
 import { copy } from '@/utils/common'
 import { request } from '@/utils/request.js'
 import { Message } from '@arco-design/web-vue'
-import globalParams from './components/globalParams.vue'
-import sliderDrawer from './components/sliderDrawer.vue'
+import GlobalParams from './components/globalParams.vue'
+import SliderDrawer from './components/sliderDrawer.vue'
 
 const docStore = useDocStore()
 const appInfo = ref({})
