@@ -120,7 +120,7 @@
     imgs => {
       let tmp = ''
       imgs.map(img => {
-        if (img.indexOf('.jpg') > -1 || img.indexOf('.png') > -1 || img.indexOf('.bmp') > -1 || img.indexOf('.jpeg') > -1 || img.indexOf('.svg') > -1) {
+        if (img.indexOf('.jpg') > -1 || img.indexOf('.png') > -1 || img.indexOf('.bmp') > -1 || img.indexOf('.jpeg') > -1 || img.indexOf('.svg') > -1 || img.indexOf('.gif') > -1) {
           tmp += `<img src=${img} width="100%" />`
         }
       })
