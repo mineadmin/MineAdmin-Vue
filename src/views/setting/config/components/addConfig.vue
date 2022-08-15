@@ -35,6 +35,7 @@ const inputComponent = [
   { label: '复选框', code: 'checkbox' },
   { label: '开关', code: 'switch' },
   { label: '图片上传', code: 'upload' },
+  { label: '富文本编辑器', code: 'editor' },
 ]
 
 const submit = async (data, done) => {
