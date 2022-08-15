@@ -20,10 +20,10 @@
 <script setup>
   import { useAppStore, useUserStore } from '@/store'
 
-  import columnsLayout from './components/columns/index.vue'
-  import classicLayout from './components/classic/index.vue'
-  import bannerLayout from './components/banner/index.vue'
-  import maButtonMenu from './components/ma-buttonMenu.vue'
+  import ColumnsLayout from './components/columns/index.vue'
+  import ClassicLayout from './components/classic/index.vue'
+  import BannerLayout from './components/banner/index.vue'
+  import MaButtonMenu from './components/ma-buttonMenu.vue'
 
   const appStore = useAppStore()
   const userStore = useUserStore()

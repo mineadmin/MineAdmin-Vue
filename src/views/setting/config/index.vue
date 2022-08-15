@@ -14,9 +14,10 @@
         type="rounded"
         v-model:active-key="active"
         @delete="openDeleteModal"
+        @change="handleChange"
         :updateable="true"
-        @change="handlerChangeTabs"
         auto-switch
+        :editable="true"
       >
         <template #extra>
           <a-space>
@@ -34,8 +35,8 @@
           </a-space>
         </template>
         <a-tab-pane
-          v-for="item in configGroupData"
-          :key="item.id"
+          v-for="(item, index) in configGroupData"
+          :key="`${index}-${item.id}`"
           :title="item.name"
         >
           <ma-form
@@ -75,11 +76,11 @@
   import config from '@/api/setting/config'
   import { Message } from '@arco-design/web-vue'
   import { auth } from '@/utils/common'
-  import addGroup from './components/addGroup.vue'
+  import AddGroup from './components/addGroup.vue'
   import AddConfig from './components/addConfig.vue'
   import ManageConfig from './components/manageConfig.vue'
 
-  const active = ref(0)
+  const active = ref('0-1')
   const name = ref('')
   const deleteGroupData = ref({ name: '' })
   const maFormRef = ref()
@@ -90,7 +91,8 @@
   const configGroupData = ref([])
   const deleteVisible = ref(false)
 
-  const openDeleteModal = (id) => {
+  const openDeleteModal = (data) => {
+    const id = data.split('-')[1]
     if (id == 1 || id == 2) {
       Message.info('该配置为系统核心配置，无法删除')
       return
@@ -99,17 +101,23 @@
     deleteVisible.value = true
   }
 
-  const getConfigGroupList = async (defaultKey = 1) => {
-    const response = await config.getConfigGroupList()
-    configGroupData.value = response.data
-    configGroupData.value.map(item => {
-      formArray.value[item.id] = {}
-      optionsArray.value[item.id] = []
-    })
-    setActiveTabs(defaultKey)
+  const handleChange = (key) => {
+    const params = key.split('-')
+    maFormRef.value[params[0]].init()
+    active.value = key
   }
 
-  const setActiveTabs = async (id) => {
+  const getConfigGroupList = async () => {
+    const response = await config.getConfigGroupList()
+    configGroupData.value = response.data
+    configGroupData.value.map(async item => {
+      formArray.value[item.id] = {}
+      optionsArray.value[item.id] = []
+      getConfigData(item.id)
+    })
+  }
+
+  const getConfigData = async (id) => {
     const params = {
       group_id: id,
       orderBy: 'sort',
@@ -118,7 +126,7 @@
     const response = await config.getConfigList(params)
     let form = {}
     optionsArray.value[id] = response.data.map(item => {
-      let option = { title: item.name, dataIndex: item.key, formType: item.input_type, dict: {} }
+      let option = { title: item.name, dataIndex: item.key, formType: item.input_type, dict: {}, labelWidth: '120px' }
       const allowDictType = ['select', 'radio', 'checkbox']
       if (allowDictType.includes(item.input_type)) {
         option.dict = { data: item.config_select_data }
@@ -127,23 +135,17 @@
       return option
     })
     formArray.value[id] = form
-    active.value = id
-    nextTick(() => {
-      maFormRef.value[id] && maFormRef.value[id].init()
-    })
   }
 
-  const handlerChangeTabs = (id) => setActiveTabs(id)
-
   const manageConfigModal = () => {
-    manageConfigRef.value.open(active.value)
+    manageConfigRef.value.open(active.value.split('-')[1])
   }
 
   const addGroupModal = () => addGroupRef.value.open()
   const addGroupSuccess = (result) => {
     if (result) {
       Message.success('配置组保存成功')
-      getConfigGroupList(active.value)
+      getConfigGroupList()
       return
     }
     Message.success('配置组保存失败')
@@ -152,7 +154,7 @@
   const addConfigSuccess = (result) => {
     if (result) {
       Message.success('配置添加成功')
-      getConfigGroupList(active.value)
+      getConfigGroupList()
       return
     }
     Message.success('配置添加失败')
@@ -187,6 +189,7 @@
   }
 
   getConfigGroupList()
+  nextTick(() => maFormRef.value && maFormRef.value[0].init() )
 </script>
 <script>
 export default { name: 'setting:config' }

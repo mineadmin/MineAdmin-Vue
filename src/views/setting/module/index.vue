@@ -148,11 +148,11 @@
     },
     {
       title: '描述', dataIndex: 'description', formType: 'textarea',
-      placeholder: '请输入模块的功能描述',
+      placeholder: '请输入模块的功能描述', width: 400,
       rules: [{ required: true, message: '描述必填' }],
     },
     {
-      title: '状态', dataIndex: 'enabled', formType: 'radio', addDisplay: false, editDisplay: false,
+      title: '状态', dataIndex: 'enabled', formType: 'radio', addDisplay: false, editDisplay: false, width: 120,
       dict: { data: [ { label: '开启', code: true }, { label: '禁用', code: false } ], translation: true },
     }
   ])

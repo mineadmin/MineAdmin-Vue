@@ -62,7 +62,7 @@
 import { reactive, ref, h } from 'vue'
 import doc from '@/api/doc'
 import commonApi from '@/api/common'
-import simRequest from './simRequest.vue'
+import SimRequest from './simRequest.vue'
 
 const visible = ref(false)
 const row = ref({})

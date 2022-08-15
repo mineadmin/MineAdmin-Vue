@@ -42,38 +42,47 @@
 
 <script setup>
 import { nextTick, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAppStore, useDocStore } from '@/store'
 import doc from '@/api/doc'
 
 const appStore = useAppStore()
 const docStore = useDocStore()
 const router = useRouter()
+const route = useRoute()
 const form = ref({ app_id: '', app_secret: '' })
 const formRef = ref()
 
 const submit = ({ values, errors }) => {
-
   if(errors) return false
-
   formRef.value.validate().then(() => {
-    doc.login(values).then(res => {
-      if (res.success && res.code == 200) {
-        docStore.appId = values.app_id
-        docStore.appSecret = values.app_secret
-        docStore.auth = true
-        nextTick(() => {
-          router.push({ name: 'interfaceList' })
-        })
-      }
-    })
+    docAuth(values)
   })
+}
+
+const docAuth = (data) => {
+  doc.login(data).then(res => {
+    if (res.success && res.code == 200) {
+      docStore.appId = data.app_id
+      docStore.appSecret = data.app_secret
+      docStore.auth = true
+      nextTick(() => {
+        router.push({ name: 'interfaceList' })
+      })
+    }
+  })
+}
+
+if (route.query.app_id && route.query.app_secret) {
+  form.value.app_id = route.query.app_id
+  form.value.app_secret = route.query.app_secret
+  docAuth(form.value)
 }
 </script>
 
 <style scoped>
 .auth-container {
-  background-image: url(auth-bg.svg);
+  background-image: url(/auth-bg.svg);
   background-size: cover;
   height: 100%;
 }

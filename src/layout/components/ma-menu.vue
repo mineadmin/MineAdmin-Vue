@@ -22,8 +22,8 @@
   import { useRouter, useRoute } from 'vue-router'
   import { useI18n } from 'vue-i18n'
 
-  import childrenMenu from './components/children-menu.vue'
-  
+  import ChildrenMenu from './components/children-menu.vue'
+
   import { useAppStore, useUserStore } from '@/store'
   const router = useRouter()
   const route  = useRoute()

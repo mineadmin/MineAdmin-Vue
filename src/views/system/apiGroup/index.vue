@@ -45,8 +45,7 @@
     searchLabelWidth: '75px',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 200,
-    searchLabelCols: 4,
+    operationWidth: 160,
     add: { show: true, api: apiGroup.save, auth: ['system:apiGroup:add'] },
     edit: { show: true, api: apiGroup.update, auth: ['system:apiGroup:update'] },
     delete: {
@@ -58,23 +57,24 @@
   })
 
   const columns = reactive([
-    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
+    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { 
-      title: '组名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '组名称必填' }],
+      title: '组名称', dataIndex: 'name', search: true, width: 220,
+      rules: [{ required: true, message: '组名称必填' }],
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',
       dict: { name: 'data_status', props: { label: 'title', value: 'key' } },
-      addDefaultValue: '1',
+      addDefaultValue: '1', width: 160
     },
     {
       title: '备注', dataIndex: 'remark', hide: true, formType: 'textarea',
     },
     {
-      title: '创建时间', dataIndex: 'created_at', addDisplay: false, editDisplay: false,
+      title: '创建时间', dataIndex: 'created_at', addDisplay: false, editDisplay: false, width: 180
     },
     {
-      title: '更新时间', dataIndex: 'updated_at', addDisplay: false, editDisplay: false,
+      title: '更新时间', dataIndex: 'updated_at', addDisplay: false, editDisplay: false, width: 180
     },
   ])
 </script>

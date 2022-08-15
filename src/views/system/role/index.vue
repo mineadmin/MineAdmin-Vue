@@ -72,7 +72,7 @@
 
   const changeStatus = async (status, record) => {
     if (record.code === 'superAdmin') {
-      Message.error('超级管理员角色不能禁用')
+      Message.info('超级管理员角色不能禁用')
       return
     }
     const response = await role.changeStatus({ id: record.id, status })
@@ -82,7 +82,10 @@
   }
 
   const changeSort = async (value, id) => {
-    
+    if (id === 1) {
+      Message.info('超级管理员不能修改')
+      return
+    }
     const response = await role.numberOperation({ id, numberName: 'sort', numberValue: value })
     if (response.success) {
       Message.success(response.message)
@@ -109,7 +112,7 @@
   })
 
   const columns = reactive([
-    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
+    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { 
       title: '角色名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '角色名称必填' }], width: 220
     },

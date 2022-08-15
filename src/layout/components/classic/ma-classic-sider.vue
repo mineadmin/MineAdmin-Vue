@@ -17,7 +17,7 @@
       <span class="ml-2 text-xl mt-2.5" v-if="! appStore.menuCollapse">MineAdmin</span>
     </div>
     <ma-menu
-      ref="MaMenu"
+      ref="MaMenuRef"
       height="calc(100% - 51px)"
       :class="`${appStore.menuCollapse ? 'ml-1.5' : ''};`"
     />
@@ -27,16 +27,16 @@
 <script setup>
   import { ref, onMounted } from 'vue'
   import { useAppStore, useUserStore } from '@/store'
-  import maMenu from '../ma-menu.vue'
+  import MaMenu from '../ma-menu.vue'
 
 
-  const MaMenu = ref(null)
+  const MaMenuRef = ref(null)
   const userStore = useUserStore()
   const appStore = useAppStore()
 
   onMounted(() => {
     setTimeout(_ => {
-      MaMenu.value.menus = userStore.routers
+      MaMenuRef.value.menus = userStore.routers
     }, 50)
   })
 </script>

@@ -90,7 +90,7 @@
   })
 
   const columns = reactive([
-    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
+    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { title: '接口名称', dataIndex: 'api_name', search: true, width: 180 }, 
     { title: '接口地址', dataIndex: 'access_name', search: true, width: 180 }, 
     { title: '访问IP', dataIndex: 'ip', width: 150, search: true },

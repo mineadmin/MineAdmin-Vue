@@ -90,7 +90,7 @@
   })
 
   const columns = reactive([
-    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
+    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { title: '交换机名称', dataIndex: 'exchange_name', search: true, width: 150 }, 
     { title: '路由名称', dataIndex: 'routing_key_name', search: true, width: 150 }, 
     { title: '队列名称', dataIndex: 'queue_name', width: 150 }, 
