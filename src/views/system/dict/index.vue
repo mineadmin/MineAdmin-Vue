@@ -71,7 +71,7 @@
     delete: {
       show: true,
       api: dictType.deletes, auth: ['system:dict:delete'],
-      realApi: dictType.realDeletes, realAuth: ['system:dict:realDeletes']
+      realApi: dictType.realDelete, realAuth: ['system:dict:realDeletes']
     },
     recovery: { show: true, api: dictType.recoverys, auth: ['system:dict:recovery']},
   })
