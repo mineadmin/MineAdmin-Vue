@@ -4,7 +4,7 @@
 
 <script setup>
 import { ref } from 'vue'
-const url = ref('http://swagger.mineadmin.com/swagger')
+const url = ref('https://swagger.mineadmin.com/swagger')
 </script>
 <script>
 export default { name: 'systemInterface' }
