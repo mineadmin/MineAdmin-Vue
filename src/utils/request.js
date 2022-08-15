@@ -25,7 +25,7 @@ function createService () {
       if (response.headers['content-disposition'] && response.status === 200) {
         return response
       } else if (response.data.size) {
-        response.data.codo = 500
+        response.data.code = 500
         response.data.message = '服务器内部错误'
         response.data.success = false
       } else if (response.data.code && response.data.code !== 200) {
