@@ -39,7 +39,7 @@ app.config.globalProperties.$common = common
 
 app.mount('#app')
 
-tool.capsule('MineAdmin', `v${packageJson.version} release`)
+tool.capsule('MineAdmin', `v${packageJson.version} RC`)
 console.log('MineAdmin 官网  https://www.mineadmin.com')
 console.log('MineAdmin 文档  https://doc.mineadmin.com')
 console.log('MineAdmin Gitee https://gitee.com/xmo/MineAdmin')
