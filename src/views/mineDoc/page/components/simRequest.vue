@@ -98,7 +98,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { useDocStore } from '@/store'
 import { formatJson } from '@/utils/common'
 import { request } from '@/utils/request.js'
@@ -132,8 +132,8 @@ const del = (idx) => {
 }
 
 const form = ref({
-  mode: props.row.request_mode,
-  url: `/api/v1/${props.row.access_name}`
+  mode: props.row?.request_mode,
+  url: `/api/v1/${props.row?.access_name}`
 })
 
 const requestServer = async () => {
@@ -184,4 +184,12 @@ const requestServer = async () => {
   const res = await request(config)
   response.value = formatJson(res)
 }
+
+watch(
+  () => props.row,
+  vl => {
+    form.value.mode = vl?.request_mode
+    form.value.url  = `/api/v1/${vl?.access_name}`
+  }
+)
 </script>
