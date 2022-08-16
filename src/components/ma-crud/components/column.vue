@@ -91,12 +91,12 @@
             </a-space>
           </template>
           <template v-else-if="row.customRender">
-            <CustomRender
+            <custom-render
               :column="column"
               :record="record"
               :render="row.customRender"
               :rowIndex="rowIndex"
-            ></CustomRender>
+            ></custom-render>
           </template>
           <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else>
             <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
