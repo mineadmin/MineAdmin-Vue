@@ -69,14 +69,16 @@
 
   const initMenu = () => {
     let current
-    if (route.matched[1].meta.breadcrumb) {
+    if (route.matched[1]?.meta?.breadcrumb) {
       current = route.matched[1].meta.breadcrumb[0].name
     } else {
       current = 'home'
     }
-    userStore.routers.map((item, index) => {
-      if (item.name == current) loadMenu(item, index)
-    })
+    if (userStore.routers && userStore.routers.length > 0) {
+      userStore.routers.map((item, index) => {
+        if (item.name == current) loadMenu(item, index)
+      })
+    }
   }
 
   const loadMenu = (bigMenu, index) => {
