@@ -101,7 +101,7 @@
           <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else>
             <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
             <template v-if="row.dict && row.dict.translation">
-              {{ props.searchRef.dictTrans(row.dataIndex, record[row.dataIndex]) }}
+              {{ props.searchRef.dictTrans( row.dataIndex, (row.dataIndex.indexOf('.') > -1 ) ? get(record, row.dataIndex) : record[row.dataIndex] ) }}
             </template>
             <template v-else-if="row.dataIndex && row.dataIndex.indexOf('.') !== -1">
               {{ get(record, row.dataIndex) }}

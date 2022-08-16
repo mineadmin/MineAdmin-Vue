@@ -41,8 +41,10 @@ export interface ColumnDict {
   url?: string;
   // url查询方法,填写url之后生效
   method?: "GET" | "POST" | "PUT" | "DELETE";
-  // url查询params,填写url之后生效
+  // url查询params数据,填写url之后生效
   params?: object;
+  // url查询body数据,填写url之后生效
+  body?: object;
   // 直接设置字典值
   data?: object;
   // 表格列的值是否翻译为字典对应标签
@@ -108,6 +110,8 @@ export interface BasicColumn {
     | ((record) => number | string | boolean | undefined);
   // select,radio,treeSelect,下拉字典配置
   dict?: ColumnDict;
+  // select 和 tree-select 组件是否开启虚拟列表
+  virtualList?: boolean;
   // 搜索默认值
   searchDefaultValue?: number | string | undefined;
   // 搜索描述

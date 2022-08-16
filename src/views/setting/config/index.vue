@@ -57,7 +57,7 @@
     <a-modal v-model:visible="deleteVisible" type="warning" :on-before-ok="deleteConfigGroup">
       <template #title>危险操作</template>
       <div class="mb-2">
-        确定要删除 <span class="text-red-500 underline font-black">{{ deleteGroupData.name }}</span> 模块吗？
+        确定要删除 <span class="text-red-500 underline font-black">{{ deleteGroupData.name }}</span> 配置组吗？
       </div>
       <div>
         此操作会删除组和所属组配置项，如果执行请在下面输入框输入：<span class="text-red-500">{{ deleteGroupData.name }}</span>

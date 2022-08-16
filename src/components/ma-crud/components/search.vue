@@ -27,7 +27,7 @@
             <a-select
               v-if="['select', 'radio', 'checkbox', 'transfer'].includes(item.formType)"
               v-model="searchForm[item.dataIndex]"
-              :virtual-list-props="{ height:200 }"
+              :virtual-list-props="item.virtualList ? { height: 200 } : undefined"
               :placeholder="item.searchPlaceholder || `请选择${item.title}`"
               allow-clear
               allow-search
@@ -53,7 +53,7 @@
             <a-tree-select
               v-else-if="item.formType === 'treeSelect' || item.formType === 'tree-select'"
               v-model="searchForm[item.dataIndex]"
-              :treeProps="{ virtualListProps: { height: 240 } }"
+              :treeProps="{ virtualListProps: item.virtualList ? { height: 240 } : undefined }"
               :placeholder="item.searchPlaceholder || `请选择${item.title}`"
               :disabled="item.disabled"
               :readonly="item.readonly"
@@ -105,7 +105,7 @@
 <script setup>
 import { ref, reactive, onMounted, watch, nextTick } from 'vue'
 import { request } from '@/utils/request'
-import { isArray, isFunction } from '@vue/shared'
+import { isFunction, isArray, get } from 'lodash'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { handlerProps } from '../js/common'
@@ -146,7 +146,7 @@ const init = async () => {
             formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
           }
         } else if (item.dict.url) {
-          const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.data || {})
+          const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
           if (response.data) {
             formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
           }

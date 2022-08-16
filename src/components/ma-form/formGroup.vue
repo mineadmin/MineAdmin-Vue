@@ -42,7 +42,7 @@
                   <a-select
                     v-if="item.formType === 'select'"
                     v-model="data[item.dataIndex]"
-                    :virtual-list-props="{ height:200 }"
+                    :virtual-list-props="item.virtualList ? { height: 200 } : undefined"
                     :placeholder="item.placeholder || `请选择${item.title}`"
                     allow-clear
                     allow-search
@@ -115,7 +115,7 @@
                   <a-tree-select
                     v-else-if="item.formType === 'treeSelect' || item.formType === 'tree-select'"
                     v-model="data[item.dataIndex]"
-                    :treeProps="{ virtualListProps: { height: 240 } }"
+                    :treeProps="{ virtualListProps: item.virtualList ? { height: 240 } : undefined }"
                     :placeholder="item.placeholder || `请选择${item.title}，可通过 key 搜索`"
                     :disabled="item.disabled"
                     :readonly="item.readonly"
@@ -326,7 +326,7 @@ const init = () => {
             formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
           }
         } else if (item.dict.url) {
-          const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.data || {})
+          const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
           if (response.data) {
             formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
           }
