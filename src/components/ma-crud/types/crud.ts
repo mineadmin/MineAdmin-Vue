@@ -119,7 +119,7 @@ export interface BasicCrud {
     realRole?: string[];
     // 真实按钮文案
     realText?: string;
-
+    
     // 是否显示
     show?: boolean;
   };

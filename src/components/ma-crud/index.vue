@@ -398,7 +398,7 @@ const defaultCrud = ref({
     show: false,
   },
   // 是否显示索引列
-  showIndex: true,
+  showIndex: false,
   // 索引列名称
   indexLabel: '序号',
   // 设置请求数据label

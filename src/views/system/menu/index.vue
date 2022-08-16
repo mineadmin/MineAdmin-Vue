@@ -105,7 +105,7 @@
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     {
       title: '上级菜单', dataIndex: 'parent_id', hide: true, formType: 'tree-select', 
-      dict: { url: 'system/menu/tree' }, addDefaultValue: 0,
+      dict: { url: 'system/menu/tree', params: { onlyMenu: true } }, addDefaultValue: 0,
       editDefaultValue: (record) => {
         return record.parent_id == 0 ? undefined : record.parent_id
       }
