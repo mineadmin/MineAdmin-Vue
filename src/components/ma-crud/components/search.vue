@@ -24,70 +24,72 @@
             v-if="item.search"
             :label-col-style="{ width: item.searchLabelWidth || props.searchLabelWidth }"
           >
-            <a-select
-              v-if="['select', 'radio', 'checkbox', 'transfer'].includes(item.formType)"
-              v-model="searchForm[item.dataIndex]"
-              :virtual-list-props="item.virtualList ? { height: 200 } : undefined"
-              :placeholder="item.searchPlaceholder || `请选择${item.title}`"
-              allow-clear
-              allow-search
-              :max-tag-count="1"
-              :options="formDictData[item.dataIndex]"
-              :multiple="item.multiple || ['transfer', 'checkbox'].includes(item.formType)"
-              @change="handlerCascader($event, item)"
-            />
+            <slot :name="`${item.dataIndex}`" v-bind="{ searchForm, item }">
+              <a-select
+                v-if="['select', 'radio', 'checkbox', 'transfer'].includes(item.formType)"
+                v-model="searchForm[item.dataIndex]"
+                :virtual-list-props="item.virtualList ? { height: 200 } : undefined"
+                :placeholder="item.searchPlaceholder || `请选择${item.title}`"
+                allow-clear
+                allow-search
+                :max-tag-count="1"
+                :options="formDictData[item.dataIndex]"
+                :multiple="item.multiple || ['transfer', 'checkbox'].includes(item.formType)"
+                @change="handlerCascader($event, item)"
+              />
 
-            <a-cascader
-              v-else-if="item.formType === 'cascader'"
-              v-model="searchForm[item.dataIndex]"
-              :placeholder="item.searchPlaceholder || `请选择${item.title}`"
-              allow-clear
-              allow-search
-              :disabled="item.disabled"
-              :readonly="item.readonly"
-              :expand-trigger="item.trigger || 'click'"
-              :options="formDictData[item.dataIndex]"
-              :multiple="item.multiple"
-            />
+              <a-cascader
+                v-else-if="item.formType === 'cascader'"
+                v-model="searchForm[item.dataIndex]"
+                :placeholder="item.searchPlaceholder || `请选择${item.title}`"
+                allow-clear
+                allow-search
+                :disabled="item.disabled"
+                :readonly="item.readonly"
+                :expand-trigger="item.trigger || 'click'"
+                :options="formDictData[item.dataIndex]"
+                :multiple="item.multiple"
+              />
 
-            <a-tree-select
-              v-else-if="item.formType === 'treeSelect' || item.formType === 'tree-select'"
-              v-model="searchForm[item.dataIndex]"
-              :treeProps="{ virtualListProps: item.virtualList ? { height: 240 } : undefined }"
-              :placeholder="item.searchPlaceholder || `请选择${item.title}`"
-              :disabled="item.disabled"
-              :readonly="item.readonly"
-              allow-clear
-              allow-search
-              :field-names="item.dict.props || { key: 'value', title: 'label' }"
-              :tree-checkable="item.multiple"
-              :multiple="item.multiple"
-              :data="formDictData[item.dataIndex]"
-            />
+              <a-tree-select
+                v-else-if="item.formType === 'treeSelect' || item.formType === 'tree-select'"
+                v-model="searchForm[item.dataIndex]"
+                :treeProps="{ virtualListProps: item.virtualList ? { height: 240 } : undefined }"
+                :placeholder="item.searchPlaceholder || `请选择${item.title}`"
+                :disabled="item.disabled"
+                :readonly="item.readonly"
+                allow-clear
+                allow-search
+                :field-names="item.dict.props || { key: 'value', title: 'label' }"
+                :tree-checkable="item.multiple"
+                :multiple="item.multiple"
+                :data="formDictData[item.dataIndex]"
+              />
 
-            <component
-              v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
-              :is="getComponent(item)"
-              v-model="searchForm[item.dataIndex]"
-              :placeholder="
-                item.formType === 'range'
-                ? ['请选择开始时间', '请选择结束时间']
-                : item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`
-              "
-              :show-time="item.showTime"
-              :format="item.format || ''"
-              :mode="item.mode"
-              allow-clear
-              style="width: 100%;"
-            />
+              <component
+                v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
+                :is="getComponent(item)"
+                v-model="searchForm[item.dataIndex]"
+                :placeholder="
+                  item.formType === 'range'
+                  ? ['请选择开始时间', '请选择结束时间']
+                  : item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`
+                "
+                :show-time="item.showTime"
+                :format="item.format || ''"
+                :mode="item.mode"
+                allow-clear
+                style="width: 100%;"
+              />
 
-            <component
-              v-else
-              :is="getComponent(item)"
-              v-model="searchForm[item.dataIndex]"
-              :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请输入${item.title}`"
-              allow-clear
-            />
+              <component
+                v-else
+                :is="getComponent(item)"
+                v-model="searchForm[item.dataIndex]"
+                :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请输入${item.title}`"
+                allow-clear
+              />
+            </slot>
           </a-form-item>
         </template>
       </div>
