@@ -102,7 +102,7 @@
       if (newAvatar) {
         const response = await user.updateInfo({ id: userInfo.id, avatar: newAvatar })
         if (response.success) {
-          Message.success(response.message)
+          Message.success('头像修改成功')
           userStore.user.avatar = newAvatar
         }
       }
