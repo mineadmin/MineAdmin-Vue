@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "@arco-design/color": "^0.4.0",
-    "@arco-design/web-vue": "^2.35.0",
-    "@arco-themes/vue-mine-admin": "^0.0.2",
+    "@arco-design/web-vue": "^2.35.1",
+    "@arco-themes/vue-mine-admin": "^0.0.3",
     "@tinymce/tinymce-vue": "^5.0.0",
     "autoprefixer": "^10.4.0",
     "axios": "^0.27.2",
