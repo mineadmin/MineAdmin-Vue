@@ -131,6 +131,7 @@
         <a-table
           v-bind="$attrs"
           ref="tableRef"
+          :key="defaultCrud.pk"
           :data="tableData"
           :loading="loading"
           :pagination="settingProps.pagination"
