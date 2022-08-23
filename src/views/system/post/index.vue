@@ -76,8 +76,8 @@
   const columns = reactive([
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { 
-      title: '岗位名称', dataIndex: 'name', search: true, width: 150, formType: 'select-resource', multiple: true,
-      rules: [{ required: true, message: '岗位名称必填' }], style: { width: '100%' }
+      title: '岗位名称', dataIndex: 'name', search: true, width: 150,
+      rules: [{ required: true, message: '岗位名称必填' }]
     },
     { 
       title: '岗位标识', dataIndex: 'code', search: true, width: 150,
