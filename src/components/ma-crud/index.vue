@@ -361,6 +361,8 @@ const defaultCrud = ref({
     show: false,
   },
   recovery: {
+    // 恢复api
+    api: undefined,
     // 显示恢复按钮的权限
     auth: [],
     // 显示恢复按钮的角色
