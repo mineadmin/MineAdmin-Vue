@@ -131,6 +131,7 @@
         <a-table
           v-bind="$attrs"
           ref="tableRef"
+          :key="defaultCrud.pk"
           :data="tableData"
           :loading="loading"
           :pagination="settingProps.pagination"
@@ -186,7 +187,7 @@
             </ma-column>
           </template>
           <template #summary-cell="{ column, record, rowIndex }" v-if="defaultCrud.customerSummary || defaultCrud.showSummary">
-            <slot name="summary-cell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
+            <slot name="summaryCell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
           </template>
         </a-table>
       </slot>
@@ -360,6 +361,8 @@ const defaultCrud = ref({
     show: false,
   },
   recovery: {
+    // 恢复api
+    api: undefined,
     // 显示恢复按钮的权限
     auth: [],
     // 显示恢复按钮的角色

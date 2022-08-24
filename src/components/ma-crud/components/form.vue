@@ -95,9 +95,7 @@
                     :show-search="item.showSearch"
                     :disabled="formItemDisabled(item) || item.disabled"
                     :readonly="formItemReadonly(item) || item.readonly"
-                    :expand-trigger="item.trigger || 'click'"
                     :data="formDictData[item.dataIndex]"
-                    :multiple="item.multiple"
                     @change="item.change && item.change($event, { form, item, currentAction, index })"
                     @click="item.click && item.click($event, { form, item, currentAction, index })"
                     @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
@@ -129,7 +127,7 @@
                     allow-clear
                     allow-search
                     :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
-                    :tree-checkable="item.multiple"
+                    :tree-checkable="item.treeCheckable"
                     :multiple="item.multiple"
                     :data="formDictData[item.dataIndex]"
                     @change="item.change && item.change($event, { form, item, currentAction, index })"

@@ -153,11 +153,14 @@ const recoveryAction = async record => {
 }
 
 const deleteAction = async record => {
-  if (props.options.beforeDelete && isFunction(props.options.beforeDelete) && !props.options.beforeDelete(record)) {
-    return
+  if (props.options.beforeDelete && isFunction(props.options.beforeDelete)) {
+    props.options.beforeDelete(record)
   }
   const api = props.isRecovery ? props.options.delete.realApi : props.options.delete.api
   const response = await api({ ids: [record[props.options.pk]] })
+  if (props.options.afterDelete && isFunction(props.options.afterDelete)) {
+    props.options.afterDelete(response, record)
+  }
   response.code === 200
     ? Message.success(response.message || `删除成功！`)
     : Message.error(response.message || `删除失败！`)

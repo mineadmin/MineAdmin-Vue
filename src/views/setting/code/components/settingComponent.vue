@@ -79,7 +79,7 @@
         </a-form-item>
       </div>
       <!-- 下拉、复选、单选 -->
-      <div v-if="['select', 'checkbox', 'radio'].includes(row.view_type)">
+      <div v-if="['select', 'checkbox', 'radio', 'transfer'].includes(row.view_type)">
         <a-form-item
           label="是否多选"
           field="multiple"
