@@ -20,6 +20,13 @@
         class="__search-panel"
         ref="maCrudSearch"
       >
+        <template
+          v-for="(slot, slotIndex) in searchSlots"
+          :key="slotIndex"
+          #[slot]="{ searchForm, item }"
+        >
+          <slot :name="`search-${slot}`" v-bind="{ searchForm, item }" />
+        </template>
         <template #searchButtons>
           <slot name="searchButtons"></slot>
         </template>
@@ -124,6 +131,7 @@
         <a-table
           v-bind="$attrs"
           ref="tableRef"
+          :key="defaultCrud.pk"
           :data="tableData"
           :loading="loading"
           :pagination="settingProps.pagination"
@@ -179,7 +187,7 @@
             </ma-column>
           </template>
           <template #summary-cell="{ column, record, rowIndex }" v-if="defaultCrud.customerSummary || defaultCrud.showSummary">
-            <slot name="summary-cell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
+            <slot name="summaryCell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
           </template>
         </a-table>
       </slot>
@@ -243,6 +251,7 @@ const total = ref(0)
 const requestParams = ref({})
 const columns = ref([])
 const slots = ref([])
+const searchSlots = ref([])
 const showSearch = ref(true)
 const isRecovery = ref(false)
 const expandState = ref(false)
@@ -352,6 +361,8 @@ const defaultCrud = ref({
     show: false,
   },
   recovery: {
+    // 恢复api
+    api: undefined,
     // 显示恢复按钮的权限
     auth: [],
     // 显示恢复按钮的角色
@@ -444,7 +455,18 @@ const getSlot = (cls = []) => {
   return sls
 }
 
+const getSearchSlot = () => {
+  let sls = []
+  settingProps.columns.map(item => {
+    if (item.search && item.search === true) {
+      sls.push(item.dataIndex)
+    }
+  })
+  return sls
+}
+
 slots.value = getSlot(settingProps.columns)
+searchSlots.value = getSearchSlot(settingProps.columns)
 
 const requestData = async () => {
   defaultCrud.value = Object.assign(defaultCrud.value, settingProps.crud)

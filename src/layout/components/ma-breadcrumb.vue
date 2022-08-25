@@ -8,7 +8,7 @@
         <a-breadcrumb-item
           v-if="index > 0 && !['/', '/home', '/dashboard'].includes(r.path)"
         >
-          {{ $t(`menus.${r.name}`) }}
+          {{ $t('menus.' + r.name).indexOf('.') > 0 ? r.meta.title : $t('menus.' + r.name) }}
         </a-breadcrumb-item>
       </template>
     </a-breadcrumb>

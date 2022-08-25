@@ -50,7 +50,7 @@
   const loadChildMenu = (obj) => {
     if (obj.children && obj.children.length > 0) {
       menus.value = obj.children
-      title.value = t('menus.' + obj.name)
+      title.value = t('menus.' + obj.name).indexOf('.') > 0 ? obj.meta.title : t('menus.' + obj.name)
     }
   }
 

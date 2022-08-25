@@ -6,11 +6,12 @@ let defaultSetting = {
   layout: 'classic',
   skin: 'mine',
   language: 'zh_CN',
-  color: '',
+  color: '#165dff',
 }
 
 import { defineStore } from 'pinia'
 import tool from '@/utils/tool'
+import { generate, getRgbStr } from '@arco-design/color'
 
 if (! tool.local.get('setting')) {
   tool.local.set('setting', defaultSetting)
@@ -71,6 +72,18 @@ const useAppStore = defineStore('app', {
       defaultSetting.language = this.language
       tool.local.set('setting', defaultSetting)
       window.location.reload()
+    },
+
+    changeColor(color) {
+      if (!/^#[0-9A-Za-z]{6}/.test(color)) return
+      this.color = color
+      const list = generate(this.color, { list: true, dark: this.mode === 'dark' })
+      list.forEach((color, index) => {
+        const rgbStr = getRgbStr(color)
+        document.body.style.setProperty(`--primary-${index + 1}`, rgbStr)
+      })
+      defaultSetting.color = this.color
+      tool.local.set('setting', defaultSetting)
     },
 
     useSkin(name) {

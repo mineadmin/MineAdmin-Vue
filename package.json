@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "@arco-design/color": "^0.4.0",
-    "@arco-design/web-vue": "^2.35.0",
-    "@arco-themes/vue-mine-admin": "^0.0.2",
+    "@arco-design/web-vue": "^2.35.1",
+    "@arco-themes/vue-mine-admin": "^0.0.3",
     "@tinymce/tinymce-vue": "^5.0.0",
     "autoprefixer": "^10.4.0",
     "axios": "^0.27.2",
@@ -31,6 +31,7 @@
     "tinymce": "^6.1.0",
     "vue": "^3.2.37",
     "vue-clipboard3": "^2.0.0",
+    "vue-color-kit": "^1.0.5",
     "vue-echarts": "^6.0.2",
     "vue-i18n": "^9.1.10",
     "vue-router": "^4.1.2"
@@ -40,7 +41,7 @@
     "@vitejs/plugin-vue-jsx": "^2.0.0",
     "less": "^4.1.3",
     "less-loader": "^11.0.0",
-    "vite": "^3.0.0",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "vite": "^3.0.0"
   }
 }
