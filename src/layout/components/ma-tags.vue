@@ -10,10 +10,10 @@
         </a>
       </div>
       <span class="ma-tag-prev" v-if="tagShowPrevNext">
-        <IconCaretLeft :size="20" class="tag-scroll-icon" @click="handleScroll(-200)" />
+        <IconLeft :size="20" class="tag-scroll-icon" @click="handleScroll(-200)" />
       </span>
       <span class="ma-tag-next" v-if="tagShowPrevNext">
-        <IconCaretRight :size="20" class="tag-scroll-icon" @click="handleScroll(200)" />
+        <IconRight :size="20" class="tag-scroll-icon" @click="handleScroll(200)" />
       </span>
     </div>
     <a-trigger class="ma-tags-more-dropdown" :popup-translate="[-65, -6]" :show-arrow="true" trigger="hover">
@@ -121,8 +121,8 @@ watch(
         if (tags.value && tags.value.scrollWidth > tags.value.clientWidth) {
           tags.value.querySelector('.active').scrollIntoView()
           if (appStore.tag && onceFlag.value) {
-            Message.error({
-              content: "您已打开页面数数量较多,为了流畅的使用系统可以关闭暂时不用的功能!",
+            Message.info({
+              content: "打开页面数量较多，为了流畅的使用系统可关闭暂时不用的功能!",
               icon: () => h(IconFaceFrownFill)
             })
             onceFlag.value = false
@@ -310,8 +310,8 @@ onMounted(() => {
 <style scoped lang="less">
 [mine-skin="mine"] {
   .tag-pn {
-    padding: 0 24px;
-    margin: 0 10px;
+    padding: 0 15px;
+    margin: 0 5px;
   }
 
   .menu-tags-wrapper {
@@ -341,11 +341,11 @@ onMounted(() => {
     }
 
     .ma-tag-prev {
-      left: 4px;
+      left: -4px;
     }
 
     .ma-tag-next {
-      right: 4px;
+      right: -4px;
     }
 
     .tags a {
@@ -361,7 +361,9 @@ onMounted(() => {
     text-align: left;
     justify-content: center;
     align-items: center;
-    margin-right: 20px;
+    margin-right: 15px;
+    margin-left: 5px;
+    top: -1px;
 
     .ma-tags-more-icon {
       display: inline-block;
