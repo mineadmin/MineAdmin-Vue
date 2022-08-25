@@ -22,6 +22,8 @@ export default {
   menuWidthHelp: 'Sets the display width of the left menu',
   saveToBackend: 'Save to backend',
   backendSettingTitle: 'Backend setting',
+  systemPrimaryColor: 'System Primary Color',
+  personalizedConfig: 'Personalized configuration',
   layout: {
     classic: 'Classic',
     columns: 'Columns',

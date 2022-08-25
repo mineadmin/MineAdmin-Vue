@@ -21,7 +21,7 @@
     <template #title>{{ $t('sys.backendSettingTitle') }}</template>
     <a-form :model="form" :auto-label-width="true">
       <a-row class="flex justify-center mb-5">
-        <a-divider orientation="center"><span class="title">系统主色调</span></a-divider>
+        <a-divider orientation="center"><span class="title">{{ $t('sys.systemPrimaryColor') }}</span></a-divider>
         <ColorPicker
           theme="dark"
           :color="appStore.color"
@@ -31,7 +31,7 @@
           style="width: 218px;"
         />
       </a-row>
-      <a-divider orientation="center"><span class="title">个人化配置</span></a-divider>
+      <a-divider orientation="center"><span class="title">{{ $t('sys.personalizedConfig') }}</span></a-divider>
       <a-form-item :label="$t('sys.skin')" :help="$t('sys.skinHelp')">
         {{ currentSkin }} 
         <a-button type="primary" status="success" size="mini" class="ml-2" @click="skin.open()">
@@ -94,8 +94,7 @@ const form = reactive({
   menuCollapse: appStore.menuCollapse,
   menuWidth: appStore.menuWidth,
   layout: appStore.layout,
-  language: appStore.language,
-  color: appStore.color
+  language: appStore.language
 })
 
 const defaultColorList = reactive([
@@ -137,7 +136,8 @@ const save = async (done) => {
     menuWidth: appStore.menuWidth,
     layout: appStore.layout,
     skin: appStore.skin,
-    language: appStore.language
+    language: appStore.language,
+    color: appStore.color
   }
 
   user.updateInfo({ id: userStore.user.id, backend_setting: data }).then(res => {
