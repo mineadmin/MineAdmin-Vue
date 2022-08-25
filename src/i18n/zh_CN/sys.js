@@ -22,6 +22,8 @@ export default {
   menuWidthHelp: '设置左侧菜单的显示宽度',
   saveToBackend: '保存到后台',
   backendSettingTitle: '后台设置',
+  systemPrimaryColor: '系统主色调',
+  personalizedConfig: '个性化配置 ',
   layout: {
     classic: '经典',
     columns: '分栏',
