@@ -308,7 +308,6 @@ onMounted(() => {
 </script>
 
 <style scoped lang="less">
-[mine-skin="mine"] {
   .tag-pn {
     padding: 0 15px;
     margin: 0 5px;
@@ -331,7 +330,7 @@ onMounted(() => {
 
       .tag-scroll-icon {
         cursor: pointer;
-        color: #9a9a9a;
+        color: var(--color-text-3);
         ;
       }
 
@@ -367,7 +366,7 @@ onMounted(() => {
 
     .ma-tags-more-icon {
       display: inline-block;
-      color: #9a9a9a;
+      color: var(--color-text-2);
       cursor: pointer;
       transition: transform .3s ease-out;
 
@@ -389,7 +388,7 @@ onMounted(() => {
         width: 6px;
         height: 6px;
         content: "";
-        background: #9a9a9a;
+        background: var(--color-text-3);
       }
 
       .ma-box:after {
@@ -399,7 +398,7 @@ onMounted(() => {
         width: 6px;
         height: 6px;
         content: "";
-        background: #9a9a9a;
+        background: var(--color-text-3);
       }
     }
   }
@@ -444,5 +443,4 @@ onMounted(() => {
       margin: 5px 0;
     }
   }
-}
 </style>
