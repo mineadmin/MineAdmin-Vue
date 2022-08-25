@@ -81,6 +81,7 @@ const useAppStore = defineStore('app', {
       list.forEach((color, index) => {
         const rgbStr = getRgbStr(color)
         document.body.style.setProperty(`--primary-${index + 1}`, rgbStr)
+        document.body.style.setProperty(`--arcoblue-${index + 1}`, rgbStr)
       })
       defaultSetting.color = this.color
       tool.local.set('setting', defaultSetting)
