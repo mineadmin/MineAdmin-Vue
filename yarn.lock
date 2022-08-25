@@ -1739,6 +1739,11 @@ vue-clipboard3@^2.0.0:
   dependencies:
     clipboard "^2.0.6"
 
+vue-color-kit@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.npmmirror.com/vue-color-kit/-/vue-color-kit-1.0.5.tgz#4524be982078d4916756e480d2c9324717169738"
+  integrity sha512-PUQzqdpI7672YYuoHdTLENHldieVMis0u9g2n7NAxiLGdiaqCD/QaYtbDOvtASpN5oSIfKxQgPV+i45MOlkKnw==
+
 vue-demi@*, vue-demi@^0.13.2:
   version "0.13.4"
   resolved "https://registry.npmmirror.com/vue-demi/-/vue-demi-0.13.4.tgz#fcb320892d78d3a7ec227024776f77d9a5c4831d"

@@ -20,6 +20,18 @@
   >
     <template #title>{{ $t('sys.backendSettingTitle') }}</template>
     <a-form :model="form" :auto-label-width="true">
+      <a-row class="flex justify-center mb-5">
+        <a-divider orientation="center"><span class="title">系统主色调</span></a-divider>
+        <ColorPicker
+          theme="dark"
+          :color="appStore.color"
+          :sucker-hide="true"
+          :colors-default="defaultColorList"
+          @changeColor="changeColor"
+          style="width: 218px;"
+        />
+      </a-row>
+      <a-divider orientation="center"><span class="title">个人化配置</span></a-divider>
       <a-form-item :label="$t('sys.skin')" :help="$t('sys.skinHelp')">
         {{ currentSkin }} 
         <a-button type="primary" status="success" size="mini" class="ml-2" @click="skin.open()">
@@ -65,6 +77,8 @@ import user from '@/api/system/user'
 import Skin from './skin.vue'
 import skins from '@/config/skins'
 import { useI18n } from 'vue-i18n'
+import { ColorPicker } from 'vue-color-kit'
+import 'vue-color-kit/dist/vue-color-kit.css'
 
 const userStore = useUserStore()
 const appStore  = useAppStore()
@@ -80,8 +94,18 @@ const form = reactive({
   menuCollapse: appStore.menuCollapse,
   menuWidth: appStore.menuWidth,
   layout: appStore.layout,
-  language: appStore.language
+  language: appStore.language,
+  color: appStore.color
 })
+
+const defaultColorList = reactive([
+  '#165DFF', '#F53F3F', '#F77234', '#F7BA1E', '#00B42A', '#14C9C9', '#3491FA',
+  '#722ED1', '#F5319D', '#D91AD9', '#34C759', '#43a047', '#7cb342', '#c0ca33',
+  '#86909c', '#6d4c41',
+])
+const changeColor = (color) => {
+  appStore.changeColor(color.hex)
+}
 
 skins.map(item => {
   if (item.name === appStore.skin) currentSkin.value = t('skin.' + item.name)

@@ -103,6 +103,7 @@ const useUserStore = defineStore('user', {
         appStore.changeMenuWidth(setting.menuWidth)
         appStore.changeLayout(setting.layout)
         appStore.useSkin(setting.skin)
+        appStore.changeColor(setting.color)
       }
     }
   }
