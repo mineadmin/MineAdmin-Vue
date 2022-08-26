@@ -251,7 +251,7 @@
           :label-col-style="{ width: '120px' }"
           v-if="row.view_type == 'date'"
         >
-          <a-select v-model="form.formType" allow-clear>
+          <a-select v-model="form.mode" allow-clear>
             <a-option value="date">日期选择器</a-option>
             <a-option value="week">周选择器</a-option>
             <a-option value="month">月选择器</a-option>
@@ -266,7 +266,7 @@
           field="showTime"
           label-col-flex="auto"
           :label-col-style="{ width: '120px' }"
-          v-if="form.formType == 'date'"
+          v-if="form.mode == 'date'"
         >
           <a-radio-group v-model="form.showTime">
             <a-radio :value="true">是</a-radio>
