@@ -52,7 +52,7 @@
       window.open(menu.path)
     } else {
       router.push(menu.path)
-      tagStore.addTag({ title: menu.meta.title, path: menu.path })
+      tagStore.addTag({ name: menu.name, title: menu.meta.title, path: menu.path })
     }
   }
 </script>

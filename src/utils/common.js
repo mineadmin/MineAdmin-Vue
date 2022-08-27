@@ -21,11 +21,19 @@ export const refreshTag = () => {
   })
 }
 
+export const addTag = (tag) => {
+  const tagStore  = useTagStore()
+  const keepStore = useKeepAliveStore()
+  tagStore.addTag(tag)
+  keepStore.addKeepAlive(tag.name)
+}
+
 export const closeTag = (tag) => {
   const tagStore  = useTagStore()
   const keepStore = useKeepAliveStore()
-  tagStore.removeTag(tag)
+  const t = tagStore.removeTag(tag)
   keepStore.removeKeepAlive(tag.name)
+  router.push({ name: t.name, query: t.query })
 }
 
 export const success = (title, content) => {

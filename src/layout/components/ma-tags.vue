@@ -63,9 +63,7 @@
 import { ref, watch, onMounted, nextTick, h } from 'vue'
 import { useAppStore, useTagStore, useKeepAliveStore } from '@/store'
 import { useRoute, useRouter } from 'vue-router'
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
-
+import { addTag, closeTag, refreshTag } from '@/utils/common'
 import Sortable from "sortablejs"
 import { Message } from '@arco-design/web-vue'
 import { IconFaceFrownFill } from '@arco-design/web-vue/dist/arco-vue-icon'
@@ -177,24 +175,11 @@ const contextMenuRefreshTag = () => {
   if (route.name != tag.name) {
     router.push({ name: tag.name, query: tag.query || {} })
   }
-  NProgress.start()
-  keepStore.removeKeepAlive(tag.name)
-  keepStore.hidden()
-  nextTick(() => {
-    keepStore.addKeepAlive(tag.name)
-    keepStore.display()
-    NProgress.done()
-  })
+  refreshTag()
 }
+
 const tagToolRefreshTag = () => {
-  NProgress.start()
-  keepStore.removeKeepAlive(route.name)
-  keepStore.hidden()
-  nextTick(() => {
-    keepStore.addKeepAlive(route.name)
-    keepStore.display()
-    NProgress.done()
-  })
+  refreshTag()
 }
 const tagToolCloseCurrentTag = () => {
   const currentTagName = route.name
@@ -238,17 +223,6 @@ const contextMenuCloseOtherTag = () => {
     }
   })
   contextMenuVisible.value = false
-}
-
-const addTag = async (tag) => {
-  tagStore.addTag(tag)
-  keepStore.addKeepAlive(tag.name)
-}
-
-const closeTag = async (tag) => {
-  const t = await tagStore.removeTag(tag)
-  keepStore.removeKeepAlive(tag.name)
-  router.push({ name: t.name, query: t.query })
 }
 
 const scrollHandler = event => {
