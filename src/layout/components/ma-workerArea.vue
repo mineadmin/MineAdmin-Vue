@@ -9,7 +9,7 @@
 -->
 <template>
   <a-layout-content class="work-area customer-scrollbar relative">
-    <div class="p-3 h-full" v-if="$route.meta.type !== 'I'">
+    <div class="h-full" :class="{ 'p-3': $route.path.indexOf('maIframe') === -1 }">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <keep-alive :include="keepStore.keepAlives">
@@ -17,11 +17,7 @@
           </keep-alive>
         </transition>
       </router-view>
-    </div>
-    <div v-else class="h-full">
-      <transition name="fade" mode="out-in">
-        <iframe-view />
-      </transition>
+      <iframe-view />
     </div>
   </a-layout-content>
 </template>

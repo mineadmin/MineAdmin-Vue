@@ -12,20 +12,28 @@ export const refreshTag = () => {
   const route = router.currentRoute.value
   const keepStore = useKeepAliveStore()
   NProgress.start()
-  keepStore.removeKeepAlive(route.name)
+  keepStore.removeKeepAlive(route)
   keepStore.hidden()
   nextTick(() => {
-    keepStore.addKeepAlive(route.name)
+    keepStore.addKeepAlive(route)
     keepStore.display()
     NProgress.done()
   })
 }
 
+export const addTag = (tag) => {
+  const tagStore  = useTagStore()
+  const keepStore = useKeepAliveStore()
+  tagStore.addTag(tag)
+  keepStore.addKeepAlive(tag)
+}
+
 export const closeTag = (tag) => {
   const tagStore  = useTagStore()
   const keepStore = useKeepAliveStore()
-  tagStore.removeTag(tag)
-  keepStore.removeKeepAlive(tag.name)
+  const t = tagStore.removeTag(tag)
+  keepStore.removeKeepAlive(tag)
+  router.push({ name: t.name, query: t.query })
 }
 
 export const success = (title, content) => {
