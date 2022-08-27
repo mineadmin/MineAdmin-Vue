@@ -3,7 +3,6 @@ import { defineStore } from 'pinia'
 const useKeepAliveStore = defineStore('keepAlive', {
   state: () => ({
     keepAlives: [],
-    name: null,
     show: true
   }),
 
@@ -16,13 +15,16 @@ const useKeepAliveStore = defineStore('keepAlive', {
   actions: {
 
     addKeepAlive (component) {
-      if (! this.keepAlives.includes(component)) {
-        this.keepAlives.push(component)
+      if (component.path.indexOf('maIframe') > -1) {
+        return
+      }
+      if (! this.keepAlives.includes(component.name)) {
+        this.keepAlives.push(component.name)
       }
     },
 
     removeKeepAlive (component) {
-      const idx = this.keepAlives.indexOf(component)
+      const idx = this.keepAlives.indexOf(component.name)
       if (idx !== -1) {
         this.keepAlives.splice(idx, 1)
       }
@@ -31,8 +33,6 @@ const useKeepAliveStore = defineStore('keepAlive', {
     display () { this.show = true },
 
     hidden  () { this.show = false },
-
-    setName (name) { this.name = name },
 
     clearKeepAlive() { this.keepAlives = [] },
   },

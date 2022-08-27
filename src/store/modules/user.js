@@ -137,6 +137,7 @@ const flatAsyncRoutes = (routes, breadcrumb=[]) => {
 }
 
 const views = import.meta.glob('../../views/**/**.vue')
+const empty = import.meta.glob('../../layout/empty.vue')
 
 // 菜单转换路由
 const filterAsyncRouter = (routerMap) => {
@@ -144,9 +145,9 @@ const filterAsyncRouter = (routerMap) => {
   routerMap.forEach(item => {
     if (item.meta.type !== 'B') {
 
-      if(item.meta.type === 'I'){
+      if (item.meta.type === 'I') {
         item.meta.url = item.path
-        item.path = `iframe/${item.name}`
+        item.path = `/maIframe/${item.name}`
       }
 
       const route = {

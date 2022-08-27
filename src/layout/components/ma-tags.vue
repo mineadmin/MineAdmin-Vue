@@ -4,7 +4,7 @@
       <div class="tags" ref="tags">
         <a v-for="tag in tagStore.tags" :key="tag.name" @contextmenu.prevent="openContextMenu($event, tag)"
           :class="route.name == tag.name ? 'active' : ''"
-          @click="$router.push({ name: tag.name, query: tag.query || {} })">
+          @click="tagJump(tag)">
           {{ tag.customTitle ? tag.customTitle : $t('menus.' + tag.name).indexOf('.') > 0 ? tag.title : $t('menus.' + tag.name) }}
           <icon-close class="tag-icon" v-if="!tag.affix" @click.stop="closeTag(tag)" />
         </a>
@@ -68,12 +68,10 @@ import Sortable from "sortablejs"
 import { Message } from '@arco-design/web-vue'
 import { IconFaceFrownFill } from '@arco-design/web-vue/dist/arco-vue-icon'
 
-
 const route = useRoute()
 const router = useRouter()
 const appStore = useAppStore()
 const tagStore = useTagStore()
-const keepStore = useKeepAliveStore()
 const tags = ref(null)
 const containerDom = ref(null)
 const scrollbarDom = ref(null)
@@ -115,18 +113,18 @@ watch(
         title: r.meta.title,
         query: r.query
       })
-      nextTick(() => {
-        if (tags.value && tags.value.scrollWidth > tags.value.clientWidth) {
-          tags.value.querySelector('.active').scrollIntoView()
-          if (appStore.tag && onceFlag.value) {
-            Message.info({
-              content: "打开页面数量较多，为了流畅的使用系统可关闭暂时不用的功能!",
-              icon: () => h(IconFaceFrownFill)
-            })
-            onceFlag.value = false
-          }
-        }
-      })
+      // nextTick(() => {
+      //   if (tags.value && tags.value.scrollWidth > tags.value.clientWidth) {
+      //     tags.value.querySelector('.active').scrollIntoView()
+      //     if (appStore.tag && onceFlag.value) {
+      //       Message.info({
+      //         content: "打开页面数量较多，为了流畅的使用系统可关闭暂时不用的功能!",
+      //         icon: () => h(IconFaceFrownFill)
+      //       })
+      //       onceFlag.value = false
+      //     }
+      //   }
+      // })
     }
   },
   { deep: true }
@@ -148,6 +146,10 @@ watch(
       : document.body.removeEventListener("click", e => handler(e))
   }
 )
+
+const tagJump = tag => {
+  router.push({ name: tag.name, query: tag.query || {} })
+}
 
 const openContextMenu = (e, tag) => {
   contextMenuItem.value = tag
@@ -182,10 +184,9 @@ const tagToolRefreshTag = () => {
   refreshTag()
 }
 const tagToolCloseCurrentTag = () => {
-  const currentTagName = route.name
   const list = [...tagStore.tags]
   list.forEach(tag => {
-    if (tag.affix || currentTagName == tag.name) {
+    if (tag.affix || route.name == tag.name) {
       closeTag(tag)
     }
   })
@@ -197,11 +198,9 @@ const contextMenuCloseTag = () => {
   }
 }
 const tagToolCloseOtherTag = () => {
-
-  const currentTagName = route.name
   const list = [...tagStore.tags]
   list.forEach(tag => {
-    if (tag.affix || currentTagName == tag.name) {
+    if (tag.affix || route.name == tag.name) {
       return true
     } else {
       closeTag(tag)

@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-  import { watch, onMounted } from 'vue'
+  import { watch } from 'vue'
   import { useIframeStore } from '@/store'
   import { useRoute } from 'vue-router'
 
@@ -28,11 +28,11 @@
     { deep: true }
   )
 
-  onMounted(() => pushRoute(route))
-
   const pushRoute = (r) => {
     if (r.meta.type === 'I') {
       iframeStore.addIframe(r)
     }
   }
+
+  pushRoute(route)
 </script>
