@@ -242,6 +242,7 @@ import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
+import { refreshTag } from '@/utils/common'
 import _ from 'lodash'
 
 const loading = ref(true)
@@ -573,7 +574,7 @@ const tableSetting = () => {
 }
 
 const requestSuccess = response => {
-  defaultCrud.value.dataCompleteRefresh && refresh()
+  defaultCrud.value.dataCompleteRefresh && refreshTag()
 }
 
 const getIndex = (rowIndex) => {
