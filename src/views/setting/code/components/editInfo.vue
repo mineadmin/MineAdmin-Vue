@@ -506,6 +506,7 @@ import SettingComponent from './settingComponent.vue'
 
 // 导入变量
 import * as vars from '../js/vars.js'
+import { findProp } from '@vue/compiler-core'
 
 const record = ref({})
 const loading = ref(true)
@@ -584,6 +585,12 @@ const init = () => {
     } else {
       form.value[name] = record.value[name]
     }
+  }
+
+  if (record.value.options && record.value.options.relations) {
+    formOptions.value.relations = record.value.options.relations
+  } else {
+    formOptions.value.relations = []
   }
 
   // 请求表字段
