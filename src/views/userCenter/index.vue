@@ -65,8 +65,7 @@
   import { useUserStore } from '@/store'
   import { Message } from '@arco-design/web-vue'
   import user from '@/api/system/user'
-  import loginLog from '@/api/system/loginLog'
-  import operLog from '@/api/system/operLog'
+  import commonApi from '@/api/common'
 
   import ModifyPassword from './components/modifyPassword.vue'
   import UserInfomation from './components/userInfomation.vue'
@@ -85,11 +84,11 @@
   })
 
   onMounted(() => {
-    loginLog.getPageList( Object.assign(requestParams, { orderBy: 'login_time', orderType: 'desc' }) ).then(res => {
+    commonApi.getLoginLogList( Object.assign(requestParams, { orderBy: 'login_time', orderType: 'desc' }) ).then(res => {
       loginLogList.value = res.data.items
     })
 
-    operLog.getPageList( Object.assign(requestParams, { orderBy: 'created_at', orderType: 'desc' }) ).then(res => {
+    commonApi.getOperationLogList( Object.assign(requestParams, { orderBy: 'created_at', orderType: 'desc' }) ).then(res => {
       operationLogList.value = res.data.items
     })
   })
