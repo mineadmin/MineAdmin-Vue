@@ -69,7 +69,7 @@ const crud = reactive({
   viewLayoutSetting: { layout: 'customer', width: '800px' },
   beforeAdd: (form) => form.api_id = currentRow.value.id,
   beforeRequest: (params) => {
-    params.app_id = currentRow.value.id
+    params.api_id = currentRow.value.id
     params.type = currentType.value == 'request' ? 1 : 2
   },
 })
