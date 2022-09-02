@@ -602,14 +602,19 @@ const dbClickOpenEdit = (record) => {
       return
     }
 
-    if (! checkAuth(defaultCrud.value.edit.auth || [])) {
-      Message.error('没有编辑数据的权限')
-      return
-    }
+    if (_.isArray(defaultCrud.value.edit.auth)) {
+      for (let code in defaultCrud.value.edit.auth) {
+        if (! checkAuth(code)) {
+          Message.error('没有编辑数据的权限')
+          return
+        }
+      }
 
-    if (defaultCrud.value.edit.api && isFunction(defaultCrud.value.edit.api)) {
-      editAction(record)
+      if (defaultCrud.value.edit.api && isFunction(defaultCrud.value.edit.api)) {
+        editAction(record)
+      }
     }
+    
   }
 }
 
