@@ -157,6 +157,7 @@
           </template>
           <template #columns>
             <ma-column
+              v-if="reloadColumn"
               :options="defaultCrud"
               :columns="columns"
               :searchRef="maCrudSearch"
@@ -242,10 +243,10 @@ import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
-import { refreshTag } from '@/utils/common'
 import _ from 'lodash'
 
 const loading = ref(true)
+const reloadColumn = ref(true)
 const openPagination = ref(false)
 const pageSizeOption = ref([10, 20, 30, 50, 100])
 const total = ref(0)
@@ -513,9 +514,7 @@ const requestHandle = async () => {
   } else {
     console.error(`ma-crud error：crud.api not is Function.`)
   }
-
   isFunction(settingProps.crud.afterRequest) && settingProps.crud.afterRequest(tableData.value)
-
   loading.value = false
 }
 
@@ -573,8 +572,15 @@ const tableSetting = () => {
   maCrudSetting.value.open()
 }
 
-const requestSuccess = response => {
-  defaultCrud.value.dataCompleteRefresh && refreshTag()
+const requestSuccess = async response => {
+  defaultCrud.value.dataCompleteRefresh && await refresh()
+  if (reloadColumn.value) {
+    reloadColumn.value = false
+    nextTick(() => {
+      reloadColumn.value = true
+    })
+  }
+
 }
 
 const getIndex = (rowIndex) => {
