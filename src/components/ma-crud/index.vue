@@ -609,8 +609,8 @@ const dbClickOpenEdit = (record) => {
     }
 
     if (_.isArray(defaultCrud.value.edit.auth)) {
-      for (let code in defaultCrud.value.edit.auth) {
-        if (! checkAuth(code)) {
+      for (let index in defaultCrud.value.edit.auth) {
+        if (! checkAuth(defaultCrud.value.edit.auth[index])) {
           Message.error('没有编辑数据的权限')
           return
         }
