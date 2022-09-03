@@ -53,9 +53,9 @@
           
             <a-link><icon-double-right /> 更多</a-link>
             <template #content>
-              <a-doption value="updateCache">更新缓存</a-doption>
-              <a-doption value="setHomePage">设置首页</a-doption>
-              <a-doption value="resetPassword">重置密码</a-doption>
+              <a-doption value="updateCache" v-auth="['system:user:cache']">更新缓存</a-doption>
+              <a-doption value="setHomePage" v-auth="['system:user:homePage']">设置首页</a-doption>
+              <a-doption value="resetPassword" v-auth="['system:user:initUserPassword']">重置密码</a-doption>
             </template>
           </a-dropdown>
         </template>
@@ -171,8 +171,8 @@
       realApi: user.realDeletes, realAuth: ['system:user:realDeletes']
     },
     recovery: { show: true, api: user.recoverys, auth: ['system:user:recovery']},
-    import: { show: true, url: 'system/user/import', templateUrl: 'system/user/downloadTemplate' },
-    export: { show: true, url: 'system/user/export' },
+    import: { show: true, url: 'system/user/import', templateUrl: 'system/user/downloadTemplate', auth: ['system:user:import'] },
+    export: { show: true, url: 'system/user/export', auth: ['system:user:export'] },
     viewLayoutSetting: { layout: 'customer', width: 800 },
     isDbClickEdit: false
   })

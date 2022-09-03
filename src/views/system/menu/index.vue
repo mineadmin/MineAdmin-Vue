@@ -38,7 +38,11 @@
 
       <!-- 操作前置扩展 -->
       <template #operationBeforeExtend="{ record }">
-        <a-link @click="openAdd(record.id)" v-if=" record.type === 'M' && ! isRecovery "><icon-plus /> 新增</a-link>
+        <a-link
+          @click="openAdd(record.id)"
+          v-if=" record.type === 'M' && ! isRecovery "
+          v-auth="['system:menu:add']"
+        ><icon-plus /> 新增</a-link>
       </template>
     </ma-crud>
   </div>
