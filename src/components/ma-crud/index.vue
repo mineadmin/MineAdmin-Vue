@@ -37,11 +37,9 @@
         <a-space class="lg:flex block lg:inline-block" >
 
           <a-button
-            v-if="
-              defaultCrud.add.show
-              && ($common.auth(defaultCrud.add.auth || [])
-              || (defaultCrud.add.role || []))
-            "
+            v-if="defaultCrud.add.show"
+            v-auth="defaultCrud.add.auth || []"
+            v-role="defaultCrud.add.role || []"
             @click="addAction" type="primary"
             class="w-full lg:w-auto mt-2 lg:mt-0"
           ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
@@ -50,13 +48,11 @@
             content="确定要删除数据吗?"
             position="bottom"
             @ok="deletesMultipleAction"
-            v-if="
-              defaultCrud.delete.show
-              && ($common.auth(defaultCrud.delete.auth || [])
-              || (defaultCrud.delete.role || []))
-            "
+            v-if="defaultCrud.delete.show"
           >
             <a-button
+              v-auth="defaultCrud.delete.auth || []"
+              v-role="defaultCrud.delete.role || []"
               type="primary" status="danger"
               class="w-full lg:w-auto mt-2 lg:mt-0"
             ><icon-delete /> {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-button>
@@ -66,35 +62,28 @@
             content="确定要恢复数据吗?"
             position="bottom"
             @ok="recoverysMultipleAction"
-            v-if="
-              defaultCrud.recovery.show
-              && isRecovery
-              && ($common.auth(defaultCrud.recovery.auth || [])
-              || (defaultCrud.recovery.role || []))
-            "
+            v-if="defaultCrud.recovery.show && isRecovery"
           >
             <a-button
+              v-auth="defaultCrud.recovery.auth || []"
+              v-role="defaultCrud.recovery.role || []"
               type="primary" status="success"
               class="w-full lg:w-auto mt-2 lg:mt-0"
             ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-button>
           </a-popconfirm>
 
           <a-button
-            v-if="
-              defaultCrud.import.show
-              && ($common.auth(defaultCrud.import.auth || [])
-              || (defaultCrud.import.role || []))
-            "
+            v-if="defaultCrud.import.show"
+            v-auth="defaultCrud.import.auth || []"
+            v-role="defaultCrud.import.role || []"
             @click="importAction"
             class="w-full lg:w-auto mt-2 lg:mt-0"
           ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
 
           <a-button
-            v-if="
-              defaultCrud.export.show
-              && ($common.auth(defaultCrud.export.auth || [])
-              || (defaultCrud.export.role || []))
-            "
+            v-if="defaultCrud.export.show"
+            v-auth="defaultCrud.export.auth || []"
+            v-role="defaultCrud.export.role || []"
             @click="exportAction"
             class="w-full lg:w-auto mt-2 lg:mt-0"
           ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
