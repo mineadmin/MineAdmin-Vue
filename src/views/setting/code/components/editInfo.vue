@@ -506,7 +506,6 @@ import SettingComponent from './settingComponent.vue'
 
 // 导入变量
 import * as vars from '../js/vars.js'
-import { findProp } from '@vue/compiler-core'
 
 const record = ref({})
 const loading = ref(true)
