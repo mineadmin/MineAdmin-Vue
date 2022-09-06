@@ -12,10 +12,9 @@
     <div class="_crud-header flex flex-col mb-2" ref="crudHeader">
       <ma-search
         :columns="settingProps.columns"
-        :search-label-width="settingProps.crud.searchLabelWidth"
-        :search-label-align="settingProps.crud.searchLabelAlign"
-        :search-label-cols="settingProps.crud.searchLabelCols"
-        :search-col="settingProps.crud.searchCol"
+        :search-label-width="defaultCrud.searchLabelWidth"
+        :search-label-align="defaultCrud.searchLabelAlign"
+        :search-customer-layout="defaultCrud.searchCustomerLayout"
         @search="searchHandler"
         class="__search-panel"
         ref="maCrudSearch"
@@ -304,6 +303,8 @@ const defaultCrud = ref({
     // 标签对齐方式
     labelAlign: 'right'
   },
+  // 搜索栏是否自定义布局
+  searchCustomerLayout: false,
   add: {
     // 新增api
     api: undefined,
