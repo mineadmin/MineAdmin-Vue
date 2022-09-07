@@ -209,7 +209,7 @@ const requestDict = (url, method, params, data, timeout = 10 * 1000) => request(
 
 const init = async () => {
   if (props.columns.length > 0) {
-    columns.value = props.columns.filter( item => item.search === true )
+    columns.value = props.columns.filter( item => item.search === true || item.dict )
   }
 
   const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
