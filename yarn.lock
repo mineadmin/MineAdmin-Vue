@@ -31,10 +31,10 @@
     resize-observer-polyfill "^1.5.1"
     scroll-into-view-if-needed "^2.2.28"
 
-"@arco-themes/vue-mine-admin@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.npmmirror.com/@arco-themes/vue-mine-admin/-/vue-mine-admin-0.0.5.tgz#12d25452713f2b57e96a1b5b8e20516eb3c70eea"
-  integrity sha512-JoNMCkCMAv8YC/+kbHTGZDavmepsbmBudK/R5C/uSZZuJa4OgCYmS/iPZR2akrHmwroXSoaNoS9G2WmBihwBBA==
+"@arco-themes/vue-mine-admin@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.npmmirror.com/@arco-themes/vue-mine-admin/-/vue-mine-admin-0.0.6.tgz#0bfc78ae92db96f441a97825b0b917a3c4181337"
+  integrity sha512-v+KZq1YtaQdRSRcjJKnpI6ni73NKUhB0OSjJhB/ho3BVXqXRiARYJTkEFEm9jgIPkb/YzxYdYIiaLl8tak2zBg==
 
 "@babel/code-frame@^7.18.6":
   version "7.18.6"
