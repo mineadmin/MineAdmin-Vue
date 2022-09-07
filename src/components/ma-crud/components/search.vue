@@ -209,35 +209,37 @@ const requestDict = (url, method, params, data, timeout = 10 * 1000) => request(
 
 const init = async () => {
   if (props.columns.length > 0) {
-    columns.value = props.columns.filter( item => item.search === true || item.dict )
+    columns.value = props.columns.filter( item => item.search === true )
   }
 
   const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
-  if (columns.value.length > 0) {
-    isShowSearch.value = true
-    columns.value.map(async item => {
-      if (item.dataIndex && item.search) {
-        searchForm[item.dataIndex] = item.searchDefaultValue || undefined
-      }
+  if (props.columns.length > 0) {
+    isShowSearch.value = columns.value.length > 0 ? true : false
+    props.columns.map(async item => {
+      if (item.search || item.dict) {
+        if (item.dataIndex && item.search) {
+          searchForm[item.dataIndex] = item.searchDefaultValue || undefined
+        }
 
-      if (allowRequestFormType.includes(item.formType) && item.dict) {
-        if (item.dict.name) {
-          const response = await commonApi.getDict(item.dict.name)
-          if (response.data) {
-            formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
-          }
-        } else if (item.dict.url) {
-          const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
-          if (response.data) {
-            formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
-          }
-        } else if (item.dict.data) {
-          if (isArray(item.dict.data)) {
-            formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, item.dict.data)
-          } else if (isFunction(item.dict.data)) {
-            const response = await item.dict.data()
-            formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response)
+        if (allowRequestFormType.includes(item.formType) && item.dict) {
+          if (item.dict.name) {
+            const response = await commonApi.getDict(item.dict.name)
+            if (response.data) {
+              formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
+            }
+          } else if (item.dict.url) {
+            const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
+            if (response.data) {
+              formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
+            }
+          } else if (item.dict.data) {
+            if (isArray(item.dict.data)) {
+              formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, item.dict.data)
+            } else if (isFunction(item.dict.data)) {
+              const response = await item.dict.data()
+              formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response)
+            }
           }
         }
       }
