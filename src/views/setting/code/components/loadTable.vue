@@ -56,7 +56,6 @@
     autoRequest: false,
     api: dataMaintain.getPageList,
     showIndex: true,
-    searchLabelWidth: '75px',
     rowSelection: { showCheckedAll: true, key: 'name', onlyCurrent: true },
   })
 

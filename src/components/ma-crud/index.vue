@@ -12,10 +12,9 @@
     <div class="_crud-header flex flex-col mb-2" ref="crudHeader">
       <ma-search
         :columns="settingProps.columns"
-        :search-label-width="settingProps.crud.searchLabelWidth"
-        :search-label-align="settingProps.crud.searchLabelAlign"
-        :search-label-cols="settingProps.crud.searchLabelCols"
-        :search-col="settingProps.crud.searchCol"
+        :search-label-width="defaultCrud.searchLabelWidth"
+        :search-label-align="defaultCrud.searchLabelAlign"
+        :search-customer-layout="defaultCrud.searchCustomerLayout"
         @search="searchHandler"
         class="__search-panel"
         ref="maCrudSearch"
@@ -37,11 +36,9 @@
         <a-space class="lg:flex block lg:inline-block" >
 
           <a-button
-            v-if="
-              defaultCrud.add.show
-              && ($common.auth(defaultCrud.add.auth || [])
-              || (defaultCrud.add.role || []))
-            "
+            v-if="defaultCrud.add.show"
+            v-auth="defaultCrud.add.auth || []"
+            v-role="defaultCrud.add.role || []"
             @click="addAction" type="primary"
             class="w-full lg:w-auto mt-2 lg:mt-0"
           ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
@@ -50,13 +47,11 @@
             content="确定要删除数据吗?"
             position="bottom"
             @ok="deletesMultipleAction"
-            v-if="
-              defaultCrud.delete.show
-              && ($common.auth(defaultCrud.delete.auth || [])
-              || (defaultCrud.delete.role || []))
-            "
+            v-if="defaultCrud.delete.show"
           >
             <a-button
+              v-auth="defaultCrud.delete.auth || []"
+              v-role="defaultCrud.delete.role || []"
               type="primary" status="danger"
               class="w-full lg:w-auto mt-2 lg:mt-0"
             ><icon-delete /> {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-button>
@@ -66,35 +61,28 @@
             content="确定要恢复数据吗?"
             position="bottom"
             @ok="recoverysMultipleAction"
-            v-if="
-              defaultCrud.recovery.show
-              && isRecovery
-              && ($common.auth(defaultCrud.recovery.auth || [])
-              || (defaultCrud.recovery.role || []))
-            "
+            v-if="defaultCrud.recovery.show && isRecovery"
           >
             <a-button
+              v-auth="defaultCrud.recovery.auth || []"
+              v-role="defaultCrud.recovery.role || []"
               type="primary" status="success"
               class="w-full lg:w-auto mt-2 lg:mt-0"
             ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-button>
           </a-popconfirm>
 
           <a-button
-            v-if="
-              defaultCrud.import.show
-              && ($common.auth(defaultCrud.import.auth || [])
-              || (defaultCrud.import.role || []))
-            "
+            v-if="defaultCrud.import.show"
+            v-auth="defaultCrud.import.auth || []"
+            v-role="defaultCrud.import.role || []"
             @click="importAction"
             class="w-full lg:w-auto mt-2 lg:mt-0"
           ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
 
           <a-button
-            v-if="
-              defaultCrud.export.show
-              && ($common.auth(defaultCrud.export.auth || [])
-              || (defaultCrud.export.role || []))
-            "
+            v-if="defaultCrud.export.show"
+            v-auth="defaultCrud.export.auth || []"
+            v-role="defaultCrud.export.role || []"
             @click="exportAction"
             class="w-full lg:w-auto mt-2 lg:mt-0"
           ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
@@ -157,6 +145,7 @@
           </template>
           <template #columns>
             <ma-column
+              v-if="reloadColumn"
               :options="defaultCrud"
               :columns="columns"
               :searchRef="maCrudSearch"
@@ -242,10 +231,10 @@ import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
-import { refreshTag } from '@/utils/common'
 import _ from 'lodash'
 
 const loading = ref(true)
+const reloadColumn = ref(true)
 const openPagination = ref(false)
 const pageSizeOption = ref([10, 20, 30, 50, 100])
 const total = ref(0)
@@ -314,6 +303,8 @@ const defaultCrud = ref({
     // 标签对齐方式
     labelAlign: 'right'
   },
+  // 搜索栏是否自定义布局
+  searchCustomerLayout: false,
   add: {
     // 新增api
     api: undefined,
@@ -513,9 +504,7 @@ const requestHandle = async () => {
   } else {
     console.error(`ma-crud error：crud.api not is Function.`)
   }
-
   isFunction(settingProps.crud.afterRequest) && settingProps.crud.afterRequest(tableData.value)
-
   loading.value = false
 }
 
@@ -573,8 +562,15 @@ const tableSetting = () => {
   maCrudSetting.value.open()
 }
 
-const requestSuccess = response => {
-  defaultCrud.value.dataCompleteRefresh && refreshTag()
+const requestSuccess = async response => {
+  defaultCrud.value.dataCompleteRefresh && await refresh()
+  if (reloadColumn.value) {
+    reloadColumn.value = false
+    nextTick(() => {
+      reloadColumn.value = true
+    })
+  }
+
 }
 
 const getIndex = (rowIndex) => {
@@ -602,14 +598,19 @@ const dbClickOpenEdit = (record) => {
       return
     }
 
-    if (! checkAuth(defaultCrud.value.edit.auth || [])) {
-      Message.error('没有编辑数据的权限')
-      return
-    }
+    if (_.isArray(defaultCrud.value.edit.auth)) {
+      for (let index in defaultCrud.value.edit.auth) {
+        if (! checkAuth(defaultCrud.value.edit.auth[index])) {
+          Message.error('没有编辑数据的权限')
+          return
+        }
+      }
 
-    if (defaultCrud.value.edit.api && isFunction(defaultCrud.value.edit.api)) {
-      editAction(record)
+      if (defaultCrud.value.edit.api && isFunction(defaultCrud.value.edit.api)) {
+        editAction(record)
+      }
     }
+    
   }
 }
 

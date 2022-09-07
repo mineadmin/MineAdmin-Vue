@@ -238,10 +238,9 @@ tool.download = (res, downName = '') => {
 
   let fileName
   if (!downName) {
-    const patt = new RegExp('filename=([^;]+\\.[^.;]+);*');
     const contentDisposition = decodeURI(res.headers['content-disposition'])
-    const result = patt.exec(contentDisposition)
-    fileName = result[1].replace(/\"/g, '')
+    const result = contentDisposition.match(/filename\*=utf-8\'\'(.+)/gi)
+    fileName = result[0].replace(/filename\*=utf-8\'\'/gi, '')
   } else {
     fileName = downName
   }
