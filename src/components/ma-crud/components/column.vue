@@ -46,11 +46,9 @@
                 ><icon-eye /> {{ props.options.see.text || '查看' }}</a-link> -->
 
                 <a-link
-                  v-if="
-                    props.options.edit.show &&
-                    !props.isRecovery &&
-                    ($common.auth(props.options.edit.auth || []) || props.options.edit.role || [])
-                  "
+                  v-if="props.options.edit.show && !props.isRecovery"
+                  v-auth="props.options.edit.auth || []"
+                  v-role="props.options.edit.role || []"
                   type="primary"
                   @click="editAction(record)"
                 >
@@ -61,11 +59,9 @@
                   content="确定要恢复该数据吗?"
                   position="bottom"
                   @ok="recoveryAction(record)"
-                  v-if="
-                    props.options.recovery.show &&
-                    props.isRecovery &&
-                    ($common.auth(props.options.recovery.auth || []) || props.options.recovery.role || [])
-                  "
+                  v-if="props.options.recovery.show && props.isRecovery"
+                  v-auth="props.options.recovery.auth || []"
+                  v-role="props.options.recovery.role || []"
                 >
                   <a-link type="primary"> <icon-undo /> {{ props.options.recovery.text || '恢复' }} </a-link>
                 </a-popconfirm>
@@ -74,12 +70,13 @@
                   content="确定要删除该数据吗?"
                   position="bottom"
                   @ok="deleteAction(record)"
-                  v-if="
-                    props.options.delete.show &&
-                    ($common.auth(props.options.delete.auth || []) || props.options.delete.role || [])
-                  "
+                  v-if="props.options.delete.show"
                 >
-                  <a-link type="primary">
+                  <a-link
+                    type="primary"
+                    v-auth="props.options.delete.auth || []"
+                    v-role="props.options.delete.role || []"
+                  >
                     <icon-delete />
                     {{
                       props.isRecovery ? props.options.delete.realText || '删除' : props.options.delete.text || '删除'

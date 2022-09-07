@@ -87,7 +87,6 @@ const columns = reactive([
   {
     title: '配置值',
     dataIndex: 'value',
-    rules: [{ required: true, message: '配置值必填' }],
     width: 200,
   },
   {
