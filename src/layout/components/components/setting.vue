@@ -148,6 +148,7 @@ const save = async (done) => {
     layout: appStore.layout,
     skin: appStore.skin,
     language: appStore.language,
+    animation: appStore.animation,
     color: appStore.color
   }
 
