@@ -6,6 +6,7 @@ let defaultSetting = {
   layout: 'classic',
   skin: 'mine',
   language: 'zh_CN',
+  animation: 'ma-slide-down',
   color: '#165dff',
 }
 
@@ -84,6 +85,12 @@ const useAppStore = defineStore('app', {
         document.body.style.setProperty(`--arcoblue-${index + 1}`, rgbStr)
       })
       defaultSetting.color = this.color
+      tool.local.set('setting', defaultSetting)
+    },
+
+    changeAnimation(name) {
+      this.animation = name
+      defaultSetting.animation = this.animation
       tool.local.set('setting', defaultSetting)
     },
 
