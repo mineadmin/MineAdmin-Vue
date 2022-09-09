@@ -29,7 +29,7 @@
         :align="row.align || 'left'"
         :fixed="row.fixed"
         :sortable="row.sortable"
-        v-if="!row.hide"
+        v-else
       >
         <template #cell="{ record, column, rowIndex }">
           <template v-if="row.dataIndex === '__operation'">
