@@ -203,7 +203,7 @@ const emits = defineEmits(['search'])
 
 watch(() => props.columns, () => {
   init()
-})
+}, { deep: true })
 
 const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
 
