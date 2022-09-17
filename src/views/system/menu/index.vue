@@ -118,8 +118,11 @@
       title: '菜单名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '菜单名称必填' }], width: 180,
     },
     { 
-      title: '菜单类型', dataIndex: 'type', hide: true, formType: 'radio', addDefaultValue: 'M', 
-      dict: { data: menuType, props: { label: 'label', value: 'code' } },
+      title: '菜单类型', dataIndex: 'type', formType: 'radio', addDefaultValue: 'M', width: 100,
+      dict: {
+        data: menuType, props: { label: 'label', value: 'code' }, translation: true,
+        tagColors: { 'M': 'blue', 'B': 'green', 'L': 'orangered', 'I': 'pinkpurple' }
+      },
       control: (value) => {
         if ( value == 'B') {
           return {

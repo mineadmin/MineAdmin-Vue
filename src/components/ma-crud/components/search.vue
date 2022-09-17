@@ -323,9 +323,17 @@ const dictTrans = (dataIndex, value) => {
   }
 }
 
+const dictColors = (dataIndex, value) => {
+  if (formDictData.value[dataIndex] && formDictData.value[dataIndex].colors) {
+    return formDictData.value[dataIndex].colors[value]
+  } else {
+    return undefined
+  }
+}
+
 init()
 
-defineExpose({ dictTrans, searchForm })
+defineExpose({ dictColors, dictTrans, searchForm })
 </script>
 
 <style scoped lang="less">
