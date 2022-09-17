@@ -204,8 +204,8 @@
                     :title="item.title || '点击上传'"
                     :icon="item.icon || 'icon-plus'"
                     :chunk="item.chunk || false"
-                    :only-url="item.onlyUrl || true"
-                    :only-id="item.onlyId || true"
+                    :only-url="item?.onlyUrl ?? true"
+                    :only-id="item?.onlyId ?? true"
                     :file-type="item.fileType || 'button'"
                     :show-word-limit="['input', 'textarea'].includes(item.formType) ? true : false"
                     :is-echo="item.isEcho"
@@ -408,7 +408,8 @@ const handlerProps = (allowType, item, tmpArr) => {
   if (allowType.includes(item.formType)) {
     data = tmpArr.map(dicItem => {
       const label = dicItem[ (item.dict.props && item.dict.props.label) || 'label'  ]
-      const value = dicItem[ (item.dict.props && item.dict.props.value) || 'code' ]
+      let tmp = dicItem[ (item.dict.props && item.dict.props.value) || 'code' ]
+      const value = typeof tmp == 'boolean' ? tmp + '' : tmp
       tran[value] = label
       return { label, value } 
     })

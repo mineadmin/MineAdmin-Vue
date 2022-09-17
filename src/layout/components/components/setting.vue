@@ -51,6 +51,15 @@
           <a-option value="en">{{ $t('sys.english') }}</a-option>
         </a-select>
       </a-form-item>
+      <a-form-item :label="$t('sys.animation')" :help="$t('sys.animationHelp')">
+        <a-select v-model="form.animation" @change="handleAnimation">
+          <a-option value="ma-fade">{{ $t('sys.animate.fade') }}</a-option>
+          <a-option value="ma-slide-left">{{ $t('sys.animate.sliderLeft') }}</a-option>
+          <a-option value="ma-slide-right">{{ $t('sys.animate.sliderRight') }}</a-option>
+          <a-option value="ma-slide-down">{{ $t('sys.animate.sliderDown') }}</a-option>
+          <a-option value="ma-slide-up">{{ $t('sys.animate.sliderUp') }}</a-option>
+        </a-select>
+      </a-form-item>
       <a-form-item :label="$t('sys.dark')" :help="$t('sys.darkHelp')" v-if="currentSkin === 'Mine'">
         <a-switch v-model="form.mode" @change="handleSettingMode" />
       </a-form-item>
@@ -94,7 +103,8 @@ const form = reactive({
   menuCollapse: appStore.menuCollapse,
   menuWidth: appStore.menuWidth,
   layout: appStore.layout,
-  language: appStore.language
+  language: appStore.language,
+  animation: appStore.animation,
 })
 
 const defaultColorList = reactive([
@@ -121,6 +131,7 @@ const close = () => visible.value = false
 
 const handleLayout = (val) => appStore.changeLayout(val)
 const handleLanguage = (val) => appStore.changeLanguage(val)
+const handleAnimation = (val) => appStore.changeAnimation(val)
 const handleSettingMode = (val) => appStore.toggleMode(val ? 'dark' : 'light')
 const handleSettingTag = (val) => appStore.toggleTag(val)
 const handleMenuCollapse = (val) => appStore.toggleMenu(val)
@@ -137,6 +148,7 @@ const save = async (done) => {
     layout: appStore.layout,
     skin: appStore.skin,
     language: appStore.language,
+    animation: appStore.animation,
     color: appStore.color
   }
 
