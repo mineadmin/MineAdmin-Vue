@@ -16,6 +16,5 @@ export const handlerProps = (allowType, item, tmpArr) => {
   }
   data.tran = tran
   data.colors = colors
-  console.log(data)
   return data
 }
