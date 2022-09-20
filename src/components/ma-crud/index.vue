@@ -428,7 +428,7 @@ watch(() => settingProps.crud.requestParams, (val) => {
 
 watch(() => settingProps.columns, () => {
   requestData()
-})
+}, { deep: true })
 
 watch(() => settingProps.api, () => {
   requestData()
