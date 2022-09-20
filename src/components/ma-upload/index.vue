@@ -291,7 +291,6 @@ const init = () => {
               item.percent = 100
               fileList.value.push(item)
             } else {
-              console.log(item)
               fileList.value.push({ status: 'complete', percent: 100, url: item })
             }
           })
