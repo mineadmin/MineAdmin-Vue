@@ -59,7 +59,7 @@
     operationWidth: 100,
     delete: {
       show: true,
-      api: crontab.deletes, auth: ['setting:crontab:deleteCrontabLog'],
+      api: crontab.deleteLog, auth: ['setting:crontab:deleteCrontabLog'],
     },
     beforeRequest: (params) => {
       params.orderBy = 'created_at'
