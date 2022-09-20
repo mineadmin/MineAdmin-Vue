@@ -201,7 +201,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import commonApi from '@/api/common'
 import file2md5 from 'file2md5'
 import { Message, } from '@arco-design/web-vue'
@@ -212,7 +212,7 @@ import { isArray, isObject, isString } from '@vue/shared'
 const { t } = useI18n()
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
-  modelValue: { type: [ String, Object, Array ], default: () => {} },
+  modelValue: { type: [ String, Array, Object ], default: () => {} },
   title: { type: String, default: 'buttonText', },
   icon: { type: String, default: 'icon-plus'},
   rounded: { type: Boolean, default: false },
@@ -241,7 +241,7 @@ const storageMode = {
   '4': 'QINIU'
 }
 
-onMounted(() => {
+const init = () => {
   nextTick(() => {
     if (props.type === 'image' && props.accept !== '*') {
       accept.value = '.jpg,jpeg,.gif,.png,.svg,.bpm'
@@ -278,7 +278,30 @@ onMounted(() => {
       }
     })
   }
-})
+
+  if (props.type === 'image') {
+    watch(
+      () => props.modelValue,
+      vl => {
+        if (isArray(props.modelValue)) {
+          fileList.value = []
+          props.modelValue.map(item => {
+            if (isObject(item)) {
+              item.status = 'complete'
+              item.percent = 100
+              fileList.value.push(item)
+            } else {
+              console.log(item)
+              fileList.value.push({ status: 'complete', percent: 100, url: item })
+            }
+          })
+        } else if (isString(props.modelValue) || isObject(props.modelValue)) {
+          fileList.value = props.modelValue
+        }
+      }
+    )
+  }
+}
 
 const uploadImageHandler = async (options) => {
   if (! options.fileItem) return
@@ -494,6 +517,7 @@ const removeImage = (idx) => {
   emit('update:modelValue', files)
 }
 
+init()
 </script>
 
 <style scoped lang="less">
@@ -536,4 +560,3 @@ const removeImage = (idx) => {
   border: 1px dashed rgb(var(--primary-6));
 }
 </style>
-
