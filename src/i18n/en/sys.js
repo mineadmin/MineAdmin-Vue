@@ -58,6 +58,15 @@ export default {
     error: 'The verification code is incorrect',
     notice: 'Please enter the verification code'
   },
+  animation: 'Animation',
+  animationHelp: 'Page transition animation effect',
+  animate: {
+    fade: 'The page fades out',
+    sliderLeft: 'The page fades to the left',
+    sliderRight:'The page fades to the right',
+    sliderDown:'The page fades to the down',
+    sliderUp:'The page fades to the up',
+  },
   tags: {
     refresh: 'Refresh',
     closeTag: 'Close curretn tag',

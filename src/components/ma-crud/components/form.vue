@@ -230,8 +230,8 @@
                     :title="item.title || '点击上传'"
                     :icon="item.icon || 'icon-plus'"
                     :chunk="item.chunk || false"
-                    :only-url="item.onlyUrl || true"
-                    :only-id="item.onlyId || true"
+                    :only-url="item?.onlyUrl ?? true"
+                    :only-id="item?.onlyId ?? true"
                     :file-type="item.fileType || 'button'"
                     :show-word-limit="['input', 'textarea'].includes(item.formType) ? true : false"
                     :is-echo="item.isEcho"
@@ -329,12 +329,12 @@ watch(
   },
   { deep: true }
 )
-const submit = (done) => {
+const submit = async (done) => {
   crudForm.value.validate()
   .then(async result => {
     if (result) {
       done(false)
-      return
+      return false
     }
     let response
     if (currentAction.value === 'add') {
@@ -349,7 +349,7 @@ const submit = (done) => {
     if ( response.code === 200 ) {
       Message.success(response.message || `${actionTitle.value}成功！`)
       emit('success', response)
-      done()
+      done(true)
     } else {
       Message.error(response.message || `${actionTitle.value}失败！`)
       emit('error', response)
@@ -357,7 +357,6 @@ const submit = (done) => {
     }
   })
   .catch()
-  //.finally( done(false) )
 }
 const open = () => {
   nextTick(() =>{
