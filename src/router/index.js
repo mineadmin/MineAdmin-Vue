@@ -29,7 +29,7 @@ router.beforeEach(async (to, from, next) => {
       return
     }
 
-    if (! userStore.user) {
+    if (! userStore.user && userStore.user == undefined ) {
       const data = await userStore.requestUserInfo()
       if (! data) {
         userStore.clearToken()
