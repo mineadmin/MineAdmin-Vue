@@ -52,7 +52,7 @@
         <a-button
           type="outline"
           class="w-4/5"
-          @click="openPage('https://doc.mineadmin.com/doc/other/wenti.html')"
+          @click="openPage('https://doc.mineadmin.com/faqs/')"
         >常见问题</a-button>
       </a-card>
     </div>
