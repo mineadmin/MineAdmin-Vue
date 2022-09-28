@@ -330,7 +330,7 @@ watch(
   { deep: true }
 )
 const submit = async (done) => {
-  crudForm.value.validate()
+  return crudForm.value.validate()
   .then(async result => {
     if (result) {
       done(false)
@@ -356,7 +356,6 @@ const submit = async (done) => {
       done(false)
     }
   })
-  .catch()
 }
 const open = () => {
   nextTick(() =>{
