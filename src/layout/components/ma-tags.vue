@@ -2,18 +2,18 @@
   <div class="flex justify-between tags-container" ref="containerDom" v-if="appStore.tag">
     <div class="menu-tags-wrapper" ref="scrollbarDom" :class="{ 'tag-pn': tagShowPrevNext }">
       <div class="tags" ref="tags">
-        <a v-for="tag in tagStore.tags" :key="tag.name" @contextmenu.prevent="openContextMenu($event, tag)"
-          :class="route.name == tag.name ? 'active' : ''"
+        <a v-for="tag in tagStore.tags" :key="tag.path" @contextmenu.prevent="openContextMenu($event, tag)"
+          :class="route.path == tag.path ? 'active' : ''"
           @click="tagJump(tag)">
           {{ tag.customTitle ? tag.customTitle : $t('menus.' + tag.name).indexOf('.') > 0 ? tag.title : $t('menus.' + tag.name) }}
           <icon-close class="tag-icon" v-if="!tag.affix" @click.stop="closeTag(tag)" />
         </a>
       </div>
       <span class="ma-tag-prev" v-if="tagShowPrevNext">
-        <IconLeft :size="20" class="tag-scroll-icon" @click="handleScroll(-200)" />
+        <IconLeft :size="20" class="tag-scroll-icon" @click="handleScroll(-500)" />
       </span>
       <span class="ma-tag-next" v-if="tagShowPrevNext">
-        <IconRight :size="20" class="tag-scroll-icon" @click="handleScroll(200)" />
+        <IconRight :size="20" class="tag-scroll-icon" @click="handleScroll(500)" />
       </span>
     </div>
     <a-trigger class="ma-tags-more-dropdown" :popup-translate="[-65, -6]" :show-arrow="true" trigger="hover">
@@ -60,8 +60,8 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, nextTick, h } from 'vue'
-import { useAppStore, useTagStore, useKeepAliveStore } from '@/store'
+import { ref, watch, onMounted, nextTick } from 'vue'
+import { useAppStore, useTagStore } from '@/store'
 import { useRoute, useRouter } from 'vue-router'
 import { addTag, closeTag, refreshTag } from '@/utils/common'
 import Sortable from "sortablejs"
@@ -73,17 +73,12 @@ const router = useRouter()
 const appStore = useAppStore()
 const tagStore = useTagStore()
 const tags = ref(null)
-const containerDom = ref(null)
-const scrollbarDom = ref(null)
 const tagShowPrevNext = ref(false)
 const contextMenuVisible = ref(false)
 const contextMenuItem = ref(null)
 const left = ref(0)
 const top = ref(0)
-const notAddTagList = [
-  'login'
-]
-const onceFlag = ref(true)
+const notAddTagList = [ 'login' ]
 watch(
   () => appStore.tag,
   r => {
@@ -108,26 +103,19 @@ watch(
     if (!notAddTagList.includes(r.name)) {
       addTag({
         name: r.name,
-        path: r.path,
+        path: r.fullPath,
         affix: r.meta.affix,
-        title: r.meta.title,
-        query: r.query
+        title: r.meta.title
       })
-      // nextTick(() => {
-      //   if (tags.value && tags.value.scrollWidth > tags.value.clientWidth) {
-      //     tags.value.querySelector('.active').scrollIntoView()
-      //     if (appStore.tag && onceFlag.value) {
-      //       Message.info({
-      //         content: "打开页面数量较多，为了流畅的使用系统可关闭暂时不用的功能!",
-      //         icon: () => h(IconFaceFrownFill)
-      //       })
-      //       onceFlag.value = false
-      //     }
-      //   }
-      // })
     }
-  },
-  { deep: true }
+
+    nextTick(() => {
+      if ( tags.value && tags.value.scrollWidth > tags.value.clientWidth ) {
+        //确保当前标签在可视范围内
+        tags.value.querySelector('.active').scrollIntoView()
+      }
+    })
+  }, { deep: true }
 )
 
 watch(
@@ -148,7 +136,7 @@ watch(
 )
 
 const tagJump = tag => {
-  router.push({ name: tag.name, query: tag.query || {} })
+  router.push({ path: tag.path })
 }
 
 const openContextMenu = (e, tag) => {
@@ -174,8 +162,8 @@ const closeContextMenu = () => {
 const contextMenuRefreshTag = () => {
   const tag = contextMenuItem.value
   contextMenuVisible.value = false
-  if (route.name != tag.name) {
-    router.push({ name: tag.name, query: tag.query || {} })
+  if (route.path != tag.path) {
+    router.push({ path: tag.path })
   }
   refreshTag()
 }
@@ -186,7 +174,7 @@ const tagToolRefreshTag = () => {
 const tagToolCloseCurrentTag = () => {
   const list = [...tagStore.tags]
   list.forEach(tag => {
-    if (tag.affix || route.name == tag.name) {
+    if (tag.affix || route.path == tag.path) {
       closeTag(tag)
     }
   })
@@ -200,7 +188,7 @@ const contextMenuCloseTag = () => {
 const tagToolCloseOtherTag = () => {
   const list = [...tagStore.tags]
   list.forEach(tag => {
-    if (tag.affix || route.name == tag.name) {
+    if (tag.affix || route.path == tag.path) {
       return true
     } else {
       closeTag(tag)
@@ -210,12 +198,12 @@ const tagToolCloseOtherTag = () => {
 }
 const contextMenuCloseOtherTag = () => {
   const currentTag = contextMenuItem.value
-  if (route.name != currentTag.name) {
-    router.push({ name: currentTag.name, query: currentTag.query || {} })
+  if (route.path != currentTag.path) {
+    router.push({ path: currentTag.path })
   }
   const list = [...tagStore.tags]
   list.forEach(tag => {
-    if (tag.affix || currentTag.name == tag.name) {
+    if (tag.affix || currentTag.path == tag.path) {
       return true
     } else {
       closeTag(tag)

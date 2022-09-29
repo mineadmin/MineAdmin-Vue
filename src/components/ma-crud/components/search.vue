@@ -286,14 +286,6 @@ const handlerCascader = (val, column) => {
           const data   = Object.assign(dict.data || {}, temp)
           response = await requestDict(dict.url, dict.method || 'GET', params || {}, data || {})
         }
-        // 原始数据格式的
-        if (response.data && response.data.data && response.status === 200) {
-          formDictData.value[name] = response.data.data
-        } else {
-          Message.error('字典联动请求失败：' + name)
-          console.error(response)
-        }
-
         if (response.data && response.code === 200) {
           formDictData.value[name] = response.data.map(dicItem => {
             return {
@@ -301,6 +293,9 @@ const handlerCascader = (val, column) => {
               'value': dicItem[ (dict.props && dict.props.value) || 'value' ]
             } 
           })
+        } else {
+          Message.error('字典联动请求失败：' + name)
+          console.error(response)
         }
       }
     })

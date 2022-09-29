@@ -13,7 +13,7 @@
       <router-view v-slot="{ Component }">
         <transition :name="appStore.animation" mode="out-in">
           <keep-alive :include="keepStore.keepAlives">
-            <component :is="Component" :key="$route.name" v-if="keepStore.show" />
+            <component :is="Component" :key="$route.fullPath" v-if="keepStore.show" />
           </keep-alive>
         </transition>
       </router-view>
