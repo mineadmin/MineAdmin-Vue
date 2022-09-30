@@ -186,10 +186,9 @@
         </slot>
       </div>
     </div>
-    <div class="_crud-footer mt-3 text-right" ref="crudFooterRef">
+    <div class="_crud-footer mt-3 text-right" ref="crudFooterRef" v-if="total > 0 && openPagination && !settingProps.pagination">
       <a-pagination
         :total="total"
-        v-if="total > 0 && openPagination && !settingProps.pagination"
         show-total show-jumper show-page-size
         :page-size-options="pageSizeOption"
         @page-size-change="pageSizeChangeHandler"
@@ -441,14 +440,14 @@ watch(
   () => {
     return {
       pageLayout: defaultCrud.value.pageLayout,
-      total: total.value,
+      openPagination: openPagination.value,
     }
   },
   (val, oldValue) => {
-    if (val.pageLayout == 'fixed' && val.total != oldValue.total) {
+    if (val.pageLayout == 'fixed') {
       nextTick(() => {
         headerHeight.value = crudHeaderRef.value.offsetHeight
-        settingFixedPage(val.total)
+        settingFixedPage(val.openPagination)
       })
     }
   }
@@ -588,7 +587,11 @@ const toggleSearch = () => {
   const dom = crudHeaderRef.value.style
   dom.display = showSearch.value ? 'none' : 'block'
   showSearch.value = ! showSearch.value
-  headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? 24 : crudHeaderRef.value.offsetHeight + 32
+  if (openPagination.value) {
+    headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? 24 : crudHeaderRef.value.offsetHeight + 32
+  } else {
+    headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? -8 : crudHeaderRef.value.offsetHeight
+  }
   defaultCrud.value.pageLayout == 'fixed' && settingFixedPage()
 }
 
@@ -795,9 +798,9 @@ onMounted(() => {
   document.querySelector('.arco-table-body').className += ' customer-scrollbar'
 })
 
-const settingFixedPage = (pageTotal = 0) => {
+const settingFixedPage = (openPage = false) => {
   const workAreaHeight = document.querySelector('.work-area').offsetHeight
-  const tempHeight = headerHeight.value + 120 + (pageTotal > 0 ? 32 : 0)
+  const tempHeight = headerHeight.value + 120 + (openPage ? 32 : -12)
   const tableHeight = workAreaHeight - tempHeight
   crudContentRef.value.style.height = tableHeight + 'px'
 }
