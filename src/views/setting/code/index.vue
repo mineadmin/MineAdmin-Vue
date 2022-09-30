@@ -11,8 +11,8 @@
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
     <ma-crud :crud="crud" :columns="columns" ref="crudRef" @selection-change="selectionChange">
-      <!-- 操作前置扩展 -->
-      <template #tableButtons>
+      <!-- 表格按钮后置扩展 -->
+      <template #tableAfterButtons>
         <a-button
           v-auth="['setting:code:generate']"
           type="outline"

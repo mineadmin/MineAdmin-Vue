@@ -23,8 +23,8 @@
     <div class="lg:w-10/12 w-full lg:ml-4 mt-5 lg:mt-0">
       <!-- CRUD 组件 -->
       <ma-crud :crud="crud" :columns="columns" ref="crudRef">
-        <!-- 表格按钮扩展 -->
-        <template #tableButtons>
+        <!-- 表格按钮后置扩展 -->
+        <template #tableAfterButtons>
           <a-input-group v-if="mode === 'window'">
             <a-button @click="selectAll"><icon-select-all /> 全选</a-button>
             <a-button @click="flushAll"><icon-eraser /> 清除</a-button>

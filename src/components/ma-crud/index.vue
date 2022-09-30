@@ -34,70 +34,72 @@
     <div class="_crud-content">
       <div class="opartion-tools lg:flex justify-between mb-3">
         <a-space class="lg:flex block lg:inline-block" >
-
-          <a-button
-            v-if="defaultCrud.add.show"
-            v-auth="defaultCrud.add.auth || []"
-            v-role="defaultCrud.add.role || []"
-            @click="addAction" type="primary"
-            class="w-full lg:w-auto mt-2 lg:mt-0"
-          ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
-
-          <a-popconfirm
-            content="确定要删除数据吗?"
-            position="bottom"
-            @ok="deletesMultipleAction"
-            v-if="defaultCrud.delete.show"
-          >
+          <slot name="tableBeforeButtons"></slot>
+          <slot name="tableButtons">
             <a-button
-              v-auth="defaultCrud.delete.auth || []"
-              v-role="defaultCrud.delete.role || []"
-              type="primary" status="danger"
+              v-if="defaultCrud.add.show"
+              v-auth="defaultCrud.add.auth || []"
+              v-role="defaultCrud.add.role || []"
+              @click="addAction" type="primary"
               class="w-full lg:w-auto mt-2 lg:mt-0"
-            ><icon-delete /> {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-button>
-          </a-popconfirm>
+            ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
 
-          <a-popconfirm
-            content="确定要恢复数据吗?"
-            position="bottom"
-            @ok="recoverysMultipleAction"
-            v-if="defaultCrud.recovery.show && isRecovery"
-          >
+            <a-popconfirm
+              content="确定要删除数据吗?"
+              position="bottom"
+              @ok="deletesMultipleAction"
+            >
+              <a-button
+                v-if="defaultCrud.delete.show"
+                v-auth="defaultCrud.delete.auth || []"
+                v-role="defaultCrud.delete.role || []"
+                type="primary" status="danger"
+                class="w-full lg:w-auto mt-2 lg:mt-0"
+              ><icon-delete /> {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-button>
+            </a-popconfirm>
+
+            <a-popconfirm
+              content="确定要恢复数据吗?"
+              position="bottom"
+              @ok="recoverysMultipleAction"
+            >
+              <a-button
+                v-if="defaultCrud.recovery.show && isRecovery"
+                v-auth="defaultCrud.recovery.auth || []"
+                v-role="defaultCrud.recovery.role || []"
+                type="primary" status="success"
+                class="w-full lg:w-auto mt-2 lg:mt-0"
+              ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-button>
+            </a-popconfirm>
+
             <a-button
-              v-auth="defaultCrud.recovery.auth || []"
-              v-role="defaultCrud.recovery.role || []"
-              type="primary" status="success"
+              v-if="defaultCrud.import.show"
+              v-auth="defaultCrud.import.auth || []"
+              v-role="defaultCrud.import.role || []"
+              @click="importAction"
               class="w-full lg:w-auto mt-2 lg:mt-0"
-            ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-button>
-          </a-popconfirm>
+            ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
 
-          <a-button
-            v-if="defaultCrud.import.show"
-            v-auth="defaultCrud.import.auth || []"
-            v-role="defaultCrud.import.role || []"
-            @click="importAction"
-            class="w-full lg:w-auto mt-2 lg:mt-0"
-          ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
+            <a-button
+              v-if="defaultCrud.export.show"
+              v-auth="defaultCrud.export.auth || []"
+              v-role="defaultCrud.export.role || []"
+              @click="exportAction"
+              class="w-full lg:w-auto mt-2 lg:mt-0"
+            ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
 
-          <a-button
-            v-if="defaultCrud.export.show"
-            v-auth="defaultCrud.export.auth || []"
-            v-role="defaultCrud.export.role || []"
-            @click="exportAction"
-            class="w-full lg:w-auto mt-2 lg:mt-0"
-          ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
-
-          <a-button
-            type="secondary"
-            @click="handlerExpand"
-            v-if="defaultCrud.isExpand"
-            class="w-full lg:w-auto mt-2 lg:mt-0"
-          >
-            <icon-expand v-if="! expandState" />
-            <icon-shrink v-else />
-            {{ expandState ? ' 折叠' : ' 展开' }}
-          </a-button>
-          <slot name="tableButtons"></slot>
+            <a-button
+              type="secondary"
+              @click="handlerExpand"
+              v-if="defaultCrud.isExpand"
+              class="w-full lg:w-auto mt-2 lg:mt-0"
+            >
+              <icon-expand v-if="! expandState" />
+              <icon-shrink v-else />
+              {{ expandState ? ' 折叠' : ' 展开' }}
+            </a-button>
+          </slot>
+          <slot name="tableAfterButtons"></slot>
         </a-space>
         <a-space class="lg:mt-0 mt-2" v-if="defaultCrud.showTools">
           <slot name="tools"></slot>
