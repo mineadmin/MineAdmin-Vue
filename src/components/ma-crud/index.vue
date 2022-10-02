@@ -193,7 +193,7 @@
         :page-size-options="pageSizeOption"
         @page-size-change="pageSizeChangeHandler"
         @change="pageChangeHandler"
-        :current="requestParams[config.request.page]"
+        v-model:current="requestParams[config.request.page]"
         :page-size="requestParams[config.request.pageSize]"
         style="display: inline-flex"
       />
@@ -569,7 +569,7 @@ const searchHandler = (formData) => {
   if (settingProps.crud.beforeSearch && isFunction(settingProps.crud.beforeSearch)) {
     settingProps.crud.beforeSearch(requestParams.value)
   }
-  refresh()
+  pageChangeHandler(1)
 }
 
 const pageSizeChangeHandler = (pageSize) => {
