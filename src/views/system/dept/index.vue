@@ -64,7 +64,7 @@
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 200,
-    add: { show: true, api: dept.save, auth: ['system:dept:add'] },
+    add: { show: true, api: dept.save, auth: ['system:dept:save'] },
     edit: { show: true, api: dept.update, auth: ['system:dept:update'] },
     delete: {
       show: true,
