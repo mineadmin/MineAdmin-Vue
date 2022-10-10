@@ -46,7 +46,7 @@
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 160,
-    add: { show: true, api: appGroup.save, auth: ['system:appGroup:add'] },
+    add: { show: true, api: appGroup.save, auth: ['system:appGroup:save'] },
     edit: { show: true, api: appGroup.update, auth: ['system:appGroup:update'] },
     delete: {
       show: true,

@@ -66,7 +66,7 @@
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 240,
-    add: { show: true, api: dictType.save, auth: ['system:dict:add'] },
+    add: { show: true, api: dictType.save, auth: ['system:dict:save'] },
     edit: { show: true, api: dictType.update, auth: ['system:dict:update'] },
     delete: {
       show: true,

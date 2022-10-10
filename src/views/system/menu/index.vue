@@ -41,7 +41,7 @@
         <a-link
           @click="openAdd(record.id)"
           v-if=" record.type === 'M' && ! isRecovery "
-          v-auth="['system:menu:add']"
+          v-auth="['system:menu:save']"
         ><icon-plus /> 新增</a-link>
       </template>
     </ma-crud>
@@ -92,7 +92,7 @@
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 200,
-    add: { show: true, api: menu.save, auth: ['system:menu:add'] },
+    add: { show: true, api: menu.save, auth: ['system:menu:save'] },
     edit: { show: true, api: menu.update, auth: ['system:menu:update'] },
     delete: {
       show: true,

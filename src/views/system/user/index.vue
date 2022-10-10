@@ -163,7 +163,7 @@
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 200,
-    add: { show: true, api: user.save, auth: ['system:user:add'] },
+    add: { show: true, api: user.save, auth: ['system:user:save'] },
     edit: { show: true, api: user.update, auth: ['system:user:update'] },
     delete: {
       show: true,

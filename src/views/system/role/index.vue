@@ -100,7 +100,7 @@
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 320,
-    add: { show: true, api: role.save, auth: ['system:role:add'] },
+    add: { show: true, api: role.save, auth: ['system:role:save'] },
     edit: { show: true, api: role.update, auth: ['system:role:update'] },
     delete: {
       show: true,
