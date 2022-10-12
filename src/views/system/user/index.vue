@@ -160,10 +160,11 @@
     recycleApi: user.getRecyclePageList,
     showIndex: false,
     searchLabelWidth: '75px',
+    pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 200,
-    add: { show: true, api: user.save, auth: ['system:user:add'] },
+    add: { show: true, api: user.save, auth: ['system:user:save'] },
     edit: { show: true, api: user.update, auth: ['system:user:update'] },
     delete: {
       show: true,
@@ -184,7 +185,7 @@
       type: 'image', rounded: true, span: 24, labelWidth: '86px'
     },
     { 
-      title: '账户', dataIndex: 'username', width: 130, search: true,
+      title: '账户', dataIndex: 'username', width: 130, search: true, editDisabled: true,
       rules: [{ required: true, message: '账户必填' }], span: 12
     },
     {
@@ -193,7 +194,7 @@
     },
     { 
       title: '密码', dataIndex: 'password', hide: true, autocomplete: 'off',
-      addDefaultValue: '123456', editDefaultValue: '', type: 'password', 
+      addDefaultValue: '123456', editDefaultValue: '', editDisabled: true, type: 'password', 
       span: 12, addRules: [{ required: true, message: '密码必填' }],
     },
     { title: '昵称', dataIndex: 'nickname', width: 120, span: 12 },
