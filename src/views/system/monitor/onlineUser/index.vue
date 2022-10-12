@@ -37,6 +37,7 @@
     showIndex: false,
     operationColumn: true,
     operationWidth: 120,
+    pageLayout: 'fixed',
   })
 
   const columns = reactive([

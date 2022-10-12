@@ -110,6 +110,7 @@
     api: module.getPageList,
     showIndex: false,
     searchLabelWidth: '75px',
+    pageLayout: 'fixed',
     operationColumn: true,
     operationWidth: 240,
     add: { show: true, api: module.save, auth: ['setting:module:save'] },

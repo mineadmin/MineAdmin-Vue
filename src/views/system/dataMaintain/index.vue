@@ -79,6 +79,7 @@ const tableStruct = (name) => {
 const crud = reactive({
   api: dataMaintain.getPageList,
   searchLabelWidth: '75px',
+  pageLayout: 'fixed',
   showIndex: false,
   rowSelection: { showCheckedAll: true, key: 'name' },
   operationColumn: true,
