@@ -600,14 +600,15 @@ const tableSetting = () => {
 }
 
 const requestSuccess = async response => {
-  defaultCrud.value.dataCompleteRefresh && await refresh()
-  if (reloadColumn.value) {
-    reloadColumn.value = false
-    nextTick(() => {
-      reloadColumn.value = true
-    })
+  if (response && response.code && response.code == 200) {
+    defaultCrud.value.dataCompleteRefresh && await refresh()
+    if (reloadColumn.value) {
+      reloadColumn.value = false
+      nextTick(() => {
+        reloadColumn.value = true
+      })
+    }
   }
-
 }
 
 const getIndex = (rowIndex) => {
