@@ -109,12 +109,7 @@
               {{ get(record, row.dataIndex) }}
             </template>
             <template v-else-if="row.formType === 'upload'">
-              <a-image
-                class="list-image"
-                width="40px"
-                height="40px"
-                :src="fileUrl"
-              />
+              <a-link @click="imageSee(row, record)"><icon-image /> 查看图片</a-link>
             </template>
             <template v-else>{{ record[row.dataIndex] }}</template>
           </slot>
@@ -133,7 +128,7 @@ import CustomRender from '../js/custom-render'
 import tool from '@/utils/tool'
 import commonApi from '@/api/common'
 
-const emit = defineEmits(['refresh'])
+const emit = defineEmits(['refresh', 'showImage'])
 const props = defineProps({
   options: Object,
   searchRef: Object,
@@ -142,6 +137,42 @@ const props = defineProps({
   params: Object,
   isRecovery: Boolean,
 })
+
+const storageMode = {
+  '1': 'LOCAL',
+  '2': 'OSS',
+  '3': 'COS',
+  '4': 'QINIU'
+}
+
+const imageSee = async (row, record) => {
+  if (row.returnType) {
+    if (! ['id', 'hash'].includes(row.returnType)) {
+      Message.info('该图片无法查看')
+      return
+    }
+    Message.info('获取图片中，请稍等...')
+    const api = row.returnType == 'id' ? commonApi.getFileInfoById : commonApi.getFileInfoByHash
+    const result  = res?.success ?? false
+    if (! result) {
+      Message.info('图片信息无法获取')
+      return
+    }
+
+    const isImage = res.data.mime_type.indexOf('image') > -1
+    result && emit(
+      'showImage',
+      isImage ? tool.attachUrl(res.data.url, storageMode[res.data.storage_mode]) : 'not-image.png'
+    )
+
+  } else {
+    if (! record[row.dataIndex]) {
+      Message.info('无图片')
+      return
+    }
+    emit('showImage', record[row.dataIndex] ?? 'not-image.png')
+  }
+}
 
 const getTagColor = (row, record) => {
   return props.searchRef.dictColors( row.dataIndex, (row.dataIndex.indexOf('.') > -1 ) ? get(record, row.dataIndex) : record[row.dataIndex] )
