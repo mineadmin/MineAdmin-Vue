@@ -117,7 +117,8 @@
   const props = defineProps({
     modelValue: { type: [ String, Array ] },
     multiple: { type: Boolean, default: true },
-    onlyUrl: { type: Boolean, default: true }
+    onlyData: { type: Boolean, default: true },
+    returnType: { type: String, default: 'url'},
   })
   
   onMounted(async () => {
@@ -165,8 +166,8 @@
   const selectFile = (item, index) => {
 
     if ( ! props.multiple && selecteds.value ) {
-      if (props.onlyUrl && item.url != selecteds.value) return
-      if (! props.onlyUrl && item.id != selecteds.value.id) return
+      if (props.onlyData && item.url != selecteds.value) return
+      if (! props.onlyData && item.id != selecteds.value.id) return
     }
 
     const children = rl.value.children
@@ -178,8 +179,8 @@
       children[index].className = className
       if (props.multiple) {
         selecteds.value.map((file, idx) => {
-          if (props.onlyUrl && file == item.url) selecteds.value.splice(idx, 1)
-          if (! props.onlyUrl && file.id == item.id) selecteds.value.splice(idx, 1)
+          if (props.onlyData && file == item.url) selecteds.value.splice(idx, 1)
+          if (! props.onlyData && file.id == item.id) selecteds.value.splice(idx, 1)
         })
       } else {
         selecteds.value = ''
@@ -187,9 +188,9 @@
     } else {
       children[index].className = className + ' active'
       if (props.multiple) {
-        selecteds.value.push(props.onlyUrl ? item?.url : item)
+        selecteds.value.push(props.onlyData ? item[props.returnType] : item)
       } else {
-        selecteds.value = props.onlyUrl ? item?.url : item
+        selecteds.value = props.onlyData ? item[props.returnType] : item
       }
     }
   }

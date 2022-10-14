@@ -225,7 +225,8 @@ const props = defineProps({
   tip: { type: String, default: undefined },
   type: { type: String, default: 'image' },
   accept: { type: String, default: '*' },
-  onlyUrl: { type: Boolean, default: true },
+  onlyData: { type: Boolean, default: true },
+  returnType: { type: String, default: 'url' },
   fileType: { type: String, default: 'button' },
   showList: { type: Boolean, default: true },
 })
@@ -319,7 +320,7 @@ const uploadImageHandler = async (options) => {
   if (result) {
     result.url = tool.attachUrl(result.url, storageMode[result.storage_mode])
     if (! props.multiple) {
-      fileList.value = props.onlyUrl ? result.url : result
+      fileList.value = props.onlyData ? result[props.returnType] : result
       emit('update:modelValue', fileList.value)
       currentItem.value.percent = 99
       setTimeout(() => {
@@ -338,7 +339,7 @@ const uploadImageHandler = async (options) => {
       }, 1200)
       let files = []
       fileList.value.map(item => {
-        files.push(props.onlyUrl ? item.url : item)
+        files.push(props.onlyData ? item[props.returnType] : item)
       })
       emit('update:modelValue', files)
     }
@@ -360,12 +361,12 @@ const uploadFileHandler = async (options) => {
       let files = []
       fileList.value.push(res)
       fileList.value.map(item => {
-        files.push(props.onlyUrl && item.url ? item.url : item)
+        files.push(props.onlyData && item[props.returnType] ? item[props.returnType] : item)
       })
       emit('update:modelValue', files)
     } else {
       fileList.value = res
-      emit('update:modelValue', props.onlyUrl && res.url ? res.url : res)
+      emit('update:modelValue', props.onlyData && res[props.returnType] ? res[props.returnType] : res)
     }
   })
 }
@@ -410,12 +411,12 @@ const chunkUpload = async (options) => {
           fileList.value[idx].res = res.data
           const files = []
           fileList.value.map(item => {
-            item.percent === 1 && files.push(props.onlyUrl ? item.res.url : item.res)
+            item.percent === 1 && files.push(props.onlyData ? item.res[props.returnType] : item.res)
           })
           emit('update:modelValue', files)
         } else {
           fileList.value.percent = 1
-          emit('update:modelValue', props.onlyUrl ? res.data.url : res.data)
+          emit('update:modelValue', props.onlyData ? res.data[props.returnType] : res.data)
         }
         return
       }
@@ -469,7 +470,7 @@ const removeChunkFile = (file = null) => {
       if (file.uid === item.uid) {
         fileList.value.splice(idx, 1)
       } else if (item.res) {
-        files.push(props.onlyUrl ? item.res.url : item.res)
+        files.push(props.onlyData ? item.res[props.returnType] : item.res)
       }
     })
     emit('update:modelValue', files)
@@ -487,7 +488,7 @@ const removeFile = async (fileItem) => {
         if (item.uid === fileItem.uid) fileList.value.splice(idx, 1)
       })
       fileList.value.map( item => {
-        files.push(props.onlyUrl && item.url ? item.url : item)
+        files.push(props.onlyData && item[props.returnType] ? item[props.returnType] : item)
       })
       emit('update:modelValue', files)
       return true
