@@ -97,6 +97,7 @@
           </template>
           <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else>
             <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
+            
             <template v-if="row.dict && row.dict.translation">
               <a-tag v-if="row.dict.tagColors" :color="getTagColor(row, record)">
                 {{ getDataIndex(row, record) }}
@@ -107,6 +108,14 @@
             <template v-else-if="row.dataIndex && row.dataIndex.indexOf('.') !== -1">
               {{ get(record, row.dataIndex) }}
             </template>
+            <template v-else-if="row.formType === 'upload'">
+              <a-image
+                class="list-image"
+                width="40px"
+                height="40px"
+                :src="fileUrl"
+              />
+            </template>
             <template v-else>{{ record[row.dataIndex] }}</template>
           </slot>
         </template>
@@ -116,10 +125,13 @@
 </template>
 
 <script setup>
+import { ref, watch } from 'vue'
 import { Message } from '@arco-design/web-vue'
 import config from '@/config/crud'
 import { isFunction, get } from 'lodash'
 import CustomRender from '../js/custom-render'
+import tool from '@/utils/tool'
+import commonApi from '@/api/common'
 
 const emit = defineEmits(['refresh'])
 const props = defineProps({
@@ -180,3 +192,10 @@ const refresh = () => {
   emit('refresh')
 }
 </script>
+
+<style scoped>
+:deep(.arco-image-img) {
+  object-fit: contain;
+  background-color: var(--color-fill-4);
+}
+</style>
