@@ -306,6 +306,7 @@
               <template #isEdit="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_edit" /></template>
               <template #isList="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_list" /></template>
               <template #isQuery="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_query" /></template>
+              <template #isSort="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_sort" /></template>
               <!-- end -->
               <!-- 查询方式 -->
               <template #queryType="{ rowIndex }">
@@ -314,7 +315,7 @@
               <!-- 组件 -->
               <template #viewType="{ record, rowIndex }">
                 <a-space>
-                  <a-select v-model="form.columns[rowIndex].view_type" :style="{ width: '180px' }" :options="vars.viewComponent" allow-clear></a-select>
+                  <a-select v-model="form.columns[rowIndex].view_type" :style="{ width: '160px' }" :options="vars.viewComponent" allow-clear></a-select>
                   <a-link
                     v-if="! notNeedSettingComponents.includes(record.view_type)"
                     @click="settingComponentRef.open(record)"
@@ -506,7 +507,6 @@ import SettingComponent from './settingComponent.vue'
 
 // 导入变量
 import * as vars from '../js/vars.js'
-import { findProp } from '@vue/compiler-core'
 
 const record = ref({})
 const loading = ref(true)
@@ -602,6 +602,7 @@ const init = () => {
       item.is_edit = item.is_edit === 2
       item.is_list = item.is_list === 2
       item.is_query = item.is_query === 2
+      item.is_sort = item.is_sort === 2
       form.value.columns.push(item)
     })
   })
