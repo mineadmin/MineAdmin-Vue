@@ -19,13 +19,13 @@
         </a-button>
       </a-space>
       <a-card v-for="(data, index) in form.datas" :key="index"
-        :class="`mt-3 grid grid-cols-1 lg:grid-cols-${(!props.options.layout || props.options.layout === 'auto') ? (props.options.cols || 1) : 1} `">
+        :class="`mt-3 grid grid-cols-1 lg:grid-cols-${ (props.options?.layout ?? 'auto') ? ( props.options?.cols ?? 1 ) : 1}`">
         <a-space class="mb-2">
           <a-button status="danger" size="small" @click="deleteCurrent(index)">
             <icon-close /> 删除
           </a-button>
         </a-space>
-        <template v-if="(! props.options.layout || props.options.layout === 'auto')">
+        <template v-if="(props.options?.layout ?? 'auto')">
           <template v-for="(item, idx) in rows[index]" :key="idx">
             <a-form-item
               v-show="formItemShow"

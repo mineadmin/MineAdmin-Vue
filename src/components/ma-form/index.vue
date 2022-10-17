@@ -13,11 +13,11 @@
       <a-form
         ref="formRef"
         :model="form"
-        :label-align="props.options.labelAlign || 'right'"
+        :label-align="props.options?.labelAlign ?? 'right'"
         @submit="submit"
       >
-        <div :class="`grid grid-cols-1 lg:grid-cols-${ (props.options.layout || props.options.layout === 'auto') ? ( props.options.cols || 1 ) : 1}`">
-          <template v-if="(! props.options.layout || props.options.layout === 'auto')">
+        <div :class="`grid grid-cols-1 lg:grid-cols-${ (props.options?.layout ?? 'auto') ? ( props.options?.cols ?? 1 ) : 1}`">
+          <template v-if="(!props.options?.layout ?? 'auto')">
             <template v-for="(item, index) in columns" :key="index">
               <a-form-item
                 v-show="(typeof item.display == 'undefined' || item.display === true)"
