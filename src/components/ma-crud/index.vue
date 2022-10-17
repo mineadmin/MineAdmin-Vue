@@ -157,6 +157,7 @@
                 :isRecovery="isRecovery"
                 :params="requestParams"
                 @refresh="() => refresh()"
+                @showImage="showImage"
               >
                 <template #operationBeforeExtend="{ record, column, rowIndex }">
                   <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
@@ -217,6 +218,7 @@
       v-model="defaultCrud.import"
     />
 
+    <a-image-preview :src="imgUrl" v-model:visible="imgVisible" />
   </a-layout-content>
 </template>
 
@@ -240,6 +242,8 @@ import _ from 'lodash'
 const loading = ref(true)
 const reloadColumn = ref(true)
 const openPagination = ref(false)
+const imgVisible = ref(false)
+const imgUrl = ref('not-image.png')
 const pageSizeOption = ref([10, 20, 30, 50, 100])
 const total = ref(0)
 const requestParams = ref({})
@@ -476,6 +480,11 @@ const getSlot = (cls = []) => {
     }
   })
   return sls
+}
+
+const showImage = url => {
+  imgUrl.value = url
+  imgVisible.value = true
 }
 
 const getSearchSlot = () => {
