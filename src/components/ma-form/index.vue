@@ -16,7 +16,7 @@
         :label-align="props.options.labelAlign || 'right'"
         @submit="submit"
       >
-        <div :class="`grid grid-cols-1 lg:grid-cols-${ (props.options.layout ||  props.options.layout === 'auto') ? ( props.options.cols || 1 ) : 1}`">
+        <div :class="`grid grid-cols-1 lg:grid-cols-${ (props.options.layout || props.options.layout === 'auto') ? ( props.options.cols || 1 ) : 1}`">
           <template v-if="(! props.options.layout || props.options.layout === 'auto')">
             <template v-for="(item, index) in columns" :key="index">
               <a-form-item
@@ -470,7 +470,7 @@
             </template>
           </a-row>
         </div>
-        <div class="text-center mt-5" v-if="props.options.showButtons">
+        <div class="text-center mt-5" v-if="props.options?.showButtons ?? true">
           <a-space size="large">
             <a-button html-type="submit" type="primary">
               <icon-check /> {{ props.options.submitText || '提交' }}
