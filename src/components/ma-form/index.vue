@@ -12,12 +12,13 @@
     <a-spin :loading="formLoading" tip="加载中..." class="w-full">
       <a-form
         ref="formRef"
+        v-bind="$attrs"
         :model="form"
         :label-align="props.options?.labelAlign ?? 'right'"
         @submit="submit"
       >
-        <div :class="`grid grid-cols-1 lg:grid-cols-${ (props.options?.layout ?? 'auto') ? ( props.options?.cols ?? 1 ) : 1}`">
-          <template v-if="(!props.options?.layout ?? 'auto')">
+        <div :class="`grid grid-cols-1 lg:grid-cols-${ (props.options.layout === 'auto') ? ( props.options?.cols ?? 1 ) : 1}`">
+          <template v-if="props.options.layout === 'auto'">
             <template v-for="(item, index) in columns" :key="index">
               <a-form-item
                 v-show="(typeof item.display == 'undefined' || item.display === true)"
@@ -242,7 +243,7 @@
               </a-form-item>
             </template>
           </template>
-          <a-row v-else>
+          <a-row v-else :gutter="props.options?.gutter ?? 24">
             <template v-for="(item, index) in columns" :key="index">
               <a-col :span="parseInt(props.options.layout === 'customer' ? ( item.span || 24 ) : 24)">
                 <a-form-item
