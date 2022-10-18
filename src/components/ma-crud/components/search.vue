@@ -282,6 +282,7 @@ const handlerCascader = (val, column) => {
     searchLoading.value = true
     column.cascaderItem.map(async name => {
       const dict = columns.value.filter(col => col.dataIndex === name && col.dict )[0].dict
+      searchForm[name] = undefined
       if (dict && dict.url && dict.props) {
         let response
         if (dict && dict.url.indexOf('{{key}}') > 0) {

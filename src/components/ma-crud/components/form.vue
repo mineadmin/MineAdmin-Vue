@@ -658,6 +658,11 @@ const init = () => {
         } else if (typeof item.editDefaultValue != 'undefined') {
           form.value[item.dataIndex] = item.editDefaultValue
         }
+
+        // 针对联动数据加载回显
+        if (item.cascaderItem && item.cascaderItem.length > 0) {
+          handlerCascader(form.value[item.dataIndex], item)
+        }
       }
       if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaders.includes(item.dataIndex)) {
         if (item.dict.name) {
@@ -705,6 +710,7 @@ const handlerCascader = (val, column) => {
     dataLoading.value = true
     column.cascaderItem.map(async name => {
       const dict = columns.value.filter(col => col.dataIndex === name && col.dict )[0].dict
+      if (currentAction.value === 'add') form.value[name] = undefined
       if (dict && dict.url && dict.props) {
         let response
         if (dict && dict.url.indexOf('{{key}}') > 0) {

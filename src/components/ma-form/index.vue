@@ -594,6 +594,11 @@ const init = () => {
           form.value[item.dataIndex] = []
         }
       }
+
+      // 针对联动数据加载回显
+      if (item.cascaderItem && item.cascaderItem.length > 0) {
+        handlerCascader(form.value[item.dataIndex], item)
+      }
       
       if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaders.includes(item.dataIndex)) {
         if (item.dict.name) {
