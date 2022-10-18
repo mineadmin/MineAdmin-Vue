@@ -47,7 +47,7 @@
                     :readonly="item.readonly"
                     :options="formDictData[item.dataIndex]"
                     :multiple="item.multiple"
-                    @change="handlerCascader($event, { form, item, index })"
+                    @change="handlerCascader($event, item)"
                   />
 
                   <a-checkbox-group
@@ -55,7 +55,7 @@
                     v-model="form[item.dataIndex]"
                     :disabled="item.disabled"
                     :readonly="item.readonly"
-                    @change="handlerCascader($event, { form, item, index })"
+                    @change="handlerCascader($event, item)"
                   >
                     <a-checkbox
                       v-for="option in formDictData[item.dataIndex]"
@@ -69,7 +69,7 @@
                     :disabled="item.disabled"
                     :readonly="item.readonly"
                     :type="item.type"
-                    @change="handlerCascader($event, { form, item, index })"
+                    @change="handlerCascader($event, item)"
                   >
                     <a-radio
                       v-for="option in formDictData[item.dataIndex]"
@@ -273,7 +273,7 @@
                       :readonly="item.readonly"
                       :options="formDictData[item.dataIndex]"
                       :multiple="item.multiple"
-                      @change="handlerCascader($event, { form, item, index })"
+                      @change="handlerCascader($event, item)"
                     />
 
                     <a-checkbox-group
@@ -281,7 +281,7 @@
                       v-model="form[item.dataIndex]"
                       :disabled="item.disabled"
                       :readonly="item.readonly"
-                      @change="handlerCascader($event, { form, item, index })"
+                      @change="handlerCascader($event, item)"
                     >
                       <a-checkbox
                         v-for="option in formDictData[item.dataIndex]"
@@ -295,7 +295,7 @@
                       :disabled="item.disabled"
                       :readonly="item.readonly"
                       :type="item.type"
-                      @change="handlerCascader($event, { form, item, index })"
+                      @change="handlerCascader($event, item)"
                     >
                       <a-radio
                         v-for="option in formDictData[item.dataIndex]"
@@ -492,7 +492,7 @@ import { ref, watch } from 'vue'
 import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
-import { isArray, isFunction } from 'lodash'
+import { isArray, isFunction, concat } from 'lodash'
 
 import MaFormGroup from './formGroup.vue'
 
@@ -579,6 +579,13 @@ const init = () => {
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
   const arrayDefault = ['checkbox', 'user-select', 'form-group']
   if (columns.value && columns.value.length > 0) {
+    let cascaders = []
+    columns.value.map(item => {
+      if (item.cascaderItem && item.cascaderItem.length > 0) {
+        cascaders = concat(cascaders, item.cascaderItem)
+      }
+    })
+
     columns.value.map(async item => {
 
       if (! form.value[item.dataIndex] && typeof form.value[item.dataIndex] == 'undefined') {
@@ -588,7 +595,7 @@ const init = () => {
         }
       }
       
-      if (allowRequestFormType.includes(item.formType) && item.dict) {
+      if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaders.includes(item.dataIndex)) {
         if (item.dict.name) {
           const response = await commonApi.getDict(item.dict.name)
           if (response.data) {

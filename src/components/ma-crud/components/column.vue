@@ -120,7 +120,6 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
 import { Message } from '@arco-design/web-vue'
 import config from '@/config/crud'
 import { isFunction, get } from 'lodash'
