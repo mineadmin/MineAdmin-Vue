@@ -764,14 +764,29 @@ const formItemReadonly = (item) => {
   }
   return false
 }
+
+const toRules = (rules) => {
+
+  if (!rules) {
+    return []
+  }
+
+  if (Array.isArray(rules)) {
+    return rules.map(v => ({...v}))
+  }
+
+  return {...rules}
+}
+
 const getRules = (item) => {
   if (currentAction.value === 'add') {
-    return item.addRules ? item.addRules : item.rules || []
+    return toRules(item.addRules ? item.addRules : item.rules || [])
   }
   if (currentAction.value === 'edit') {
-    return item.editRules ? item.editRules : item.rules || []
+    return toRules(item.editRules ? item.editRules : item.rules || [])
   }
 }
+
 const getComponent = (item) => {
   if (! item.formType) {
     return `a-input`
