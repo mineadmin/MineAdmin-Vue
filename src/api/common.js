@@ -211,5 +211,33 @@ export default {
       url: 'setting/common/getModuleList',
       method: 'get'
     })
+  },
+
+  downloadById(id) {
+    return request({
+      url: 'system/downloadById?id=' + id,
+      method: 'get',
+    })
+  },
+
+  downloadByHash(hash) {
+    return request({
+      url: 'system/downloadByHash?hash=' + hash,
+      method: 'get',
+    })
+  },
+
+  getFileInfoById(id) {
+    return request({
+      url: 'system/getFileInfoById?id=' + id,
+      method: 'get',
+    })
+  },
+
+  getFileInfoByHash(hash) {
+    return request({
+      url: 'system/getFileInfoByHash?hash=' + hash,
+      method: 'get',
+    })
   }
 }

@@ -97,6 +97,7 @@
           </template>
           <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else>
             <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
+            
             <template v-if="row.dict && row.dict.translation">
               <a-tag v-if="row.dict.tagColors" :color="getTagColor(row, record)">
                 {{ getDataIndex(row, record) }}
@@ -106,6 +107,9 @@
             </template>
             <template v-else-if="row.dataIndex && row.dataIndex.indexOf('.') !== -1">
               {{ get(record, row.dataIndex) }}
+            </template>
+            <template v-else-if="row.formType === 'upload'">
+              <a-link @click="imageSee(row, record)"><icon-image /> 查看图片</a-link>
             </template>
             <template v-else>{{ record[row.dataIndex] }}</template>
           </slot>
@@ -120,8 +124,10 @@ import { Message } from '@arco-design/web-vue'
 import config from '@/config/crud'
 import { isFunction, get } from 'lodash'
 import CustomRender from '../js/custom-render'
+import tool from '@/utils/tool'
+import commonApi from '@/api/common'
 
-const emit = defineEmits(['refresh'])
+const emit = defineEmits(['refresh', 'showImage'])
 const props = defineProps({
   options: Object,
   searchRef: Object,
@@ -130,6 +136,42 @@ const props = defineProps({
   params: Object,
   isRecovery: Boolean,
 })
+
+const storageMode = {
+  '1': 'LOCAL',
+  '2': 'OSS',
+  '3': 'COS',
+  '4': 'QINIU'
+}
+
+const imageSee = async (row, record) => {
+  if (row.returnType) {
+    if (! ['id', 'hash'].includes(row.returnType)) {
+      Message.info('该图片无法查看')
+      return
+    }
+    Message.info('获取图片中，请稍等...')
+    const api = row.returnType == 'id' ? commonApi.getFileInfoById : commonApi.getFileInfoByHash
+    const result  = res?.success ?? false
+    if (! result) {
+      Message.info('图片信息无法获取')
+      return
+    }
+
+    const isImage = res.data.mime_type.indexOf('image') > -1
+    result && emit(
+      'showImage',
+      isImage ? tool.attachUrl(res.data.url, storageMode[res.data.storage_mode]) : 'not-image.png'
+    )
+
+  } else {
+    if (! record[row.dataIndex]) {
+      Message.info('无图片')
+      return
+    }
+    emit('showImage', record[row.dataIndex] ?? 'not-image.png')
+  }
+}
 
 const getTagColor = (row, record) => {
   return props.searchRef.dictColors( row.dataIndex, (row.dataIndex.indexOf('.') > -1 ) ? get(record, row.dataIndex) : record[row.dataIndex] )
@@ -180,3 +222,10 @@ const refresh = () => {
   emit('refresh')
 }
 </script>
+
+<style scoped>
+:deep(.arco-image-img) {
+  object-fit: contain;
+  background-color: var(--color-fill-4);
+}
+</style>

@@ -57,7 +57,7 @@
                     :readonly="formItemReadonly(item) || item.readonly"
                     :options="formDictData[item.dataIndex]"
                     :multiple="item.multiple"
-                    @change="handlerCascader($event, { form, item, currentAction, index })"
+                    @change="handlerCascader($event, item)"
                   />
 
                   <a-checkbox-group
@@ -65,7 +65,7 @@
                     v-model="form[item.dataIndex]"
                     :disabled="formItemDisabled(item) || item.disabled"
                     :readonly="formItemReadonly(item) || item.readonly"
-                    @change="handlerCascader($event, { form, item, currentAction, index })"
+                    @change="handlerCascader($event, item)"
                   >
                     <a-checkbox
                       v-for="option in formDictData[item.dataIndex]"
@@ -79,7 +79,7 @@
                     :disabled="formItemDisabled(item) || item.disabled"
                     :readonly="formItemReadonly(item) || item.readonly"
                     :type="item.type"
-                    @change="handlerCascader($event, { form, item, currentAction, index })"
+                    @change="handlerCascader($event, item)"
                   >
                     <a-radio
                       v-for="option in formDictData[item.dataIndex]"
@@ -229,12 +229,13 @@
                     :title="item.title || '点击上传'"
                     :icon="item.icon || 'icon-plus'"
                     :chunk="item.chunk || false"
-                    :only-url="item?.onlyUrl ?? true"
+                    :only-data="item?.onlyData ?? true"
+                    :return-type="item?.returnType ?? 'url'"
                     :only-id="item?.onlyId ?? true"
                     :file-type="item.fileType || 'button'"
                     :show-word-limit="['input', 'textarea'].includes(item.formType) ? true : false"
                     :is-echo="item.isEcho"
-                    :mode="item.formType === 'input-number' ? 'button' : item.mode"
+                    :mode="item.mode"
                     :height="item.height || undefined"
                     :language="item.language || 'javascript'"
                     :isBind="item.language || false"
@@ -299,7 +300,7 @@
                       :readonly="formItemReadonly(item) || item.readonly"
                       :options="formDictData[item.dataIndex]"
                       :multiple="item.multiple"
-                      @change="handlerCascader($event, { form, item, currentAction, index })"
+                      @change="handlerCascader($event, item)"
                     />
 
                     <a-checkbox-group
@@ -307,7 +308,7 @@
                       v-model="form[item.dataIndex]"
                       :disabled="formItemDisabled(item) || item.disabled"
                       :readonly="formItemReadonly(item) || item.readonly"
-                      @change="handlerCascader($event, { form, item, currentAction, index })"
+                      @change="handlerCascader($event, item)"
                     >
                       <a-checkbox
                         v-for="option in formDictData[item.dataIndex]"
@@ -321,7 +322,7 @@
                       :disabled="formItemDisabled(item) || item.disabled"
                       :readonly="formItemReadonly(item) || item.readonly"
                       :type="item.type"
-                      @change="handlerCascader($event, { form, item, currentAction, index })"
+                      @change="handlerCascader($event, item)"
                     >
                       <a-radio
                         v-for="option in formDictData[item.dataIndex]"
@@ -471,12 +472,13 @@
                       :title="item.title || '点击上传'"
                       :icon="item.icon || 'icon-plus'"
                       :chunk="item.chunk || false"
-                      :only-url="item?.onlyUrl ?? true"
+                      :only-data="item?.onlyData ?? true"
+                      :return-type="item?.returnType ?? 'url'"
                       :only-id="item?.onlyId ?? true"
                       :file-type="item.fileType || 'button'"
                       :show-word-limit="['input', 'textarea'].includes(item.formType) ? true : false"
                       :is-echo="item.isEcho"
-                      :mode="item.formType === 'input-number' ? 'button' : item.mode"
+                      :mode="item.mode"
                       :height="item.height || undefined"
                       :language="item.language || 'javascript'"
                       :isBind="item.language || false"
@@ -523,7 +525,7 @@ import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { handlerProps } from '../js/common'
-import { isArray, isFunction } from 'lodash'
+import { isArray, isFunction, concat } from 'lodash'
 import MaFormGroup from '@/components/ma-form/formGroup.vue'
 
 const componentName = ref('a-modal')
@@ -630,6 +632,12 @@ const init = () => {
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
   const arrayDefault = ['checkbox', 'user-select', 'form-group']
   if (columns.value.length > 0) {
+    let cascaders = []
+    columns.value.map(item => {
+      if (item.cascaderItem && item.cascaderItem.length > 0) {
+        cascaders = concat(cascaders, item.cascaderItem)
+      }
+    })
     columns.value.map(async item => {
       if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
       // add 默认值处理
@@ -650,8 +658,13 @@ const init = () => {
         } else if (typeof item.editDefaultValue != 'undefined') {
           form.value[item.dataIndex] = item.editDefaultValue
         }
+
+        // 针对联动数据加载回显
+        if (item.cascaderItem && item.cascaderItem.length > 0) {
+          handlerCascader(form.value[item.dataIndex], item)
+        }
       }
-      if (allowRequestFormType.includes(item.formType) && item.dict) {
+      if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaders.includes(item.dataIndex)) {
         if (item.dict.name) {
           const response = await commonApi.getDict(item.dict.name)
           if (response.data) {
@@ -697,6 +710,7 @@ const handlerCascader = (val, column) => {
     dataLoading.value = true
     column.cascaderItem.map(async name => {
       const dict = columns.value.filter(col => col.dataIndex === name && col.dict )[0].dict
+      if (currentAction.value === 'add') form.value[name] = undefined
       if (dict && dict.url && dict.props) {
         let response
         if (dict && dict.url.indexOf('{{key}}') > 0) {
@@ -750,14 +764,29 @@ const formItemReadonly = (item) => {
   }
   return false
 }
+
+const toRules = (rules) => {
+
+  if (!rules) {
+    return []
+  }
+
+  if (Array.isArray(rules)) {
+    return rules.map(v => ({...v}))
+  }
+
+  return {...rules}
+}
+
 const getRules = (item) => {
   if (currentAction.value === 'add') {
-    return item.addRules ? item.addRules : item.rules || []
+    return toRules(item.addRules ? item.addRules : item.rules || [])
   }
   if (currentAction.value === 'edit') {
-    return item.editRules ? item.editRules : item.rules || []
+    return toRules(item.editRules ? item.editRules : item.rules || [])
   }
 }
+
 const getComponent = (item) => {
   if (! item.formType) {
     return `a-input`

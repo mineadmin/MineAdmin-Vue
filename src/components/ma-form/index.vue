@@ -12,12 +12,13 @@
     <a-spin :loading="formLoading" tip="加载中..." class="w-full">
       <a-form
         ref="formRef"
+        v-bind="$attrs"
         :model="form"
-        :label-align="props.options.labelAlign || 'right'"
+        :label-align="props.options?.labelAlign ?? 'right'"
         @submit="submit"
       >
-        <div :class="`grid grid-cols-1 lg:grid-cols-${ (props.options.layout ||  props.options.layout === 'auto') ? ( props.options.cols || 1 ) : 1}`">
-          <template v-if="(! props.options.layout || props.options.layout === 'auto')">
+        <div :class="`grid grid-cols-1 lg:grid-cols-${ (props.options.layout === 'auto') ? ( props.options?.cols ?? 1 ) : 1}`">
+          <template v-if="props.options.layout === 'auto'">
             <template v-for="(item, index) in columns" :key="index">
               <a-form-item
                 v-show="(typeof item.display == 'undefined' || item.display === true)"
@@ -46,7 +47,7 @@
                     :readonly="item.readonly"
                     :options="formDictData[item.dataIndex]"
                     :multiple="item.multiple"
-                    @change="handlerCascader($event, { form, item, index })"
+                    @change="handlerCascader($event, item)"
                   />
 
                   <a-checkbox-group
@@ -54,7 +55,7 @@
                     v-model="form[item.dataIndex]"
                     :disabled="item.disabled"
                     :readonly="item.readonly"
-                    @change="handlerCascader($event, { form, item, index })"
+                    @change="handlerCascader($event, item)"
                   >
                     <a-checkbox
                       v-for="option in formDictData[item.dataIndex]"
@@ -68,7 +69,7 @@
                     :disabled="item.disabled"
                     :readonly="item.readonly"
                     :type="item.type"
-                    @change="handlerCascader($event, { form, item, index })"
+                    @change="handlerCascader($event, item)"
                   >
                     <a-radio
                       v-for="option in formDictData[item.dataIndex]"
@@ -203,12 +204,13 @@
                     :title="item.title || '点击上传'"
                     :icon="item.icon || 'icon-plus'"
                     :chunk="item.chunk || false"
-                    :only-url="item?.onlyUrl ?? true"
+                    :only-data="item?.onlyData ?? true"
+                    :return-type="item?.returnType ?? 'url'"
                     :only-id="item?.onlyId ?? true"
                     :file-type="item.fileType || 'button'"
                     :show-word-limit="['input', 'textarea'].includes(item.formType) ? true : false"
                     :is-echo="item.isEcho"
-                    :mode="item.formType === 'input-number' ? 'button' : item.mode"
+                    :mode="item.mode"
                     :height="item.height || undefined"
                     :language="item.language || 'javascript'"
                     :isBind="item.language || false"
@@ -241,7 +243,7 @@
               </a-form-item>
             </template>
           </template>
-          <a-row v-else>
+          <a-row v-else :gutter="props.options?.gutter ?? 24">
             <template v-for="(item, index) in columns" :key="index">
               <a-col :span="parseInt(props.options.layout === 'customer' ? ( item.span || 24 ) : 24)">
                 <a-form-item
@@ -271,7 +273,7 @@
                       :readonly="item.readonly"
                       :options="formDictData[item.dataIndex]"
                       :multiple="item.multiple"
-                      @change="handlerCascader($event, { form, item, index })"
+                      @change="handlerCascader($event, item)"
                     />
 
                     <a-checkbox-group
@@ -279,7 +281,7 @@
                       v-model="form[item.dataIndex]"
                       :disabled="item.disabled"
                       :readonly="item.readonly"
-                      @change="handlerCascader($event, { form, item, index })"
+                      @change="handlerCascader($event, item)"
                     >
                       <a-checkbox
                         v-for="option in formDictData[item.dataIndex]"
@@ -293,7 +295,7 @@
                       :disabled="item.disabled"
                       :readonly="item.readonly"
                       :type="item.type"
-                      @change="handlerCascader($event, { form, item, index })"
+                      @change="handlerCascader($event, item)"
                     >
                       <a-radio
                         v-for="option in formDictData[item.dataIndex]"
@@ -428,12 +430,13 @@
                       :title="item.title || '点击上传'"
                       :icon="item.icon || 'icon-plus'"
                       :chunk="item.chunk || false"
-                      :only-url="item?.onlyUrl ?? true"
+                      :only-data="item?.onlyData ?? true"
+                      :return-type="item?.returnType ?? 'url'"
                       :only-id="item?.onlyId ?? true"
                       :file-type="item.fileType || 'button'"
                       :show-word-limit="['input', 'textarea'].includes(item.formType) ? true : false"
                       :is-echo="item.isEcho"
-                      :mode="item.formType === 'input-number' ? 'button' : item.mode"
+                      :mode="item.mode"
                       :height="item.height || undefined"
                       :language="item.language || 'javascript'"
                       :isBind="item.language || false"
@@ -468,7 +471,7 @@
             </template>
           </a-row>
         </div>
-        <div class="text-center mt-5" v-if="props.options.showButtons">
+        <div class="text-center mt-5" v-if="props.options?.showButtons ?? true">
           <a-space size="large">
             <a-button html-type="submit" type="primary">
               <icon-check /> {{ props.options.submitText || '提交' }}
@@ -489,7 +492,7 @@ import { ref, watch } from 'vue'
 import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
-import { isArray, isFunction } from 'lodash'
+import { isArray, isFunction, concat } from 'lodash'
 
 import MaFormGroup from './formGroup.vue'
 
@@ -576,6 +579,13 @@ const init = () => {
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
   const arrayDefault = ['checkbox', 'user-select', 'form-group']
   if (columns.value && columns.value.length > 0) {
+    let cascaders = []
+    columns.value.map(item => {
+      if (item.cascaderItem && item.cascaderItem.length > 0) {
+        cascaders = concat(cascaders, item.cascaderItem)
+      }
+    })
+
     columns.value.map(async item => {
 
       if (! form.value[item.dataIndex] && typeof form.value[item.dataIndex] == 'undefined') {
@@ -584,8 +594,13 @@ const init = () => {
           form.value[item.dataIndex] = []
         }
       }
+
+      // 针对联动数据加载回显
+      if (item.cascaderItem && item.cascaderItem.length > 0) {
+        handlerCascader(form.value[item.dataIndex], item)
+      }
       
-      if (allowRequestFormType.includes(item.formType) && item.dict) {
+      if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaders.includes(item.dataIndex)) {
         if (item.dict.name) {
           const response = await commonApi.getDict(item.dict.name)
           if (response.data) {

@@ -186,7 +186,7 @@
 <script setup>
 import { ref, reactive, watch } from 'vue'
 import { request } from '@/utils/request'
-import { isFunction, isArray, get } from 'lodash'
+import { isFunction, isArray, concat } from 'lodash'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { handlerProps } from '../js/common'
@@ -216,13 +216,19 @@ const init = async () => {
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
   if (props.columns.length > 0) {
     isShowSearch.value = columns.value.length > 0 ? true : false
+    let cascaders = []
+    props.columns.map(item => {
+      if (item.cascaderItem && item.cascaderItem.length > 0) {
+        cascaders = concat(cascaders, item.cascaderItem)
+      }
+    })
     props.columns.map(async item => {
       if (item.search || item.dict) {
         if (item.dataIndex && item.search) {
           searchForm[item.dataIndex] = item.searchDefaultValue || undefined
         }
 
-        if (allowRequestFormType.includes(item.formType) && item.dict) {
+        if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaders.includes(item.dataIndex)) {
           if (item.dict.name) {
             const response = await commonApi.getDict(item.dict.name)
             if (response.data) {
@@ -276,6 +282,7 @@ const handlerCascader = (val, column) => {
     searchLoading.value = true
     column.cascaderItem.map(async name => {
       const dict = columns.value.filter(col => col.dataIndex === name && col.dict )[0].dict
+      searchForm[name] = undefined
       if (dict && dict.url && dict.props) {
         let response
         if (dict && dict.url.indexOf('{{key}}') > 0) {
