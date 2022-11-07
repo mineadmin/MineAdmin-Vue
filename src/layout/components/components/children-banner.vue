@@ -35,7 +35,7 @@
     import { ref, watch, onMounted } from 'vue'
     import { useTagStore } from '@/store'
     import { useRouter, useRoute } from 'vue-router'
-    import SubMenu from './SubMenu.vue'
+    import SubMenu from './sub-menu.vue'
     defineProps({ modelValue: Array })
     const router = useRouter()
     const emits = defineEmits(['go'])

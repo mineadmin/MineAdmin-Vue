@@ -13,13 +13,13 @@
       {{ $t(`menus.${menuInfo.name}`).indexOf('.') > 0 ? menuInfo.meta.title : $t(`menus.${menuInfo.name}`) }}
     </template>
     <template #icon v-if="menuInfo.meta.icon">
-      <component :is="menuInfo.meta.icon" :class="menuInfo.meta.icon.indexOf('ma') > 0 ? 'icon' : 'icon-menu'" />
+      <component :is="menuInfo.meta.icon" :class="menuInfo.meta.icon.indexOf('ma') > 0 ? 'icon' : ''" />
     </template>
     <template v-for="item in menuInfo.children" :key="item.id">
       <template v-if="!item.children|| item.children.length === 0">
         <a-menu-item :key="item.name" @click="routerPush(item)">
           <template #icon v-if="item.meta.icon">
-            <component :is="item.meta.icon" :class="item.meta.icon.indexOf('ma') > 0 ? 'icon' : 'icon-menu'" />
+            <component :is="item.meta.icon" :class="menuInfo.meta.icon.indexOf('ma') > 0 ? 'icon' : ''" />
           </template>
           {{ $t(`menus.${item.name}`).indexOf('.') > 0 ? item.meta.title : $t(`menus.${item.name}`) }}
         </a-menu-item>
@@ -47,13 +47,11 @@
     }
   }
 </script>
-<style>
-  .sys-menus .icon {
-    width: 1em;
-    height: 1em;
-  }
-
-  .arco-menu-selected .icon {
-    fill: rgb(var(--primary-6));
-  }
+<style scoped>
+.arco-trigger-menu-icon .icon {
+width: 1em; height: 1em; 
+}
+[mine-skin="mine"] .arco-menu-selected .icon {
+fill: rgb(var(--primary-6));
+}
 </style>
