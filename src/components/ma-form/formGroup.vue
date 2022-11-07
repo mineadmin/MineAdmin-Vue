@@ -18,11 +18,11 @@
           <icon-stop /> 清空
         </a-button>
       </a-space>
-      <a-card v-for="(data, index) in form.datas" :key="index"
+      <a-card v-for="(data, index) in form[props.dataIndex]" :key="index"
         :class="`mt-3 grid grid-cols-1 lg:grid-cols-${ (props.options.layout === 'auto') ? ( props.options?.cols ?? 1 ) : 1}`">
         <a-space class="mb-2">
           <a-button status="danger" size="small" @click="deleteCurrent(index)">
-            <icon-close /> 删除
+            <icon-close /> 删除   
           </a-button>
         </a-space>
         <template v-if="props.options.layout === 'auto'">
@@ -30,7 +30,7 @@
             <a-form-item
               v-show="formItemShow"
               :label="item.title"
-              :field="`datas.${index}.${item.dataIndex}`"
+              :field="`${props.dataIndex}.${index}.${item.dataIndex}`"
               label-col-flex="auto"
               :label-col-style="{ width: item.labelWidth ? item.labelWidth : props.options.labelWidth || '100px' }"
               :rules="item.rules || []"
@@ -475,17 +475,19 @@ import { isFunction, concat } from 'lodash'
 import commonApi from '@/api/common'
 
 const loading = ref(true)
-const form = reactive({ datas: [] })
+const form = reactive({})
 const rows = ref([])
 const formDictData = ref({})
 
 const props = defineProps({
   modelValue: { type: Object },
   options: { type: Object, default: { layout: 'auto' } },
-  columns: { type: Array }
+  columns: { type: Array },
+  dataIndex: { type: String, default: 'datas' },
 })
 
 const emit = defineEmits(['update:modelValue'])
+form[props.dataIndex] = []
 
 watch(
   () => props.modelValue,
@@ -493,7 +495,7 @@ watch(
 )
 
 watch(
-  () => form.datas,
+  () => form[props.dataIndex],
   vl => emit('update:modelValue', vl),
   { deep: true }
 )
@@ -509,19 +511,20 @@ const add = () => {
   }
   rows.value.push(props.columns)
   props.columns.map(item => tmp[item.dataIndex] = undefined)
-  form.datas.push(tmp)
+  console.log(form[props.dataIndex])
+  form[props.dataIndex].push(tmp)
 }
 
 const deleteCurrent = (index) => {
   if (props.deleteRow && isFunction(props.deleteRow)) {
     props.deleteRow()
   }
-  form.datas.splice(index, 1)
+  form[props.dataIndex].splice(index, 1)
   rows.value.splice(index, 1)
 }
 
 const flush = () => {
-  form.datas = []
+  form[props.dataIndex] = []
   rows.value = []
 }
 

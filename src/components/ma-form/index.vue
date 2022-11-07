@@ -227,6 +227,7 @@
                   v-model="form[item.dataIndex]"
                   :options="item.childrenOptions"
                   :columns="item.children"
+                  :dataIndex="item.dataIndex"
                 >
                   <template
                     v-for="(groupItem, groupIndex) in item.children"
@@ -453,6 +454,7 @@
                     v-model="form[item.dataIndex]"
                     :options="item.childrenOptions"
                     :columns="item.children"
+                    :dataIndex="item.dataIndex"
                   >
                     <template
                       v-for="(groupItem, groupIndex) in item.children"
