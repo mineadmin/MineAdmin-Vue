@@ -63,6 +63,9 @@
 
   const open = (row) => {
     form.value = { id: row.id, name: row.name, code: row.code }
+    handlerExpand(false)
+    handlerSelect(false)
+    handlerLinkage(false)
     setData(row.id)
     visible.value = true
   }
@@ -85,11 +88,12 @@
     t.expandNode(value, nodes.includes(value[0]) ? false : true)
   }
 
-  const setData = (roleId) => {
-    menu.tree().then(res => menuList.value = res.data )
-    role.getMenuByRole(roleId).then(res => {
-      selectKeys.value = res.data[0].menus.map( item => item.id )
-    })
+  const setData = async (roleId) => {
+    const menuResponse = await menu.tree()
+    menuList.value = menuResponse.data
+    const roleResponse = await role.getMenuByRole(roleId)
+    selectKeys.value = roleResponse.data[0].menus.map( item => item.id)
+    selectKeys.value.length > 0 && handlerLinkage(true)
     loading.value = false
   }
 
