@@ -511,7 +511,6 @@ const add = () => {
   }
   rows.value.push(props.columns)
   props.columns.map(item => tmp[item.dataIndex] = undefined)
-  console.log(form[props.dataIndex])
   form[props.dataIndex].push(tmp)
 }
 
