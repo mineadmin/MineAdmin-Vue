@@ -724,7 +724,7 @@ const handlerCascader = (val, column) => {
         if (response.data && response.code === 200) {
           formDictData.value[name] = response.data.map(dicItem => {
             return {
-              'label': dicItem[ (dict.props && dict.props.label) || 'code'  ],
+              'label': dicItem[ (dict.props && dict.props.label) || 'label'  ],
               'value': dicItem[ (dict.props && dict.props.value) || 'value' ]
             } 
           })
