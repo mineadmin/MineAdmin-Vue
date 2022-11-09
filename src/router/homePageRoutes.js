@@ -27,15 +27,6 @@ const homePageRoutes = [
       type: 'M',
     },
     component: () => import('@/views/userCenter/message.vue'),
-  }, {
-    name: 'processDesign',
-    path: '/processDesign',
-    meta: {
-      title: '流程设计器',
-      icon: 'icon-message',
-      type: 'M',
-    },
-    component: () => import('@/views/workflow/index.vue'),
   }
 ]
 
