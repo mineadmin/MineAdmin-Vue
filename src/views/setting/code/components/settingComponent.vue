@@ -109,11 +109,11 @@
           </a-form-item>
           <a-form-item
             label="值"
-            field="code"
+            field="value"
             label-col-flex="auto"
             :label-col-style="{ width: '80px' }"
           >
-            <a-input v-model="item.code" />
+            <a-input v-model="item.value" />
           </a-form-item>
         </a-card>
       </div>
