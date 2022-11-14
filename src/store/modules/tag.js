@@ -51,7 +51,7 @@ const useTagStore = defineStore('tag', {
     updateTagTitle(path, title) {
       this.tags.map(item => {
         if (item.path == path) {
-          item.customeTitle = title
+          item.customTitle = title
         }
       })
       this.updateTagsToLocal()
