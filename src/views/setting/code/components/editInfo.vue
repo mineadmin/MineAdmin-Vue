@@ -12,7 +12,7 @@
     <template #title>编辑生成信息 - {{ record?.table_comment }}</template>
 
     <a-spin :loading="loading" tip="加载数据中..." class="w-full">
-      <a-form :model="form">
+      <a-form :model="form" ref="formRef">
         <a-tabs v-model:active-key="activeTab">
           <a-tab-pane title="配置信息" key="base_config">
 
@@ -523,6 +523,9 @@ const form = ref({
   generate_menus: ['save', 'update' , 'read', 'delete' , 'recycle', 'changeStatus', 'numberOperation', 'import', 'export'],
   columns: [],
 })
+
+const formRef = ref()
+
 // form扩展组
 const formOptions = ref({
   relations: []
@@ -558,6 +561,13 @@ const confrimSetting = (name, value) => {
 }
 
 const save = async (done) => {
+  const validResult = await formRef.value.validate()
+  if (validResult) {
+    for (let i in validResult) {
+      Message.error(validResult[i].message)
+    }
+    return false
+  }
   form.value.options = formOptions.value
   if (! form.value.generate_menus) {
     form.value.generate_menus = ['save', 'update' , 'read', 'delete' , 'recycle', 'changeStatus', 'numberOperation', 'import', 'export']
