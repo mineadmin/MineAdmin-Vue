@@ -76,8 +76,8 @@
   const router = useRouter()
 
   const types = [
-    { label: '单表CRUD', code: 'single' },
-    { label: '树表CRUD', code: 'tree' },
+    { label: '单表CRUD', value: 'single' },
+    { label: '树表CRUD', value: 'tree' },
   ]
 
   const selectSuccess = (result) => {

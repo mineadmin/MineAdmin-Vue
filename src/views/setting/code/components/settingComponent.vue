@@ -323,7 +323,7 @@ const open = (record) => {
 }
 
 const add = () => {
-  form.value.collection.push({ label: '', code: ''})
+  form.value.collection.push({ label: '', value: ''})
 }
 const del = (idx) => {
   form.value.collection.splice(idx, 1)

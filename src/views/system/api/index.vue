@@ -118,7 +118,7 @@
     },
     {
       title: '认证模式', dataIndex: 'auth_mode', formType: 'radio',
-      dict: { data: [{ label: '简易模式', code: 1 }, { label: '复杂模式', code: 2 }], translation: true },
+      dict: { data: [{ label: '简易模式', value: 1 }, { label: '复杂模式', value: 2 }], translation: true },
       addDefaultValue: 1, width: 130, span: 12,
     },
     {
