@@ -16,6 +16,7 @@
         allow-clear
         v-model="currentIcon"
         @change="handlerChange"
+        v-if="props.type === 'select'"
       >
         <a-optgroup label="Arco Design">
           <a-option
@@ -44,7 +45,8 @@
           </a-option>
         </a-optgroup>
       </a-select>
-      <div class="icon-container">
+      <a-input v-else-if="props.type === 'input'" placeholder="请点击右侧按钮选择图标" allow-clear v-model="currentIcon" />
+      <div class="icon-container" v-if="props.preview">
         <component :is="currentIcon" v-if="currentIcon" />
       </div>
       <a-button type="primary" @click="() => visible = true">选择图标</a-button>
@@ -91,7 +93,9 @@
   const currentIcon = ref()
 
   const props = defineProps({
-    modelValue: { type: String }
+    modelValue: { type: String },
+    type: { type: String, default: 'select' },
+    preview: { type: Boolean, default: true },
   })
   
   const emit = defineEmits(['update:modelValue'])

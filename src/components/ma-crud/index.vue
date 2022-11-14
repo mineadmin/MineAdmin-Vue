@@ -9,7 +9,7 @@
 -->
 <template>
   <a-layout-content class="flex flex-col lg:h-full relative w-full">
-    <div class="_crud-header flex flex-col mb-2" ref="crudHeader">
+    <div class="_crud-header flex flex-col mb-2" ref="crudHeaderRef">
       <ma-search
         :columns="settingProps.columns"
         :search-label-width="defaultCrud.searchLabelWidth"
@@ -32,72 +32,74 @@
       </ma-search>
     </div>
     <div class="_crud-content">
-      <div class="opartion-tools lg:flex justify-between mb-3">
+      <div class="operation-tools lg:flex justify-between mb-3" ref="crudOperationRef">
         <a-space class="lg:flex block lg:inline-block" >
-
-          <a-button
-            v-if="defaultCrud.add.show"
-            v-auth="defaultCrud.add.auth || []"
-            v-role="defaultCrud.add.role || []"
-            @click="addAction" type="primary"
-            class="w-full lg:w-auto mt-2 lg:mt-0"
-          ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
-
-          <a-popconfirm
-            content="确定要删除数据吗?"
-            position="bottom"
-            @ok="deletesMultipleAction"
-            v-if="defaultCrud.delete.show"
-          >
+          <slot name="tableBeforeButtons"></slot>
+          <slot name="tableButtons">
             <a-button
-              v-auth="defaultCrud.delete.auth || []"
-              v-role="defaultCrud.delete.role || []"
-              type="primary" status="danger"
+              v-if="defaultCrud.add.show"
+              v-auth="defaultCrud.add.auth || []"
+              v-role="defaultCrud.add.role || []"
+              @click="addAction" type="primary"
               class="w-full lg:w-auto mt-2 lg:mt-0"
-            ><icon-delete /> {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-button>
-          </a-popconfirm>
+            ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
 
-          <a-popconfirm
-            content="确定要恢复数据吗?"
-            position="bottom"
-            @ok="recoverysMultipleAction"
-            v-if="defaultCrud.recovery.show && isRecovery"
-          >
+            <a-popconfirm
+              content="确定要删除数据吗?"
+              position="bottom"
+              @ok="deletesMultipleAction"
+            >
+              <a-button
+                v-if="defaultCrud.delete.show"
+                v-auth="defaultCrud.delete.auth || []"
+                v-role="defaultCrud.delete.role || []"
+                type="primary" status="danger"
+                class="w-full lg:w-auto mt-2 lg:mt-0"
+              ><icon-delete /> {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-button>
+            </a-popconfirm>
+
+            <a-popconfirm
+              content="确定要恢复数据吗?"
+              position="bottom"
+              @ok="recoverysMultipleAction"
+            >
+              <a-button
+                v-if="defaultCrud.recovery.show && isRecovery"
+                v-auth="defaultCrud.recovery.auth || []"
+                v-role="defaultCrud.recovery.role || []"
+                type="primary" status="success"
+                class="w-full lg:w-auto mt-2 lg:mt-0"
+              ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-button>
+            </a-popconfirm>
+
             <a-button
-              v-auth="defaultCrud.recovery.auth || []"
-              v-role="defaultCrud.recovery.role || []"
-              type="primary" status="success"
+              v-if="defaultCrud.import.show"
+              v-auth="defaultCrud.import.auth || []"
+              v-role="defaultCrud.import.role || []"
+              @click="importAction"
               class="w-full lg:w-auto mt-2 lg:mt-0"
-            ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-button>
-          </a-popconfirm>
+            ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
 
-          <a-button
-            v-if="defaultCrud.import.show"
-            v-auth="defaultCrud.import.auth || []"
-            v-role="defaultCrud.import.role || []"
-            @click="importAction"
-            class="w-full lg:w-auto mt-2 lg:mt-0"
-          ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
+            <a-button
+              v-if="defaultCrud.export.show"
+              v-auth="defaultCrud.export.auth || []"
+              v-role="defaultCrud.export.role || []"
+              @click="exportAction"
+              class="w-full lg:w-auto mt-2 lg:mt-0"
+            ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
 
-          <a-button
-            v-if="defaultCrud.export.show"
-            v-auth="defaultCrud.export.auth || []"
-            v-role="defaultCrud.export.role || []"
-            @click="exportAction"
-            class="w-full lg:w-auto mt-2 lg:mt-0"
-          ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
-
-          <a-button
-            type="secondary"
-            @click="handlerExpand"
-            v-if="defaultCrud.isExpand"
-            class="w-full lg:w-auto mt-2 lg:mt-0"
-          >
-            <icon-expand v-if="! expandState" />
-            <icon-shrink v-else />
-            {{ expandState ? ' 折叠' : ' 展开' }}
-          </a-button>
-          <slot name="tableButtons"></slot>
+            <a-button
+              type="secondary"
+              @click="handlerExpand"
+              v-if="defaultCrud.isExpand"
+              class="w-full lg:w-auto mt-2 lg:mt-0"
+            >
+              <icon-expand v-if="! expandState" />
+              <icon-shrink v-else />
+              {{ expandState ? ' 折叠' : ' 展开' }}
+            </a-button>
+          </slot>
+          <slot name="tableAfterButtons"></slot>
         </a-space>
         <a-space class="lg:mt-0 mt-2" v-if="defaultCrud.showTools">
           <slot name="tools"></slot>
@@ -115,81 +117,84 @@
           <a-tooltip content="设置"><a-button shape="circle" @click="tableSetting"><icon-settings /></a-button></a-tooltip>
         </a-space>
       </div>
-      <slot name="content" v-bind="tableData">
-        <a-table
-          v-bind="$attrs"
-          ref="tableRef"
-          :key="defaultCrud.pk"
-          :data="tableData"
-          :loading="loading"
-          :pagination="settingProps.pagination"
-          :stripe="defaultCrud.stripe"
-          :bordered="defaultCrud.bordered"
-          :rowSelection="defaultCrud.rowSelection || undefined"
-          :row-key="defaultCrud.rowSelection && defaultCrud.rowSelection.key || 'id'"
-          :scroll="defaultCrud.scroll"
-          :column-resizable="defaultCrud.resizable"
-          :size="defaultCrud.size"
-          :hide-expand-button-on-empty="defaultCrud.hideExpandButtonOnEmpty"
-          :default-expand-all-rows="defaultCrud.expandAllRows"
-          :summary="defaultCrud.customerSummary || __summary || defaultCrud.showSummary"
-          @selection-change="setSelecteds"
-          @sorter-change="handlerSort"
-        >
-          <template #tr="{ record }">
-            <tr class="ma-crud-table-tr" @dblclick="dbClickOpenEdit(record)" />
-          </template>
+      <div ref="crudContentRef">
+        <slot name="content" v-bind="tableData">
+          <a-table
+            v-bind="$attrs"
+            ref="tableRef"
+            :key="defaultCrud.pk"
+            :data="tableData"
+            :loading="loading"
+            :sticky-header="defaultCrud.stickyHeader"
+            :pagination="settingProps.pagination"
+            :stripe="defaultCrud.stripe"
+            :bordered="defaultCrud.bordered"
+            :rowSelection="defaultCrud.rowSelection || undefined"
+            :row-key="defaultCrud.rowSelection && defaultCrud.rowSelection.key || 'id'"
+            :scroll="defaultCrud.scroll"
+            :column-resizable="defaultCrud.resizable"
+            :size="defaultCrud.size"
+            :hide-expand-button-on-empty="defaultCrud.hideExpandButtonOnEmpty"
+            :default-expand-all-rows="defaultCrud.expandAllRows"
+            :summary="defaultCrud.customerSummary || __summary || defaultCrud.showSummary"
+            @selection-change="setSelecteds"
+            @sorter-change="handlerSort"
+          >
+            <template #tr="{ record }">
+              <tr class="ma-crud-table-tr" @dblclick="dbClickOpenEdit(record)" />
+            </template>
 
-          <template #expand-row="record" v-if="defaultCrud.showExpandRow">
-            <slot name="expand-row" v-bind="record"></slot>
-          </template>
-          <template #columns>
-            <ma-column
-              v-if="reloadColumn"
-              :options="defaultCrud"
-              :columns="columns"
-              :searchRef="maCrudSearch"
-              :formRef="maCrudForm"
-              :isRecovery="isRecovery"
-              :params="requestParams"
-              @refresh="() => refresh()"
-            >
-              <template #operationBeforeExtend="{ record, column, rowIndex }">
-                <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
-              </template>
-
-              <template #operationCell="{ record, column, rowIndex }">
-                <slot name="operationCell" v-bind="{ record, column, rowIndex }"></slot>
-              </template>
-
-              <template #operationAfterExtend="{ record, column, rowIndex }">
-                <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
-              </template>
-
-              <template
-                v-for="(slot, slotIndex) in slots"
-                :key="slotIndex"
-                #[slot]="{ record, column, rowIndex }"
+            <template #expand-row="record" v-if="defaultCrud.showExpandRow">
+              <slot name="expand-row" v-bind="record"></slot>
+            </template>
+            <template #columns>
+              <ma-column
+                v-if="reloadColumn"
+                :options="defaultCrud"
+                :columns="columns"
+                :searchRef="maCrudSearch"
+                :formRef="maCrudForm"
+                :isRecovery="isRecovery"
+                :params="requestParams"
+                @refresh="() => refresh()"
+                @showImage="showImage"
               >
-                <slot :name="`${slot}`" v-bind="{ record, column, rowIndex }" />
-              </template>
-            </ma-column>
-          </template>
-          <template #summary-cell="{ column, record, rowIndex }" v-if="defaultCrud.customerSummary || defaultCrud.showSummary">
-            <slot name="summaryCell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
-          </template>
-        </a-table>
-      </slot>
+                <template #operationBeforeExtend="{ record, column, rowIndex }">
+                  <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
+                </template>
+
+                <template #operationCell="{ record, column, rowIndex }">
+                  <slot name="operationCell" v-bind="{ record, column, rowIndex }"></slot>
+                </template>
+
+                <template #operationAfterExtend="{ record, column, rowIndex }">
+                  <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
+                </template>
+
+                <template
+                  v-for="(slot, slotIndex) in slots"
+                  :key="slotIndex"
+                  #[slot]="{ record, column, rowIndex }"
+                >
+                  <slot :name="`${slot}`" v-bind="{ record, column, rowIndex }" />
+                </template>
+              </ma-column>
+            </template>
+            <template #summary-cell="{ column, record, rowIndex }" v-if="defaultCrud.customerSummary || defaultCrud.showSummary">
+              <slot name="summaryCell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
+            </template>
+          </a-table>
+        </slot>
+      </div>
     </div>
-    <div class="_crud-footer mt-3 text-right">
+    <div class="_crud-footer mt-3 text-right" ref="crudFooterRef" v-if="total > 0 && openPagination && !settingProps.pagination">
       <a-pagination
         :total="total"
-        v-if="total > 0 && openPagination && !settingProps.pagination"
         show-total show-jumper show-page-size
         :page-size-options="pageSizeOption"
         @page-size-change="pageSizeChangeHandler"
         @change="pageChangeHandler"
-        :current="requestParams[config.request.page]"
+        v-model:current="requestParams[config.request.page]"
         :page-size="requestParams[config.request.pageSize]"
         style="display: inline-flex"
       />
@@ -213,6 +218,7 @@
       v-model="defaultCrud.import"
     />
 
+    <a-image-preview :src="imgUrl" v-model:visible="imgVisible" />
   </a-layout-content>
 </template>
 
@@ -236,6 +242,8 @@ import _ from 'lodash'
 const loading = ref(true)
 const reloadColumn = ref(true)
 const openPagination = ref(false)
+const imgVisible = ref(false)
+const imgUrl = ref('not-image.png')
 const pageSizeOption = ref([10, 20, 30, 50, 100])
 const total = ref(0)
 const requestParams = ref({})
@@ -245,7 +253,13 @@ const searchSlots = ref([])
 const showSearch = ref(true)
 const isRecovery = ref(false)
 const expandState = ref(false)
-const crudHeader = ref(null)
+
+const crudHeaderRef = ref(null)
+const crudOperationRef = ref(null)
+const crudContentRef = ref(null)
+const crudFooterRef = ref(null)
+const headerHeight = ref(0)
+
 const selecteds = ref([])
 
 const tableData = ref([])
@@ -288,6 +302,10 @@ const defaultCrud = ref({
   customerSummary: false,
   // 是否显示工具栏
   showTools: true,
+  // 表头是否吸顶
+  stickyHeader: true,
+  // 页面布局方式，支持 normal（标准）和 fixed（固定）两种
+  pageLayout: 'normal',
   // 新增和编辑显示设置
   viewLayoutSetting: {
     // 布局方式, 支持 auto（自动） 和 customer（自定义）两种
@@ -422,12 +440,25 @@ watch(() => settingProps.pageSizeOption, (val) => {
   pageSizeOption.value = val
 })
 
+watch(
+  () => {
+    return {
+      pageLayout: defaultCrud.value.pageLayout,
+      openPagination: openPagination.value,
+    }
+  },
+  (val, oldValue) => {
+    if (val.pageLayout == 'fixed') {
+      nextTick(() => {
+        headerHeight.value = crudHeaderRef.value.offsetHeight
+        settingFixedPage(val.openPagination)
+      })
+    }
+  }
+)
+
 watch(() => settingProps.crud.requestParams, (val) => {
   requestParams.value = val
-}, { deep: true })
-
-watch(() => settingProps.columns, () => {
-  requestData()
 }, { deep: true })
 
 watch(() => settingProps.api, () => {
@@ -445,6 +476,11 @@ const getSlot = (cls = []) => {
     }
   })
   return sls
+}
+
+const showImage = url => {
+  imgUrl.value = url
+  imgVisible.value = true
 }
 
 const getSearchSlot = () => {
@@ -538,7 +574,7 @@ const searchHandler = (formData) => {
   if (settingProps.crud.beforeSearch && isFunction(settingProps.crud.beforeSearch)) {
     settingProps.crud.beforeSearch(requestParams.value)
   }
-  refresh()
+  pageChangeHandler(1)
 }
 
 const pageSizeChangeHandler = (pageSize) => {
@@ -553,9 +589,15 @@ const pageChangeHandler = (currentPage) => {
 }
 
 const toggleSearch = () => {
-  const dom = crudHeader.value.style
+  const dom = crudHeaderRef.value.style
   dom.display = showSearch.value ? 'none' : 'block'
   showSearch.value = ! showSearch.value
+  if (openPagination.value) {
+    headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? 24 : crudHeaderRef.value.offsetHeight + 32
+  } else {
+    headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? -8 : crudHeaderRef.value.offsetHeight
+  }
+  defaultCrud.value.pageLayout == 'fixed' && settingFixedPage()
 }
 
 const tableSetting = () => {
@@ -563,14 +605,15 @@ const tableSetting = () => {
 }
 
 const requestSuccess = async response => {
-  defaultCrud.value.dataCompleteRefresh && await refresh()
-  if (reloadColumn.value) {
-    reloadColumn.value = false
-    nextTick(() => {
-      reloadColumn.value = true
-    })
+  if (response && response.code && response.code == 200) {
+    defaultCrud.value.dataCompleteRefresh && await refresh()
+    if (reloadColumn.value) {
+      reloadColumn.value = false
+      nextTick(() => {
+        reloadColumn.value = true
+      })
+    }
   }
-
 }
 
 const getIndex = (rowIndex) => {
@@ -757,7 +800,16 @@ if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.aut
   requestData()
 }
 
-onMounted(() => document.querySelector('.arco-table-body').className += ' customer-scrollbar' )
+onMounted(() => {
+  document.querySelector('.arco-table-body').className += ' customer-scrollbar'
+})
+
+const settingFixedPage = (openPage = false) => {
+  const workAreaHeight = document.querySelector('.work-area').offsetHeight
+  const tempHeight = headerHeight.value + 120 + (openPage ? 32 : -12)
+  const tableHeight = workAreaHeight - tempHeight
+  crudContentRef.value.style.height = tableHeight + 'px'
+}
 
 defineExpose({
   refresh, requestData, addAction, editAction, getTableData, setSelecteds,

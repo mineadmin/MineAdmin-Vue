@@ -41,7 +41,7 @@
         <a-link
           @click="openAdd(record.id)"
           v-if=" record.type === 'M' && ! isRecovery "
-          v-auth="['system:menu:add']"
+          v-auth="['system:menu:save']"
         ><icon-plus /> 新增</a-link>
       </template>
     </ma-crud>
@@ -59,10 +59,10 @@
   let isRecovery = computed(() => crudRef.value ? crudRef.value.isRecovery : false )
 
   const menuType = [
-    { label: '菜单', code: 'M' },
-    { label: '按钮', code: 'B' },
-    { label: '外链', code: 'L' },
-    { label: 'iFrame', code: 'I' },
+    { label: '菜单', value: 'M' },
+    { label: '按钮', value: 'B' },
+    { label: '外链', value: 'L' },
+    { label: 'iFrame', value: 'I' },
   ]
 
   const changeStatus = async (status, id) => {
@@ -89,10 +89,11 @@
     recycleApi: menu.getRecycleList,
     showIndex: false,
     searchLabelWidth: '75px',
+    pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 200,
-    add: { show: true, api: menu.save, auth: ['system:menu:add'] },
+    add: { show: true, api: menu.save, auth: ['system:menu:save'] },
     edit: { show: true, api: menu.update, auth: ['system:menu:update'] },
     delete: {
       show: true,
@@ -120,7 +121,7 @@
     { 
       title: '菜单类型', dataIndex: 'type', formType: 'radio', addDefaultValue: 'M', width: 100,
       dict: {
-        data: menuType, props: { label: 'label', value: 'code' }, translation: true,
+        data: menuType, translation: true,
         tagColors: { 'M': 'blue', 'B': 'green', 'L': 'orangered', 'I': 'pinkpurple' }
       },
       control: (value) => {

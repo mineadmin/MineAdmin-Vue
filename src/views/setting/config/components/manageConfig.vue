@@ -24,14 +24,14 @@ const visible = ref(false)
 const groupId = ref()
 const crudRef = ref()
 const inputComponent = [
-  { label: '文本框', code: 'input' },
-  { label: '文本域', code: 'textarea' },
-  { label: '下拉选择框', code: 'select' },
-  { label: '单选框', code: 'radio' },
-  { label: '复选框', code: 'checkbox' },
-  { label: '开关', code: 'switch' },
-  { label: '图片上传', code: 'upload' },
-  { label: '富文本编辑器', code: 'editor' },
+  { label: '文本框', value: 'input' },
+  { label: '文本域', value: 'textarea' },
+  { label: '下拉选择框', value: 'select' },
+  { label: '单选框', value: 'radio' },
+  { label: '复选框', value: 'checkbox' },
+  { label: '开关', value: 'switch' },
+  { label: '图片上传', value: 'upload' },
+  { label: '富文本编辑器', value: 'editor' },
 ]
 
 const open = (id) => {

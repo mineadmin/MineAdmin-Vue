@@ -16,8 +16,8 @@ const useTagStore = defineStore('tag', {
   actions: {
 
     addTag(tag) {
-      const target = this.tags.find( item => item.name === tag.name )
-      if (! target && tag.name ) {
+      const target = this.tags.find( item => item.path === tag.path )
+      if (! target && tag.path ) {
         this.tags.push(tag)
       }
       this.updateTagsToLocal()
@@ -26,7 +26,7 @@ const useTagStore = defineStore('tag', {
     removeTag(tag) {
       let index = 0
       this.tags.map((item, idx) => {
-        if ( item.name === tag.name && ! item.affix ) {
+        if ( item.path === tag.path && ! item.affix ) {
           if (this.tags[(idx + 1)]) {
             index = idx
           } else if ( idx > 0) {
@@ -41,16 +41,16 @@ const useTagStore = defineStore('tag', {
 
     updateTag(tag) {
       this.tags.map(item => {
-        if (item.name == tag.name) {
+        if (item.path == tag.path) {
           item = Object.assign(item, tag)
         }
       })
       this.updateTagsToLocal()
     },
 
-    updateTagTitle(name, title) {
+    updateTagTitle(path, title) {
       this.tags.map(item => {
-        if (item.name == name) {
+        if (item.path == path) {
           item.customeTitle = title
         }
       })

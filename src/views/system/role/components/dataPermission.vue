@@ -81,6 +81,9 @@
 
   const open = (row) => {
     form.value = { id: row.id, name: row.name, code: row.code, data_scope: row.data_scope }
+    handlerExpand(false)
+    handlerSelect(false)
+    handlerLinkage(false)
     setData(row.id)
     visible.value = true
   }
@@ -103,11 +106,12 @@
     t.expandNode(value, nodes.includes(value[0]) ? false : true)
   }
 
-  const setData = (roleId) => {
-    dept.tree().then(res => deptList.value = res.data )
-    role.getDeptByRole(roleId).then(res => {
-      selectKeys.value = res.data[0].depts.map( item => item.id )
-    })
+  const setData = async (roleId) => {
+    const deptResponse = await dept.tree()
+    deptList.value = deptResponse.data
+    const roleResponse = await role.getDeptByRole(roleId)
+    selectKeys.value = roleResponse.data[0].depts.map( item => item.id )
+    selectKeys.value.length > 0 && handlerLinkage(true)
     loading.value = false
   }
 

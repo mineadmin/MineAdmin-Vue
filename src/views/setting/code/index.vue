@@ -11,8 +11,8 @@
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
     <ma-crud :crud="crud" :columns="columns" ref="crudRef" @selection-change="selectionChange">
-      <!-- 操作前置扩展 -->
-      <template #tableButtons>
+      <!-- 表格按钮后置扩展 -->
+      <template #tableAfterButtons>
         <a-button
           v-auth="['setting:code:generate']"
           type="outline"
@@ -76,8 +76,8 @@
   const router = useRouter()
 
   const types = [
-    { label: '单表CRUD', code: 'single' },
-    { label: '树表CRUD', code: 'tree' },
+    { label: '单表CRUD', value: 'single' },
+    { label: '树表CRUD', value: 'tree' },
   ]
 
   const selectSuccess = (result) => {
@@ -114,6 +114,7 @@
     api: generate.getPageList,
     showIndex: false,
     searchLabelWidth: '75px',
+    pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 350,

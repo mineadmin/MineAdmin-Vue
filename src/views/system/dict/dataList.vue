@@ -66,6 +66,7 @@ const crud = reactive({
   recycleApi: dict.getRecyclePageList,
   showIndex: false,
   searchLabelWidth: '75px',
+  pageLayout: 'fixed',
   rowSelection: { showCheckedAll: true },
   operationColumn: true,
   operationWidth: 160,
@@ -73,7 +74,7 @@ const crud = reactive({
     form.code = currentRow.value?.code
     form.type_id = currentRow.value?.id
   },
-  add: { show: true, api: dict.saveDictData, auth: ['system:dict:add'] },
+  add: { show: true, api: dict.saveDictData, auth: ['system:dict:save'] },
   edit: { show: true, api: dict.updateDictData, auth: ['system:dict:update'] },
   delete: {
     show: true,

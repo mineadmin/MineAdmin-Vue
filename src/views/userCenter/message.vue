@@ -21,7 +21,7 @@
     <div class="h-hull w-full lg:ml-3 lg:mr-2 pt-2">
       <ma-crud :crud="crud" :columns="columns" ref="crudRef">
 
-        <template #operation>
+        <template #tableAfterButtons>
           <a-radio-group
             class="mt-2 lg:mt-0"
             type="button"

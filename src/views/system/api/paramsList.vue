@@ -53,10 +53,11 @@ const crud = reactive({
   recycleApi: apiColumn.getRecycleList,
   showIndex: false,
   searchLabelWidth: '75px',
+  pageLayout: 'fixed',
   rowSelection: { showCheckedAll: true },
   operationColumn: true,
   operationWidth: 300,
-  add: { show: true, api: apiColumn.save, auth: ['system:api:add'] },
+  add: { show: true, api: apiColumn.save, auth: ['system:api:save'] },
   edit: { show: true, api: apiColumn.update, auth: ['system:api:update'] },
   delete: {
     show: true,
@@ -87,7 +88,7 @@ const columns = reactive([
   },
   {
     title: '字段类型', dataIndex: 'type', disabled: true, formType: 'radio',
-    dict: { data: [{ label: '请求', code: 1 }, { label: '响应', code: 2 }], translation: true },
+    dict: { data: [{ label: '请求', value: 1 }, { label: '响应', value: 2 }], translation: true },
     addDefaultValue: () => currentType.value == 'request' ? 1 : 2, 
     span: 8, labelWidth: '140px',
   },
@@ -98,7 +99,7 @@ const columns = reactive([
   },
   {
     title: '必填', dataIndex: 'is_required', search: true,
-    dict: { data: [{ label: '是', code: 2 }, { label: '否', code: 1 }], translation: true },
+    dict: { data: [{ label: '是', value: 2 }, { label: '否', value: 1 }], translation: true },
     addDefaultValue: 2, formType: 'radio', span: 8,
     control: (value) => {
       if ( value == 2) {

@@ -43,10 +43,11 @@
     recycleApi: apiGroup.getRecycleList,
     showIndex: false,
     searchLabelWidth: '75px',
+    pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 160,
-    add: { show: true, api: apiGroup.save, auth: ['system:apiGroup:add'] },
+    add: { show: true, api: apiGroup.save, auth: ['system:apiGroup:save'] },
     edit: { show: true, api: apiGroup.update, auth: ['system:apiGroup:update'] },
     delete: {
       show: true,
