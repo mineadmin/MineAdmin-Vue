@@ -15,15 +15,7 @@
         <span class="ml-2 text-xl mt-2.5 hidden md:block">MineAdmin</span>
       </div>
       <div class="flex justify-between w-full layout-banner">
-        <a-menu
-          ref="MaMenuRef"
-          mode="horizontal"
-          class="layout-banner-menu hidden lg:flex"
-          :popup-max-height="360"
-          :selected-keys="actives"
-        >
-          <children-menu v-model="userStore.routers" />
-        </a-menu>
+        <children-banner v-model="userStore.routers" />
         <ma-operation />
       </div>
     </a-layout-header>
@@ -39,7 +31,7 @@
   import MaOperation from '../ma-operation.vue'
   import MaWorkerArea from '../ma-workerArea.vue'
   import MaTags from '../ma-tags.vue'
-  import ChildrenMenu from '../components/children-menu.vue'
+  import ChildrenBanner from '../components/children-banner.vue'
 
   const route = useRoute()
 

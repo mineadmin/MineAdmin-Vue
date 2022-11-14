@@ -44,10 +44,10 @@
   const logsRef = ref()
 
   const types = [
-    { label: '命令任务', code: 1 },
-    { label: '类任务', code: 2} ,
-    { label: 'URL任务', code: 3 },
-    { label: 'PHP脚本任务', code: 4 },
+    { label: '命令任务', value: 1 },
+    { label: '类任务', value: 2} ,
+    { label: 'URL任务', value: 3 },
+    { label: 'PHP脚本任务', value: 4 },
   ]
 
   const changeStatus = async (status, id) => {
@@ -105,7 +105,7 @@
     },
     {
       title: '单次执行', dataIndex: 'singleton', formType: 'radio', addDefaultValue: 2,
-      dict: { data: [{ label: '是', code: 1 }, { label: '否', code: 2 }]}, hide: true
+      dict: { data: [{ label: '是', value: 1 }, { label: '否', value: 2 }]}, hide: true
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',

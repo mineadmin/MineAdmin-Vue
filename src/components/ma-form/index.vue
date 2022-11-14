@@ -227,6 +227,7 @@
                   v-model="form[item.dataIndex]"
                   :options="item.childrenOptions"
                   :columns="item.children"
+                  :dataIndex="item.dataIndex"
                 >
                   <template
                     v-for="(groupItem, groupIndex) in item.children"
@@ -453,6 +454,7 @@
                     v-model="form[item.dataIndex]"
                     :options="item.childrenOptions"
                     :columns="item.children"
+                    :dataIndex="item.dataIndex"
                   >
                     <template
                       v-for="(groupItem, groupIndex) in item.children"
@@ -648,7 +650,7 @@ const handlerProps = (allowType, item, tmpArr) => {
   if (allowType.includes(item.formType)) {
     data = tmpArr.map(dicItem => {
       const label = dicItem[ (item.dict.props && item.dict.props.label) || 'label'  ]
-      let tmp = dicItem[ (item.dict.props && item.dict.props.value) || 'code' ]
+      let tmp = dicItem[ (item.dict.props && item.dict.props.value) || 'value' ]
       const value = typeof tmp == 'boolean' ? tmp + '' : tmp
       tran[value] = label
       return { label, value } 
@@ -678,7 +680,7 @@ const handlerCascader = (val, column) => {
         if (response.data && response.code === 200) {
           formDictData.value[name] = response.data.map(dicItem => {
             return {
-              'label': dicItem[ (dict.props && dict.props.label) || 'code'  ],
+              'label': dicItem[ (dict.props && dict.props.label) || 'label'  ],
               'value': dicItem[ (dict.props && dict.props.value) || 'value' ]
             } 
           })

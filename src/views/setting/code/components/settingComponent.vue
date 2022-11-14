@@ -109,11 +109,11 @@
           </a-form-item>
           <a-form-item
             label="值"
-            field="code"
+            field="value"
             label-col-flex="auto"
             :label-col-style="{ width: '80px' }"
           >
-            <a-input v-model="item.code" />
+            <a-input v-model="item.value" />
           </a-form-item>
         </a-card>
       </div>
@@ -323,7 +323,7 @@ const open = (record) => {
 }
 
 const add = () => {
-  form.value.collection.push({ label: '', code: ''})
+  form.value.collection.push({ label: '', value: ''})
 }
 const del = (idx) => {
   form.value.collection.splice(idx, 1)

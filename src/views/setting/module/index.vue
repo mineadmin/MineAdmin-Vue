@@ -154,7 +154,7 @@
     },
     {
       title: '状态', dataIndex: 'enabled', formType: 'radio', addDisplay: false, editDisplay: false, width: 120,
-      dict: { data: [ { label: '开启', code: true }, { label: '禁用', code: false } ], translation: true },
+      dict: { data: [ { label: '开启', value: true }, { label: '禁用', value: false } ], translation: true },
     }
   ])
 </script>
