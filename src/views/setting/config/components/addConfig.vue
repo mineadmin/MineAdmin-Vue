@@ -105,7 +105,7 @@ const columns = reactive([
     formType: 'code-editor',
     labelWidth: '120px',
     height: 200,
-    formExtra: '用于配置下拉、单选、复选的数据，格式例子：[{"label":"数据一", "code":"shuju1"},...]',
+    formExtra: '用于配置下拉、单选、复选的数据，格式例子：[{"label":"数据一", "value":"shuju1"},...]',
   }
 ])
 
