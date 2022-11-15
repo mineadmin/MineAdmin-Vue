@@ -186,6 +186,13 @@
                     @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
                   />
 
+                  <component
+                    v-else-if="item.formType === 'component'"
+                    :is="item.dataIndex"
+                    :columns="columns"
+                    :item="item"
+                  />
+
                   <a-button
                     v-else-if="item.formType === 'button'"
                     :disabled="formItemDisabled(item) || item.disabled"
@@ -430,6 +437,13 @@
                       @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
                     />
 
+                    <component
+                      v-else-if="item.formType === 'component'"
+                      :is="item.dataIndex"
+                      :columns="columns"
+                      :item="item"
+                    />
+
                     <a-button
                       v-else-if="item.formType === 'button'"
                       :disabled="formItemDisabled(item) || item.disabled"
@@ -522,7 +536,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick, watch } from 'vue'
+import { ref, nextTick, watch, toRaw, getCurrentInstance, provide } from 'vue'
 import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
@@ -530,6 +544,7 @@ import { handlerProps } from '../js/common'
 import { isArray, isFunction, concat } from 'lodash'
 import MaFormGroup from '@/components/ma-form/formGroup.vue'
 
+const app = getCurrentInstance().appContext.app
 const componentName = ref('a-modal')
 const columns = ref([])
 const currentAction = ref('')
@@ -545,6 +560,9 @@ const props = defineProps({
   modelValue: Array,
   crud: { type: Object }
 })
+
+provide('form', toRaw(form))
+
 setting.value = props.crud.viewLayoutSetting
 watch(
   () => props.crud.viewLayoutSetting,
@@ -638,6 +656,10 @@ const init = () => {
     columns.value.map(item => {
       if (item.cascaderItem && item.cascaderItem.length > 0) {
         cascaders = concat(cascaders, item.cascaderItem)
+      }
+
+      if (item.formType === 'component' && item.component && !app._context.components[item.dataIndex]) {
+        app.component(item.dataIndex, item.component)
       }
     })
     columns.value.map(async item => {
