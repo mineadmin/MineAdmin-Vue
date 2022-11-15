@@ -738,5 +738,5 @@ const getComponent = (item) => {
 
 props.autoInit && init()
 
-defineExpose({ init, reset })
+defineExpose({ init, reset, formRef })
 </script>
