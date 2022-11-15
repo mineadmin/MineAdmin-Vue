@@ -177,6 +177,13 @@
                   />
 
                   <component
+                    v-else-if="item.formType === 'component'"
+                    :is="item.dataIndex"
+                    :columns="columns"
+                    :item="item"
+                  />
+
+                  <component
                     v-else
                     :is="getComponent(item)"
                     v-model="form[item.dataIndex]"
@@ -404,6 +411,13 @@
                     />
 
                     <component
+                      v-else-if="item.formType === 'component'"
+                      :is="item.dataIndex"
+                      :columns="columns"
+                      :item="item"
+                    />
+
+                    <component
                       v-else
                       :is="getComponent(item)"
                       v-model="form[item.dataIndex]"
@@ -490,7 +504,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, getCurrentInstance, provide } from 'vue'
 import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
@@ -498,6 +512,7 @@ import { isArray, isFunction, concat } from 'lodash'
 
 import MaFormGroup from './formGroup.vue'
 
+const app = getCurrentInstance().appContext.app
 const columns = ref([])
 const form = ref({})
 const formRef = ref(null)
@@ -518,6 +533,8 @@ const props = defineProps({
     } 
   },
 })
+
+provide('form', form)
 
 columns.value = props.columns
 form.value = props.modelValue
@@ -576,6 +593,7 @@ const done = (status) => formLoading.value = status
 const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
 
 const init = () => {
+  console.log(11111)
   formLoading.value = true
   const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
@@ -586,9 +604,14 @@ const init = () => {
       if (item.cascaderItem && item.cascaderItem.length > 0) {
         cascaders = concat(cascaders, item.cascaderItem)
       }
+
+      if (item.formType === 'component' && item.component && !app._context.components[item.dataIndex]) {
+        app.component(item.dataIndex, item.component)
+      }
     })
 
     columns.value.map(async item => {
+      console.log(item)
 
       if (! form.value[item.dataIndex] && typeof form.value[item.dataIndex] == 'undefined') {
         form.value[item.dataIndex] = undefined
@@ -611,7 +634,7 @@ const init = () => {
         } else if (item.dict.url) {
           const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
           if (response.data) {
-            formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
+            formDictData.value[item.dataIndex] = typeof item.dict.success == 'function'  ? item.dict.success(allowCoverFormType, item, response.data) : handlerProps(allowCoverFormType, item, response.data)
           }
         } else if (item.dict.data) {
           if (isArray(item.dict.data)) {
@@ -717,5 +740,5 @@ const getComponent = (item) => {
 
 props.autoInit && init()
 
-defineExpose({ init, reset })
+defineExpose({ init, reset, formRef })
 </script>

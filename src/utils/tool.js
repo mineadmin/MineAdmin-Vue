@@ -279,6 +279,18 @@ tool.httpBuild = (data, isPrefix = false) => {
   return _result.length ? prefix + _result.join('&') : ''
 }
 
+tool.getRequestParams = (url) => {
+  const theRequest = new Object()
+  if (url.indexOf('?') != -1) {
+    const params = url.split('?')[1].split('&')
+    for (let i = 0; i < params.length; i++) {
+      const param = params[i].split('=')
+      theRequest[param[0]] = decodeURIComponent(param[1])
+    }
+  }
+  return theRequest
+}
+
 tool.attachUrl = (path, defaultStorage = 'LOCAL') => {
 	return uploadConfig.storage[defaultStorage] + path
 }

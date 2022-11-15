@@ -3,7 +3,7 @@
     <div class="menu-tags-wrapper" ref="scrollbarDom" :class="{ 'tag-pn': tagShowPrevNext }">
       <div class="tags" ref="tags">
         <a v-for="tag in tagStore.tags" :key="tag.path" @contextmenu.prevent="openContextMenu($event, tag)"
-          :class="route.path == tag.path ? 'active' : ''"
+          :class="route.fullPath == tag.path ? 'active' : ''"
           @click="tagJump(tag)">
           {{ tag.customTitle ? tag.customTitle : $t('menus.' + tag.name).indexOf('.') > 0 ? tag.title : $t('menus.' + tag.name) }}
           <icon-close class="tag-icon" v-if="!tag.affix" @click.stop="closeTag(tag)" />
@@ -67,6 +67,7 @@ import { addTag, closeTag, refreshTag } from '@/utils/common'
 import Sortable from "sortablejs"
 import { Message } from '@arco-design/web-vue'
 import { IconFaceFrownFill } from '@arco-design/web-vue/dist/arco-vue-icon'
+import tool from '@/utils/tool'
 
 const route = useRoute()
 const router = useRouter()
@@ -136,7 +137,7 @@ watch(
 )
 
 const tagJump = tag => {
-  router.push({ path: tag.path })
+  router.push({ path: tag.path, query: tool.getRequestParams(tag.path) })
 }
 
 const openContextMenu = (e, tag) => {
