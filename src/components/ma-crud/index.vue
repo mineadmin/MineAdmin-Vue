@@ -510,9 +510,8 @@ const requestData = async () => {
     columns.value.push({ title: defaultCrud.value.operationColumnText, dataIndex: '__operation', width: defaultCrud.value.operationWidth, align: 'right', fixed: 'right' })
   }
   columns.value.forEach(item => {
-    item.width = defaultCrud.value.columnWidth
+    !item.width && (item.width = defaultCrud.value.columnWidth)
   })
-  console.log(columns)
   showSearch.value = true
   initRequestParams()
   await refresh()
