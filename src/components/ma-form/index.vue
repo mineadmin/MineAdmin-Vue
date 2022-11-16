@@ -177,6 +177,13 @@
                   />
 
                   <component
+                    v-else-if="item.formType === 'component'"
+                    :is="item.dataIndex"
+                    :columns="columns"
+                    :item="item"
+                  />
+
+                  <component
                     v-else
                     :is="getComponent(item)"
                     v-model="form[item.dataIndex]"
@@ -404,6 +411,13 @@
                     />
 
                     <component
+                      v-else-if="item.formType === 'component'"
+                      :is="item.dataIndex"
+                      :columns="columns"
+                      :item="item"
+                    />
+
+                    <component
                       v-else
                       :is="getComponent(item)"
                       v-model="form[item.dataIndex]"
@@ -490,7 +504,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, getCurrentInstance, provide } from 'vue'
 import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
@@ -498,6 +512,7 @@ import { isArray, isFunction, concat } from 'lodash'
 
 import MaFormGroup from './formGroup.vue'
 
+const app = getCurrentInstance().appContext.app
 const columns = ref([])
 const form = ref({})
 const formRef = ref(null)
@@ -518,6 +533,8 @@ const props = defineProps({
     } 
   },
 })
+
+provide('form', form)
 
 columns.value = props.columns
 form.value = props.modelValue
@@ -585,6 +602,10 @@ const init = () => {
     columns.value.map(item => {
       if (item.cascaderItem && item.cascaderItem.length > 0) {
         cascaders = concat(cascaders, item.cascaderItem)
+      }
+
+      if (item.formType === 'component' && item.component && !app._context.components[item.dataIndex]) {
+        app.component(item.dataIndex, item.component)
       }
     })
 
@@ -717,5 +738,5 @@ const getComponent = (item) => {
 
 props.autoInit && init()
 
-defineExpose({ init, reset })
+defineExpose({ init, reset, formRef })
 </script>
