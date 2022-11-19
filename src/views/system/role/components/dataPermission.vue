@@ -107,7 +107,7 @@
   }
 
   const setData = async (roleId) => {
-    const deptResponse = await dept.tree()
+    const deptResponse = await dept.tree({ scope: true })
     deptList.value = deptResponse.data
     const roleResponse = await role.getDeptByRole(roleId)
     selectKeys.value = roleResponse.data[0].depts.map( item => item.id )
