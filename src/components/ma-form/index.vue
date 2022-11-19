@@ -593,6 +593,7 @@ const done = (status) => formLoading.value = status
 const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
 
 const init = () => {
+  console.log(11111)
   formLoading.value = true
   const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
@@ -610,6 +611,7 @@ const init = () => {
     })
 
     columns.value.map(async item => {
+      console.log(item)
 
       if (! form.value[item.dataIndex] && typeof form.value[item.dataIndex] == 'undefined') {
         form.value[item.dataIndex] = undefined
@@ -632,7 +634,7 @@ const init = () => {
         } else if (item.dict.url) {
           const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
           if (response.data) {
-            formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
+            formDictData.value[item.dataIndex] = typeof item.dict.success == 'function'  ? item.dict.success(allowCoverFormType, item, response.data) : handlerProps(allowCoverFormType, item, response.data)
           }
         } else if (item.dict.data) {
           if (isArray(item.dict.data)) {

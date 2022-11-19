@@ -211,7 +211,9 @@
       v-model="columns"
       v-model:crud="defaultCrud"
       @success="requestSuccess"
-    />
+    >
+      <slot name="form"></slot>
+    </ma-form>
 
     <ma-import
       ref="maCrudImport"
@@ -282,6 +284,8 @@ const defaultCrud = ref({
   dragSort: false,
   // 子节点为空隐藏节点按钮
   hideExpandButtonOnEmpty: true,
+  // 设置单列宽度
+  columnWidth: 80,
   // 默认展开所有行
   expandAllRows: false,
   // 斑马线
@@ -510,6 +514,9 @@ const requestData = async () => {
   if (defaultCrud.value.operationColumn && columns.value.length > 0 && columns.value[columns.value.length - 1].dataIndex !== '__operation') {
     columns.value.push({ title: defaultCrud.value.operationColumnText, dataIndex: '__operation', width: defaultCrud.value.operationWidth, align: 'right', fixed: 'right' })
   }
+  columns.value.forEach(item => {
+    !item.width && (item.width = defaultCrud.value.columnWidth)
+  })
   showSearch.value = true
   initRequestParams()
   await refresh()
