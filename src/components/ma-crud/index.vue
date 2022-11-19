@@ -284,6 +284,8 @@ const defaultCrud = ref({
   hideExpandButtonOnEmpty: true,
   // 默认展开所有行
   expandAllRows: false,
+  // 默认展开搜索
+  expandSearch: true,
   // 斑马线
   stripe: true,
   // 新增、编辑、删除完成后是否刷新表格
@@ -510,7 +512,7 @@ const requestData = async () => {
   if (defaultCrud.value.operationColumn && columns.value.length > 0 && columns.value[columns.value.length - 1].dataIndex !== '__operation') {
     columns.value.push({ title: defaultCrud.value.operationColumnText, dataIndex: '__operation', width: defaultCrud.value.operationWidth, align: 'right', fixed: 'right' })
   }
-  showSearch.value = true
+  showSearch.value = !defaultCrud.value.expandSearch
   initRequestParams()
   await refresh()
 }
@@ -807,6 +809,7 @@ if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.aut
 
 onMounted(() => {
   document.querySelector('.arco-table-body').className += ' customer-scrollbar'
+  toggleSearch()
 })
 
 const settingFixedPage = (openPage = false) => {
