@@ -7,6 +7,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import router from '@/router'
 import { useTagStore, useKeepAliveStore } from '@/store'
+import tool from '@/utils/tool'
 
 export const refreshTag = () => {
   const route = router.currentRoute.value
@@ -33,7 +34,7 @@ export const closeTag = (tag) => {
   const keepStore = useKeepAliveStore()
   const t = tagStore.removeTag(tag)
   keepStore.removeKeepAlive(tag)
-  router.push({ name: t.name, query: t.query })
+  router.push({ path: t.path, query: tool.getRequestParams(t.path) })
 }
 
 export const success = (title, content) => {

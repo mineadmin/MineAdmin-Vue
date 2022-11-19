@@ -163,8 +163,8 @@ const closeContextMenu = () => {
 const contextMenuRefreshTag = () => {
   const tag = contextMenuItem.value
   contextMenuVisible.value = false
-  if (route.path != tag.path) {
-    router.push({ path: tag.path })
+  if (route.fullPath != tag.fullPath) {
+    router.push({ path: tag.path, query: tool.getRequestParams(tag.path) })
   }
   refreshTag()
 }

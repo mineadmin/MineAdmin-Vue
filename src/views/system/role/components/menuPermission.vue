@@ -89,7 +89,7 @@
   }
 
   const setData = async (roleId) => {
-    const menuResponse = await menu.tree()
+    const menuResponse = await menu.tree({ scope: true })
     menuList.value = menuResponse.data
     const roleResponse = await role.getMenuByRole(roleId)
     selectKeys.value = roleResponse.data[0].menus.map( item => item.id)

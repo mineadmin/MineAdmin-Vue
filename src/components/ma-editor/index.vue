@@ -104,6 +104,7 @@
     plugins: props.plugins,
     toolbar: props.toolbar,
     branding: false,
+    content_css: '/tinymce/skins/content/default/content.css',
     setup: (editor) => {
       editor.on('init', () => {
         editor.getBody().style.fontSize = '14px';

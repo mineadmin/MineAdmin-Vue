@@ -310,6 +310,8 @@ const defaultCrud = ref({
   stickyHeader: true,
   // 页面布局方式，支持 normal（标准）和 fixed（固定）两种
   pageLayout: 'normal',
+  // 默认统一设置列宽度
+  columnWidth: 100,
   // 新增和编辑显示设置
   viewLayoutSetting: {
     // 布局方式, 支持 auto（自动） 和 customer（自定义）两种
@@ -503,6 +505,9 @@ searchSlots.value = getSearchSlot(settingProps.columns)
 const requestData = async () => {
   defaultCrud.value = Object.assign(defaultCrud.value, settingProps.crud)
   columns.value = Object.assign(settingProps.columns, {})
+  columns.value.map(item => {
+    !item.width && (item.width = defaultCrud.value.columnWidth)
+  })
   if (defaultCrud.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {
     columns.value.unshift({ title: defaultCrud.value.indexLabel, dataIndex: '__index', width: 70, fixed: 'left' })
   }
