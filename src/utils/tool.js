@@ -1,5 +1,6 @@
 import CryptoJS from 'crypto-js'
 import uploadConfig from '@/config/upload'
+import CityLinkageJson from "@/components/ma-cityLinkage/lib/city.json"
 
 const typeColor = (type = 'default') => {
   let color = ''
@@ -134,9 +135,34 @@ tool.screen = (element) => {
   }
 }
 
+// 城市代码翻译成名称
+tool.cityToCode = function(province, city = undefined, area = undefined, split = ' / ') {
+  try {
+    let provinceData = CityLinkageJson.filter(item => province == item.code)[0]
+    if (! city) {
+      return provinceData.name
+    }
+    let cityData = provinceData.children.filter(item => city == item.code)[0]
+
+    if (! area) {
+      return [provinceData.name, cityData.name].join(split)
+    }
+    let areaData = cityData.children.filter(item => area == item.code)[0]
+
+    return [provinceData.name, cityData.name, areaData.name].join(split)
+  } catch (e) {
+    return ''
+  }
+}
+
 /* 复制对象 */
 tool.objCopy = (obj) => {
   return JSON.parse(JSON.stringify(obj));
+}
+
+tool.viewImage = function(path, defaultStorage = 'LOCAL') {
+  let mode = tool.local.get('site_storage_mode') ? tool.local.get('site_storage_mode').toUpperCase() : defaultStorage
+  return uploadConfig.storage[mode] + path
 }
 
 /* 日期格式化 */
