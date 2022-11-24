@@ -46,7 +46,7 @@
                 ><icon-eye /> {{ props.options.see.text || '查看' }}</a-link> -->
 
                 <a-link
-                  v-if="props.options.edit.show && !props.isRecovery"
+                  v-if="(isFunction(props.options.edit.show) ? props.options.edit.show(record):props.options.edit.show) && !props.isRecovery"
                   v-auth="props.options.edit.auth || []"
                   v-role="props.options.edit.role || []"
                   type="primary"
@@ -59,7 +59,7 @@
                   content="确定要恢复该数据吗?"
                   position="bottom"
                   @ok="recoveryAction(record)"
-                  v-if="props.options.recovery.show && props.isRecovery"
+                  v-if="(isFunction(props.options.recovery.show) ? props.options.recovery.show(record):props.options.recovery.show) && props.isRecovery"
                   v-auth="props.options.recovery.auth || []"
                   v-role="props.options.recovery.role || []"
                 >
@@ -70,7 +70,7 @@
                   content="确定要删除该数据吗?"
                   position="bottom"
                   @ok="deleteAction(record)"
-                  v-if="props.options.delete.show"
+                  v-if="(isFunction(props.options.delete.show) ? props.options.delete.show(record):props.options.delete.show)"
                 >
                   <a-link
                     type="primary"
