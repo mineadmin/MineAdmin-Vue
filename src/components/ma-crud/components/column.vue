@@ -146,12 +146,18 @@ const storageMode = {
 
 const imageSee = async (row, record) => {
   if (row.returnType) {
+
+    if (row.returnType == 'url') {
+      emit('showImage', record.url)
+      return
+    }
+
     if (! ['id', 'hash'].includes(row.returnType)) {
       Message.info('该图片无法查看')
       return
     }
     Message.info('获取图片中，请稍等...')
-    const api = row.returnType == 'id' ? commonApi.getFileInfoById : commonApi.getFileInfoByHash
+    const res = row.returnType == 'id' ? await commonApi.getFileInfoById({ id: record.id }) : await commonApi.getFileInfoByHash({ hash: record.hash })
     const result  = res?.success ?? false
     if (! result) {
       Message.info('图片信息无法获取')
