@@ -8,7 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Message } from '@arco-design/web-vue'
 import { useI18n } from 'vue-i18n'
 
@@ -97,7 +97,6 @@ onMounted(() => {
 
 const refresh = () => {
   generateCode()
-  verifyCode.value = ''
 }
 
 defineExpose({ checkResult, refresh })
