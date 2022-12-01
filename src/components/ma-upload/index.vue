@@ -188,12 +188,12 @@
             class="chunk-file-list flex flex-col"
           >
             <div class="flex justify-between items-center">
-              <div>{{ fileList.file.name }}</div>
+              <div>{{ fileList.file?.name ?? fileList }}</div>
               <a-button shape="circle" @click="removeChunkFile">
                 <template #icon><icon-delete /></template>
               </a-button>
             </div>
-            <a-progress animation :percent="fileList.percent || 0" class="mt-2"/>
+            <a-progress animation :percent="(fileList.percent ? 0 : 1)" class="mt-2"/>
           </div>
         </a-space>
       </div>
