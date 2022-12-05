@@ -280,7 +280,7 @@ const init = () => {
     })
   }
 
-  if (props.type === 'image') {
+  if (props.type === 'image' && ! props.chunk) {
     watch(
       () => props.modelValue,
       vl => {
