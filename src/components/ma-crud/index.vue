@@ -829,7 +829,7 @@ defineExpose({
 
 <style scoped lang="less">
 .__search-panel {
-  transition: display 1s; overflow: hidden;
+  transition: display 1s; overflow: hidden; width: 100%;
 }
 ._crud-footer {
   z-index: 10;
