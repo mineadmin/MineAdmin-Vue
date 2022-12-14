@@ -86,7 +86,7 @@
       }
     },
     { 
-      title: '部门名称啊', dataIndex: 'name', search: true, width: 150,
+      title: '部门名称', dataIndex: 'name', search: true, width: 150,
       rules: [{ required: true, message: '部门名称必填' }],
     },
     { title: '负责人', dataIndex: 'leader', search: true, width: 120 },
