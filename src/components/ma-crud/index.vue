@@ -225,7 +225,7 @@
 <script setup>
 import config from '@/config/crud'
 import { isFunction } from '@vue/shared'
-import { ref, watch, nextTick, onMounted } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 
 import MaSearch from './components/search.vue'
 import MaForm from './components/form.vue'
@@ -803,7 +803,7 @@ if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.aut
   requestData()
 }
 
-onMounted(() => {
+nextTick(() => {
   document.querySelector('.arco-table-body').className += ' customer-scrollbar'
   toggleSearch()
 })
