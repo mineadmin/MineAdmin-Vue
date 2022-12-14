@@ -610,15 +610,13 @@ const submit = async (done) => {
       response = await props.crud.edit.api(form.value[props.crud.pk], form.value)
       isFunction(props.crud.afterEdit) && props.crud.afterEdit(response, form.value)
     }
-    if ( response.code === 200 ) {
+    if ( response.success ) {
       Message.success(response.message || `${actionTitle.value}成功！`)
       emit('success', response)
       done(true)
-    } else {
-      Message.error(response.message || `${actionTitle.value}失败！`)
-      emit('error', response)
-      done(false)
+      return true
     }
+    done(false)
   })
 }
 const open = () => {
