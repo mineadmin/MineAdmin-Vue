@@ -32,7 +32,7 @@
               :label="item.title ?? '未命名'"
               :field="`${props.dataIndex}.${index}.${item.dataIndex}`"
               label-col-flex="auto"
-              :label-col-style="{ width: data.labelWidth ? item.labelWidth : props.options.labelWidth || '100px' }"
+              :label-col-style="{ width: item.labelWidth ? item.labelWidth : props.options.labelWidth || '100px' }"
               :rules="item.rules || []"
               :validate-trigger="item.validateTrigger"
               :validate-status="item.validateStatus"
