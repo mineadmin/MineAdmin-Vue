@@ -29,10 +29,10 @@
           <template v-for="(item, idx) in rows[index]" :key="idx">
             <a-form-item
               v-show="formItemShow"
-              :label="item.title"
+              :label="item.title ?? '未命名'"
               :field="`${props.dataIndex}.${index}.${item.dataIndex}`"
               label-col-flex="auto"
-              :label-col-style="{ width: item.labelWidth ? item.labelWidth : props.options.labelWidth || '100px' }"
+              :label-col-style="{ width: data.labelWidth ? item.labelWidth : props.options.labelWidth || '100px' }"
               :rules="item.rules || []"
               :validate-trigger="item.validateTrigger"
               :validate-status="item.validateStatus"
@@ -491,7 +491,7 @@ form[props.dataIndex] = []
 
 watch(
   () => props.modelValue,
-  vl => form.datas = vl
+  vl => form[props.dataIndex] = vl
 )
 
 watch(
@@ -504,13 +504,12 @@ const done = (status) => {
   loading.value = status
 }
 
-const add = () => {
-  let tmp = {}
+const add = ( data = {} ) => {
+  let tmp = data.srcElement ? {} : data
   if (props.addRow && isFunction(props.addRow)) {
     props.addRow()
   }
   rows.value.push(props.columns)
-  props.columns.map(item => tmp[item.dataIndex] = undefined)
   form[props.dataIndex].push(tmp)
 }
 
@@ -526,6 +525,10 @@ const flush = () => {
   form[props.dataIndex] = []
   rows.value = []
 }
+
+props.modelValue.map(item => {
+  add(item)
+})
 
 const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
 
