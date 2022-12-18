@@ -203,9 +203,7 @@ const editAction = record => {
 
 const recoveryAction = async record => {
   const response = await props.options.recovery.api({ ids: [record[props.options.pk]] })
-  response.code === 200
-    ? Message.success(response.message || `恢复成功！`)
-    : Message.error(response.message || `恢复失败！`)
+  Message.success(response.message || `恢复成功！`)
   emit('refresh')
 }
 
@@ -218,9 +216,7 @@ const deleteAction = async record => {
   if (props.options.afterDelete && isFunction(props.options.afterDelete)) {
     props.options.afterDelete(response, record)
   }
-  response.code === 200
-    ? Message.success(response.message || `删除成功！`)
-    : Message.error(response.message || `删除失败！`)
+  Message.success(response.message || `删除成功！`)
   emit('refresh')
 }
 

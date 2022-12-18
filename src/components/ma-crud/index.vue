@@ -225,7 +225,7 @@
 <script setup>
 import config from '@/config/crud'
 import { isFunction } from '@vue/shared'
-import { ref, watch, nextTick, onMounted } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 
 import MaSearch from './components/search.vue'
 import MaForm from './components/form.vue'
@@ -683,9 +683,7 @@ const deletesMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
     const api = isRecovery.value ? defaultCrud.value.delete.realApi : defaultCrud.value.delete.api
     const response = await api({ ids: selecteds.value })
-    response.code === 200
-    ? Message.success(response.message || `删除成功！`)
-    : Message.error(response.message || `删除失败！`)
+    Message.success(response.message || `删除成功！`)
     refresh()
   } else {
     Message.error('至少选择一条数据')
@@ -695,9 +693,7 @@ const deletesMultipleAction = async () => {
 const recoverysMultipleAction = async() => {
   if (selecteds.value && selecteds.value.length > 0) {
     const response = await defaultCrud.value.recovery.api({ ids: selecteds.value })
-    response.code === 200
-    ? Message.success(response.message || `恢复成功！`)
-    : Message.error(response.message || `恢复失败！`)
+    Message.success(response.message || `恢复成功！`)
     refresh()
   } else {
     Message.error('至少选择一条数据')
@@ -807,7 +803,7 @@ if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.aut
   requestData()
 }
 
-onMounted(() => {
+nextTick(() => {
   document.querySelector('.arco-table-body').className += ' customer-scrollbar'
   toggleSearch()
 })
