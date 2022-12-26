@@ -46,7 +46,7 @@
                 ><icon-eye /> {{ props.options.see.text || '查看' }}</a-link> -->
 
                 <a-link
-                  v-if="props.options.edit.show && !props.isRecovery"
+                  v-if="(isFunction(props.options.edit.show) ? props.options.edit.show(record):props.options.edit.show) && !props.isRecovery"
                   v-auth="props.options.edit.auth || []"
                   v-role="props.options.edit.role || []"
                   type="primary"
@@ -59,7 +59,7 @@
                   content="确定要恢复该数据吗?"
                   position="bottom"
                   @ok="recoveryAction(record)"
-                  v-if="props.options.recovery.show && props.isRecovery"
+                  v-if="(isFunction(props.options.recovery.show) ? props.options.recovery.show(record):props.options.recovery.show) && props.isRecovery"
                   v-auth="props.options.recovery.auth || []"
                   v-role="props.options.recovery.role || []"
                 >
@@ -70,7 +70,7 @@
                   content="确定要删除该数据吗?"
                   position="bottom"
                   @ok="deleteAction(record)"
-                  v-if="props.options.delete.show"
+                  v-if="(isFunction(props.options.delete.show) ? props.options.delete.show(record):props.options.delete.show)"
                 >
                   <a-link
                     type="primary"
@@ -146,12 +146,18 @@ const storageMode = {
 
 const imageSee = async (row, record) => {
   if (row.returnType) {
+
+    if (row.returnType == 'url') {
+      emit('showImage', record.url)
+      return
+    }
+
     if (! ['id', 'hash'].includes(row.returnType)) {
       Message.info('该图片无法查看')
       return
     }
     Message.info('获取图片中，请稍等...')
-    const api = row.returnType == 'id' ? commonApi.getFileInfoById : commonApi.getFileInfoByHash
+    const res = row.returnType == 'id' ? await commonApi.getFileInfoById({ id: record.id }) : await commonApi.getFileInfoByHash({ hash: record.hash })
     const result  = res?.success ?? false
     if (! result) {
       Message.info('图片信息无法获取')
@@ -197,24 +203,21 @@ const editAction = record => {
 
 const recoveryAction = async record => {
   const response = await props.options.recovery.api({ ids: [record[props.options.pk]] })
-  response.code === 200
-    ? Message.success(response.message || `恢复成功！`)
-    : Message.error(response.message || `恢复失败！`)
+  Message.success(response.message || `恢复成功！`)
   emit('refresh')
 }
 
 const deleteAction = async record => {
+  let data = {}
   if (props.options.beforeDelete && isFunction(props.options.beforeDelete)) {
-    props.options.beforeDelete(record)
+    data = props.options.beforeDelete(record)
   }
   const api = props.isRecovery ? props.options.delete.realApi : props.options.delete.api
-  const response = await api({ ids: [record[props.options.pk]] })
+  const response = await api(Object.assign({ ids: [record[props.options.pk]] }, data))
   if (props.options.afterDelete && isFunction(props.options.afterDelete)) {
     props.options.afterDelete(response, record)
   }
-  response.code === 200
-    ? Message.success(response.message || `删除成功！`)
-    : Message.error(response.message || `删除失败！`)
+  Message.success(response.message || `删除成功！`)
   emit('refresh')
 }
 

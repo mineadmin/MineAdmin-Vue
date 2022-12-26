@@ -29,7 +29,7 @@
           <template v-for="(item, idx) in rows[index]" :key="idx">
             <a-form-item
               v-show="formItemShow"
-              :label="item.title"
+              :label="item.title ?? '未命名'"
               :field="`${props.dataIndex}.${index}.${item.dataIndex}`"
               label-col-flex="auto"
               :label-col-style="{ width: item.labelWidth ? item.labelWidth : props.options.labelWidth || '100px' }"
@@ -119,7 +119,9 @@
                   allow-clear
                   allow-search
                   :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
-                  :tree-checkable="item.multiple"
+                  :tree-checkable="item.treeCheckable"
+                  :tree-check-strictly="item.treeCheckStrictly"
+                  :max-tag-count="item.maxTagCount ?? 2"
                   :multiple="item.multiple"
                   :data="formDictData[item.dataIndex]"
                   @change="item.change && item.change($event, { data, item, index })"
@@ -338,7 +340,9 @@
                     allow-clear
                     allow-search
                     :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
-                    :tree-checkable="item.multiple"
+                    :tree-checkable="item.treeCheckable"
+                    :tree-check-strictly="item.treeCheckStrictly"
+                    :max-tag-count="item.maxTagCount ?? 2"
                     :multiple="item.multiple"
                     :data="formDictData[item.dataIndex]"
                     @change="item.change && item.change($event, { data, item, index })"
@@ -471,7 +475,7 @@
 <script setup>
 import { reactive, ref, watch } from 'vue'
 import { request } from '@/utils/request'
-import { isFunction, concat } from 'lodash'
+import { isFunction, concat, isArray } from 'lodash'
 import commonApi from '@/api/common'
 
 const loading = ref(true)
@@ -491,7 +495,7 @@ form[props.dataIndex] = []
 
 watch(
   () => props.modelValue,
-  vl => form.datas = vl
+  vl => form[props.dataIndex] = vl
 )
 
 watch(
@@ -504,13 +508,12 @@ const done = (status) => {
   loading.value = status
 }
 
-const add = () => {
-  let tmp = {}
+const add = ( data = {} ) => {
+  let tmp = data.srcElement ? {} : data
   if (props.addRow && isFunction(props.addRow)) {
     props.addRow()
   }
   rows.value.push(props.columns)
-  props.columns.map(item => tmp[item.dataIndex] = undefined)
   form[props.dataIndex].push(tmp)
 }
 
@@ -526,6 +529,10 @@ const flush = () => {
   form[props.dataIndex] = []
   rows.value = []
 }
+
+props.modelValue.map(item => {
+  add(item)
+})
 
 const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
 
@@ -592,7 +599,7 @@ const handlerCascader = (val, column) => {
   if (column.cascaderItem && isArray(column.cascaderItem) && column.cascaderItem.length > 0 && val) {
     loading.value = true
     column.cascaderItem.map(async name => {
-      const dict = props.props.columns.filter(col => col.dataIndex === name && col.dict )[0].dict
+      const dict = props.columns.filter(col => col.dataIndex === name && col.dict )[0].dict
       if (dict && dict.url && dict.props) {
         let response
         if (dict && dict.url.indexOf('{{key}}') > 0) {

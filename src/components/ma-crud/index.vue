@@ -225,7 +225,7 @@
 <script setup>
 import config from '@/config/crud'
 import { isFunction } from '@vue/shared'
-import { ref, watch, nextTick, onMounted } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 
 import MaSearch from './components/search.vue'
 import MaForm from './components/form.vue'
@@ -284,6 +284,8 @@ const defaultCrud = ref({
   hideExpandButtonOnEmpty: true,
   // 默认展开所有行
   expandAllRows: false,
+  // 默认展开搜索
+  expandSearch: true,
   // 斑马线
   stripe: true,
   // 新增、编辑、删除完成后是否刷新表格
@@ -510,7 +512,7 @@ const requestData = async () => {
   if (defaultCrud.value.operationColumn && columns.value.length > 0 && columns.value[columns.value.length - 1].dataIndex !== '__operation') {
     columns.value.push({ title: defaultCrud.value.operationColumnText, dataIndex: '__operation', width: defaultCrud.value.operationWidth, align: 'right', fixed: 'right' })
   }
-  showSearch.value = true
+  showSearch.value = !defaultCrud.value.expandSearch
   initRequestParams()
   await refresh()
 }
@@ -680,10 +682,15 @@ const exportAction = () => {
 const deletesMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
     const api = isRecovery.value ? defaultCrud.value.delete.realApi : defaultCrud.value.delete.api
-    const response = await api({ ids: selecteds.value })
-    response.code === 200
-    ? Message.success(response.message || `删除成功！`)
-    : Message.error(response.message || `删除失败！`)
+    let data = {}
+    if (defaultCrud.value.beforeDelete && isFunction(defaultCrud.value.beforeDelete)) {
+      data = defaultCrud.value.beforeDelete()
+    }
+    const response = await api(Object.assign( { ids: selecteds.value }, data ))
+    if (defaultCrud.value.afterDelete && isFunction(defaultCrud.value.afterDelete)) {
+      defaultCrud.value.afterDelete(response)
+    }
+    Message.success(response.message || `删除成功！`)
     refresh()
   } else {
     Message.error('至少选择一条数据')
@@ -693,9 +700,7 @@ const deletesMultipleAction = async () => {
 const recoverysMultipleAction = async() => {
   if (selecteds.value && selecteds.value.length > 0) {
     const response = await defaultCrud.value.recovery.api({ ids: selecteds.value })
-    response.code === 200
-    ? Message.success(response.message || `恢复成功！`)
-    : Message.error(response.message || `恢复失败！`)
+    Message.success(response.message || `恢复成功！`)
     refresh()
   } else {
     Message.error('至少选择一条数据')
@@ -805,8 +810,9 @@ if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.aut
   requestData()
 }
 
-onMounted(() => {
+nextTick(() => {
   document.querySelector('.arco-table-body').className += ' customer-scrollbar'
+  toggleSearch()
 })
 
 const settingFixedPage = (openPage = false) => {
@@ -826,7 +832,7 @@ defineExpose({
 
 <style scoped lang="less">
 .__search-panel {
-  transition: display 1s; overflow: hidden;
+  transition: display 1s; overflow: hidden; width: 100%;
 }
 ._crud-footer {
   z-index: 10;
