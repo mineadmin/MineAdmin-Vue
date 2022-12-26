@@ -599,7 +599,7 @@ const handlerCascader = (val, column) => {
   if (column.cascaderItem && isArray(column.cascaderItem) && column.cascaderItem.length > 0 && val) {
     loading.value = true
     column.cascaderItem.map(async name => {
-      const dict = props.props.columns.filter(col => col.dataIndex === name && col.dict )[0].dict
+      const dict = props.columns.filter(col => col.dataIndex === name && col.dict )[0].dict
       if (dict && dict.url && dict.props) {
         let response
         if (dict && dict.url.indexOf('{{key}}') > 0) {
