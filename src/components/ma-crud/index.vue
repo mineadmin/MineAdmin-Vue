@@ -682,7 +682,14 @@ const exportAction = () => {
 const deletesMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
     const api = isRecovery.value ? defaultCrud.value.delete.realApi : defaultCrud.value.delete.api
-    const response = await api({ ids: selecteds.value })
+    let data = {}
+    if (defaultCrud.value.beforeDelete && isFunction(defaultCrud.value.beforeDelete)) {
+      data = defaultCrud.value.beforeDelete()
+    }
+    const response = await api(Object.assign( { ids: selecteds.value }, data ))
+    if (defaultCrud.value.afterDelete && isFunction(defaultCrud.value.afterDelete)) {
+      defaultCrud.value.afterDelete(response)
+    }
     Message.success(response.message || `删除成功！`)
     refresh()
   } else {

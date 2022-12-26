@@ -43,7 +43,6 @@
   const columns = reactive([
     { title: '用户账户', dataIndex: 'username', search: true, width: 180 },
     { title: '用户昵称', dataIndex: 'nickname', width: 180 },
-    { title: '所属部门', dataIndex: 'dept.name', width: 180 },
     { title: '登录IP', dataIndex: 'login_ip', width: 180 },
     { title: '登录时间', dataIndex: 'login_time', width: 180 },
   ])
