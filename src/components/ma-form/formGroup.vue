@@ -119,7 +119,9 @@
                   allow-clear
                   allow-search
                   :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
-                  :tree-checkable="item.multiple"
+                  :tree-checkable="item.treeCheckable"
+                  :tree-check-strictly="item.treeCheckStrictly"
+                  :max-tag-count="item.maxTagCount ?? 2"
                   :multiple="item.multiple"
                   :data="formDictData[item.dataIndex]"
                   @change="item.change && item.change($event, { data, item, index })"
@@ -338,7 +340,9 @@
                     allow-clear
                     allow-search
                     :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
-                    :tree-checkable="item.multiple"
+                    :tree-checkable="item.treeCheckable"
+                    :tree-check-strictly="item.treeCheckStrictly"
+                    :max-tag-count="item.maxTagCount ?? 2"
                     :multiple="item.multiple"
                     :data="formDictData[item.dataIndex]"
                     @change="item.change && item.change($event, { data, item, index })"
@@ -471,7 +475,7 @@
 <script setup>
 import { reactive, ref, watch } from 'vue'
 import { request } from '@/utils/request'
-import { isFunction, concat } from 'lodash'
+import { isFunction, concat, isArray } from 'lodash'
 import commonApi from '@/api/common'
 
 const loading = ref(true)
