@@ -260,16 +260,19 @@ tool.formatSize = (size) => {
 
 tool.download = (res, downName = '') => {
   const aLink = document.createElement('a');
-  const blob = new Blob([res.data], { type: res.headers['content-type'].replace(';charset=utf8', '') })
+  let fileName = downName
+  let blob = res //第三方请求返回blob对象
 
-  let fileName
-  if (!downName) {
-    const contentDisposition = decodeURI(res.headers['content-disposition'])
-    const result = contentDisposition.match(/filename\*=utf-8\'\'(.+)/gi)
-    fileName = result[0].replace(/filename\*=utf-8\'\'/gi, '')
-  } else {
-    fileName = downName
+  //通过后端接口返回
+  if (res.headers && res.data) {
+    blob = new Blob([res.data], {type: res.headers['content-type'].replace(';charset=utf8', '')})
+    if (!downName) {
+        const contentDisposition = decodeURI(res.headers['content-disposition'])
+        const result = contentDisposition.match(/filename\*=utf-8\'\'(.+)/gi)
+        fileName = result[0].replace(/filename\*=utf-8\'\'/gi, '')
+    }
   }
+  
   aLink.href = URL.createObjectURL(blob)
   // 设置下载文件名称
   aLink.setAttribute('download', fileName)
