@@ -596,15 +596,17 @@ const pageChangeHandler = (currentPage) => {
 }
 
 const toggleSearch = () => {
-  const dom = crudHeaderRef.value.style
-  dom.display = showSearch.value ? 'none' : 'block'
-  showSearch.value = ! showSearch.value
-  if (openPagination.value) {
-    headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? 24 : crudHeaderRef.value.offsetHeight + 32
-  } else {
-    headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? -8 : crudHeaderRef.value.offsetHeight
+  const dom = crudHeaderRef.value?.style
+  if (dom) {
+    dom.display = showSearch.value ? 'none' : 'block'
+    showSearch.value = ! showSearch.value
+    if (openPagination.value) {
+      headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? 24 : crudHeaderRef.value.offsetHeight + 32
+    } else {
+      headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? -8 : crudHeaderRef.value.offsetHeight
+    }
+    defaultCrud.value.pageLayout == 'fixed' && settingFixedPage()
   }
-  defaultCrud.value.pageLayout == 'fixed' && settingFixedPage()
 }
 
 const tableSetting = () => {
