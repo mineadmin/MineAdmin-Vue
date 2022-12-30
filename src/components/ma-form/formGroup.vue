@@ -132,7 +132,7 @@
                 <component
                   v-else-if="['date', 'range', 'time'].includes(item.formType)"
                   :is="getComponent(item)"
-                  v-model="form[item.dataIndex]"
+                  v-model="data[item.dataIndex]"
                   :placeholder="item.formType === 'range'
                     ? ['请选择开始时间', '请选择结束时间']
                     : item.placeholder ? item.placeholder : `请选择${item.title}`
@@ -153,7 +153,7 @@
                 <component
                   v-else-if="['month', 'year', 'week', 'quarter'].includes(item.formType)"
                   :is="getComponent(item)"
-                  v-model="form[item.dataIndex]"
+                  v-model="data[item.dataIndex]"
                   :placeholder="item.placeholder || `请选择${item.title}`"
                   :format="item.format || ''"
                   :disabled="item.disabled"
@@ -353,7 +353,7 @@
                   <component
                     v-else-if="['date', 'range', 'time'].includes(item.formType)"
                     :is="getComponent(item)"
-                    v-model="form[item.dataIndex]"
+                    v-model="data[item.dataIndex]"
                     :placeholder="item.formType === 'range'
                       ? ['请选择开始时间', '请选择结束时间']
                       : item.placeholder ? item.placeholder : `请选择${item.title}`
@@ -374,7 +374,7 @@
                   <component
                     v-else-if="['month', 'year', 'week', 'quarter'].includes(item.formType)"
                     :is="getComponent(item)"
-                    v-model="form[item.dataIndex]"
+                    v-model="data[item.dataIndex]"
                     :placeholder="item.placeholder || `请选择${item.title}`"
                     :format="item.format || ''"
                     :disabled="item.disabled"
