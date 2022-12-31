@@ -145,9 +145,9 @@
                   :mode="item.mode"
                   allow-clear
                   style="width: 100%;"
-                  @change="item.change && item.change($event, { form, item, index })"
-                  @click="item.click && item.click($event, { form, item, index })"
-                  @blur="item.blur && item.blur($event, { form, item, index })"
+                  @change="item.change && item.change($event, { data, item, index })"
+                  @click="item.click && item.click($event, { data, item, index })"
+                  @blur="item.blur && item.blur($event, { data, item, index })"
                 />
 
                 <component
@@ -160,9 +160,9 @@
                   :readonly="item.readonly"
                   allow-clear
                   style="width: 100%;"
-                  @change="item.change && item.change($event, { form, item, index })"
-                  @click="item.click && item.click($event, { form, item, index })"
-                  @blur="item.blur && item.blur($event, { form, item, index })"
+                  @change="item.change && item.change($event, { data, item, index })"
+                  @click="item.click && item.click($event, { data, item, index })"
+                  @blur="item.blur && item.blur($event, { data, item, index })"
                 />
 
                 <component
@@ -366,9 +366,9 @@
                     :mode="item.mode"
                     allow-clear
                     style="width: 100%;"
-                    @change="item.change && item.change($event, { form, item, index })"
-                    @click="item.click && item.click($event, { form, item, index })"
-                    @blur="item.blur && item.blur($event, { form, item, index })"
+                    @change="item.change && item.change($event, { data, item, index })"
+                    @click="item.click && item.click($event, { data, item, index })"
+                    @blur="item.blur && item.blur($event, { data, item, index })"
                   />
 
                   <component
@@ -381,9 +381,9 @@
                     :readonly="item.readonly"
                     allow-clear
                     style="width: 100%;"
-                    @change="item.change && item.change($event, { form, item, index })"
-                    @click="item.click && item.click($event, { form, item, index })"
-                    @blur="item.blur && item.blur($event, { form, item, index })"
+                    @change="item.change && item.change($event, { data, item, index })"
+                    @click="item.click && item.click($event, { data, item, index })"
+                    @blur="item.blur && item.blur($event, { data, item, index })"
                   />
 
                   <component
