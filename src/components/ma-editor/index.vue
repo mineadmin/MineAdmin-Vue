@@ -9,7 +9,7 @@
 -->
 <template>
   <div>
-    <editor v-model="content" :init="initConfig" :id="props.id"></editor>
+    <editor :key="editorKey" v-model="content" :init="initConfig" :id="props.id"></editor>
 
     <a-modal v-model:visible="resourceVisible" :width="1080" :footer="false"  draggable>
       <template #title>资源选择器</template>
@@ -116,6 +116,8 @@
     }
   })
 
+  const editorKey = ref(new Date().getTime())
+
   watch(
     () => list.value,
     imgs => {
@@ -125,6 +127,7 @@
           tmp += `<img src=${img} width="100%" />`
         }
       })
+      editorKey.value = new Date().getTime()
       content.value = content.value ? content.value + tmp : tmp
       resource.value.clearSelecteds()
       resourceVisible.value = false
