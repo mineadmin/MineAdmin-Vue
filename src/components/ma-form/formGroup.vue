@@ -48,9 +48,9 @@
                   :max-tag-count="item.maxTagCount || 1"
                   :disabled="item.disabled"
                   :readonly="item.readonly"
-                  :options="formDictData[item.dataIndex]"
+                  :options="getDictData(item.dataIndex, index)"
                   :multiple="item.multiple"
-                  @change="handlerCascader($event, item)"
+                  @change="handlerCascader($event, item, index)"
                 />
 
                 <a-checkbox-group
@@ -58,10 +58,10 @@
                   v-model="data[item.dataIndex]"
                   :disabled="item.disabled"
                   :readonly="item.readonly"
-                  @change="handlerCascader($event, item)"
+                  @change="handlerCascader($event, item, index)"
                 >
                   <a-checkbox
-                    v-for="option in formDictData[item.dataIndex]"
+                    v-for="option in getDictData(item.dataIndex, index)"
                     :key="option" :value="Number.isInteger(data[item.dataIndex]) ? parseInt(option.value) : option.value"
                   >{{ option.label }}</a-checkbox>
                 </a-checkbox-group>
@@ -72,10 +72,10 @@
                   :disabled="item.disabled"
                   :readonly="item.readonly"
                   :type="item.type"
-                  @change="handlerCascader($event, item)"
+                  @change="handlerCascader($event, item, index)"
                 >
                   <a-radio
-                    v-for="option in formDictData[item.dataIndex]"
+                    v-for="option in getDictData(item.dataIndex, index)"
                     :key="option" :value="Number.isInteger(data[item.dataIndex]) ? parseInt(option.value) : option.value"
                   >{{ option.label }}</a-radio>
                 </a-radio-group>
@@ -269,9 +269,9 @@
                     :max-tag-count="item.maxTagCount || 1"
                     :disabled="item.disabled"
                     :readonly="item.readonly"
-                    :options="formDictData[item.dataIndex]"
+                    :options="getDictData(item.dataIndex, index)"
                     :multiple="item.multiple"
-                    @change="handlerCascader($event, item)"
+                    @change="handlerCascader($event, item, index)"
                   />
 
                   <a-checkbox-group
@@ -279,10 +279,10 @@
                     v-model="data[item.dataIndex]"
                     :disabled="item.disabled"
                     :readonly="item.readonly"
-                    @change="handlerCascader($event, item)"
+                    @change="handlerCascader($event, item, index)"
                   >
                     <a-checkbox
-                      v-for="option in formDictData[item.dataIndex]"
+                      v-for="option in getDictData(item.dataIndex, index)"
                       :key="option" :value="Number.isInteger(data[item.dataIndex]) ? parseInt(option.value) : option.value"
                     >{{ option.label }}</a-checkbox>
                   </a-checkbox-group>
@@ -293,10 +293,10 @@
                     :disabled="item.disabled"
                     :readonly="item.readonly"
                     :type="item.type"
-                    @change="handlerCascader($event, item)"
+                    @change="handlerCascader($event, item, index)"
                   >
                     <a-radio
-                      v-for="option in formDictData[item.dataIndex]"
+                      v-for="option in getDictData(item.dataIndex, index)"
                       :key="option" :value="Number.isInteger(data[item.dataIndex]) ? parseInt(option.value) : option.value"
                     >{{ option.label }}</a-radio>
                   </a-radio-group>
@@ -475,13 +475,14 @@
 <script setup>
 import { reactive, ref, watch } from 'vue'
 import { request } from '@/utils/request'
-import { isFunction, concat, isArray } from 'lodash'
+import { isFunction, isArray } from 'lodash'
 import commonApi from '@/api/common'
 
 const loading = ref(true)
 const form = reactive({})
 const rows = ref([])
 const formDictData = ref({})
+const cascaderItems = ref([])
 
 const props = defineProps({
   modelValue: { type: Object },
@@ -523,6 +524,11 @@ const deleteCurrent = (index) => {
   }
   form[props.dataIndex].splice(index, 1)
   rows.value.splice(index, 1)
+  cascaderItems.value.map(name => {
+    if (formDictData.value[name][index]) {
+      formDictData.value[name][index] = undefined
+    }
+  })
 }
 
 const flush = () => {
@@ -542,17 +548,16 @@ const init = () => {
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
 
   if (props.columns.length > 0) {
-    let cascaders = []
     props.columns.map(item => {
       if (item.cascaderItem && item.cascaderItem.length > 0) {
-        cascaders = concat(cascaders, item.cascaderItem)
+        item.cascaderItem.map(name => cascaderItems.value.push(name))
       }
     })
 
     props.columns.map(async item => {
       if (! formItemShow(item)) return
       
-      if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaders.includes(item.dataIndex)) {
+      if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaderItems.value.includes(item.dataIndex)) {
         if (item.dict.name) {
           const response = await commonApi.getDict(item.dict.name)
           if (response.data) {
@@ -595,7 +600,15 @@ const handlerProps = (allowType, item, tmpArr) => {
   return data
 }
 
-const handlerCascader = (val, column) => {
+const getDictData = (name, index) => {
+  if (cascaderItems.value.includes(name)) {
+    return formDictData.value[name][index] ?? undefined
+  } else {
+    return formDictData.value[name]
+  }
+}
+
+const handlerCascader = (val, column, index) => {
   if (column.cascaderItem && isArray(column.cascaderItem) && column.cascaderItem.length > 0 && val) {
     loading.value = true
     column.cascaderItem.map(async name => {
@@ -611,7 +624,7 @@ const handlerCascader = (val, column) => {
           response = await requestDict(dict.url, dict.method || 'GET', params || {}, data || {})
         }
         if (response.data && response.code === 200) {
-          formDictData.value[name] = response.data.map(dicItem => {
+          formDictData.value[name][index] = response.data.map(dicItem => {
             return {
               'label': dicItem[ (dict.props && dict.props.label) || 'label'  ],
               'value': dicItem[ (dict.props && dict.props.value) || 'value' ]
