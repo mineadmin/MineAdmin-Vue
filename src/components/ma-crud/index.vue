@@ -306,6 +306,8 @@ const defaultCrud = ref({
   showTools: true,
   // 表头是否吸顶
   stickyHeader: true,
+  // 开启新增编辑组件显示顺序自定义
+  openViewOrdered: false,
   // 页面布局方式，支持 normal（标准）和 fixed（固定）两种
   pageLayout: 'normal',
   // 默认统一设置列宽度

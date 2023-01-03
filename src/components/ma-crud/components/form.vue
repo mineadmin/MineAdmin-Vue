@@ -627,7 +627,7 @@ const open = () => {
   nextTick(() =>{
     componentName.value = setting.value.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
     dataVisible.value = true
-    columns.value = props.modelValue
+    settingOrdered()
     init()
   })
 }
@@ -648,6 +648,29 @@ const edit = (data) => {
   open()
 }
 const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
+
+const settingOrdered = () => {
+  columns.value = Object.assign(props.modelValue)
+  if (props.crud.openViewOrdered) {
+    columns.value.map((item, index) => {
+      if (! columns.value[index].order) {
+        columns.value[index].order = 0
+      }
+    })
+    
+    for ( let i = 0; i < columns.value.length; i++ ) {
+      for( let j = i; j < columns.value.length; j++ ) {
+        if (columns.value[j].order > columns.value[i].order) {
+          let temp = Object.assign(columns.value[i])
+          columns.value[i] = Object.assign(columns.value[j])
+          columns.value[j] = Object.assign(temp)
+          temp = null
+        }
+      }
+    }
+  }
+}
+
 const init = () => {
   dataLoading.value = true
   const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
