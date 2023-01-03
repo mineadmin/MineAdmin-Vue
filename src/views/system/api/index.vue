@@ -65,10 +65,11 @@
     recycleApi: api.getRecycleList,
     showIndex: false,
     searchLabelWidth: '75px',
+    pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 260,
-    add: { show: true, api: api.save, auth: ['system:api:add'] },
+    add: { show: true, api: api.save, auth: ['system:api:save'] },
     edit: { show: true, api: api.update, auth: ['system:api:update'] },
     delete: {
       show: true,
@@ -117,7 +118,7 @@
     },
     {
       title: '认证模式', dataIndex: 'auth_mode', formType: 'radio',
-      dict: { data: [{ label: '简易模式', code: 1 }, { label: '复杂模式', code: 2 }], translation: true },
+      dict: { data: [{ label: '简易模式', value: 1 }, { label: '复杂模式', value: 2 }], translation: true },
       addDefaultValue: 1, width: 130, span: 12,
     },
     {

@@ -12,7 +12,7 @@
     <template #title>编辑生成信息 - {{ record?.table_comment }}</template>
 
     <a-spin :loading="loading" tip="加载数据中..." class="w-full">
-      <a-form :model="form">
+      <a-form :model="form" ref="formRef">
         <a-tabs v-model:active-key="activeTab">
           <a-tab-pane title="配置信息" key="base_config">
 
@@ -306,6 +306,7 @@
               <template #isEdit="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_edit" /></template>
               <template #isList="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_list" /></template>
               <template #isQuery="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_query" /></template>
+              <template #isSort="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_sort" /></template>
               <!-- end -->
               <!-- 查询方式 -->
               <template #queryType="{ rowIndex }">
@@ -314,7 +315,7 @@
               <!-- 组件 -->
               <template #viewType="{ record, rowIndex }">
                 <a-space>
-                  <a-select v-model="form.columns[rowIndex].view_type" :style="{ width: '180px' }" :options="vars.viewComponent" allow-clear></a-select>
+                  <a-select v-model="form.columns[rowIndex].view_type" :style="{ width: '160px' }" :options="vars.viewComponent" allow-clear></a-select>
                   <a-link
                     v-if="! notNeedSettingComponents.includes(record.view_type)"
                     @click="settingComponentRef.open(record)"
@@ -506,7 +507,6 @@ import SettingComponent from './settingComponent.vue'
 
 // 导入变量
 import * as vars from '../js/vars.js'
-import { findProp } from '@vue/compiler-core'
 
 const record = ref({})
 const loading = ref(true)
@@ -523,6 +523,9 @@ const form = ref({
   generate_menus: ['save', 'update' , 'read', 'delete' , 'recycle', 'changeStatus', 'numberOperation', 'import', 'export'],
   columns: [],
 })
+
+const formRef = ref()
+
 // form扩展组
 const formOptions = ref({
   relations: []
@@ -558,10 +561,14 @@ const confrimSetting = (name, value) => {
 }
 
 const save = async (done) => {
-  form.value.options = formOptions.value
-  if (! form.value.generate_menus) {
-    form.value.generate_menus = ['save', 'update' , 'read', 'delete' , 'recycle', 'changeStatus', 'numberOperation', 'import', 'export']
+  const validResult = await formRef.value.validate()
+  if (validResult) {
+    for (let i in validResult) {
+      Message.error(validResult[i].message)
+    }
+    return false
   }
+  form.value.options = formOptions.value
   const response = await generate.update(form.value)
   response.success && Message.success(response.message)
   done(true)
@@ -580,8 +587,8 @@ const delRelation = (idx) => formOptions.value.relations.splice(idx, 1)
 const init = () => {
   // 设置form数据
   for (let name in record.value) {
-    if (name === 'generate_menus' && record.value[name]) {
-      form.value[name] = record.value[name].split(',')
+    if (name === 'generate_menus') {
+      form.value[name] = record.value[name] ? record.value[name].split(',') : []
     } else {
       form.value[name] = record.value[name]
     }
@@ -602,6 +609,7 @@ const init = () => {
       item.is_edit = item.is_edit === 2
       item.is_list = item.is_list === 2
       item.is_query = item.is_query === 2
+      item.is_sort = item.is_sort === 2
       form.value.columns.push(item)
     })
   })

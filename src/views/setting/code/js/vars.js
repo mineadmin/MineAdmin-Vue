@@ -27,10 +27,11 @@ export const columns = [
   { title: '编辑', dataIndex: 'is_edit', slotName: 'isEdit', width: 80, },
   { title: '列表', dataIndex: 'is_list', slotName: 'isList', width: 80, },
   { title: '查询', dataIndex: 'is_query', slotName: 'isQuery', width: 80, },
+  { title: '排序', dataIndex: 'is_sort', slotName: 'isSort', width: 80, },
   { title: '查询方式', dataIndex: 'query_type', slotName: 'queryType', width: 180, },
-  { title: '页面控件', dataIndex: 'view_type', slotName: 'viewType', width: 260, },
-  { title: '数据字典', dataIndex: 'dict_type', slotName: 'dictType', width: 200, },
-  { title: '允许角色', dataIndex: 'allow_roles', slotName: 'allowRoles', width: 240, },
+  { title: '页面控件', dataIndex: 'view_type', slotName: 'viewType', width: 240, },
+  { title: '数据字典', dataIndex: 'dict_type', slotName: 'dictType', width: 180, },
+  { title: '允许角色', dataIndex: 'allow_roles', slotName: 'allowRoles', width: 200, },
 ]
 
 export const queryType = [

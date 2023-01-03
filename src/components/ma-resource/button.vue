@@ -30,7 +30,7 @@
     </a-input-group>
     <a-modal v-model:visible="visible" :width="props.width" :footer="false"  draggable>
       <template #title>资源选择器</template>
-      <ma-resource v-model="list" :multiple="props.multiple" :only-url="props.onlyUrl" />
+      <ma-resource v-model="list" :multiple="props.multiple" :only-data="props.onlyData" />
     </a-modal>
   </div>
 </template>
@@ -48,7 +48,7 @@
   const props = defineProps({
     modelValue: { type: [ String, Array ] },
     multiple: { type: Boolean, default: true },
-    onlyUrl: { type: Boolean, default: true },
+    onlyData: { type: Boolean, default: true },
     width: { type: Number, default: 1080 },
   })
 

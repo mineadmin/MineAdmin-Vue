@@ -58,6 +58,15 @@ export default {
     error: '验证码错误',
     notice: '请输入验证码'
   },
+  animation: '切换动画',
+  animationHelp: '工作区页面切换的进场和出场动画效果',
+  animate: {
+    fade: '页面渐隐渐出',
+    sliderLeft: '页面向左渐出',
+    sliderRight:'页面向右渐出',
+    sliderDown:'页面向下渐出',
+    sliderUp:'页面向上渐出',
+  },
   tags: {
     refresh: '刷新',
     closeTag: '关闭当前标签',

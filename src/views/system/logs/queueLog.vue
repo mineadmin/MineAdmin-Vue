@@ -84,6 +84,7 @@
     api: queueLog.getPageList,
     showIndex: false,
     searchLabelWidth: '90px',
+    pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     requestParams: { orderBy: 'created_at', orderType: 'desc' },
     delete: { show: true, api: queueLog.deletes, auth: ['system:queueLog:delete'] },

@@ -109,11 +109,11 @@
           </a-form-item>
           <a-form-item
             label="值"
-            field="code"
+            field="value"
             label-col-flex="auto"
             :label-col-style="{ width: '80px' }"
           >
-            <a-input v-model="item.code" />
+            <a-input v-model="item.value" />
           </a-form-item>
         </a-card>
       </div>
@@ -149,14 +149,28 @@
       <div v-if="['upload', 'selectResource'].includes(row.view_type)">
         <a-form-item
           label="返回数据"
-          field="onlyUrl"
+          field="onlyData"
           label-col-flex="auto"
           :label-col-style="{ width: '120px' }"
         >
-          <a-radio-group v-model="form.onlyUrl">
-            <a-radio :value="true">仅url地址</a-radio>
+          <a-radio-group v-model="form.onlyData">
+            <a-radio :value="true">单个字段数据</a-radio>
             <a-radio :value="false">全量数据</a-radio>
           </a-radio-group>
+        </a-form-item>
+        <a-form-item
+          label="返回数据"
+          field="returnType"
+          label-col-flex="auto"
+          :label-col-style="{ width: '120px' }"
+          v-if="form.onlyData"
+          :extra="`支持 uploadfile 数据表所有字段，这里仅列常用部分`"
+        >
+          <a-select v-model="form.returnType" placeholder="请选择上传返回数据类型">
+            <a-option value="url">附件URL</a-option>
+            <a-option value="id">附件ID</a-option>
+            <a-option value="hash">附件HASH</a-option>
+          </a-select>
         </a-form-item>
         <a-form-item
           label="是否可多选"
@@ -309,7 +323,7 @@ const open = (record) => {
 }
 
 const add = () => {
-  form.value.collection.push({ label: '', code: ''})
+  form.value.collection.push({ label: '', value: ''})
 }
 const del = (idx) => {
   form.value.collection.splice(idx, 1)

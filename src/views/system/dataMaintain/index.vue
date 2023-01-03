@@ -11,7 +11,7 @@
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
     <ma-crud :crud="crud" :columns="columns" ref="crudRef" @selection-change="selectChange">
-      <!-- 表格操作按钮 -->
+      <!-- 表格操作按钮扩展 -->
       <template #tableButtons>
         <a-button @click="operate('optimize')" v-auth="['system:dataMaintain:optimize']">
           <icon-tool /> 优化表
@@ -79,6 +79,7 @@ const tableStruct = (name) => {
 const crud = reactive({
   api: dataMaintain.getPageList,
   searchLabelWidth: '75px',
+  pageLayout: 'fixed',
   showIndex: false,
   rowSelection: { showCheckedAll: true, key: 'name' },
   operationColumn: true,

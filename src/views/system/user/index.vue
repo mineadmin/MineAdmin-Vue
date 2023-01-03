@@ -101,7 +101,7 @@
   let isRecovery = computed(() => crudRef.value ? crudRef.value.isRecovery : false )
 
   const switchDept = (id) => {
-    crud.requestParams = id[0] === 'all' ? { dept_id: undefined } : { dept_id: id[0] }
+    crud.requestParams = id[0] === 'all' ? { s: undefined } : { dept_id: id[0] }
     crudRef.value.requestData()
   }
 
@@ -160,10 +160,11 @@
     recycleApi: user.getRecyclePageList,
     showIndex: false,
     searchLabelWidth: '75px',
+    pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 200,
-    add: { show: true, api: user.save, auth: ['system:user:add'] },
+    add: { show: true, api: user.save, auth: ['system:user:save'] },
     edit: { show: true, api: user.update, auth: ['system:user:update'] },
     delete: {
       show: true,
@@ -184,16 +185,22 @@
       type: 'image', rounded: true, span: 24, labelWidth: '86px'
     },
     { 
-      title: '账户', dataIndex: 'username', width: 130, search: true,
+      title: '账户', dataIndex: 'username', width: 130, search: true, editDisabled: true,
       rules: [{ required: true, message: '账户必填' }], span: 12
     },
     {
-      title: '所属部门', dataIndex: 'dept_id', hide: true, formType: 'tree-select', span: 12,
-      dict: { url: 'system/dept/tree' }, rules: [{ required: true, message: '所属部门必选' }]
+      title: '所属部门', dataIndex: 'dept_ids', hide: true, formType: 'tree-select',
+      span: 12, multiple: true, treeCheckable: true, treeCheckStrictly: true,
+      dict: { url: 'system/dept/tree' }, rules: [{ required: true, message: '所属部门必选' }],
+      editDefaultValue: async (record) => {
+        const response = await user.read(record.id)
+        const ids = response.data.deptList.map(item => item.id )
+        return ids
+      }
     },
     { 
       title: '密码', dataIndex: 'password', hide: true, autocomplete: 'off',
-      addDefaultValue: '123456', editDefaultValue: '', type: 'password', 
+      addDefaultValue: '123456', editDefaultValue: '', editDisabled: true, type: 'password', 
       span: 12, addRules: [{ required: true, message: '密码必填' }],
     },
     { title: '昵称', dataIndex: 'nickname', width: 120, span: 12 },

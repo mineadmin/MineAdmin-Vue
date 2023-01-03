@@ -122,7 +122,7 @@
   const handleLogout = async () => {
     await userStore.logout()
     document.querySelector('#app').style.filter = 'grayscale(0)'
-    router.push({ name: 'login', query: { redirect: router.currentRoute.fullPath || '' } })
+    window.location.href = '/'
   }
 
   const handleLogoutCancel = () => {

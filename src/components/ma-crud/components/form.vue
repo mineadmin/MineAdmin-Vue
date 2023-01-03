@@ -24,13 +24,12 @@
       <a-form
         ref="crudForm"
         :model="form"
-        :class="`grid grid-cols-1 lg:grid-cols-${ (! setting.layout || setting.layout === 'auto') ? ( setting.cols || 1 ) : 1} `"
         :label-align="setting.labelAlign || 'right'"
         @submit="submit"
       >
-        <a-row>
-          <template v-for="(item, index) in columns" :key="index">
-            <a-col :span="parseInt(setting.layout === 'customer' ? ( item.span || 24 ) : 24)">
+        <div :class="`w-full grid grid-cols-1 lg:grid-cols-${ (! setting.layout || setting.layout === 'auto') ? ( setting.cols || 1 ) : 1}`">
+          <template v-if="(! setting.layout || setting.layout === 'auto')">
+            <template v-for="(item, index) in columns" :key="index">
               <a-form-item
                 v-if="
                   formItemShow(item) &&
@@ -58,7 +57,7 @@
                     :readonly="formItemReadonly(item) || item.readonly"
                     :options="formDictData[item.dataIndex]"
                     :multiple="item.multiple"
-                    @change="handlerCascader($event, { form, item, currentAction, index })"
+                    @change="handlerCascader($event, item)"
                   />
 
                   <a-checkbox-group
@@ -66,7 +65,7 @@
                     v-model="form[item.dataIndex]"
                     :disabled="formItemDisabled(item) || item.disabled"
                     :readonly="formItemReadonly(item) || item.readonly"
-                    @change="handlerCascader($event, { form, item, currentAction, index })"
+                    @change="handlerCascader($event, item)"
                   >
                     <a-checkbox
                       v-for="option in formDictData[item.dataIndex]"
@@ -80,7 +79,7 @@
                     :disabled="formItemDisabled(item) || item.disabled"
                     :readonly="formItemReadonly(item) || item.readonly"
                     :type="item.type"
-                    @change="handlerCascader($event, { form, item, currentAction, index })"
+                    @change="handlerCascader($event, item)"
                   >
                     <a-radio
                       v-for="option in formDictData[item.dataIndex]"
@@ -128,6 +127,8 @@
                     allow-search
                     :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
                     :tree-checkable="item.treeCheckable"
+                    :tree-check-strictly="item.treeCheckStrictly"
+                    :max-tag-count="item.maxTagCount ?? 2"
                     :multiple="item.multiple"
                     :data="formDictData[item.dataIndex]"
                     @change="item.change && item.change($event, { form, item, currentAction, index })"
@@ -187,6 +188,13 @@
                     @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
                   />
 
+                  <component
+                    v-else-if="item.formType === 'component'"
+                    :is="item.dataIndex"
+                    :columns="columns"
+                    :item="item"
+                  />
+
                   <a-button
                     v-else-if="item.formType === 'button'"
                     :disabled="formItemDisabled(item) || item.disabled"
@@ -230,12 +238,13 @@
                     :title="item.title || '点击上传'"
                     :icon="item.icon || 'icon-plus'"
                     :chunk="item.chunk || false"
-                    :only-url="item.onlyUrl || true"
-                    :only-id="item.onlyId || true"
+                    :only-data="item?.onlyData ?? true"
+                    :return-type="item?.returnType ?? 'url'"
+                    :only-id="item?.onlyId ?? true"
                     :file-type="item.fileType || 'button'"
                     :show-word-limit="['input', 'textarea'].includes(item.formType) ? true : false"
                     :is-echo="item.isEcho"
-                    :mode="item.formType === 'input-number' ? 'button' : item.mode"
+                    :mode="item.mode"
                     :height="item.height || undefined"
                     :language="item.language || 'javascript'"
                     :isBind="item.language || false"
@@ -252,6 +261,7 @@
                   v-model="form[item.dataIndex]"
                   :options="item.childrenOptions"
                   :columns="item.children"
+                  :dataIndex="item.dataIndex"
                 >
                   <template
                     v-for="(groupItem, groupIndex) in item.children"
@@ -267,23 +277,278 @@
 
                 <template #extra v-if="item.formExtra">{{ item.formExtra }}</template>
               </a-form-item>
-            </a-col>
+            </template>
           </template>
-        </a-row>
+
+          <a-row v-else>
+            <template v-for="(item, index) in columns" :key="index">
+              <a-col :span="parseInt(setting.layout === 'customer' ? ( item.span || 24 ) : 24)">
+                <a-form-item
+                  v-if="
+                    formItemShow(item) &&
+                    ! ['__index', '__operation'].includes(item.dataIndex)
+                  "
+                  v-show="(typeof item.display == 'undefined' || item.display === true)"
+                  :label="item.title"
+                  :field="item.dataIndex"
+                  label-col-flex="auto"
+                  :label-col-style="{ width: item.labelWidth ? item.labelWidth : setting.labelWidth || '100px' }"
+                  :rules="getRules(item)"
+                  :validate-trigger="item.validateTrigger"
+                  :validate-status="item.validateStatus"
+                >
+                  <template v-if="item.formType !== 'form-group'">
+                    <a-select
+                      v-if="item.formType === 'select'"
+                      v-model="form[item.dataIndex]"
+                      :virtual-list-props="item.virtualList ? { height: 200 } : undefined"
+                      :placeholder="item.placeholder || `请选择${item.title}`"
+                      allow-clear
+                      allow-search
+                      :max-tag-count="item.maxTagCount || 1"
+                      :disabled="formItemDisabled(item) || item.disabled"
+                      :readonly="formItemReadonly(item) || item.readonly"
+                      :options="formDictData[item.dataIndex]"
+                      :multiple="item.multiple"
+                      @change="handlerCascader($event, item)"
+                    />
+
+                    <a-checkbox-group
+                      v-else-if="item.formType === 'checkbox'"
+                      v-model="form[item.dataIndex]"
+                      :disabled="formItemDisabled(item) || item.disabled"
+                      :readonly="formItemReadonly(item) || item.readonly"
+                      @change="handlerCascader($event, item)"
+                    >
+                      <a-checkbox
+                        v-for="option in formDictData[item.dataIndex]"
+                        :key="option" :value="Number.isInteger(form[item.dataIndex]) ? parseInt(option.value) : option.value"
+                      >{{ option.label }}</a-checkbox>
+                    </a-checkbox-group>
+
+                    <a-radio-group
+                      v-else-if="item.formType === 'radio'"
+                      v-model="form[item.dataIndex]"
+                      :disabled="formItemDisabled(item) || item.disabled"
+                      :readonly="formItemReadonly(item) || item.readonly"
+                      :type="item.type"
+                      @change="handlerCascader($event, item)"
+                    >
+                      <a-radio
+                        v-for="option in formDictData[item.dataIndex]"
+                        :key="option" :value="Number.isInteger(form[item.dataIndex]) ? parseInt(option.value) : option.value"
+                      >{{ option.label }}</a-radio>
+                    </a-radio-group>
+
+                    <a-transfer
+                      v-else-if="item.formType === 'transfer'"
+                      :title="['源数据', '目标数据']"
+                      v-model="form[item.dataIndex]"
+                      :show-search="item.showSearch"
+                      :disabled="formItemDisabled(item) || item.disabled"
+                      :readonly="formItemReadonly(item) || item.readonly"
+                      :data="formDictData[item.dataIndex]"
+                      @change="item.change && item.change($event, { form, item, currentAction, index })"
+                      @click="item.click && item.click($event, { form, item, currentAction, index })"
+                      @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
+                    />
+
+                    <a-cascader
+                      v-else-if="item.formType === 'cascader'"
+                      v-model="form[item.dataIndex]"
+                      :placeholder="item.placeholder || `请选择${item.title}`"
+                      allow-clear
+                      allow-search
+                      :disabled="formItemDisabled(item) || item.disabled"
+                      :readonly="formItemReadonly(item) || item.readonly"
+                      :expand-trigger="item.trigger || 'click'"
+                      :options="formDictData[item.dataIndex]"
+                      :multiple="item.multiple"
+                      @change="item.change && item.change($event, { form, item, currentAction, index })"
+                      @click="item.click && item.click($event, { form, item, currentAction, index })"
+                      @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
+                    />
+
+                    <a-tree-select
+                      v-else-if="item.formType === 'treeSelect' || item.formType === 'tree-select'"
+                      v-model="form[item.dataIndex]"
+                      :treeProps="{ virtualListProps: item.virtualList ? { height: 240 } : undefined }"
+                      :placeholder="item.placeholder || `请选择${item.title}，可通过 key 搜索`"
+                      :disabled="formItemDisabled(item) || item.disabled"
+                      :readonly="formItemReadonly(item) || item.readonly"
+                      allow-clear
+                      allow-search
+                      :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
+                      :tree-checkable="item.treeCheckable"
+                      :tree-check-strictly="item.treeCheckStrictly"
+                      :max-tag-count="item.maxTagCount ?? 2"
+                      :multiple="item.multiple"
+                      :data="formDictData[item.dataIndex]"
+                      @change="item.change && item.change($event, { form, item, currentAction, index })"
+                      @click="item.click && item.click($event, { form, item, currentAction, index })"
+                      @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
+                    />
+
+                    <component
+                      v-else-if="['date', 'range', 'time'].includes(item.formType)"
+                      :is="getComponent(item)"
+                      v-model="form[item.dataIndex]"
+                      :placeholder="item.formType === 'range'
+                        ? ['请选择开始时间', '请选择结束时间']
+                        : item.placeholder ? item.placeholder : `请选择${item.title}`
+                      "
+                      :format="item.format || ''"
+                      :disabled="item.disabled"
+                      :readonly="item.readonly"
+                      :show-time="item.showTime"
+                      :type="item.type"
+                      :mode="item.mode"
+                      allow-clear
+                      style="width: 100%;"
+                      @change="item.change && item.change($event, { form, item, index })"
+                      @click="item.click && item.click($event, { form, item, index })"
+                      @blur="item.blur && item.blur($event, { form, item, index })"
+                    />
+
+                    <component
+                      v-else-if="['month', 'year', 'week', 'quarter'].includes(item.formType)"
+                      :is="getComponent(item)"
+                      v-model="form[item.dataIndex]"
+                      :placeholder="item.placeholder || `请选择${item.title}`"
+                      :format="item.format || ''"
+                      :disabled="item.disabled"
+                      :readonly="item.readonly"
+                      allow-clear
+                      style="width: 100%;"
+                      @change="item.change && item.change($event, { form, item, index })"
+                      @click="item.click && item.click($event, { form, item, index })"
+                      @blur="item.blur && item.blur($event, { form, item, index })"
+                    />
+
+                    <component
+                      v-else-if="item.formType === 'mention'"
+                      :is="getComponent(item)"
+                      v-model="form[item.dataIndex]"
+                      :placeholder="item.placeholder || `请输入${item.title}`"
+                      :disabled="formItemDisabled(item) || item.disabled"
+                      :readonly="formItemReadonly(item) || item.readonly"
+                      :split="item.split"
+                      :type="item.type"
+                      allow-clear
+                      :prefix="item.prefix"
+                      @change="item.change && item.change($event, { form, item, currentAction, index })"
+                      @click="item.click && item.click($event, { form, item, currentAction, index })"
+                      @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
+                    />
+
+                    <component
+                      v-else-if="item.formType === 'component'"
+                      :is="item.dataIndex"
+                      :columns="columns"
+                      :item="item"
+                    />
+
+                    <a-button
+                      v-else-if="item.formType === 'button'"
+                      :disabled="formItemDisabled(item) || item.disabled"
+                      :type="item.type"
+                      :status="item.status"
+                      :style="item.style"
+                      @click="item.click && item.click($event, { form, item, currentAction, index })"
+                      @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
+                    >
+                      <template #icon v-if="item.icon" >
+                        <component :is="item.icon" />
+                      </template>
+                      {{ item.text || ''}}
+                    </a-button>
+
+                    <component
+                      v-else
+                      :is="getComponent(item)"
+                      v-model="form[item.dataIndex]"
+                      :placeholder="item.placeholder || `请输入${item.title}`"
+                      :disabled="formItemDisabled(item) || item.disabled"
+                      :readonly="formItemReadonly(item) || item.readonly"
+                      :max-length="item.maxLength || 0"
+                      :max="item.max"
+                      :min="item.min"
+                      :step="item.step"
+                      :precision="item.precision"
+                      :checked-value="item.checkedValue"
+                      :unchecked-value="item.uncheckedValue"
+                      :show-ticks="item.showTicks"
+                      :allow-half="item.half"
+                      :type="item.type"
+                      :autocomplete="
+                        (item.formType === 'input-password' || item.type == 'password') ? 'off' : item.autocomplete
+                      "
+                      :limit="item.limit || 0"
+                      :accept="item.accept || '*'"
+                      :tip="item.tip"
+                      :multiple="item.multiple || false"
+                      :rounded="item.rounded || false"
+                      :title="item.title || '点击上传'"
+                      :icon="item.icon || 'icon-plus'"
+                      :chunk="item.chunk || false"
+                      :only-data="item?.onlyData ?? true"
+                      :return-type="item?.returnType ?? 'url'"
+                      :only-id="item?.onlyId ?? true"
+                      :file-type="item.fileType || 'button'"
+                      :show-word-limit="['input', 'textarea'].includes(item.formType) ? true : false"
+                      :is-echo="item.isEcho"
+                      :mode="item.mode"
+                      :height="item.height || undefined"
+                      :language="item.language || 'javascript'"
+                      :isBind="item.language || false"
+                      allow-clear
+                      @change="item.change && item.change($event, { form, item, currentAction, index })"
+                      @click="item.click && item.click($event, { form, item, currentAction, index })"
+                      @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
+                      :style="item.style"
+                    />
+                  </template>
+
+                  <ma-form-group
+                    v-else
+                    v-model="form[item.dataIndex]"
+                    :options="item.childrenOptions"
+                    :columns="item.children"
+                    :dataIndex="item.dataIndex"
+                  >
+                    <template
+                      v-for="(groupItem, groupIndex) in item.children"
+                      :key="groupIndex"
+                      #[groupItem.dataIndex]="{ data }"
+                    >
+                      <slot
+                        :name="`${item.dataIndex}-${groupItem.dataIndex}`"
+                        v-bind="{ data, groupItem, groupIndex }"
+                      />
+                    </template>
+                  </ma-form-group>
+
+                  <template #extra v-if="item.formExtra">{{ item.formExtra }}</template>
+                </a-form-item>
+              </a-col>
+            </template>
+          </a-row>
+        </div>
       </a-form>
     </a-spin>
   </component>
 </template>
 
 <script setup>
-import { ref, nextTick, watch } from 'vue'
+import { ref, nextTick, watch, toRaw, getCurrentInstance, provide } from 'vue'
 import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { handlerProps } from '../js/common'
-import { isArray, isFunction } from 'lodash'
+import { isArray, isFunction, concat } from 'lodash'
 import MaFormGroup from '@/components/ma-form/formGroup.vue'
 
+const app = getCurrentInstance().appContext.app
 const componentName = ref('a-modal')
 const columns = ref([])
 const currentAction = ref('')
@@ -299,6 +564,9 @@ const props = defineProps({
   modelValue: Array,
   crud: { type: Object }
 })
+
+provide('form', toRaw(form))
+
 setting.value = props.crud.viewLayoutSetting
 watch(
   () => props.crud.viewLayoutSetting,
@@ -329,12 +597,12 @@ watch(
   },
   { deep: true }
 )
-const submit = (done) => {
-  crudForm.value.validate()
+const submit = async (done) => {
+  return crudForm.value.validate()
   .then(async result => {
     if (result) {
       done(false)
-      return
+      return false
     }
     let response
     if (currentAction.value === 'add') {
@@ -346,24 +614,20 @@ const submit = (done) => {
       response = await props.crud.edit.api(form.value[props.crud.pk], form.value)
       isFunction(props.crud.afterEdit) && props.crud.afterEdit(response, form.value)
     }
-    if ( response.code === 200 ) {
+    if ( response.success ) {
       Message.success(response.message || `${actionTitle.value}成功！`)
       emit('success', response)
-      done()
-    } else {
-      Message.error(response.message || `${actionTitle.value}失败！`)
-      emit('error', response)
-      done(false)
+      done(true)
+      return true
     }
+    done(false)
   })
-  .catch()
-  //.finally( done(false) )
 }
 const open = () => {
   nextTick(() =>{
     componentName.value = setting.value.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
     dataVisible.value = true
-    columns.value = props.modelValue
+    settingOrdered()
     init()
   })
 }
@@ -384,12 +648,45 @@ const edit = (data) => {
   open()
 }
 const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
+
+const settingOrdered = () => {
+  columns.value = Object.assign(props.modelValue)
+  if (props.crud.openViewOrdered) {
+    columns.value.map((item, index) => {
+      if (! columns.value[index].order) {
+        columns.value[index].order = 0
+      }
+    })
+    
+    for ( let i = 0; i < columns.value.length; i++ ) {
+      for( let j = 0; j < columns.value.length; j++ ) {
+        if (columns.value[j].order > columns.value[i].order) {
+          let temp = Object.assign(columns.value[i])
+          columns.value[i] = Object.assign(columns.value[j])
+          columns.value[j] = Object.assign(temp)
+          temp = null
+        }
+      }
+    }
+  }
+}
+
 const init = () => {
   dataLoading.value = true
   const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
   const arrayDefault = ['checkbox', 'user-select', 'form-group']
   if (columns.value.length > 0) {
+    let cascaders = []
+    columns.value.map(item => {
+      if (item.cascaderItem && item.cascaderItem.length > 0) {
+        cascaders = concat(cascaders, item.cascaderItem)
+      }
+
+      if (item.formType === 'component' && item.component && !app._context.components[item.dataIndex]) {
+        app.component(item.dataIndex, item.component)
+      }
+    })
     columns.value.map(async item => {
       if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
       // add 默认值处理
@@ -410,8 +707,13 @@ const init = () => {
         } else if (typeof item.editDefaultValue != 'undefined') {
           form.value[item.dataIndex] = item.editDefaultValue
         }
+
+        // 针对联动数据加载回显
+        if (item.cascaderItem && item.cascaderItem.length > 0) {
+          handlerCascader(form.value[item.dataIndex], item)
+        }
       }
-      if (allowRequestFormType.includes(item.formType) && item.dict) {
+      if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaders.includes(item.dataIndex)) {
         if (item.dict.name) {
           const response = await commonApi.getDict(item.dict.name)
           if (response.data) {
@@ -457,6 +759,7 @@ const handlerCascader = (val, column) => {
     dataLoading.value = true
     column.cascaderItem.map(async name => {
       const dict = columns.value.filter(col => col.dataIndex === name && col.dict )[0].dict
+      if (currentAction.value === 'add') form.value[name] = undefined
       if (dict && dict.url && dict.props) {
         let response
         if (dict && dict.url.indexOf('{{key}}') > 0) {
@@ -467,20 +770,16 @@ const handlerCascader = (val, column) => {
           const data   = Object.assign(dict.data || {}, temp)
           response = await requestDict(dict.url, dict.method || 'GET', params || {}, data || {})
         }
-        // 原始数据格式的
-        if (response.data && response.data.data && response.status === 200) {
-          formDictData.value[name] = response.data.data
-        } else {
-          Message.error('字典联动请求失败：' + name)
-          console.error(response)
-        }
         if (response.data && response.code === 200) {
           formDictData.value[name] = response.data.map(dicItem => {
             return {
-              'label': dicItem[ (dict.props && dict.props.label) || 'code'  ],
+              'label': dicItem[ (dict.props && dict.props.label) || 'label'  ],
               'value': dicItem[ (dict.props && dict.props.value) || 'value' ]
             } 
           })
+        } else {
+          Message.error('字典联动请求失败：' + name)
+          console.error(response)
         }
       }
     })
@@ -514,14 +813,29 @@ const formItemReadonly = (item) => {
   }
   return false
 }
+
+const toRules = (rules) => {
+
+  if (!rules) {
+    return []
+  }
+
+  if (Array.isArray(rules)) {
+    return rules.map(v => ({...v}))
+  }
+
+  return {...rules}
+}
+
 const getRules = (item) => {
   if (currentAction.value === 'add') {
-    return item.addRules ? item.addRules : item.rules || []
+    return toRules(item.addRules ? item.addRules : item.rules || [])
   }
   if (currentAction.value === 'edit') {
-    return item.editRules ? item.editRules : item.rules || []
+    return toRules(item.editRules ? item.editRules : item.rules || [])
   }
 }
+
 const getComponent = (item) => {
   if (! item.formType) {
     return `a-input`

@@ -8,18 +8,23 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Message } from '@arco-design/web-vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const codeText = ref('')
 const verfiyCanvas = ref(null)
-const canvasSetting = reactive({
-  pool: 'abcdefghjkmnpqrstuvwxyz23456789',
-  width: 120,
-  height: 36,
-  size: 4
+const props = defineProps({
+  options: {
+    type: Object,
+    default: {
+      pool: 'abcdefghjkmnpqrstuvwxyz23456789',
+      width: 120,
+      height: 36,
+      size: 4
+    }
+  }
 })
 
 const checkResult = (verifyCode) => {
@@ -52,21 +57,21 @@ const generateCode = () => {
   codeText.value = ''
   const ctx = verfiyCanvas.value.getContext('2d')
   ctx.fillStyle = randomColor(230, 255)
-  ctx.fillRect(0, 0, canvasSetting.width, canvasSetting.height)
+  ctx.fillRect(0, 0, props.options.width, props.options.height)
 
-  for (let i = 0; i < canvasSetting.size; i++) {
-    let currentText = '' + canvasSetting.pool[randomNum(0, canvasSetting.pool.length)]
+  for (let i = 0; i < props.options.size; i++) {
+    let currentText = '' + props.options.pool[randomNum(0, props.options.pool.length)]
     codeText.value += currentText
     ctx.font = '36px Simhei'
     ctx.textAlign="center"
     ctx.fillStyle = randomColor(80, 150)
-    ctx.fillText(currentText, (i + 1) * randomNum(20, 25), canvasSetting.height / 2 + 13)
+    ctx.fillText(currentText, (i + 1) * randomNum(20, 25), props.options.height / 2 + 13)
   }
 
   for (let i = 0; i < 5; i++) {
     ctx.beginPath()
-    ctx.moveTo(randomNum(0, canvasSetting.width), randomNum(0, canvasSetting.height))
-    ctx.lineTo(randomNum(0, canvasSetting.width), randomNum(0, canvasSetting.height))
+    ctx.moveTo(randomNum(0, props.options.width), randomNum(0, props.options.height))
+    ctx.lineTo(randomNum(0, props.options.width), randomNum(0, props.options.height))
     ctx.strokeStyle = randomColor(180, 230)
     ctx.closePath()
     ctx.stroke()
@@ -74,7 +79,7 @@ const generateCode = () => {
 
   for (let i = 0; i < 40; i++) {
     ctx.beginPath()
-    ctx.arc(randomNum(0, canvasSetting.width), randomNum(0, canvasSetting.height), 1, 0, 2 * Math.PI)
+    ctx.arc(randomNum(0, props.options.width), randomNum(0, props.options.height), 1, 0, 2 * Math.PI)
     ctx.closePath()
     ctx.fillStyle = randomColor(150, 200)
     ctx.fill()
@@ -92,7 +97,6 @@ onMounted(() => {
 
 const refresh = () => {
   generateCode()
-  verifyCode.value = ''
 }
 
 defineExpose({ checkResult, refresh })
@@ -103,8 +107,8 @@ defineExpose({ checkResult, refresh })
     <canvas
       ref="verfiyCanvas"
       class="canvas"
-      :width="canvasSetting.width"
-      :height="canvasSetting.height" @click="refresh"
+      :width="props.options.width"
+      :height="props.options.height" @click="refresh"
     />
   </a-tooltip>
 </template>

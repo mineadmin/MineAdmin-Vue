@@ -26,6 +26,7 @@
     api: loginLog.getPageList,
     showIndex: false,
     searchLabelWidth: '75px',
+    pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     requestParams: { orderBy: 'login_time', orderType: 'desc' },
     delete: { show: true, api: loginLog.deletes, auth: ['system:loginLog:delete'] },
@@ -36,7 +37,7 @@
     { title: '登录用户', dataIndex: 'username', search: true, width: 150 }, 
     { 
       title: '登录状态', dataIndex: 'status', search: true, width: 120, formType: 'select',
-      dict: { data: [ { label: '成功', code: 1 }, { label: '失败', code: 2 } ], translation: true }
+      dict: { data: [ { label: '成功', value: 1 }, { label: '失败', value: 2 } ], translation: true }
     },
     { title: '登录IP', dataIndex: 'ip', width: 150, search: true },
     { title: '登录地点', dataIndex: 'ip_location', width: 150 },

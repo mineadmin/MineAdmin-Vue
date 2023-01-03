@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "@arco-design/color": "^0.4.0",
-    "@arco-design/web-vue": "^2.36.0",
-    "@arco-themes/vue-mine-admin": "^0.0.5",
+    "@arco-design/web-vue": "^2.40.0",
+    "@arco-themes/vue-mine-admin": "^0.0.10",
     "@tinymce/tinymce-vue": "^5.0.0",
     "autoprefixer": "^10.4.0",
     "axios": "^0.27.2",
@@ -37,7 +37,7 @@
     "vue-router": "^4.1.2"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^3.0.0",
+    "@vitejs/plugin-vue": "^3.1.2",
     "@vitejs/plugin-vue-jsx": "^2.0.0",
     "less": "^4.1.3",
     "less-loader": "^11.0.0",

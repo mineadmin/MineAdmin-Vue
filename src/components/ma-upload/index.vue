@@ -188,12 +188,12 @@
             class="chunk-file-list flex flex-col"
           >
             <div class="flex justify-between items-center">
-              <div>{{ fileList.file.name }}</div>
+              <div>{{ fileList.file?.name ?? fileList }}</div>
               <a-button shape="circle" @click="removeChunkFile">
                 <template #icon><icon-delete /></template>
               </a-button>
             </div>
-            <a-progress animation :percent="fileList.percent || 0" class="mt-2"/>
+            <a-progress animation :percent="(fileList.percent ? 0 : 1)" class="mt-2"/>
           </div>
         </a-space>
       </div>
@@ -201,7 +201,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import commonApi from '@/api/common'
 import file2md5 from 'file2md5'
 import { Message, } from '@arco-design/web-vue'
@@ -212,7 +212,7 @@ import { isArray, isObject, isString } from '@vue/shared'
 const { t } = useI18n()
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
-  modelValue: { type: [ String, Object, Array ], default: () => {} },
+  modelValue: { type: [ String, Array, Object ], default: () => {} },
   title: { type: String, default: 'buttonText', },
   icon: { type: String, default: 'icon-plus'},
   rounded: { type: Boolean, default: false },
@@ -225,7 +225,8 @@ const props = defineProps({
   tip: { type: String, default: undefined },
   type: { type: String, default: 'image' },
   accept: { type: String, default: '*' },
-  onlyUrl: { type: Boolean, default: true },
+  onlyData: { type: Boolean, default: true },
+  returnType: { type: String, default: 'url' },
   fileType: { type: String, default: 'button' },
   showList: { type: Boolean, default: true },
 })
@@ -241,7 +242,7 @@ const storageMode = {
   '4': 'QINIU'
 }
 
-onMounted(() => {
+const init = () => {
   nextTick(() => {
     if (props.type === 'image' && props.accept !== '*') {
       accept.value = '.jpg,jpeg,.gif,.png,.svg,.bpm'
@@ -278,7 +279,29 @@ onMounted(() => {
       }
     })
   }
-})
+
+  if (props.type === 'image' && ! props.chunk) {
+    watch(
+      () => props.modelValue,
+      vl => {
+        if (isArray(props.modelValue)) {
+          fileList.value = []
+          props.modelValue.map(item => {
+            if (isObject(item)) {
+              item.status = 'complete'
+              item.percent = 100
+              fileList.value.push(item)
+            } else {
+              fileList.value.push({ status: 'complete', percent: 100, url: item })
+            }
+          })
+        } else if (isString(props.modelValue) || isObject(props.modelValue)) {
+          fileList.value = props.modelValue
+        }
+      }
+    )
+  }
+}
 
 const uploadImageHandler = async (options) => {
   if (! options.fileItem) return
@@ -297,7 +320,7 @@ const uploadImageHandler = async (options) => {
   if (result) {
     result.url = tool.attachUrl(result.url, storageMode[result.storage_mode])
     if (! props.multiple) {
-      fileList.value = props.onlyUrl ? result.url : result
+      fileList.value = props.onlyData ? result[props.returnType] : result
       emit('update:modelValue', fileList.value)
       currentItem.value.percent = 99
       setTimeout(() => {
@@ -316,7 +339,7 @@ const uploadImageHandler = async (options) => {
       }, 1200)
       let files = []
       fileList.value.map(item => {
-        files.push(props.onlyUrl ? item.url : item)
+        files.push(props.onlyData ? item[props.returnType] : item)
       })
       emit('update:modelValue', files)
     }
@@ -338,12 +361,12 @@ const uploadFileHandler = async (options) => {
       let files = []
       fileList.value.push(res)
       fileList.value.map(item => {
-        files.push(props.onlyUrl && item.url ? item.url : item)
+        files.push(props.onlyData && item[props.returnType] ? item[props.returnType] : item)
       })
       emit('update:modelValue', files)
     } else {
       fileList.value = res
-      emit('update:modelValue', props.onlyUrl && res.url ? res.url : res)
+      emit('update:modelValue', props.onlyData && res[props.returnType] ? res[props.returnType] : res)
     }
   })
 }
@@ -388,12 +411,12 @@ const chunkUpload = async (options) => {
           fileList.value[idx].res = res.data
           const files = []
           fileList.value.map(item => {
-            item.percent === 1 && files.push(props.onlyUrl ? item.res.url : item.res)
+            item.percent === 1 && files.push(props.onlyData ? item.res[props.returnType] : item.res)
           })
           emit('update:modelValue', files)
         } else {
           fileList.value.percent = 1
-          emit('update:modelValue', props.onlyUrl ? res.data.url : res.data)
+          emit('update:modelValue', props.onlyData ? res.data[props.returnType] : res.data)
         }
         return
       }
@@ -447,7 +470,7 @@ const removeChunkFile = (file = null) => {
       if (file.uid === item.uid) {
         fileList.value.splice(idx, 1)
       } else if (item.res) {
-        files.push(props.onlyUrl ? item.res.url : item.res)
+        files.push(props.onlyData ? item.res[props.returnType] : item.res)
       }
     })
     emit('update:modelValue', files)
@@ -465,7 +488,7 @@ const removeFile = async (fileItem) => {
         if (item.uid === fileItem.uid) fileList.value.splice(idx, 1)
       })
       fileList.value.map( item => {
-        files.push(props.onlyUrl && item.url ? item.url : item)
+        files.push(props.onlyData && item[props.returnType] ? item[props.returnType] : item)
       })
       emit('update:modelValue', files)
       return true
@@ -494,6 +517,7 @@ const removeImage = (idx) => {
   emit('update:modelValue', files)
 }
 
+init()
 </script>
 
 <style scoped lang="less">
@@ -536,4 +560,3 @@ const removeImage = (idx) => {
   border: 1px dashed rgb(var(--primary-6));
 }
 </style>
-
