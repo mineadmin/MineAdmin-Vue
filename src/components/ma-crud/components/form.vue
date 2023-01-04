@@ -659,7 +659,7 @@ const settingOrdered = () => {
     })
     
     for ( let i = 0; i < columns.value.length; i++ ) {
-      for( let j = i; j < columns.value.length; j++ ) {
+      for( let j = 0; j < columns.value.length; j++ ) {
         if (columns.value[j].order > columns.value[i].order) {
           let temp = Object.assign(columns.value[i])
           columns.value[i] = Object.assign(columns.value[j])
