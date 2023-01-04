@@ -127,7 +127,6 @@
           tmp += `<img src=${img} width="100%" />`
         }
       })
-      editorKey.value = new Date().getTime()
       content.value = content.value ? content.value + tmp : tmp
       resource.value.clearSelecteds()
       resourceVisible.value = false
