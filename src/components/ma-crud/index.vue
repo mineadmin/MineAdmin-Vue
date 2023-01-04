@@ -237,7 +237,7 @@ import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
-import _ from 'lodash'
+import { isArray } from 'lodash'
 
 const loading = ref(true)
 const reloadColumn = ref(true)
@@ -556,7 +556,7 @@ const requestHandle = async () => {
 const refresh = async () => {
   if (settingProps.data) {
     loading.value = true
-    const data = Array.isArray(settingProps.data) ? settingProps.data : config.parseResponseData(await settingProps.data(requestParams.value))
+    const data = isArray(settingProps.data) ? settingProps.data : config.parseResponseData(await settingProps.data(requestParams.value))
     if (data.rows) {
       tableData.value = data.rows
       openPagination.value = true
@@ -652,7 +652,7 @@ const dbClickOpenEdit = (record) => {
       return
     }
 
-    if (_.isArray(defaultCrud.value.edit.auth)) {
+    if (isArray(defaultCrud.value.edit.auth)) {
       for (let index in defaultCrud.value.edit.auth) {
         if (! checkAuth(defaultCrud.value.edit.auth[index])) {
           Message.error('没有编辑数据的权限')
