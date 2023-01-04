@@ -10,13 +10,13 @@
 <template>
   <div class="ma-content-block">
     <a-space class="flex">
-      <a-button type="primary" @click="visible = true"><icon-select-all /> 选择用户</a-button>
-      <a-tag size="large" color="blue">已选择 {{ _.isArray(selecteds) ? selecteds.length : 0 }} 位用户</a-tag>
-      <a-input-tag v-model="userList" :style="{ width:'320px' }" placeholder="请点击前面按钮选择用户" :max-tag-count="3" disabled/>
+      <a-button type="primary" @click="visible = true"><icon-select-all /> {{ props.text }}</a-button>
+      <a-tag size="large" color="blue" v-if="props.isEcho">已选择 {{ _.isArray(selecteds) ? selecteds.length : 0 }} 位</a-tag>
+      <a-input-tag v-model="userList" v-if="props.isEcho" :style="{ width:'320px' }" :placeholder="'请点击前面按钮' + props.text" :max-tag-count="3" disabled/>
     </a-space>
 
     <a-modal v-model:visible="visible" width="1000px" draggable :on-before-ok="close" unmountOnClose>
-      <template #title>选择用户</template>
+      <template #title>{{ props.text }}</template>
 
       <ma-crud
         ref="crudRef"
@@ -33,15 +33,16 @@
   import { onMounted, ref, watch } from 'vue'
   import commonApi from '@/api/common'
   import { Message } from '@arco-design/web-vue'
-  import _ from 'lodash'
+  import { isArray, isEmpty } from 'lodash'
 
   const props = defineProps({
     modelValue: { type: Array },
     isEcho: { type: Boolean, default: false },
-    onlyId: { type: Boolean, default: true }
+    onlyId: { type: Boolean, default: true },
+    text: { type: String, default: '选择用户' }
   })
 
-  const emit = defineEmits(['update:modelValue'])
+  const emit = defineEmits(['update:modelValue', 'success'])
 
   const visible = ref(false)
   const selecteds = ref([])
@@ -63,9 +64,9 @@
   }
 
   const close = async (done) => {
-    if (_.isArray(selecteds.value) && selecteds.value.length > 0) {
+    if (isArray(selecteds.value) && selecteds.value.length > 0) {
       const response = await commonApi.getUserInfoByIds({ ids: selecteds.value })
-      if (! _.isEmpty(response) && _.isArray(response.data)) {
+      if (! isEmpty(response) && isArray(response.data)) {
         userList.value = response.data.map( item => {
           return `${item.username}(${item.id})`
         })
@@ -74,6 +75,7 @@
         } else {
           emit('update:modelValue', response.data)
         }
+        emit('success', true)
         Message.success('选择成功')
       }
     } else {

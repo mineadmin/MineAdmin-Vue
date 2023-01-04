@@ -1,5 +1,6 @@
 import CryptoJS from 'crypto-js'
 import uploadConfig from '@/config/upload'
+import CityLinkageJson from "@/components/ma-cityLinkage/lib/city.json"
 
 const typeColor = (type = 'default') => {
   let color = ''
@@ -134,9 +135,34 @@ tool.screen = (element) => {
   }
 }
 
+// 城市代码翻译成名称
+tool.cityToCode = function(province, city = undefined, area = undefined, split = ' / ') {
+  try {
+    let provinceData = CityLinkageJson.filter(item => province == item.code)[0]
+    if (! city) {
+      return provinceData.name
+    }
+    let cityData = provinceData.children.filter(item => city == item.code)[0]
+
+    if (! area) {
+      return [provinceData.name, cityData.name].join(split)
+    }
+    let areaData = cityData.children.filter(item => area == item.code)[0]
+
+    return [provinceData.name, cityData.name, areaData.name].join(split)
+  } catch (e) {
+    return ''
+  }
+}
+
 /* 复制对象 */
 tool.objCopy = (obj) => {
   return JSON.parse(JSON.stringify(obj));
+}
+
+tool.viewImage = function(path, defaultStorage = 'LOCAL') {
+  let mode = tool.local.get('site_storage_mode') ? tool.local.get('site_storage_mode').toUpperCase() : defaultStorage
+  return uploadConfig.storage[mode] + path
 }
 
 /* 日期格式化 */
@@ -234,16 +260,19 @@ tool.formatSize = (size) => {
 
 tool.download = (res, downName = '') => {
   const aLink = document.createElement('a');
-  const blob = new Blob([res.data], { type: res.headers['content-type'].replace(';charset=utf8', '') })
+  let fileName = downName
+  let blob = res //第三方请求返回blob对象
 
-  let fileName
-  if (!downName) {
-    const contentDisposition = decodeURI(res.headers['content-disposition'])
-    const result = contentDisposition.match(/filename\*=utf-8\'\'(.+)/gi)
-    fileName = result[0].replace(/filename\*=utf-8\'\'/gi, '')
-  } else {
-    fileName = downName
+  //通过后端接口返回
+  if (res.headers && res.data) {
+    blob = new Blob([res.data], {type: res.headers['content-type'].replace(';charset=utf8', '')})
+    if (!downName) {
+        const contentDisposition = decodeURI(res.headers['content-disposition'])
+        const result = contentDisposition.match(/filename\*=utf-8\'\'(.+)/gi)
+        fileName = result[0].replace(/filename\*=utf-8\'\'/gi, '')
+    }
   }
+  
   aLink.href = URL.createObjectURL(blob)
   // 设置下载文件名称
   aLink.setAttribute('download', fileName)

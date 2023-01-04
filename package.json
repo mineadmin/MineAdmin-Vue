@@ -1,6 +1,6 @@
 {
   "name": "mineadmin-vue",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "scripts": {
     "dev": "vite serve --mode development",
@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "@arco-design/color": "^0.4.0",
-    "@arco-design/web-vue": "^2.38.3",
-    "@arco-themes/vue-mine-admin": "^0.0.9",
+    "@arco-design/web-vue": "^2.40.0",
+    "@arco-themes/vue-mine-admin": "^0.0.10",
     "@tinymce/tinymce-vue": "^5.0.0",
     "autoprefixer": "^10.4.0",
     "axios": "^0.27.2",

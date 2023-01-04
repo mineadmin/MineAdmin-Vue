@@ -49,8 +49,7 @@ const upload = (options) => {
   const dataForm = new FormData()
   dataForm.append('file', options.fileItem.file)
   commonApi.importExcel(props.modelValue.url, dataForm).then( res => {
-    res.code == 200 && Message.success(res.message || '导入成功')
-    res.code != 200 && Message.error(res.message || '导入失败')
+    res.success && Message.success(res.message || '导入成功')
     close()
   })
 }

@@ -9,7 +9,7 @@
 -->
 <template>
   <div>
-    <editor v-model="content" :init="initConfig" :id="props.id"></editor>
+    <editor :key="editorKey" v-model="content" :init="initConfig" :id="props.id"></editor>
 
     <a-modal v-model:visible="resourceVisible" :width="1080" :footer="false"  draggable>
       <template #title>资源选择器</template>
@@ -115,6 +115,8 @@
       })
     }
   })
+
+  const editorKey = ref(new Date().getTime())
 
   watch(
     () => list.value,
