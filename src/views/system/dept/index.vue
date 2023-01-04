@@ -30,7 +30,14 @@
           :default-checked="record.status == 1"
         />
       </template>
+
+      <template #operationBeforeExtend="{ record }">
+        <a-link @click="openLeaderModal(record)"><icon-user /> 领导列表</a-link>
+      </template>
     </ma-crud>
+
+    <leader-list ref="leaderRef" />
+    
   </div>
 </template>
 
@@ -38,8 +45,10 @@
   import { ref, reactive, onMounted } from 'vue'
   import dept from '@/api/system/dept'
   import { Message } from '@arco-design/web-vue'
+  import LeaderList from './leader.vue'
 
   const crudRef = ref()
+  const leaderRef = ref()
 
   const changeStatus = async (status, id) => {
     const response = await dept.changeStatus({ id, status })
@@ -48,12 +57,15 @@
     }
   }
 
-
   const changeSort = async (value, id) => {
     const response = await dept.numberOperation({ id, numberName: 'sort', numberValue: value })
     if (response.success) {
       Message.success(response.message)
     }
+  }
+
+  const openLeaderModal = (record) => {
+    leaderRef.value.open(record)
   }
 
   const crud = reactive({
@@ -64,7 +76,7 @@
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 200,
+    operationWidth: 220,
     add: { show: true, api: dept.save, auth: ['system:dept:save'] },
     edit: { show: true, api: dept.update, auth: ['system:dept:update'] },
     delete: {

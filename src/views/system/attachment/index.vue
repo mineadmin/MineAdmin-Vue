@@ -136,11 +136,22 @@
   }
 
   const download = async (record) => {
-    Message.info('请求服务器下载文件中...')
-    const url = 'system/downloadById?id=' + record.id
+    let url = ''
+    let storeMode = getStoreMode(record.storage_mode)
+
+    if (storeMode !== 'LOCAL') {
+      Message.info('处理中...')
+      const domain = upload.storage[storeMode]
+      url = domain + record.url
+    } else {
+      //文件上传在本地则请求后端下载
+      Message.info('请求服务器下载文件中...')
+      url = 'system/downloadById?id=' + record.id
+    }
+
     const response = await commonApi.download(url, 'get')
     if (response) {
-      tool.download(response)
+      tool.download(response, (storeMode !== 'LOCAL') ? record.origin_name : '')
       Message.success('请求成功，文件开始下载')  
     } else {
       Message.error('文件下载失败')  

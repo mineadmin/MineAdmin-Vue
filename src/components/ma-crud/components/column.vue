@@ -203,24 +203,21 @@ const editAction = record => {
 
 const recoveryAction = async record => {
   const response = await props.options.recovery.api({ ids: [record[props.options.pk]] })
-  response.code === 200
-    ? Message.success(response.message || `恢复成功！`)
-    : Message.error(response.message || `恢复失败！`)
+  Message.success(response.message || `恢复成功！`)
   emit('refresh')
 }
 
 const deleteAction = async record => {
+  let data = {}
   if (props.options.beforeDelete && isFunction(props.options.beforeDelete)) {
-    props.options.beforeDelete(record)
+    data = props.options.beforeDelete(record)
   }
   const api = props.isRecovery ? props.options.delete.realApi : props.options.delete.api
-  const response = await api({ ids: [record[props.options.pk]] })
+  const response = await api(Object.assign({ ids: [record[props.options.pk]] }, data))
   if (props.options.afterDelete && isFunction(props.options.afterDelete)) {
     props.options.afterDelete(response, record)
   }
-  response.code === 200
-    ? Message.success(response.message || `删除成功！`)
-    : Message.error(response.message || `删除失败！`)
+  Message.success(response.message || `删除成功！`)
   emit('refresh')
 }
 

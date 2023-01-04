@@ -131,6 +131,18 @@
       if (allowDictType.includes(item.input_type)) {
         option.dict = { data: item.config_select_data }
       }
+      if (item.input_type === 'switch') {
+        switch( typeof item.value ) {
+          case 'string':
+            option.checkedValue = 'true'
+            option.uncheckedValue = ''
+            break
+          case 'number':
+            option.checkedValue = 1
+            option.uncheckedValue = 0
+            break
+        }
+      }
       form[item.key] = item.value
       return option
     })

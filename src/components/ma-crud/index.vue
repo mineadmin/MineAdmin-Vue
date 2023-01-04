@@ -225,7 +225,7 @@
 <script setup>
 import config from '@/config/crud'
 import { isFunction } from '@vue/shared'
-import { ref, watch, nextTick, onMounted } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 
 import MaSearch from './components/search.vue'
 import MaForm from './components/form.vue'
@@ -237,7 +237,7 @@ import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
-import _ from 'lodash'
+import { isArray } from 'lodash'
 
 const loading = ref(true)
 const reloadColumn = ref(true)
@@ -306,6 +306,8 @@ const defaultCrud = ref({
   showTools: true,
   // 表头是否吸顶
   stickyHeader: true,
+  // 开启新增编辑组件显示顺序自定义
+  openViewOrdered: false,
   // 页面布局方式，支持 normal（标准）和 fixed（固定）两种
   pageLayout: 'normal',
   // 默认统一设置列宽度
@@ -554,7 +556,7 @@ const requestHandle = async () => {
 const refresh = async () => {
   if (settingProps.data) {
     loading.value = true
-    const data = Array.isArray(settingProps.data) ? settingProps.data : config.parseResponseData(await settingProps.data(requestParams.value))
+    const data = isArray(settingProps.data) ? settingProps.data : config.parseResponseData(await settingProps.data(requestParams.value))
     if (data.rows) {
       tableData.value = data.rows
       openPagination.value = true
@@ -596,15 +598,17 @@ const pageChangeHandler = (currentPage) => {
 }
 
 const toggleSearch = () => {
-  const dom = crudHeaderRef.value.style
-  dom.display = showSearch.value ? 'none' : 'block'
-  showSearch.value = ! showSearch.value
-  if (openPagination.value) {
-    headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? 24 : crudHeaderRef.value.offsetHeight + 32
-  } else {
-    headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? -8 : crudHeaderRef.value.offsetHeight
+  const dom = crudHeaderRef.value?.style
+  if (dom) {
+    dom.display = showSearch.value ? 'none' : 'block'
+    showSearch.value = ! showSearch.value
+    if (openPagination.value) {
+      headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? 24 : crudHeaderRef.value.offsetHeight + 32
+    } else {
+      headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? -8 : crudHeaderRef.value.offsetHeight
+    }
+    defaultCrud.value.pageLayout == 'fixed' && settingFixedPage()
   }
-  defaultCrud.value.pageLayout == 'fixed' && settingFixedPage()
 }
 
 const tableSetting = () => {
@@ -648,7 +652,7 @@ const dbClickOpenEdit = (record) => {
       return
     }
 
-    if (_.isArray(defaultCrud.value.edit.auth)) {
+    if (isArray(defaultCrud.value.edit.auth)) {
       for (let index in defaultCrud.value.edit.auth) {
         if (! checkAuth(defaultCrud.value.edit.auth[index])) {
           Message.error('没有编辑数据的权限')
@@ -682,10 +686,15 @@ const exportAction = () => {
 const deletesMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
     const api = isRecovery.value ? defaultCrud.value.delete.realApi : defaultCrud.value.delete.api
-    const response = await api({ ids: selecteds.value })
-    response.code === 200
-    ? Message.success(response.message || `删除成功！`)
-    : Message.error(response.message || `删除失败！`)
+    let data = {}
+    if (defaultCrud.value.beforeDelete && isFunction(defaultCrud.value.beforeDelete)) {
+      data = defaultCrud.value.beforeDelete()
+    }
+    const response = await api(Object.assign( { ids: selecteds.value }, data ))
+    if (defaultCrud.value.afterDelete && isFunction(defaultCrud.value.afterDelete)) {
+      defaultCrud.value.afterDelete(response)
+    }
+    Message.success(response.message || `删除成功！`)
     refresh()
   } else {
     Message.error('至少选择一条数据')
@@ -695,9 +704,7 @@ const deletesMultipleAction = async () => {
 const recoverysMultipleAction = async() => {
   if (selecteds.value && selecteds.value.length > 0) {
     const response = await defaultCrud.value.recovery.api({ ids: selecteds.value })
-    response.code === 200
-    ? Message.success(response.message || `恢复成功！`)
-    : Message.error(response.message || `恢复失败！`)
+    Message.success(response.message || `恢复成功！`)
     refresh()
   } else {
     Message.error('至少选择一条数据')
@@ -807,7 +814,7 @@ if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.aut
   requestData()
 }
 
-onMounted(() => {
+nextTick(() => {
   document.querySelector('.arco-table-body').className += ' customer-scrollbar'
   toggleSearch()
 })
