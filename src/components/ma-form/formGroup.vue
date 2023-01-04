@@ -576,6 +576,8 @@ const init = () => {
             formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response)
           }
         }
+      } else if (allowRequestFormType.includes(item.formType) && item.dict) {
+        formDictData.value[item.dataIndex] = []
       }
     })
   }
@@ -608,12 +610,12 @@ const getDictData = (name, index) => {
   }
 }
 
-const handlerCascader = (val, column, index) => {
+const handlerCascader = async (val, column, index) => {
   if (column.cascaderItem && isArray(column.cascaderItem) && column.cascaderItem.length > 0 && val) {
     loading.value = true
     column.cascaderItem.map(async name => {
       const dict = props.columns.filter(col => col.dataIndex === name && col.dict )[0].dict
-      if (dict && dict.url && dict.props) {
+      if (dict && dict.url) {
         let response
         if (dict && dict.url.indexOf('{{key}}') > 0) {
           response = await requestDict(dict.url.replace('{{key}}', val), dict.method || 'GET', dict.params || {}, dict.data || {})
