@@ -830,7 +830,12 @@ const toRules = (rules) => {
   if (Array.isArray(rules)) {
     return rules.map(v => ({...v}))
   }
-
+  
+  if (!rules.validator && isFunction(rules.validatorFormData)) {
+    rules.validator = (value, cb) => {
+       rules.validatorFormData(value, cb, form.value)
+    }
+  }
   return {...rules}
 }
 
