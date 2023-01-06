@@ -36,6 +36,9 @@ const modal = reactive({
   visible: prop.default_visible,
   open(data){
     modal.visible = true
+    for (let [key, value] of Object.entries(data)) {
+      form.value[key] = value
+    }
     emit('open', data)
   },
   close()
