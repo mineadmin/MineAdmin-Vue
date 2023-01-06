@@ -238,7 +238,7 @@ import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
 import { isArray } from 'lodash'
-import { globalColumn } from '@/config/curd/column.js'
+import { globalColumn } from '@/config/column.js'
 
 const loading = ref(true)
 const reloadColumn = ref(true)

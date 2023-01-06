@@ -24,7 +24,6 @@
  * 事件
  *  @visible(show = true|false) 显示关闭事件
  */
-
 import { reactive, ref, watch } from "vue";
 const emit = defineEmits(["visible", "validateError", "open", "cancel", "close"]);
 const form = ref({});
@@ -40,12 +39,12 @@ const maFormRef = ref();
 
 const modal = reactive({
   visible: prop.default_visible,
-  open(data){
-    modal.visible = true
+  open(data) {
+    modal.visible = true;
     for (let [key, value] of Object.entries(data)) {
-      form.value[key] = value
+      form.value[key] = value;
     }
-    emit('open', data)
+    emit("open", data);
   },
   close() {
     modal.visible = false;

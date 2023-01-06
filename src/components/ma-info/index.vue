@@ -43,7 +43,7 @@
  */
 import { getCurrentInstance, ref, watch } from "vue";
 import tool from "@/utils/tool";
-import {get, isArray} from "lodash";
+import { get, isArray } from "lodash";
 
 const app = getCurrentInstance().appContext.app;
 const columns = ref([]);
@@ -84,24 +84,23 @@ watch(
 );
 
 watch(
-    () => props.data,
-    (vl) => {
-      data.value = props.data
-      descriptions.value = []
-      columns.value.forEach((item) => {
-        if (item.dataIndex === '__operation' || item.infoShow === false) {
-          return ;
-        }
-        descriptions.value.push({
-          ...item,
-          label: item.title,
-          value: get(data.value, item.dataIndex),
-        })
-      })
-    },
-    { deep : true, immediate: true }
-)
-
+  () => props.data,
+  (vl) => {
+    data.value = props.data;
+    descriptions.value = [];
+    columns.value.forEach((item) => {
+      if (item.dataIndex === "__operation" || item.infoShow === false) {
+        return;
+      }
+      descriptions.value.push({
+        ...item,
+        label: item.title,
+        value: get(data.value, item.dataIndex),
+      });
+    });
+  },
+  { deep: true, immediate: true }
+);
 </script>
 
 <style scoped></style>
