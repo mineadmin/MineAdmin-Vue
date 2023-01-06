@@ -214,7 +214,6 @@
                     v-else
                     :is="getComponent(item)"
                     v-model="form[item.dataIndex]"
-                    default-value="content"
                     :placeholder="item.placeholder || `请输入${item.title}`"
                     :disabled="formItemDisabled(item) || item.disabled"
                     :readonly="formItemReadonly(item) || item.readonly"
