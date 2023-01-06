@@ -43,7 +43,7 @@
  */
 import {getCurrentInstance, ref, watch} from "vue";
 import tool from "@/utils/tool";
-import {isArray} from "lodash";
+import {get, isArray} from "lodash";
 
 const app = getCurrentInstance().appContext.app
 const columns = ref([])
@@ -99,12 +99,14 @@ watch(
         descriptions.value.push({
           ...item,
           label: item.title,
-          value: data.value[item.dataIndex],
+          value: get(data.value, item.dataIndex),
         })
       })
     },
       { deep : true, immediate: true }
 )
+
+
 </script>
 
 <style scoped>
