@@ -10,9 +10,9 @@ import i18n from '@/i18n'
 import directives from './directives'
 
 // 官方样式
-// import '@arco-design/web-vue/dist/arco.css'
+import '@arco-design/web-vue/dist/arco.css'
 // MineAdmin样式
-import '@arco-themes/vue-mine-admin/index.less'
+// import '@arco-themes/vue-mine-admin/index.less'
 import './style/skin.less'
 import './style/index.css'
 import './style/global.less'
