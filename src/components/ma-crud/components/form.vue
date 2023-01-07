@@ -545,7 +545,7 @@ import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { handlerProps } from '../js/common'
-import { isArray, isFunction, concat } from 'lodash'
+import { isArray, isFunction, concat, get } from 'lodash'
 import MaFormGroup from '@/components/ma-form/formGroup.vue'
 
 const app = getCurrentInstance().appContext.app
@@ -597,6 +597,7 @@ watch(
   },
   { deep: true }
 )
+
 const submit = async (done) => {
   return crudForm.value.validate()
   .then(async result => {
@@ -689,6 +690,11 @@ const init = () => {
     })
     columns.value.map(async item => {
       if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
+      // 针对带点的数据处理
+      if (item.dataIndex.indexOf('.') > -1) {
+        form.value[item.dataIndex] = get(form.value, item.dataIndex)
+      }
+      
       // add 默认值处理
       if (currentAction.value === 'add') {
         form.value[item.dataIndex] = undefined
@@ -823,7 +829,12 @@ const toRules = (rules) => {
   if (Array.isArray(rules)) {
     return rules.map(v => ({...v}))
   }
-
+  
+  if (!rules.validator && isFunction(rules.validatorFormData)) {
+    rules.validator = (value, cb) => {
+       rules.validatorFormData(value, cb, form.value)
+    }
+  }
   return {...rules}
 }
 
