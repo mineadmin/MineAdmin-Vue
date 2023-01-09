@@ -653,13 +653,13 @@ const submit = async (done) => {
     }
     let response
     if (currentAction.value === 'add') {
-      isFunction(props.crud.beforeAdd) && props.crud.beforeAdd(form.value)
+      isFunction(props.crud.beforeAdd) && await props.crud.beforeAdd(form.value)
       response = await props.crud.add.api(form.value)
-      isFunction(props.crud.afterAdd) && props.crud.afterAdd(response, form.value)
+      isFunction(props.crud.afterAdd) && await props.crud.afterAdd(response, form.value)
     } else {
-      isFunction(props.crud.beforeEdit) && props.crud.beforeEdit(form.value)
+      isFunction(props.crud.beforeEdit) && await props.crud.beforeEdit(form.value)
       response = await props.crud.edit.api(form.value[props.crud.pk], form.value)
-      isFunction(props.crud.afterEdit) && props.crud.afterEdit(response, form.value)
+      isFunction(props.crud.afterEdit) && await props.crud.afterEdit(response, form.value)
     }
     if ( response.success ) {
       Message.success(response.message || `${actionTitle.value}成功！`)
