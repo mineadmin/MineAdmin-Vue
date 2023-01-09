@@ -44,7 +44,7 @@
                 :validate-trigger="item.validateTrigger"
                 :validate-status="item.validateStatus"
               >
-                <template v-if="item.formType !== 'form-group'">
+                <template v-if="item.formType !== 'form-group' && item.formType !== 'form-table'">
                   <a-select
                     v-if="item.formType === 'select'"
                     v-model="form[item.dataIndex]"
@@ -256,15 +256,37 @@
                   />
                 </template>
 
+                <ma-form-table
+                  v-else-if="item.formType === 'form-table'"
+                  v-model="form[item.dataIndex]"
+                  :columns="item.childrenForm"
+                  :parentColumns="columns"
+                  :emptyRow="item.emptyRow ?? 0"
+                  :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
+                >
+                  <template
+                    v-for="(tableItem, tableIndex) in item.childrenForm"
+                    :key="tableIndex"
+                    #[tableItem.dataIndex]="{ record }"
+                  >
+                    <slot
+                      :name="`${item.dataIndex}-${tableItem.dataIndex}`"
+                      v-bind="{ record, tableItem, tableIndex }"
+                    />
+                  </template>
+                </ma-form-table>
+
                 <ma-form-group
                   v-else
                   v-model="form[item.dataIndex]"
                   :options="item.childrenOptions"
-                  :columns="item.children"
+                  :columns="item.childrenForm"
                   :dataIndex="item.dataIndex"
+                  :emptyRow="item.emptyRow ?? 0"
+                  :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
                 >
                   <template
-                    v-for="(groupItem, groupIndex) in item.children"
+                    v-for="(groupItem, groupIndex) in item.childrenForm"
                     :key="groupIndex"
                     #[groupItem.dataIndex]="{ data }"
                   >
@@ -297,7 +319,7 @@
                   :validate-trigger="item.validateTrigger"
                   :validate-status="item.validateStatus"
                 >
-                  <template v-if="item.formType !== 'form-group'">
+                  <template v-if="item.formType !== 'form-group' && item.formType !== 'form-table'">
                     <a-select
                       v-if="item.formType === 'select'"
                       v-model="form[item.dataIndex]"
@@ -509,15 +531,37 @@
                     />
                   </template>
 
+                  <ma-form-table
+                    v-else-if="item.formType === 'form-table'"
+                    v-model="form[item.dataIndex]"
+                    :columns="item.childrenForm"
+                    :parentColumns="columns"
+                    :emptyRow="item.emptyRow ?? 0"
+                    :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
+                  >
+                    <template
+                      v-for="(tableItem, tableIndex) in item.childrenForm"
+                      :key="tableIndex"
+                      #[tableItem.dataIndex]="{ record }"
+                    >
+                      <slot
+                        :name="`${item.dataIndex}-${tableItem.dataIndex}`"
+                        v-bind="{ record, tableItem, tableIndex }"
+                      />
+                    </template>
+                  </ma-form-table>
+
                   <ma-form-group
                     v-else
                     v-model="form[item.dataIndex]"
                     :options="item.childrenOptions"
-                    :columns="item.children"
+                    :columns="item.childrenForm"
                     :dataIndex="item.dataIndex"
+                    :emptyRow="item.emptyRow ?? 0"
+                    :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
                   >
                     <template
-                      v-for="(groupItem, groupIndex) in item.children"
+                      v-for="(groupItem, groupIndex) in item.childrenForm"
                       :key="groupIndex"
                       #[groupItem.dataIndex]="{ data }"
                     >
@@ -547,6 +591,7 @@ import commonApi from '@/api/common'
 import { handlerProps } from '../js/common'
 import { isArray, isFunction, concat, get } from 'lodash'
 import MaFormGroup from '@/components/ma-form/formGroup.vue'
+import MaFormTable from '@/components/ma-form/formTable.vue'
 
 const app = getCurrentInstance().appContext.app
 const componentName = ref('a-modal')
@@ -558,6 +603,7 @@ const crudForm = ref(null)
 const actionTitle = ref('')
 const dataLoading = ref(true)
 const formDictData = ref({})
+const formTableKeys = ref({})
 const setting = ref({})
 const emit = defineEmits(['success', 'error'])
 const props = defineProps({
@@ -713,12 +759,13 @@ const init = () => {
         } else if (typeof item.editDefaultValue != 'undefined') {
           form.value[item.dataIndex] = item.editDefaultValue
         }
-
-        // 针对联动数据加载回显
-        if (item.cascaderItem && item.cascaderItem.length > 0) {
-          handlerCascader(form.value[item.dataIndex], item)
-        }
       }
+
+      // 针对联动数据加载回显
+      if ( item.cascaderItem || item.childrenCascaderItem ) {
+        handlerCascader(form.value[item.dataIndex], item)
+      }
+
       if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaders.includes(item.dataIndex)) {
         if (item.dict.name) {
           const response = await commonApi.getDict(item.dict.name)
@@ -787,6 +834,16 @@ const handlerCascader = (val, column) => {
           Message.error('字典联动请求失败：' + name)
           console.error(response)
         }
+      }
+    })
+    dataLoading.value = false
+  } else if (column.childrenCascaderItem && isArray(column.childrenCascaderItem) && column.childrenCascaderItem.length > 0 && val) {
+    dataLoading.value = true
+    column.childrenCascaderItem.map(async name => {
+      if (name.indexOf('.') > -1) {
+        const field = name.split('.')
+        formTableKeys.value[field[0]] = formTableKeys.value[field[0]] ?? {}
+        formTableKeys.value[field[0]][field[1]] = val
       }
     })
     dataLoading.value = false
