@@ -14,6 +14,43 @@ export default {
   },
 
   /**
+   * 获取部门领导列表
+   * @returns
+   */
+  getLeaderList(params = {}) {
+    return request({
+      url: 'system/dept/getLeaderList',
+      method: 'get',
+      params
+    })
+  },
+
+  /**
+   * 新增部门领导
+   * @returns
+   */
+  addLeader(data = {}) {
+    return request({
+      url: 'system/dept/addLeader',
+      method: 'post',
+      data
+    })
+  },
+
+
+  /**
+   * 删除部门领导
+   * @returns
+   */
+  delLeader(data = {}) {
+    return request({
+      url: 'system/dept/delLeader',
+      method: 'delete',
+      data
+    })
+  },
+
+  /**
    * 从回收站获取部门树
    * @returns
    */

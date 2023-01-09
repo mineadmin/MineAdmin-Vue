@@ -29,7 +29,7 @@
           <template v-for="(item, idx) in rows[index]" :key="idx">
             <a-form-item
               v-show="formItemShow"
-              :label="item.title"
+              :label="item.title ?? '未命名'"
               :field="`${props.dataIndex}.${index}.${item.dataIndex}`"
               label-col-flex="auto"
               :label-col-style="{ width: item.labelWidth ? item.labelWidth : props.options.labelWidth || '100px' }"
@@ -48,9 +48,9 @@
                   :max-tag-count="item.maxTagCount || 1"
                   :disabled="item.disabled"
                   :readonly="item.readonly"
-                  :options="formDictData[item.dataIndex]"
+                  :options="getDictData(item.dataIndex, index)"
                   :multiple="item.multiple"
-                  @change="handlerCascader($event, item)"
+                  @change="handlerCascader($event, item, index)"
                 />
 
                 <a-checkbox-group
@@ -58,10 +58,10 @@
                   v-model="data[item.dataIndex]"
                   :disabled="item.disabled"
                   :readonly="item.readonly"
-                  @change="handlerCascader($event, item)"
+                  @change="handlerCascader($event, item, index)"
                 >
                   <a-checkbox
-                    v-for="option in formDictData[item.dataIndex]"
+                    v-for="option in getDictData(item.dataIndex, index)"
                     :key="option" :value="Number.isInteger(data[item.dataIndex]) ? parseInt(option.value) : option.value"
                   >{{ option.label }}</a-checkbox>
                 </a-checkbox-group>
@@ -72,10 +72,10 @@
                   :disabled="item.disabled"
                   :readonly="item.readonly"
                   :type="item.type"
-                  @change="handlerCascader($event, item)"
+                  @change="handlerCascader($event, item, index)"
                 >
                   <a-radio
-                    v-for="option in formDictData[item.dataIndex]"
+                    v-for="option in getDictData(item.dataIndex, index)"
                     :key="option" :value="Number.isInteger(data[item.dataIndex]) ? parseInt(option.value) : option.value"
                   >{{ option.label }}</a-radio>
                 </a-radio-group>
@@ -119,7 +119,9 @@
                   allow-clear
                   allow-search
                   :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
-                  :tree-checkable="item.multiple"
+                  :tree-checkable="item.treeCheckable"
+                  :tree-check-strictly="item.treeCheckStrictly"
+                  :max-tag-count="item.maxTagCount ?? 2"
                   :multiple="item.multiple"
                   :data="formDictData[item.dataIndex]"
                   @change="item.change && item.change($event, { data, item, index })"
@@ -130,7 +132,7 @@
                 <component
                   v-else-if="['date', 'range', 'time'].includes(item.formType)"
                   :is="getComponent(item)"
-                  v-model="form[item.dataIndex]"
+                  v-model="data[item.dataIndex]"
                   :placeholder="item.formType === 'range'
                     ? ['请选择开始时间', '请选择结束时间']
                     : item.placeholder ? item.placeholder : `请选择${item.title}`
@@ -143,24 +145,24 @@
                   :mode="item.mode"
                   allow-clear
                   style="width: 100%;"
-                  @change="item.change && item.change($event, { form, item, index })"
-                  @click="item.click && item.click($event, { form, item, index })"
-                  @blur="item.blur && item.blur($event, { form, item, index })"
+                  @change="item.change && item.change($event, { data, item, index })"
+                  @click="item.click && item.click($event, { data, item, index })"
+                  @blur="item.blur && item.blur($event, { data, item, index })"
                 />
 
                 <component
                   v-else-if="['month', 'year', 'week', 'quarter'].includes(item.formType)"
                   :is="getComponent(item)"
-                  v-model="form[item.dataIndex]"
+                  v-model="data[item.dataIndex]"
                   :placeholder="item.placeholder || `请选择${item.title}`"
                   :format="item.format || ''"
                   :disabled="item.disabled"
                   :readonly="item.readonly"
                   allow-clear
                   style="width: 100%;"
-                  @change="item.change && item.change($event, { form, item, index })"
-                  @click="item.click && item.click($event, { form, item, index })"
-                  @blur="item.blur && item.blur($event, { form, item, index })"
+                  @change="item.change && item.change($event, { data, item, index })"
+                  @click="item.click && item.click($event, { data, item, index })"
+                  @blur="item.blur && item.blur($event, { data, item, index })"
                 />
 
                 <component
@@ -267,9 +269,9 @@
                     :max-tag-count="item.maxTagCount || 1"
                     :disabled="item.disabled"
                     :readonly="item.readonly"
-                    :options="formDictData[item.dataIndex]"
+                    :options="getDictData(item.dataIndex, index)"
                     :multiple="item.multiple"
-                    @change="handlerCascader($event, item)"
+                    @change="handlerCascader($event, item, index)"
                   />
 
                   <a-checkbox-group
@@ -277,10 +279,10 @@
                     v-model="data[item.dataIndex]"
                     :disabled="item.disabled"
                     :readonly="item.readonly"
-                    @change="handlerCascader($event, item)"
+                    @change="handlerCascader($event, item, index)"
                   >
                     <a-checkbox
-                      v-for="option in formDictData[item.dataIndex]"
+                      v-for="option in getDictData(item.dataIndex, index)"
                       :key="option" :value="Number.isInteger(data[item.dataIndex]) ? parseInt(option.value) : option.value"
                     >{{ option.label }}</a-checkbox>
                   </a-checkbox-group>
@@ -291,10 +293,10 @@
                     :disabled="item.disabled"
                     :readonly="item.readonly"
                     :type="item.type"
-                    @change="handlerCascader($event, item)"
+                    @change="handlerCascader($event, item, index)"
                   >
                     <a-radio
-                      v-for="option in formDictData[item.dataIndex]"
+                      v-for="option in getDictData(item.dataIndex, index)"
                       :key="option" :value="Number.isInteger(data[item.dataIndex]) ? parseInt(option.value) : option.value"
                     >{{ option.label }}</a-radio>
                   </a-radio-group>
@@ -338,7 +340,9 @@
                     allow-clear
                     allow-search
                     :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
-                    :tree-checkable="item.multiple"
+                    :tree-checkable="item.treeCheckable"
+                    :tree-check-strictly="item.treeCheckStrictly"
+                    :max-tag-count="item.maxTagCount ?? 2"
                     :multiple="item.multiple"
                     :data="formDictData[item.dataIndex]"
                     @change="item.change && item.change($event, { data, item, index })"
@@ -349,7 +353,7 @@
                   <component
                     v-else-if="['date', 'range', 'time'].includes(item.formType)"
                     :is="getComponent(item)"
-                    v-model="form[item.dataIndex]"
+                    v-model="data[item.dataIndex]"
                     :placeholder="item.formType === 'range'
                       ? ['请选择开始时间', '请选择结束时间']
                       : item.placeholder ? item.placeholder : `请选择${item.title}`
@@ -362,24 +366,24 @@
                     :mode="item.mode"
                     allow-clear
                     style="width: 100%;"
-                    @change="item.change && item.change($event, { form, item, index })"
-                    @click="item.click && item.click($event, { form, item, index })"
-                    @blur="item.blur && item.blur($event, { form, item, index })"
+                    @change="item.change && item.change($event, { data, item, index })"
+                    @click="item.click && item.click($event, { data, item, index })"
+                    @blur="item.blur && item.blur($event, { data, item, index })"
                   />
 
                   <component
                     v-else-if="['month', 'year', 'week', 'quarter'].includes(item.formType)"
                     :is="getComponent(item)"
-                    v-model="form[item.dataIndex]"
+                    v-model="data[item.dataIndex]"
                     :placeholder="item.placeholder || `请选择${item.title}`"
                     :format="item.format || ''"
                     :disabled="item.disabled"
                     :readonly="item.readonly"
                     allow-clear
                     style="width: 100%;"
-                    @change="item.change && item.change($event, { form, item, index })"
-                    @click="item.click && item.click($event, { form, item, index })"
-                    @blur="item.blur && item.blur($event, { form, item, index })"
+                    @change="item.change && item.change($event, { data, item, index })"
+                    @click="item.click && item.click($event, { data, item, index })"
+                    @blur="item.blur && item.blur($event, { data, item, index })"
                   />
 
                   <component
@@ -471,27 +475,32 @@
 <script setup>
 import { reactive, ref, watch } from 'vue'
 import { request } from '@/utils/request'
-import { isFunction, concat } from 'lodash'
+import { isFunction, isArray } from 'lodash'
 import commonApi from '@/api/common'
 
 const loading = ref(true)
 const form = reactive({})
 const rows = ref([])
 const formDictData = ref({})
+const cascaderItems = ref([])
+
+let cascaderKeys = {}
 
 const props = defineProps({
   modelValue: { type: Object },
   options: { type: Object, default: { layout: 'auto' } },
   columns: { type: Array },
   dataIndex: { type: String, default: 'datas' },
+  emptyRow: { type: Number, default: 0 },
+  cascaderKeys: { type: Object, default: {} },
 })
 
 const emit = defineEmits(['update:modelValue'])
-form[props.dataIndex] = []
+form[props.dataIndex] = props.modelValue
 
 watch(
   () => props.modelValue,
-  vl => form.datas = vl
+  vl => form[props.dataIndex] = vl
 )
 
 watch(
@@ -500,17 +509,27 @@ watch(
   { deep: true }
 )
 
+watch(
+  () => props.cascaderKeys,
+  vl => {
+    if (Object.entries(vl).toString() != Object.entries(cascaderKeys).toString()) {
+      form[props.dataIndex] = []
+      cascaderKeys = JSON.parse(JSON.stringify(vl))
+      init()
+    }
+  }, { deep: true }
+)
+
 const done = (status) => {
   loading.value = status
 }
 
-const add = () => {
-  let tmp = {}
+const add = ( data = {} ) => {
+  let tmp = data.srcElement ? {} : data
   if (props.addRow && isFunction(props.addRow)) {
     props.addRow()
   }
   rows.value.push(props.columns)
-  props.columns.map(item => tmp[item.dataIndex] = undefined)
   form[props.dataIndex].push(tmp)
 }
 
@@ -520,12 +539,21 @@ const deleteCurrent = (index) => {
   }
   form[props.dataIndex].splice(index, 1)
   rows.value.splice(index, 1)
+  cascaderItems.value.map(name => {
+    if (formDictData.value[name][index]) {
+      formDictData.value[name][index] = undefined
+    }
+  })
 }
 
 const flush = () => {
   form[props.dataIndex] = []
   rows.value = []
 }
+
+props.modelValue.map(item => {
+  add(item)
+})
 
 const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
 
@@ -535,24 +563,35 @@ const init = () => {
   const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
 
   if (props.columns.length > 0) {
-    let cascaders = []
     props.columns.map(item => {
       if (item.cascaderItem && item.cascaderItem.length > 0) {
-        cascaders = concat(cascaders, item.cascaderItem)
+        item.cascaderItem.map(name => cascaderItems.value.push(name))
       }
     })
 
     props.columns.map(async item => {
       if (! formItemShow(item)) return
       
-      if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaders.includes(item.dataIndex)) {
+      if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaderItems.value.includes(item.dataIndex)) {
         if (item.dict.name) {
           const response = await commonApi.getDict(item.dict.name)
           if (response.data) {
             formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
           }
         } else if (item.dict.url) {
-          const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
+          const key = props.cascaderKeys[item.dataIndex]
+          const url = item.dict.url
+          const tmp = {}
+          if (key) {
+            if (item.dict.url.indexOf('{{key}}') > 0) {
+              url.replace('{{key}}', key)
+            } else {
+              tmp['key'] = key
+            }
+          }
+          const params = Object.assign(item.dict.params || {}, tmp)
+          const data   = Object.assign(item.dict.data || {}, tmp)
+          const response = await requestDict(url, item.dict.method || 'GET', params, data)
           if (response.data) {
             formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
           }
@@ -564,6 +603,8 @@ const init = () => {
             formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response)
           }
         }
+      } else if (allowRequestFormType.includes(item.formType) && item.dict) {
+        formDictData.value[item.dataIndex] = []
       }
     })
   }
@@ -588,12 +629,20 @@ const handlerProps = (allowType, item, tmpArr) => {
   return data
 }
 
-const handlerCascader = (val, column) => {
+const getDictData = (name, index) => {
+  if (cascaderItems.value.includes(name)) {
+    return formDictData.value[name][index] ?? undefined
+  } else {
+    return formDictData.value[name]
+  }
+}
+
+const handlerCascader = async (val, column, index) => {
   if (column.cascaderItem && isArray(column.cascaderItem) && column.cascaderItem.length > 0 && val) {
     loading.value = true
     column.cascaderItem.map(async name => {
-      const dict = props.props.columns.filter(col => col.dataIndex === name && col.dict )[0].dict
-      if (dict && dict.url && dict.props) {
+      const dict = props.columns.filter(col => col.dataIndex === name && col.dict )[0].dict
+      if (dict && dict.url) {
         let response
         if (dict && dict.url.indexOf('{{key}}') > 0) {
           response = await requestDict(dict.url.replace('{{key}}', val), dict.method || 'GET', dict.params || {}, dict.data || {})
@@ -604,7 +653,7 @@ const handlerCascader = (val, column) => {
           response = await requestDict(dict.url, dict.method || 'GET', params || {}, data || {})
         }
         if (response.data && response.code === 200) {
-          formDictData.value[name] = response.data.map(dicItem => {
+          formDictData.value[name][index] = response.data.map(dicItem => {
             return {
               'label': dicItem[ (dict.props && dict.props.label) || 'label'  ],
               'value': dicItem[ (dict.props && dict.props.value) || 'value' ]
@@ -645,6 +694,12 @@ const getComponent = (item) => {
     case 'city-linkage': return 'ma-city-linkage'
     case 'select-resource': return 'ma-resource-button'
     default: return `a-${item.formType}`
+  }
+}
+
+if (props.emptyRow > 0) {
+  for (let i = 0; i < props.emptyRow; i++) {
+    add()
   }
 }
 

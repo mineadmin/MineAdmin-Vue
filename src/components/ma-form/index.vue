@@ -33,7 +33,7 @@
                 <slot
                   :name="`form-${item.dataIndex}`"
                   v-bind="{ form, item }"
-                  v-if="item.formType !== 'form-group'"
+                  v-if="item.formType !== 'form-group' && item.formType !== 'form-table'"
                 >
                   <a-select
                     v-if="item.formType === 'select'"
@@ -116,7 +116,9 @@
                     allow-clear
                     allow-search
                     :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
-                    :tree-checkable="item.multiple"
+                    :tree-checkable="item.treeCheckable"
+                    :tree-check-strictly="item.treeCheckStrictly"
+                    :max-tag-count="item.maxTagCount ?? 2"
                     :multiple="item.multiple"
                     :data="formDictData[item.dataIndex]"
                     @change="item.change && item.change($event, { form, item, index })"
@@ -177,6 +179,13 @@
                   />
 
                   <component
+                    v-else-if="item.formType === 'component'"
+                    :is="item.dataIndex"
+                    :columns="columns"
+                    :item="item"
+                  />
+
+                  <component
                     v-else
                     :is="getComponent(item)"
                     v-model="form[item.dataIndex]"
@@ -222,15 +231,36 @@
                   />
                 </slot>
 
+                <ma-form-table
+                  v-else-if="item.formType == 'form-table'"
+                  v-model="form[item.dataIndex]"
+                  :columns="item.childrenForm"
+                  :emptyRow="item.emptyRow ?? 0"
+                  :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
+                >
+                  <template
+                    v-for="(tableItem, tableIndex) in item.childrenForm"
+                    :key="tableIndex"
+                    #[tableItem.dataIndex]="{ record }"
+                  >
+                    <slot
+                      :name="`${item.dataIndex}-${tableItem.dataIndex}`"
+                      v-bind="{ record, tableItem, tableIndex }"
+                    />
+                  </template>
+                </ma-form-table>
+
                 <ma-form-group
                   v-else
                   v-model="form[item.dataIndex]"
                   :options="item.childrenOptions"
-                  :columns="item.children"
+                  :columns="item.childrenForm"
+                  :emptyRow="item.emptyRow ?? 0"
+                  :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
                   :dataIndex="item.dataIndex"
                 >
                   <template
-                    v-for="(groupItem, groupIndex) in item.children"
+                    v-for="(groupItem, groupIndex) in item.childrenForm"
                     :key="groupIndex"
                     #[groupItem.dataIndex]="{ data }"
                   >
@@ -260,7 +290,7 @@
                   <slot
                     :name="`form-${item.dataIndex}`"
                     v-bind="{ form, item }"
-                    v-if="item.formType !== 'form-group'"
+                    v-if="item.formType !== 'form-group' && item.formType !== 'form-table'"
                   >
                     <a-select
                       v-if="item.formType === 'select'"
@@ -343,7 +373,9 @@
                       allow-clear
                       allow-search
                       :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
-                      :tree-checkable="item.multiple"
+                      :tree-checkable="item.treeCheckable"
+                      :tree-check-strictly="item.treeCheckStrictly"
+                      :max-tag-count="item.maxTagCount ?? 2"
                       :multiple="item.multiple"
                       :data="formDictData[item.dataIndex]"
                       @change="item.change && item.change($event, { form, item, index })"
@@ -404,6 +436,13 @@
                     />
 
                     <component
+                      v-else-if="item.formType === 'component'"
+                      :is="item.dataIndex"
+                      :columns="columns"
+                      :item="item"
+                    />
+
+                    <component
                       v-else
                       :is="getComponent(item)"
                       v-model="form[item.dataIndex]"
@@ -449,15 +488,37 @@
                     />
                   </slot>
 
+                  <ma-form-table
+                    v-else-if="item.formType === 'form-table'"
+                    v-model="form[item.dataIndex]"
+                    :columns="item.childrenForm"
+                    :parentColumns="columns"
+                    :emptyRow="item.emptyRow ?? 0"
+                    :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
+                  >
+                    <template
+                      v-for="(tableItem, tableIndex) in item.childrenForm"
+                      :key="tableIndex"
+                      #[tableItem.dataIndex]="{ record }"
+                    >
+                      <slot
+                        :name="`${item.dataIndex}-${tableItem.dataIndex}`"
+                        v-bind="{ record, tableItem, tableIndex }"
+                      />
+                    </template>
+                  </ma-form-table>
+
                   <ma-form-group
                     v-else
                     v-model="form[item.dataIndex]"
                     :options="item.childrenOptions"
-                    :columns="item.children"
+                    :columns="item.childrenForm"
                     :dataIndex="item.dataIndex"
+                    :emptyRow="item.emptyRow ?? 0"
+                    :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
                   >
                     <template
-                      v-for="(groupItem, groupIndex) in item.children"
+                      v-for="(groupItem, groupIndex) in item.childrenForm"
                       :key="groupIndex"
                       #[groupItem.dataIndex]="{ data }"
                     >
@@ -490,19 +551,22 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, getCurrentInstance, provide } from 'vue'
 import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { isArray, isFunction, concat } from 'lodash'
 
 import MaFormGroup from './formGroup.vue'
+import MaFormTable from './formTable.vue'
 
+const app = getCurrentInstance().appContext.app
 const columns = ref([])
 const form = ref({})
 const formRef = ref(null)
 const formLoading = ref(true)
 const formDictData = ref({})
+const formTableKeys = ref({})
 const emit = defineEmits(['submit', 'update:modelValue'])
 const props = defineProps({
   modelValue: Object,
@@ -518,6 +582,8 @@ const props = defineProps({
     } 
   },
 })
+
+provide('form', form)
 
 columns.value = props.columns
 form.value = props.modelValue
@@ -586,6 +652,10 @@ const init = () => {
       if (item.cascaderItem && item.cascaderItem.length > 0) {
         cascaders = concat(cascaders, item.cascaderItem)
       }
+
+      if (item.formType === 'component' && item.component && !app._context.components[item.dataIndex]) {
+        app.component(item.dataIndex, item.component)
+      }
     })
 
     columns.value.map(async item => {
@@ -598,7 +668,7 @@ const init = () => {
       }
 
       // 针对联动数据加载回显
-      if (item.cascaderItem && item.cascaderItem.length > 0) {
+      if (item.cascaderItem || item.childrenCascaderItem) {
         handlerCascader(form.value[item.dataIndex], item)
       }
       
@@ -691,6 +761,16 @@ const handlerCascader = (val, column) => {
       }
     })
     formLoading.value = false
+  } else if (column.childrenCascaderItem && isArray(column.childrenCascaderItem) && column.childrenCascaderItem.length > 0 && val) {
+    formLoading.value = true
+    column.childrenCascaderItem.map(async name => {
+      if (name.indexOf('.') > -1) {
+        const field = name.split('.')
+        formTableKeys.value[field[0]] = formTableKeys.value[field[0]] ?? {}
+        formTableKeys.value[field[0]][field[1]] = val
+      }
+    })
+    formLoading.value = false
   }
 }
 
@@ -717,5 +797,5 @@ const getComponent = (item) => {
 
 props.autoInit && init()
 
-defineExpose({ init, reset })
+defineExpose({ init, reset, formRef })
 </script>

@@ -71,7 +71,7 @@ const viewMessage = async (record) => {
   row.value = record
   await queueMessage.updateReadStatus({ ids: [record.id] })
   messageStore.messageList.find( (item, idx) => {
-    if (record.id == item.id) messageStore.messageList.splice(idx, 1)
+    if (item && record.id == item.id) messageStore.messageList.splice(idx, 1)
   })
   detailVisible.value = true
 }

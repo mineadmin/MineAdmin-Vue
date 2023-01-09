@@ -569,9 +569,6 @@ const save = async (done) => {
     return false
   }
   form.value.options = formOptions.value
-  if (! form.value.generate_menus) {
-    form.value.generate_menus = ['save', 'update' , 'read', 'delete' , 'recycle', 'changeStatus', 'numberOperation', 'import', 'export']
-  }
   const response = await generate.update(form.value)
   response.success && Message.success(response.message)
   done(true)
@@ -590,8 +587,8 @@ const delRelation = (idx) => formOptions.value.relations.splice(idx, 1)
 const init = () => {
   // 设置form数据
   for (let name in record.value) {
-    if (name === 'generate_menus' && record.value[name]) {
-      form.value[name] = record.value[name].split(',')
+    if (name === 'generate_menus') {
+      form.value[name] = record.value[name] ? record.value[name].split(',') : []
     } else {
       form.value[name] = record.value[name]
     }

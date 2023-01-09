@@ -44,7 +44,7 @@
                 :validate-trigger="item.validateTrigger"
                 :validate-status="item.validateStatus"
               >
-                <template v-if="item.formType !== 'form-group'">
+                <template v-if="item.formType !== 'form-group' && item.formType !== 'form-table'">
                   <a-select
                     v-if="item.formType === 'select'"
                     v-model="form[item.dataIndex]"
@@ -127,6 +127,8 @@
                     allow-search
                     :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
                     :tree-checkable="item.treeCheckable"
+                    :tree-check-strictly="item.treeCheckStrictly"
+                    :max-tag-count="item.maxTagCount ?? 2"
                     :multiple="item.multiple"
                     :data="formDictData[item.dataIndex]"
                     @change="item.change && item.change($event, { form, item, currentAction, index })"
@@ -184,6 +186,13 @@
                     @change="item.change && item.change($event, { form, item, currentAction, index })"
                     @click="item.click && item.click($event, { form, item, currentAction, index })"
                     @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
+                  />
+
+                  <component
+                    v-else-if="item.formType === 'component'"
+                    :is="item.dataIndex"
+                    :columns="columns"
+                    :item="item"
                   />
 
                   <a-button
@@ -247,15 +256,37 @@
                   />
                 </template>
 
+                <ma-form-table
+                  v-else-if="item.formType === 'form-table'"
+                  v-model="form[item.dataIndex]"
+                  :columns="item.childrenForm"
+                  :parentColumns="columns"
+                  :emptyRow="item.emptyRow ?? 0"
+                  :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
+                >
+                  <template
+                    v-for="(tableItem, tableIndex) in item.childrenForm"
+                    :key="tableIndex"
+                    #[tableItem.dataIndex]="{ record }"
+                  >
+                    <slot
+                      :name="`${item.dataIndex}-${tableItem.dataIndex}`"
+                      v-bind="{ record, tableItem, tableIndex }"
+                    />
+                  </template>
+                </ma-form-table>
+
                 <ma-form-group
                   v-else
                   v-model="form[item.dataIndex]"
                   :options="item.childrenOptions"
-                  :columns="item.children"
+                  :columns="item.childrenForm"
                   :dataIndex="item.dataIndex"
+                  :emptyRow="item.emptyRow ?? 0"
+                  :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
                 >
                   <template
-                    v-for="(groupItem, groupIndex) in item.children"
+                    v-for="(groupItem, groupIndex) in item.childrenForm"
                     :key="groupIndex"
                     #[groupItem.dataIndex]="{ data }"
                   >
@@ -288,7 +319,7 @@
                   :validate-trigger="item.validateTrigger"
                   :validate-status="item.validateStatus"
                 >
-                  <template v-if="item.formType !== 'form-group'">
+                  <template v-if="item.formType !== 'form-group' && item.formType !== 'form-table'">
                     <a-select
                       v-if="item.formType === 'select'"
                       v-model="form[item.dataIndex]"
@@ -371,6 +402,8 @@
                       allow-search
                       :field-names="(item.dict && item.dict.props) ? item.dict.props : { key: 'value', title: 'label' }"
                       :tree-checkable="item.treeCheckable"
+                      :tree-check-strictly="item.treeCheckStrictly"
+                      :max-tag-count="item.maxTagCount ?? 2"
                       :multiple="item.multiple"
                       :data="formDictData[item.dataIndex]"
                       @change="item.change && item.change($event, { form, item, currentAction, index })"
@@ -428,6 +461,13 @@
                       @change="item.change && item.change($event, { form, item, currentAction, index })"
                       @click="item.click && item.click($event, { form, item, currentAction, index })"
                       @blur="item.blur && item.blur($event, { form, item, currentAction, index })"
+                    />
+
+                    <component
+                      v-else-if="item.formType === 'component'"
+                      :is="item.dataIndex"
+                      :columns="columns"
+                      :item="item"
                     />
 
                     <a-button
@@ -491,15 +531,37 @@
                     />
                   </template>
 
+                  <ma-form-table
+                    v-else-if="item.formType === 'form-table'"
+                    v-model="form[item.dataIndex]"
+                    :columns="item.childrenForm"
+                    :parentColumns="columns"
+                    :emptyRow="item.emptyRow ?? 0"
+                    :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
+                  >
+                    <template
+                      v-for="(tableItem, tableIndex) in item.childrenForm"
+                      :key="tableIndex"
+                      #[tableItem.dataIndex]="{ record }"
+                    >
+                      <slot
+                        :name="`${item.dataIndex}-${tableItem.dataIndex}`"
+                        v-bind="{ record, tableItem, tableIndex }"
+                      />
+                    </template>
+                  </ma-form-table>
+
                   <ma-form-group
                     v-else
                     v-model="form[item.dataIndex]"
                     :options="item.childrenOptions"
-                    :columns="item.children"
+                    :columns="item.childrenForm"
                     :dataIndex="item.dataIndex"
+                    :emptyRow="item.emptyRow ?? 0"
+                    :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
                   >
                     <template
-                      v-for="(groupItem, groupIndex) in item.children"
+                      v-for="(groupItem, groupIndex) in item.childrenForm"
                       :key="groupIndex"
                       #[groupItem.dataIndex]="{ data }"
                     >
@@ -522,14 +584,16 @@
 </template>
 
 <script setup>
-import { ref, nextTick, watch } from 'vue'
+import { ref, nextTick, watch, toRaw, getCurrentInstance, provide } from 'vue'
 import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { handlerProps } from '../js/common'
-import { isArray, isFunction, concat } from 'lodash'
+import { isArray, isFunction, concat, get } from 'lodash'
 import MaFormGroup from '@/components/ma-form/formGroup.vue'
+import MaFormTable from '@/components/ma-form/formTable.vue'
 
+const app = getCurrentInstance().appContext.app
 const componentName = ref('a-modal')
 const columns = ref([])
 const currentAction = ref('')
@@ -539,12 +603,16 @@ const crudForm = ref(null)
 const actionTitle = ref('')
 const dataLoading = ref(true)
 const formDictData = ref({})
+const formTableKeys = ref({})
 const setting = ref({})
 const emit = defineEmits(['success', 'error'])
 const props = defineProps({
   modelValue: Array,
   crud: { type: Object }
 })
+
+provide('form', toRaw(form))
+
 setting.value = props.crud.viewLayoutSetting
 watch(
   () => props.crud.viewLayoutSetting,
@@ -575,6 +643,7 @@ watch(
   },
   { deep: true }
 )
+
 const submit = async (done) => {
   return crudForm.value.validate()
   .then(async result => {
@@ -592,22 +661,20 @@ const submit = async (done) => {
       response = await props.crud.edit.api(form.value[props.crud.pk], form.value)
       isFunction(props.crud.afterEdit) && props.crud.afterEdit(response, form.value)
     }
-    if ( response.code === 200 ) {
+    if ( response.success ) {
       Message.success(response.message || `${actionTitle.value}成功！`)
       emit('success', response)
       done(true)
-    } else {
-      Message.error(response.message || `${actionTitle.value}失败！`)
-      emit('error', response)
-      done(false)
+      return true
     }
+    done(false)
   })
 }
 const open = () => {
   nextTick(() =>{
     componentName.value = setting.value.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
     dataVisible.value = true
-    columns.value = props.modelValue
+    settingOrdered()
     init()
   })
 }
@@ -628,6 +695,29 @@ const edit = (data) => {
   open()
 }
 const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
+
+const settingOrdered = () => {
+  columns.value = Object.assign(props.modelValue)
+  if (props.crud.openViewOrdered) {
+    columns.value.map((item, index) => {
+      if (! columns.value[index].order) {
+        columns.value[index].order = 0
+      }
+    })
+    
+    for ( let i = 0; i < columns.value.length; i++ ) {
+      for( let j = 0; j < columns.value.length; j++ ) {
+        if (columns.value[j].order > columns.value[i].order) {
+          let temp = Object.assign(columns.value[i])
+          columns.value[i] = Object.assign(columns.value[j])
+          columns.value[j] = Object.assign(temp)
+          temp = null
+        }
+      }
+    }
+  }
+}
+
 const init = () => {
   dataLoading.value = true
   const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
@@ -639,9 +729,18 @@ const init = () => {
       if (item.cascaderItem && item.cascaderItem.length > 0) {
         cascaders = concat(cascaders, item.cascaderItem)
       }
+
+      if (item.formType === 'component' && item.component && !app._context.components[item.dataIndex]) {
+        app.component(item.dataIndex, item.component)
+      }
     })
     columns.value.map(async item => {
       if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
+      // 针对带点的数据处理
+      if (item.dataIndex.indexOf('.') > -1) {
+        form.value[item.dataIndex] = get(form.value, item.dataIndex)
+      }
+      
       // add 默认值处理
       if (currentAction.value === 'add') {
         form.value[item.dataIndex] = undefined
@@ -660,12 +759,13 @@ const init = () => {
         } else if (typeof item.editDefaultValue != 'undefined') {
           form.value[item.dataIndex] = item.editDefaultValue
         }
-
-        // 针对联动数据加载回显
-        if (item.cascaderItem && item.cascaderItem.length > 0) {
-          handlerCascader(form.value[item.dataIndex], item)
-        }
       }
+
+      // 针对联动数据加载回显
+      if ( item.cascaderItem || item.childrenCascaderItem ) {
+        handlerCascader(form.value[item.dataIndex], item)
+      }
+
       if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaders.includes(item.dataIndex)) {
         if (item.dict.name) {
           const response = await commonApi.getDict(item.dict.name)
@@ -737,6 +837,16 @@ const handlerCascader = (val, column) => {
       }
     })
     dataLoading.value = false
+  } else if (column.childrenCascaderItem && isArray(column.childrenCascaderItem) && column.childrenCascaderItem.length > 0 && val) {
+    dataLoading.value = true
+    column.childrenCascaderItem.map(async name => {
+      if (name.indexOf('.') > -1) {
+        const field = name.split('.')
+        formTableKeys.value[field[0]] = formTableKeys.value[field[0]] ?? {}
+        formTableKeys.value[field[0]][field[1]] = val
+      }
+    })
+    dataLoading.value = false
   }
 }
 const formItemShow = (item) => {
@@ -776,7 +886,12 @@ const toRules = (rules) => {
   if (Array.isArray(rules)) {
     return rules.map(v => ({...v}))
   }
-
+  
+  if (!rules.validator && isFunction(rules.validatorFormData)) {
+    rules.validator = (value, cb) => {
+       rules.validatorFormData(value, cb, form.value)
+    }
+  }
   return {...rules}
 }
 

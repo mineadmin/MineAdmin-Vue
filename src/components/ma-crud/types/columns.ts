@@ -46,7 +46,7 @@ export interface ColumnDict {
   // url查询body数据,填写url之后生效
   body?: object;
   // 直接设置字典值
-  data?: object;
+  data?: object | Function;
   // 表格列的值是否翻译为字典对应标签
   translation?: boolean;
   // 表格key 和 value的props设置
@@ -110,6 +110,8 @@ export interface BasicColumn {
     | ((record) => number | string | boolean | undefined);
   // select,radio,treeSelect,下拉字典配置
   dict?: ColumnDict;
+  // 继承公用配置
+  common?: boolean;
   // select 和 tree-select 组件是否开启虚拟列表
   virtualList?: boolean;
   // 搜索默认值
