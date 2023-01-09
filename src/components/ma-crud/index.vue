@@ -238,6 +238,7 @@ import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
 import { isArray } from 'lodash'
+import globalColumn from '@/config/column.js'
 
 const loading = ref(true)
 const reloadColumn = ref(true)
@@ -505,7 +506,11 @@ searchSlots.value = getSearchSlot(settingProps.columns)
 const requestData = async () => {
   defaultCrud.value = Object.assign(defaultCrud.value, settingProps.crud)
   columns.value = Object.assign(settingProps.columns, {})
-  columns.value.map(item => {
+  columns.value.map((item, index) => {
+    // 公用模板
+    if (item.common && globalColumn[item.dataIndex]) {
+      columns.value[index] = globalColumn[item.dataIndex]
+    }
     !item.width && (item.width = defaultCrud.value.columnWidth)
   })
   if (defaultCrud.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {

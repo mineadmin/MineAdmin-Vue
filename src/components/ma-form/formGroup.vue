@@ -484,15 +484,19 @@ const rows = ref([])
 const formDictData = ref({})
 const cascaderItems = ref([])
 
+let cascaderKeys = {}
+
 const props = defineProps({
   modelValue: { type: Object },
   options: { type: Object, default: { layout: 'auto' } },
   columns: { type: Array },
   dataIndex: { type: String, default: 'datas' },
+  emptyRow: { type: Number, default: 0 },
+  cascaderKeys: { type: Object, default: {} },
 })
 
 const emit = defineEmits(['update:modelValue'])
-form[props.dataIndex] = []
+form[props.dataIndex] = props.modelValue
 
 watch(
   () => props.modelValue,
@@ -503,6 +507,17 @@ watch(
   () => form[props.dataIndex],
   vl => emit('update:modelValue', vl),
   { deep: true }
+)
+
+watch(
+  () => props.cascaderKeys,
+  vl => {
+    if (Object.entries(vl).toString() != Object.entries(cascaderKeys).toString()) {
+      form[props.dataIndex] = []
+      cascaderKeys = JSON.parse(JSON.stringify(vl))
+      init()
+    }
+  }, { deep: true }
 )
 
 const done = (status) => {
@@ -564,7 +579,19 @@ const init = () => {
             formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
           }
         } else if (item.dict.url) {
-          const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
+          const key = props.cascaderKeys[item.dataIndex]
+          const url = item.dict.url
+          const tmp = {}
+          if (key) {
+            if (item.dict.url.indexOf('{{key}}') > 0) {
+              url.replace('{{key}}', key)
+            } else {
+              tmp['key'] = key
+            }
+          }
+          const params = Object.assign(item.dict.params || {}, tmp)
+          const data   = Object.assign(item.dict.data || {}, tmp)
+          const response = await requestDict(url, item.dict.method || 'GET', params, data)
           if (response.data) {
             formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
           }
@@ -667,6 +694,12 @@ const getComponent = (item) => {
     case 'city-linkage': return 'ma-city-linkage'
     case 'select-resource': return 'ma-resource-button'
     default: return `a-${item.formType}`
+  }
+}
+
+if (props.emptyRow > 0) {
+  for (let i = 0; i < props.emptyRow; i++) {
+    add()
   }
 }
 

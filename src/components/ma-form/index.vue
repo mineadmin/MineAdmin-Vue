@@ -33,7 +33,7 @@
                 <slot
                   :name="`form-${item.dataIndex}`"
                   v-bind="{ form, item }"
-                  v-if="item.formType !== 'form-group'"
+                  v-if="item.formType !== 'form-group' && item.formType !== 'form-table'"
                 >
                   <a-select
                     v-if="item.formType === 'select'"
@@ -231,15 +231,36 @@
                   />
                 </slot>
 
+                <ma-form-table
+                  v-else-if="item.formType == 'form-table'"
+                  v-model="form[item.dataIndex]"
+                  :columns="item.childrenForm"
+                  :emptyRow="item.emptyRow ?? 0"
+                  :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
+                >
+                  <template
+                    v-for="(tableItem, tableIndex) in item.childrenForm"
+                    :key="tableIndex"
+                    #[tableItem.dataIndex]="{ record }"
+                  >
+                    <slot
+                      :name="`${item.dataIndex}-${tableItem.dataIndex}`"
+                      v-bind="{ record, tableItem, tableIndex }"
+                    />
+                  </template>
+                </ma-form-table>
+
                 <ma-form-group
                   v-else
                   v-model="form[item.dataIndex]"
                   :options="item.childrenOptions"
-                  :columns="item.children"
+                  :columns="item.childrenForm"
+                  :emptyRow="item.emptyRow ?? 0"
+                  :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
                   :dataIndex="item.dataIndex"
                 >
                   <template
-                    v-for="(groupItem, groupIndex) in item.children"
+                    v-for="(groupItem, groupIndex) in item.childrenForm"
                     :key="groupIndex"
                     #[groupItem.dataIndex]="{ data }"
                   >
@@ -269,7 +290,7 @@
                   <slot
                     :name="`form-${item.dataIndex}`"
                     v-bind="{ form, item }"
-                    v-if="item.formType !== 'form-group'"
+                    v-if="item.formType !== 'form-group' && item.formType !== 'form-table'"
                   >
                     <a-select
                       v-if="item.formType === 'select'"
@@ -467,15 +488,37 @@
                     />
                   </slot>
 
+                  <ma-form-table
+                    v-else-if="item.formType === 'form-table'"
+                    v-model="form[item.dataIndex]"
+                    :columns="item.childrenForm"
+                    :parentColumns="columns"
+                    :emptyRow="item.emptyRow ?? 0"
+                    :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
+                  >
+                    <template
+                      v-for="(tableItem, tableIndex) in item.childrenForm"
+                      :key="tableIndex"
+                      #[tableItem.dataIndex]="{ record }"
+                    >
+                      <slot
+                        :name="`${item.dataIndex}-${tableItem.dataIndex}`"
+                        v-bind="{ record, tableItem, tableIndex }"
+                      />
+                    </template>
+                  </ma-form-table>
+
                   <ma-form-group
                     v-else
                     v-model="form[item.dataIndex]"
                     :options="item.childrenOptions"
-                    :columns="item.children"
+                    :columns="item.childrenForm"
                     :dataIndex="item.dataIndex"
+                    :emptyRow="item.emptyRow ?? 0"
+                    :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
                   >
                     <template
-                      v-for="(groupItem, groupIndex) in item.children"
+                      v-for="(groupItem, groupIndex) in item.childrenForm"
                       :key="groupIndex"
                       #[groupItem.dataIndex]="{ data }"
                     >
@@ -515,6 +558,7 @@ import commonApi from '@/api/common'
 import { isArray, isFunction, concat } from 'lodash'
 
 import MaFormGroup from './formGroup.vue'
+import MaFormTable from './formTable.vue'
 
 const app = getCurrentInstance().appContext.app
 const columns = ref([])
@@ -522,6 +566,7 @@ const form = ref({})
 const formRef = ref(null)
 const formLoading = ref(true)
 const formDictData = ref({})
+const formTableKeys = ref({})
 const emit = defineEmits(['submit', 'update:modelValue'])
 const props = defineProps({
   modelValue: Object,
@@ -623,7 +668,7 @@ const init = () => {
       }
 
       // 针对联动数据加载回显
-      if (item.cascaderItem && item.cascaderItem.length > 0) {
+      if (item.cascaderItem || item.childrenCascaderItem) {
         handlerCascader(form.value[item.dataIndex], item)
       }
       
@@ -713,6 +758,16 @@ const handlerCascader = (val, column) => {
           Message.error('字典联动请求失败：' + name)
           console.error(response)
         }
+      }
+    })
+    formLoading.value = false
+  } else if (column.childrenCascaderItem && isArray(column.childrenCascaderItem) && column.childrenCascaderItem.length > 0 && val) {
+    formLoading.value = true
+    column.childrenCascaderItem.map(async name => {
+      if (name.indexOf('.') > -1) {
+        const field = name.split('.')
+        formTableKeys.value[field[0]] = formTableKeys.value[field[0]] ?? {}
+        formTableKeys.value[field[0]][field[1]] = val
       }
     })
     formLoading.value = false
