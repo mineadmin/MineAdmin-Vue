@@ -260,7 +260,7 @@ const loading = ref(false)
 
 let cascaderKeys = {}
 
-form[props.dataIndex] = props.modelValue
+form[props.dataIndex] = props.modelValue ?? []
 
 watch(
   () => props.modelValue,

@@ -500,7 +500,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
-form[props.dataIndex] = props.modelValue
+form[props.dataIndex] = props.modelValue ?? []
 
 watch(
   () => props.modelValue,
