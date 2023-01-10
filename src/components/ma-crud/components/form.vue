@@ -698,6 +698,7 @@ const close = () => {
   dataVisible.value = false
   columns.value = []
   form.value = {}
+  formTableKeys.value = {}
 }
 const add = () => {
   actionTitle.value = '新增'
