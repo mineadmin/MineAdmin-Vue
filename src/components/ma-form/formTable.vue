@@ -358,13 +358,7 @@ const init = async () => {
 }
 
 const addRow = () => {
-  const obj = {}
-  props.columns.map(item => {
-    if (item.formType == 'date' && item.showDefaultTime) {
-      obj[item.dataIndex] = dayjs().format('YYYY-MM-DD')
-    }
-  })
-  form[props.dataIndex].push(obj)
+  form[props.dataIndex].push({})
 }
 
 const minuRow = (index) => {
