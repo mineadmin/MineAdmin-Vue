@@ -276,7 +276,7 @@ watch(
 watch(
   () => props.cascaderKeys,
   vl => {
-    if (Object.entries(vl).toString() != Object.entries(cascaderKeys).toString()) {
+    if (JSON.stringify(vl) != JSON.stringify(cascaderKeys)) {
       form[props.dataIndex] = []
       cascaderKeys = JSON.parse(JSON.stringify(vl))
       init()
@@ -308,7 +308,7 @@ const init = async () => {
       if (item.cascaderItem && item.cascaderItem.length > 0) {
         item.cascaderItem.map(name => cascaderItems.value.push(name))
         form[props.dataIndex].map(async (data, index) => {
-          await handlerCascader(data[item.dataIndex], item, index)
+          await handlerCascader(data[item.dataIndex], item, index, false)
         })
       }
     })
@@ -396,11 +396,11 @@ const getDictData = (name, index) => {
   }
 }
 
-const handlerCascader = async (val, column, index) => {
+const handlerCascader = async (val, column, index, clearData = true) => {
   if (column.cascaderItem && isArray(column.cascaderItem) && column.cascaderItem.length > 0 && val) {
     loading.value = true
     column.cascaderItem.map(async name => {
-      form[props.dataIndex][index][name] = undefined
+      form[props.dataIndex][index][name] = clearData === true ? undefined : form[props.dataIndex][index][name] ?? undefined
       const dict = props.columns.filter(col => col.dataIndex === name && col.dict )[0].dict
       if (dict && dict.url) {
         let response
