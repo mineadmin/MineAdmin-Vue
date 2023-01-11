@@ -42,6 +42,7 @@
                     :placeholder="item.placeholder || `请选择${item.title}`"
                     allow-clear
                     allow-search
+                    allow-create
                     :max-tag-count="item.maxTagCount || 1"
                     :disabled="item.disabled"
                     :readonly="item.readonly"
@@ -234,10 +235,15 @@
                 <ma-form-table
                   v-else-if="item.formType == 'form-table'"
                   v-model="form[item.dataIndex]"
+                  :config="item.formTableConfig ?? {}"
+                  :dataIndex="item.dataIndex"
                   :columns="item.childrenForm"
                   :emptyRow="item.emptyRow ?? 0"
                   :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
                 >
+                  <template #formTableButton>
+                    <slot name="formTableButton" />
+                  </template>
                   <template
                     v-for="(tableItem, tableIndex) in item.childrenForm"
                     :key="tableIndex"
@@ -256,6 +262,7 @@
                   :options="item.childrenOptions"
                   :columns="item.childrenForm"
                   :emptyRow="item.emptyRow ?? 0"
+                  :config="item.formTableConfig ?? {}"
                   :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
                   :dataIndex="item.dataIndex"
                 >
@@ -299,6 +306,7 @@
                       :placeholder="item.placeholder || `请选择${item.title}`"
                       allow-clear
                       allow-search
+                      allow-create
                       :max-tag-count="item.maxTagCount || 1"
                       :disabled="item.disabled"
                       :readonly="item.readonly"
@@ -492,10 +500,15 @@
                     v-else-if="item.formType === 'form-table'"
                     v-model="form[item.dataIndex]"
                     :columns="item.childrenForm"
+                    :config="item.formTableConfig ?? {}"
+                    :dataIndex="item.dataIndex"
                     :parentColumns="columns"
                     :emptyRow="item.emptyRow ?? 0"
                     :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
                   >
+                    <template #formTableButton>
+                      <slot name="formTableButton" />
+                    </template>
                     <template
                       v-for="(tableItem, tableIndex) in item.childrenForm"
                       :key="tableIndex"
@@ -513,6 +526,7 @@
                     v-model="form[item.dataIndex]"
                     :options="item.childrenOptions"
                     :columns="item.childrenForm"
+                    :config="item.formTableConfig ?? {}"
                     :dataIndex="item.dataIndex"
                     :emptyRow="item.emptyRow ?? 0"
                     :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
@@ -668,7 +682,7 @@ const init = () => {
       }
 
       // 针对联动数据加载回显
-      if (item.cascaderItem || item.childrenCascaderItem) {
+      if (item.cascaderItem || item.childrenCascaderItem || item.cascaderFormTable) {
         handlerCascader(form.value[item.dataIndex], item)
       }
       
@@ -761,6 +775,8 @@ const handlerCascader = (val, column) => {
       }
     })
     formLoading.value = false
+  } else if (column.cascaderFormTable && isArray(column.cascaderFormTable) && column.cascaderFormTable.length > 0 && val) {
+    column.cascaderFormTable.map(name => formTableKeys.value[name] = val)
   } else if (column.childrenCascaderItem && isArray(column.childrenCascaderItem) && column.childrenCascaderItem.length > 0 && val) {
     formLoading.value = true
     column.childrenCascaderItem.map(async name => {
