@@ -570,6 +570,9 @@ const init = async () => {
     props.columns.map(item => {
       if (item.cascaderItem && item.cascaderItem.length > 0) {
         item.cascaderItem.map(name => cascaderItems.value.push(name))
+        form[props.dataIndex].map(async (data, index) => {
+          await handlerCascader(data[item.dataIndex], item, index)
+        })
       }
     })
 
@@ -626,7 +629,7 @@ const init = async () => {
       }
     })
   }
-  if (props.emptyRow > 0) {
+  if (props.emptyRow > 0 && form[props.dataIndex].length == 0) {
     for (let i = 0; i < props.emptyRow; i++) {
       add()
     }
