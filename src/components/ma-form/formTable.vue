@@ -38,7 +38,7 @@
                     v-show="formItemShow"
                     :hide-asterisk="false"
                     :hide-label="true"
-                    :field="`${props.dataIndex}.${index}.${item.dataIndex}`"
+                    :field="`${props.dataIndex}.${rowIndex}.${item.dataIndex}`"
                     :rules="item.rules || []"
                     :validate-trigger="item.validateTrigger"
                     :validate-status="item.validateStatus"
