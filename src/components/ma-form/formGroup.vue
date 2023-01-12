@@ -253,7 +253,7 @@
               <a-form-item
                 v-show="formItemShow"
                 :label="item.title"
-                :field="`datas.${index}.${item.dataIndex}`"
+                :field="`${props.dataIndex}.${index}.${item.dataIndex}`"
                 label-col-flex="auto"
                 :label-col-style="{ width: item.labelWidth ? item.labelWidth : props.options.labelWidth || '100px' }"
                 :rules="item.rules || []"
