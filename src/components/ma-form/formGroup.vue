@@ -644,7 +644,7 @@ const handlerProps = (allowType, item, tmpArr) => {
     data = tmpArr.map(dicItem => {
       const label = dicItem[ (item.dict.props && item.dict.props.label) || 'label'  ]
       let tmp = dicItem[ (item.dict.props && item.dict.props.value) || 'value' ]
-      const value = typeof tmp == 'boolean' ? tmp + '' : tmp
+      const value = tmp + ''
       tran[value] = label
       return { label, value } 
     })
