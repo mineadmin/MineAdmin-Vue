@@ -68,20 +68,18 @@
                   />
 
                   <component
-                    v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
-                    :is="getComponent(item)"
-                    v-model="searchForm[item.dataIndex]"
-                    :placeholder="
-                      item.formType === 'range'
-                      ? ['请选择开始时间', '请选择结束时间']
-                      : item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`
-                    "
-                    :show-time="item.showTime"
-                    :format="item.format || ''"
-                    :mode="item.mode"
-                    allow-clear
-                    style="width: 100%;"
+                      v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
+                      :is="getComponent({formType: 'range'})"
+                      v-model="searchForm[item.dataIndex]"
+                      :placeholder="['请选择开始时间', '请选择结束时间']"
+                      :time-picker-props="{ defaultValue: ['00:00:00', '23:59:59'] }"
+                      :show-time="item.showTime"
+                      :format="item.format || ''"
+                      :mode="item.mode"
+                      allow-clear
+                      style="width: 100%;"
                   />
+
 
                   <component
                     v-else
@@ -145,21 +143,20 @@
                     :data="formDictData[item.dataIndex]"
                   />
 
-                  <component
-                    v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
-                    :is="getComponent(item)"
-                    v-model="searchForm[item.dataIndex]"
-                    :placeholder="
-                      item.formType === 'range'
-                      ? ['请选择开始时间', '请选择结束时间']
-                      : item.searchPlaceholder ? item.searchPlaceholder : `请选择${item.title}`
-                    "
-                    :show-time="item.showTime"
-                    :format="item.format || ''"
-                    :mode="item.mode"
-                    allow-clear
-                    style="width: 100%;"
+                   <component
+                      v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
+                      :is="getComponent({formType: 'range'})"
+                      v-model="searchForm[item.dataIndex]"
+                      :placeholder="['请选择开始时间', '请选择结束时间']"
+                      :time-picker-props="{ defaultValue: ['00:00:00', '23:59:59'] }"
+                      :show-time="item.showTime"
+                      :format="item.format || ''"
+                      :mode="item.mode"
+                      allow-clear
+                      style="width: 100%;"
                   />
+
+
 
                   <component
                     v-else
