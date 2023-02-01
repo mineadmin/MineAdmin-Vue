@@ -1,6 +1,6 @@
 export default {
 
-  // 每页记录数
+  // 每页记录数，全局配置，但会被ma-crud组件的option配置项覆盖
   pageSize: 10,
 
   // 响应返回解析
