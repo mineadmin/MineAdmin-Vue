@@ -1,5 +1,6 @@
 import CryptoJS from 'crypto-js'
 import uploadConfig from '@/config/upload'
+import Clipboard from 'clipboard'
 import CityLinkageJson from "@/components/ma-cityLinkage/lib/city.json"
 
 const typeColor = (type = 'default') => {
@@ -135,6 +136,24 @@ tool.screen = (element) => {
   }
 }
 
+tool.copyToClipboard = function (content, clickEvent, $message, successMsg, errorMsg) {
+  const clipboard = new Clipboard(clickEvent.target, {
+    text: () => content
+  })
+
+  clipboard.on('success', () => {
+    $message.success(successMsg)
+    clipboard.destroy()
+  })
+
+  clipboard.on('error', () => {
+    $message.error(errorMsg)
+    clipboard.destroy()
+  })
+
+  clipboard.onClick(clickEvent)
+}
+
 // 城市代码翻译成名称
 tool.cityToCode = function(province, city = undefined, area = undefined, split = ' / ') {
   try {
@@ -157,7 +176,14 @@ tool.cityToCode = function(province, city = undefined, area = undefined, split =
 
 /* 复制对象 */
 tool.objCopy = (obj) => {
+  if (obj === undefined) {
+    return undefined
+  }
   return JSON.parse(JSON.stringify(obj));
+}
+
+tool.generateId = function() {
+  return Math.floor(Math.random() * 100000 + Math.random() * 20000 + Math.random() * 5000)
 }
 
 tool.viewImage = function(path, defaultStorage = 'LOCAL') {
