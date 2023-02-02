@@ -526,7 +526,7 @@ const requestData = async () => {
 
 const initRequestParams = () => {
   requestParams.value[config.request.page] = 1
-  requestParams.value[config.request.pageSize] = config.pageSize
+  requestParams.value[config.request.pageSize] = settingProps.pageSize ?? config.pageSize
   if (settingProps.crud.requestParamsLabel) {
     requestParams.value[settingProps.crud.requestParamsLabel] = settingProps.crud.requestParams
   } else {
@@ -786,6 +786,8 @@ const settingProps = defineProps({
   pagination: { type: Boolean, default: false },
   // 设置每页记录数
   pageSizeOption: { type: Array, default: () => [] },
+  // 每页记录数，会覆盖掉 config/crud.js 的全局配置
+  pageSize: undefined,
 
   // 增删改查设置
   crud: {
