@@ -21,42 +21,33 @@
       :search-button="props.component.searchButton"
       :loading="props.component.invisibleButton"
       :button-text="props.component.buttonText"
-      :mode="props.component.mode"
-      :precision="props.component.precision"
-      :step="props.component.step"
-      :max="props.component.max"
-      :min="props.component.min"
-      :formatter="props.component.formatter"
-      :parser="props.component.parser"
-      :model-event="props.component.modelEvent"
       @input="maEvent.handleInputEvent(props.component, $event)"
-      @change="props.component.change"
-      @press-enter="props.component.pressEnter"
-      @clear="props.component.clear"
-      @focus="props.component.focus"
-      @blur="props.component.blur"
-      @search="props.component.search"
+      @change="maEvent.handleChangeEvent(props.component, $event)"
+      @press-enter="maEvent.handleCommonEvent(props.component, 'onPressEnter')"
+      @clear="maEvent.handleCommonEvent(props.component, 'onClear')"
+      @focus="maEvent.handleCommonEvent(props.component, 'onFocus')"
+      @blur="maEvent.handleCommonEvent(props.component, 'onBlur')"
+      @search="maEvent.handleInputSearchEvent(props.component, $event)"
     >
       <template #prepend v-if="props.component.openPrepend">
-        <slot :name="`input${upperCaseFirst(props.component.dataIndex)}Prepend`" />
+        <slot :name="`input-${props.component.dataIndex}-prepend`" />
       </template>
       <template #append v-if="props.component.openApppend">
-        <slot :name="`input${upperCaseFirst(props.component.dataIndex)}Append`" />
+        <slot :name="`input-${props.component.dataIndex}-append`" />
       </template>
       <template #suffix v-if="props.component.openSuffix">
-        <slot :name="`input${upperCaseFirst(props.component.dataIndex)}Suffix`" />
+        <slot :name="`input-${props.component.dataIndex}-suffix`" />
       </template>
       <template #prefix v-if="props.component.openPrefix">
-        <slot :name="`input${upperCaseFirst(props.component.dataIndex)}Prefix`" />
+        <slot :name="`input-${props.component.dataIndex}-prefix`" />
       </template>
     </component>
   </ma-form-item>
 </template>
 
 <script setup>
-import { ref, inject, getCurrentInstance } from 'vue'
+import { ref, inject, onMounted } from 'vue'
 import MaFormItem from './form-item.vue'
-import { upperCaseFirst } from '../js/utils.js'
 import { maEvent } from '../js/formItemMixin.js'
 const formModel = inject('formModel')
 const maFieldEditorRef = ref()
@@ -74,8 +65,10 @@ const getComponentName = () => {
   if (props.component.formType == 'input-search') {
     return 'a-input-search'
   }
-  if (props.component.formType == 'input-number') {
-    return 'a-input-number'
-  }
 }
+
+maEvent.handleCommonEvent(props.component, 'onCreated')
+onMounted(() => {
+  maEvent.handleCommonEvent(props.component, 'onMounted')
+})
 </script>

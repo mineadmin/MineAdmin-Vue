@@ -34,7 +34,8 @@
     "vue-color-kit": "^1.0.5",
     "vue-echarts": "^6.0.2",
     "vue-i18n": "^9.1.10",
-    "vue-router": "^4.1.2"
+    "vue-router": "^4.1.2",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.1.2",

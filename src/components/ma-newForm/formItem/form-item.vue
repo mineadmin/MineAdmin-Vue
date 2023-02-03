@@ -16,6 +16,7 @@
     :feedback="props.component.feedback"
     :validate-trigger="props.component.validateTrigger"
     :validate-status="props.component.validateStatus"
+    :class="[ props.component.customClass ]"
   >
     <slot></slot>
   </a-form-item>

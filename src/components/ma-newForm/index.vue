@@ -29,7 +29,7 @@
 <script setup>
 import { ref, reactive, watch, provide, getCurrentInstance, onMounted, nextTick } from 'vue'
 import defaultOptions from './js/defaultOptions.js'
-import { getComponentName, upperCaseFirst, containerItems } from './js/utils.js'
+import { getComponentName, toHump } from './js/utils.js'
 
 import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
@@ -40,7 +40,7 @@ const componentList = import.meta.globEager('./formItem/*.vue')
 const _this = getCurrentInstance().appContext
 for (const path in containerList) {
   const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
-  const componentName = `Ma${upperCaseFirst(name)}`
+  const componentName = `Ma${toHump(name)}`
   if (! _this.components[componentName]) {
     _this.app.component(componentName, containerList[path].default)
   }
@@ -48,7 +48,7 @@ for (const path in containerList) {
 
 for (const path in componentList) {
   const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
-  const componentName = (`Ma${upperCaseFirst(name)}`).replace('-', '')
+  const componentName = `Ma${toHump(name)}`
   if (! _this.components[componentName]) {
     _this.app.component(componentName, componentList[path].default)
   }
