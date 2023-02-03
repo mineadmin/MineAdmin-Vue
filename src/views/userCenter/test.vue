@@ -22,7 +22,10 @@ const columns = ref([
         {
           title: '啦啦啦',
           childrenForm: [
-            { title: 'aaa', formType: 'input-number', dataIndex: 'title' , type: 'button'}
+            {
+              title: 'aaa', formType: 'input', dataIndex: 'title' , type: 'button',
+              onInput: 'alert(value)'
+            }
           ]
         },
         {
@@ -33,9 +36,6 @@ const columns = ref([
             }, {} ] } }
           ]
         },
-        {
-          title: 'fuck',
-        }
       ]
     }
   }
