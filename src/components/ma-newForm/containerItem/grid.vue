@@ -1,5 +1,5 @@
 <template>
-  <a-card
+  <a-row
     ref="maContainerRef"
     v-show="(typeof props.component?.options.display == 'undefined' || props.component?.options.display === true)"
     :class="[props.component?.options.customClass]"
@@ -11,18 +11,6 @@
     :header-style="props.component?.options?.headerStyle"
     :body-style="props.component?.options?.bodyStyle"
   >
-    <template #title>
-      <slot :name="`cardTitle-${props.component?.dataIndex ?? ''}`">{{ props.component?.options?.title }}</slot>
-    </template>
-    <template #actions>
-      <slot :name="`cardAction-${props.component?.dataIndex ?? ''}`"></slot>
-    </template>
-    <template #cover>
-      <slot :name="`cardCover-${props.component?.dataIndex ?? ''}`"></slot>
-    </template>
-    <template #extra>
-      <slot :name="`cardExtra-${props.component?.dataIndex ?? ''}`"></slot>
-    </template>
     <template v-for="(component, componentIndex) in (props.component?.options?.childrenForm ?? [])" :key="componentIndex">
       <component
         :is="getComponentName(component.formType)"
@@ -33,7 +21,7 @@
         </template>
       </component>
     </template>
-  </a-card>
+  </a-row>
 </template>
 
 <script setup>

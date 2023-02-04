@@ -1,37 +1,13 @@
 import { isString, isFunction } from 'lodash'
 export const maEvent = {
-  handleInputEvent: (component, value) => {
-    if (component.onInput) {
-      if ( isString(component.onInput) ) {
-        let customFn = new Function('value', component.onInput)
+  customeEvent: (component, value, evName) => {
+    if (component[evName]) {
+      if ( isString(component[evName]) ) {
+        let customFn = new Function('value', component[evName])
         customFn.call(component, value)
       }
-      if ( isFunction(component.onInput) ) {
-        component.onInput(value)
-      }
-    }
-  },
-
-  handleChangeEvent: (component, value) => {
-    if (component.onChange) {
-      if ( isString(component.onChange) ) {
-        let customFn = new Function('value', component.onChange)
-        customFn.call(component, value)
-      }
-      if ( isFunction(component.onChange) ) {
-        component.onChange(value)
-      }
-    }
-  },
-
-  handleInputSearchEvent: (component, value) => {
-    if (component.onInputSearch) {
-      if ( isString(component.onInputSearch) ) {
-        let customFn = new Function('value', component.onInputSearch)
-        customFn.call(component, value)
-      }
-      if ( isFunction(component.onInputSearch) ) {
-        component.onInputSearch(value)
+      if ( isFunction(component[evName]) ) {
+        component[evName](value)
       }
     }
   },
@@ -46,5 +22,29 @@ export const maEvent = {
         component[evName]()
       }
     }
-  }
+  },
+
+  handleInputEvent: (component, value) => {
+    maEvent.customeEvent(component, value, 'onInput')
+  },
+
+  handleChangeEvent: (component, value) => {
+    maEvent.customeEvent(component, value, 'onChange')
+  },
+
+  handleInputSearchEvent: (component, value) => {
+    maEvent.customeEvent(component, value, 'onInputSearch')
+  },
+
+  handleTabClickEvent: (component, value) => {
+    maEvent.customeEvent(component, value, 'onTabClick')
+  },
+
+  handleTabAddEvent: (component) => {
+    maEvent.customeEvent(component, component?.options?.tabs, 'onTabAdd')
+  },
+
+  handleTabDeleteEvent: (component, value) => {
+    maEvent.customeEvent(component, { tabs: component?.options?.tabs, value }, 'onTabDelete')
+  },
 }

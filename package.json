@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@arco-design/color": "^0.4.0",
-    "@arco-design/web-vue": "^2.42.0",
+    "@arco-design/web-vue": "^2.42.1",
     "@arco-themes/vue-mine-admin": "^0.0.11",
     "@tinymce/tinymce-vue": "^5.0.0",
     "autoprefixer": "^10.4.0",

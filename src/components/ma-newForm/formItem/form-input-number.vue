@@ -27,10 +27,10 @@
       @blur="maEvent.handleCommonEvent(props.component, 'onBlur')"
     >
       <template #suffix v-if="props.component.openSuffix">
-        <slot :name="`input-${props.component.dataIndex}-suffix`" />
+        <slot :name="`inputSuffix-${props.component.dataIndex}`" />
       </template>
       <template #prefix v-if="props.component.openPrefix">
-        <slot :name="`input-${props.component.dataIndex}-prefix`" />
+        <slot :name="`inputPrefix-${props.component.dataIndex}`" />
       </template>
     </a-input-number>
   </ma-form-item>

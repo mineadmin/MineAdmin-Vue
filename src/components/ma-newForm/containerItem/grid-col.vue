@@ -2,7 +2,6 @@
   <a-card
     ref="maContainerRef"
     v-show="(typeof props.component?.options.display == 'undefined' || props.component?.options.display === true)"
-    :class="[props.component?.options.customClass]"
     :extra="props.component?.options?.extra"
     :bordered="props.component?.options?.bordered"
     :loading="props.component?.options?.loading"

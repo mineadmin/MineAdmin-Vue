@@ -2,7 +2,6 @@
   <div class="ma-content-block p-4">
     <div>{{ form }}</div>
     <MaNewForm v-model="form" :columns="columns" :options="options">
-        <template #tabPanel-ok-a-title><icon-user />嘿嘿</template>
     </MaNewForm>
   </div>
 </template>
@@ -16,44 +15,68 @@ const options = ref({
   labelAlign: 'right'
 })
 const columns = ref([
-  {
-    dataIndex: 'ok',
-    formType: 'tabs',
-    options: {
-      trigger: 'hover',
-      tabs: [
-        {
-          title: '啦啦啦',
-          key: 'a',
-          childrenForm: [
-            {
-              title: 'aaa', formType: 'input', dataIndex: 'title' , type: 'button',
-            }
-          ]
-        },
-        {
-          title: '哈哈哈',
-          key:'c',
-          childrenForm: [
-            { title: 'bbb', formType: 'tabs', options: { tabs: [ {
-              childrenForm: [ { title: 'bbb', formType: 'input-number', dataIndex: 'ooo' } ]
-            }, {} ] } }
-          ]
-        },
-      ]
-    }
-  }
+  // {
+  //   dataIndex: 'ok',
+  //   formType: 'tabs',
+  //   options: {
+  //     trigger: 'hover',
+  //     tabs: [
+  //       {
+  //         title: '啦啦啦',
+  //         key: 'a',
+  //         childrenForm: [
+  //           {
+  //             title: 'aaa', formType: 'input', dataIndex: 'title' , type: 'button',
+  //             onInput: 'alert(value)'
+  //           }
+  //         ]
+  //       },
+  //       {
+  //         title: '哈哈哈',
+  //         key:'c',
+  //         childrenForm: [
+  //           { title: 'bbb', formType: 'tabs', options: { tabs: [ {
+  //             childrenForm: [ { title: 'bbb', formType: 'input-number', dataIndex: 'ooo' } ]
+  //           }, {} ] } }
+  //         ]
+  //       },
+  //     ]
+  //   }
+  // }
   // {
   //   formType: 'card',
   //   options: {
   //     title: '啦啦啦',
   //     childrenForm: [
   //       {
-  //         title: 'aaa', formType: 'input', dataIndex: 'title' , type: 'button',
+  //         formType: 'tabs',
+  //         dataIndex: 'fuck',
+  //         options: {
+  //           tabs: [ {
+  //             childrenForm: [ {title: 'aaa', formType: 'input', dataIndex: 'title' }]
+  //           }, {}, {} , {}]
+  //         }
   //       }
   //     ]
   //   }
   // }
+  {
+    formType: 'grid',
+    options: {
+      cols: 4,
+      childrenForm: [
+        {
+          formType: 'tabs',
+          dataIndex: 'fuck',
+          options: {
+            tabs: [ {
+              childrenForm: [ {title: 'aaa', formType: 'input', dataIndex: 'title' }]
+            }, {}, {} , {}]
+          }
+        }
+      ]
+    }
+  }
 ])
 
 </script>

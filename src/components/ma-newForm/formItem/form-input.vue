@@ -30,16 +30,16 @@
       @search="maEvent.handleInputSearchEvent(props.component, $event)"
     >
       <template #prepend v-if="props.component.openPrepend">
-        <slot :name="`input-${props.component.dataIndex}-prepend`" />
+        <slot :name="`inputPrepend-${props.component.dataIndex}`" />
       </template>
       <template #append v-if="props.component.openApppend">
-        <slot :name="`input-${props.component.dataIndex}-append`" />
+        <slot :name="`inputAppend-${props.component.dataIndex}`" />
       </template>
       <template #suffix v-if="props.component.openSuffix">
-        <slot :name="`input-${props.component.dataIndex}-suffix`" />
+        <slot :name="`inputSuffix-${props.component.dataIndex}`" />
       </template>
       <template #prefix v-if="props.component.openPrefix">
-        <slot :name="`input-${props.component.dataIndex}-prefix`" />
+        <slot :name="`inputPrefix-${props.component.dataIndex}`" />
       </template>
     </component>
   </ma-form-item>
