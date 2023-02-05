@@ -1,21 +1,19 @@
 <template>
   <a-tabs
-    ref="maContainerRef"
-    v-show="(typeof props.component?.options.display == 'undefined' || props.component?.options.display === true)"
-    :class="[props.component?.options.customClass]"
-    :default-active-key="props.component?.options?.tabs[0]?.key ?? 0"
-    :trigger="props.component?.options?.trigger"
-    :position="props.component?.options?.position"
-    :size="props.component?.options?.size"
-    :type="props.component?.options?.type"
-    :direction="props.component?.options?.direction"
-    :editable="props.component?.options?.editable"
-    :animation="props.component?.options?.animation"
-    :justify="props.component?.options?.justify"
-    :show-add-button="props.component?.options?.showAddButton"
-    :hide-content="props.component?.options?.hideContent"
-    :lazy-load="props.component?.options?.lazyLoad"
-    :destroy-on-hide="props.component?.options?.destroyOnHide"
+    v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
+    :class="[props.component?.customClass]"
+    :trigger="props.component?.trigger"
+    :position="props.component?.position"
+    :size="props.component?.size"
+    :type="props.component?.type"
+    :direction="props.component?.direction"
+    :editable="props.component?.editable"
+    :animation="props.component?.animation"
+    :justify="props.component?.justify"
+    :show-add-button="props.component?.showAddButton"
+    :hide-content="props.component?.hideContent"
+    :lazy-load="props.component?.lazyLoad"
+    :destroy-on-hide="props.component?.destroyOnHide"
     @change="maEvent.handleChangeEvent(props.component, $event)"
     @tab-click="maEvent.handleTabClickEvent(props.component, $event)"
     @add="maEvent.handleTabAddEvent(props.component)"
@@ -25,7 +23,7 @@
       <slot :name="`tabExtra-${props.component?.dataIndex ?? ''}`"></slot>
     </template>
     <a-tab-pane
-      v-for="(tab, index) in props.component?.options?.tabs ?? []"
+      v-for="(tab, index) in props.component?.tabs ?? []"
       :key="tab.key ?? index"
       :disabled="tab?.disabled"
       :closable="tab?.closable"
@@ -40,8 +38,8 @@
           :is="getComponentName(component.formType)"
           :component="component"
         >
-          <template v-for="slot in Object.keys($slots)" #[slot]="options" >
-            <slot :name="slot" v-bind="options" />
+          <template v-for="slot in Object.keys($slots)" #[slot]="component" >
+            <slot :name="slot" v-bind="component" />
           </template>
         </component>
       </template>
@@ -50,9 +48,7 @@
 </template>
 
 <script setup>
-import { ref, getCurrentInstance } from 'vue'
 import { getComponentName } from '../js/utils.js'
 import { maEvent } from '../js/formItemMixin.js'
-const maContainerRef = ref()
 const props = defineProps({ component: Object })
 </script>

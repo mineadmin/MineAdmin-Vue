@@ -1,11 +1,15 @@
 import tool from '@/utils/tool.js'
 import { isEmpty } from 'lodash'
 
-export const containerItems = ['tabs', 'table', 'card', 'grid']
+export const containerItems = ['tabs', 'table', 'card', 'grid', 'grid-responsive']
 export const inputType = ['input', 'input-password', 'input-search']
 
 export const generateId = (name) => {
   return `Ma_${name}_${tool.generateId()}`
+}
+
+export const addRef = (refList, name) => {
+  refList.push(name)
 }
 
 export const upperCaseFirst = (str) => {

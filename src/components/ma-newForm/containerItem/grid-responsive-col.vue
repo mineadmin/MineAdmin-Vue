@@ -1,17 +1,10 @@
 <template>
-  <a-col
+  <a-grid-item
     v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
     :class="[props.component?.customClass]"
     :span="props.component?.span ?? 12"
     :offset="props.component?.offset"
-    :order="props.component?.order"
-    :xs="props.component?.xs"
-    :sm="props.component?.sm"
-    :md="props.component?.md"
-    :lg="props.component?.lg"
-    :xl="props.component?.xl"
-    :xxl="props.component?.xxl"
-    :flex="props.component?.flex"
+    :suffix="props.component?.suffix"
   >
     <template v-for="(component, componentIndex) in (props.component?.childrenForm ?? [])" :key="componentIndex">
       <component
@@ -23,11 +16,10 @@
         </template>
       </component>
     </template>
-  </a-col>
+  </a-grid-item>
 </template>
 
 <script setup>
-import { ref, getCurrentInstance } from 'vue'
 import { getComponentName } from '../js/utils.js'
 import { maEvent } from '../js/formItemMixin.js'
 const props = defineProps({ component: Object })

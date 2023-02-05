@@ -1,17 +1,15 @@
 <template>
-  <a-row
+  <a-grid
     v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
     :class="[props.component?.customClass]"
-    :extra="props.component?.extra"
-    :bordered="props.component?.bordered"
-    :loading="props.component?.loading"
-    :hoverable="props.component?.hoverable"
-    :size="props.component?.size"
-    :header-style="props.component?.headerStyle"
-    :body-style="props.component?.bodyStyle"
+    :cols="props.component?.cols"
+    :row-gap="props.component?.rowGap"
+    :col-gap="props.component?.colGap"
+    :collapsed="props.component?.collapsed"
+    :collapsed-rows="props.component?.collapsedRows"
   >
-    <template v-for="(col, colIndex) in (props.component?.cols ?? [])" :key="colIndex">
-      <ma-grid-col :component="col">
+    <template v-for="(col, colIndex) in (props.component?.items ?? [])" :key="colIndex">
+      <ma-grid-responsive-col :component="col">
         <template v-for="(component, componentIndex) in (props.component?.childrenForm ?? [])" :key="componentIndex">
           <component
             :is="getComponentName(component.formType)"
@@ -22,13 +20,13 @@
             </template>
           </component>
         </template>
-      </ma-grid-col>
+      </ma-grid-responsive-col>
     </template>
-  </a-row>
+  </a-grid>
 </template>
 
 <script setup>
-import MaGridCol from './grid-col.vue'
+import MaGridResponsiveCol from './grid-responsive-col.vue'
 import { getComponentName } from '../js/utils.js'
 const props = defineProps({ component: Object })
 </script>

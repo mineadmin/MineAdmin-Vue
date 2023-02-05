@@ -1,25 +1,25 @@
 import { isString, isFunction } from 'lodash'
 export const maEvent = {
-  customeEvent: (component, value, evName) => {
+  customeEvent: async (component, value, evName) => {
     if (component[evName]) {
       if ( isString(component[evName]) ) {
         let customFn = new Function('value', component[evName])
-        customFn.call(component, value)
+        return await customFn.call(component, value)
       }
       if ( isFunction(component[evName]) ) {
-        component[evName](value)
+        return await component[evName](value)
       }
     }
   },
 
-  handleCommonEvent: (component, evName) => {
+  handleCommonEvent: async (component, evName) => {
     if (component[evName]) {
       if ( isString(component[evName]) ) {
         let customFn = new Function('value', component[evName])
-        customFn.call(component)
+        return await customFn.call(component)
       }
       if ( isFunction(component[evName]) ) {
-        component[evName]()
+        return await component[evName]()
       }
     }
   },
@@ -41,10 +41,10 @@ export const maEvent = {
   },
 
   handleTabAddEvent: (component) => {
-    maEvent.customeEvent(component, component?.options?.tabs, 'onTabAdd')
+    maEvent.customeEvent(component, component?.tabs, 'onTabAdd')
   },
 
   handleTabDeleteEvent: (component, value) => {
-    maEvent.customeEvent(component, { tabs: component?.options?.tabs, value }, 'onTabDelete')
+    maEvent.customeEvent(component, { tabs: component?.tabs, value }, 'onTabDelete')
   },
 }

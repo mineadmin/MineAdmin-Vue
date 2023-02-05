@@ -10,14 +10,15 @@
         :size="options?.size"
         :disabled="options?.disabled"
         :rules="options?.rules"
+        @submit="formSubmit"
       >
         <template v-for="(component, componentIndex) in columns" :key="componentIndex">
           <component
             :is="getComponentName(component.formType)"
             :component="component"
           >
-            <template v-for="slot in Object.keys($slots)" #[slot]="options" >
-              <slot :name="slot" v-bind="options" />
+            <template v-for="slot in Object.keys($slots)" #[slot]="component" >
+              <slot :name="slot" v-bind="component" />
             </template>
           </component>
         </template>
@@ -27,9 +28,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, provide, getCurrentInstance, onMounted, nextTick } from 'vue'
+import { ref, reactive, watch, provide, onMounted, getCurrentInstance } from 'vue'
+import { isString, isFunction } from 'lodash'
 import defaultOptions from './js/defaultOptions.js'
 import { getComponentName, toHump } from './js/utils.js'
+import { maEvent } from './js/formItemMixin.js'
 
 import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
@@ -40,9 +43,9 @@ const componentList = import.meta.globEager('./formItem/*.vue')
 const _this = getCurrentInstance().appContext
 for (const path in containerList) {
   const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
-  const componentName = `Ma${toHump(name)}`
-  if (! _this.components[componentName]) {
-    _this.app.component(componentName, containerList[path].default)
+  const containerName = `Ma${toHump(name)}`
+  if (! _this.components[containerName]) {
+    _this.app.component(containerName, containerList[path].default)
   }
 }
 
@@ -55,7 +58,7 @@ for (const path in componentList) {
 }
 
 const formLoading = ref(false)
-const formRef = ref()
+const maFormRef = ref()
 const form = ref({})
 
 const props = defineProps({
@@ -63,7 +66,7 @@ const props = defineProps({
   columns: { type: Array },
   options: { type: Object, default: () => {} },
 })
-const emit = defineEmits(['submit', 'update:modelValue'])
+const emit = defineEmits(['onSubmit', 'update:modelValue'])
 
 watch(
   () => form.value,
@@ -74,8 +77,22 @@ watch(
 const options = ref(Object.assign(defaultOptions, props.options))
 provide('options', options.value)
 provide('formModel', form.value)
+
+maEvent.handleCommonEvent(options.value, 'onCreated')
 onMounted(() => {
-  // 获取 $refs
-  getCurrentInstance().ctx.$refs['maFormRef']
+  maEvent.handleCommonEvent(options.value, 'onMounted')
 })
+
+const validateForm = async () => {
+  const validResult = await maFormRef.value.validate()
+}
+
+const formSubmit = async () => {
+  if ( await validateForm() ) {
+    emit('onSubmit', form.value)
+  }
+}
+
+const getFormRef = () => maFormRef.value
+defineExpose({ getFormRef, validateForm })
 </script>
