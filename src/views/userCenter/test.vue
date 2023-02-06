@@ -3,6 +3,8 @@
     <div>{{ form }}</div>
     <MaNewForm v-model="form" :columns="columns" :options="options" ref="aaa">
     </MaNewForm>
+
+    <a-button @click="form.title = '2'">停用</a-button>
   </div>
 </template>
 

@@ -28,7 +28,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, provide, onMounted, getCurrentInstance } from 'vue'
+import {
+  ref, reactive, watch, provide,
+  onMounted, nextTick, getCurrentInstance
+} from 'vue'
 import { isString, isFunction, isEmpty } from 'lodash'
 import defaultOptions from './js/defaultOptions.js'
 import { getComponentName, toHump, containerItems } from './js/utils.js'
@@ -117,6 +120,8 @@ const options = ref(Object.assign(defaultOptions, props.options))
 // 初始化
 const init = async () => {
 
+  formLoading.value = true
+
   // 收集数据列表
   flatteningColumns.value.map(item  => {
     if (item.cascaderItem && item.cascaderItem.length > 0) {
@@ -137,6 +142,10 @@ const init = async () => {
     if (! cascaderList.value.includes(item.dataIndex) && item.dict) {
       await loadDict(dictList.value, item)
     }
+  })
+
+  nextTick(() => {
+    formLoading.value = false
   })
 }
 
