@@ -23,7 +23,15 @@ const columns = ref([{
     {
       formList: [ { formType: 'card', title: '卡片', formList: [ {
         title: '标题', dataIndex: 'title', formType: 'select',
-        dict: {name: 'data_status'},
+        dict: {name: 'data_status'}, control: (value) => {
+          if (value ==1 ) {
+            return {
+              title2: { title : '我靠'}
+            }
+          } else {
+            return { title2: { title: '标题2' } }
+          }
+        }
       } ] } ]
     },
     {

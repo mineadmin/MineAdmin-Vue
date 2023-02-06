@@ -1,8 +1,28 @@
 import tool from '@/utils/tool.js'
-import { isEmpty } from 'lodash'
+import { isEmpty, isFunction, get } from 'lodash'
 
-export const containerItems         = ['tabs', 'table', 'card', 'grid', 'grid-tailwind']
-export const inputType              = ['input', 'input-password', 'input-search']
+export const containerItems = ['tabs', 'table', 'card', 'grid', 'grid-tailwind']
+export const inputType      = ['input', 'input-password', 'input-search']
+
+export const interactiveControl = (form, columns) => {
+  const obj = []
+  for (let name in form) {
+    columns.map( item => {
+      if (item.dataIndex === name && item.control && isFunction(item.control)) {
+        obj.push(item.control(get(form, name)))
+      }
+    })
+  }
+  obj.map(changItem => {
+    columns.map( (item, idx) => {
+      for (let name in changItem) {
+        if (name == item.dataIndex) {
+          columns[idx] = Object.assign(item, changItem[name] || {})
+        }
+      }
+    })
+  })
+}
 
 export const upperCaseFirst = (str) => {
   if (isEmpty(str)) return ''

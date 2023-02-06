@@ -34,7 +34,7 @@ import {
 } from 'vue'
 import { isString, isFunction, isEmpty } from 'lodash'
 import defaultOptions from './js/defaultOptions.js'
-import { getComponentName, toHump, containerItems } from './js/utils.js'
+import { getComponentName, toHump, containerItems, interactiveControl } from './js/utils.js'
 import { arrayComponentDefault, loadDict } from './js/dict.js'
 
 import { maEvent } from './js/formItemMixin.js'
@@ -81,7 +81,10 @@ watch(
 )
 watch(
   () => form.value,
-  vl => emit('update:modelValue', vl),
+  vl => {
+    interactiveControl(vl, flatteningColumns.value)
+    emit('update:modelValue', vl)
+  },
   { deep: true }
 )
 
@@ -174,6 +177,7 @@ const getFormRef = () => maFormRef.value
 const getDictlist = () => dictList.value
 const getColumns = () => flatteningColumns.value
 const getCascaderList = () => cascaderList.value
+
 defineExpose({
   getFormRef, getColumns, getDictlist, getCascaderList,
   validateForm
