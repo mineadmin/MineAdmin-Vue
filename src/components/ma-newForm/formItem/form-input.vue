@@ -58,12 +58,12 @@ const props = defineProps({
 const getComponentName = () => {
   if (props.component.formType == 'input') {
     return 'a-input'
-  }
-  if (props.component.formType == 'input-password') {
+  } else if (props.component.formType == 'input-password') {
     return 'a-input-password'
-  }
-  if (props.component.formType == 'input-search') {
+  } else if (props.component.formType == 'input-search') {
     return 'a-input-search'
+  } else {
+    return 'a-input'
   }
 }
 

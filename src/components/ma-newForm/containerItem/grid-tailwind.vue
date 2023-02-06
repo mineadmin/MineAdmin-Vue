@@ -1,17 +1,10 @@
 <template>
-  <a-row
+  <div
     v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
-    :class="[props.component?.customClass]"
-    :extra="props.component?.extra"
-    :bordered="props.component?.bordered"
-    :loading="props.component?.loading"
-    :hoverable="props.component?.hoverable"
-    :size="props.component?.size"
-    :header-style="props.component?.headerStyle"
-    :body-style="props.component?.bodyStyle"
+    :class="[ gridClass, props.component?.customClass ]"
   >
     <template v-for="(col, colIndex) in (props.component?.cols ?? [])" :key="colIndex">
-      <ma-grid-col :component="col">
+      <ma-grid-tailwind-col :component="col">
         <template v-for="(component, componentIndex) in (props.component?.formList ?? [])" :key="componentIndex">
           <component
             :is="getComponentName(component?.formType ?? 'input')"
@@ -22,13 +15,15 @@
             </template>
           </component>
         </template>
-      </ma-grid-col>
+      </ma-grid-tailwind-col>
     </template>
-  </a-row>
+  </div>
 </template>
 
 <script setup>
-import MaGridCol from './grid-col.vue'
+import { ref } from 'vue'
+import MaGridTailwindCol from './grid-tailwind-col.vue'
 import { getComponentName } from '../js/utils.js'
 const props = defineProps({ component: Object })
+const gridClass = ref(`grid grid-cols-1 lg:grid-cols-${props.component.colNumber ?? 1}`)
 </script>

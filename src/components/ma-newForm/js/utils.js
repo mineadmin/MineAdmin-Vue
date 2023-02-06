@@ -1,7 +1,7 @@
 import tool from '@/utils/tool.js'
 import { isEmpty } from 'lodash'
 
-export const containerItems = ['tabs', 'table', 'card', 'grid', 'grid-responsive']
+export const containerItems = ['tabs', 'table', 'card', 'grid', 'grid-tailwind']
 export const inputType = ['input', 'input-password', 'input-search']
 
 export const generateId = (name) => {

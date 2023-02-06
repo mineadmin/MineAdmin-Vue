@@ -14,7 +14,7 @@
       >
         <template v-for="(component, componentIndex) in columns" :key="componentIndex">
           <component
-            :is="getComponentName(component.formType)"
+            :is="getComponentName(component?.formType ?? 'input')"
             :component="component"
           >
             <template v-for="slot in Object.keys($slots)" #[slot]="component" >
