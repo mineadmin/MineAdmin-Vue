@@ -29,7 +29,7 @@
 
 <script setup>
 import { ref, reactive, watch, provide, onMounted, getCurrentInstance } from 'vue'
-import { isString, isFunction } from 'lodash'
+import { isString, isFunction, isEmpty } from 'lodash'
 import defaultOptions from './js/defaultOptions.js'
 import { getComponentName, toHump, containerItems } from './js/utils.js'
 import { arrayComponentDefault, loadDict } from './js/dict.js'
@@ -71,6 +71,11 @@ const props = defineProps({
 })
 const emit = defineEmits(['onSubmit', 'update:modelValue'])
 
+watch(
+  () => props.modelValue,
+  vl => form.value = vl,
+  { immediate: true, deep: true }
+)
 watch(
   () => form.value,
   vl => emit('update:modelValue', vl),
@@ -121,8 +126,8 @@ const init = async () => {
 
   // 初始化数据
   flatteningColumns.value.map(async item => {
-    
-    if (! form.value[item.dataIndex] && typeof form.value[item.dataIndex] == 'undefined') {
+
+    if ( isEmpty(form.value[item.dataIndex]) ) {
       form.value[item.dataIndex] = undefined
       if (arrayComponentDefault.includes(item.formType)) {
         form.value[item.dataIndex] = []
@@ -133,7 +138,6 @@ const init = async () => {
       await loadDict(dictList.value, item)
     }
   })
-
 }
 
 provide('options', options.value)
@@ -143,6 +147,7 @@ provide('formModel', form.value)
 maEvent.handleCommonEvent(options.value, 'onCreated')
 
 onMounted(() => {
+  
   maEvent.handleCommonEvent(options.value, 'onMounted')
   options.value.init && init()
 })
@@ -157,5 +162,11 @@ const formSubmit = async () => {
   }
 }
 const getFormRef = () => maFormRef.value
-defineExpose({ getFormRef, validateForm })
+const getDictlist = () => dictList.value
+const getColumns = () => flatteningColumns.value
+const getCascaderList = () => cascaderList.value
+defineExpose({
+  getFormRef, getColumns, getDictlist, getCascaderList,
+  validateForm
+})
 </script>

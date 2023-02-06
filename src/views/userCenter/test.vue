@@ -10,7 +10,7 @@
 import { ref } from "vue";
 import MaNewForm from "@cps/ma-newForm/index.vue";
 
-const form = ref({});
+const form = ref({ 'title': '1' });
 const aaa = ref();
 const options = ref({
   labelAlign: "right",
