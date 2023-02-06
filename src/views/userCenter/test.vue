@@ -16,6 +16,17 @@ const options = ref({
   labelAlign: "right",
 });
 const columns = ref([{
-  title: '标题', dataIndex: 'title', formType: 'input'
+  formType: 'tabs',
+  tabs: [
+    {
+      formList: [ { formType: 'card', title: '卡片', formList: [ {
+        title: '标题', dataIndex: 'title', formType: 'select',
+        dict: {name: 'data_status'},
+      } ] } ]
+    },
+    {
+      formList: [ { formType: 'card', title: '卡片2', formList: [ { title: '标题2', dataIndex: 'title2', formType: 'input' } ] } ]
+    }
+  ]
 }])
 </script>

@@ -31,12 +31,11 @@
 import { ref, reactive, watch, provide, onMounted, getCurrentInstance } from 'vue'
 import { isString, isFunction } from 'lodash'
 import defaultOptions from './js/defaultOptions.js'
-import { getComponentName, toHump } from './js/utils.js'
-import { maEvent } from './js/formItemMixin.js'
+import { getComponentName, toHump, containerItems } from './js/utils.js'
+import { arrayComponentDefault, loadDict } from './js/dict.js'
 
-import { request } from '@/utils/request'
+import { maEvent } from './js/formItemMixin.js'
 import { Message } from '@arco-design/web-vue'
-import commonApi from '@/api/common'
 
 const containerList = import.meta.globEager('./containerItem/*.vue')
 const componentList = import.meta.globEager('./formItem/*.vue')
@@ -59,6 +58,10 @@ for (const path in componentList) {
 
 const formLoading = ref(false)
 const maFormRef = ref()
+const flatteningColumns = ref([])
+const dictList = ref({})
+const cascaderList = ref([])
+const childrenFormColums = ref({})
 const form = ref({})
 
 const props = defineProps({
@@ -74,13 +77,74 @@ watch(
   { deep: true }
 )
 
-const options = ref(Object.assign(defaultOptions, props.options))
-provide('options', options.value)
-provide('formModel', form.value)
+const handleFlatteningColumns = (data) => {
+  for (let key in data) {
+    const item = data[key]
+    if ( containerItems.includes(item.formType) ) {
+      switch ( item.formType ) {
+        case 'tabs': 
+          if ( item.tabs ) {
+            item.tabs.map(tab => {
+              tab.formList && handleFlatteningColumns(tab.formList)
+            })
+          }
+          break
+        case 'card':
+          item.formList && handleFlatteningColumns(item.formList)
+          break
+      }
+    } else if ( item.formType == 'children-form' && item.childrenForm ) {
+      if (item.dataIndex) {
+        childrenFormColums.value[item.dataIndex] = item.childrenForm
+      } else {
+        Message.error('子表单未设置 dataIndex 属性')
+      }
+    } else {
+      flatteningColumns.value.push(item)
+    }
+  }
+}
 
+handleFlatteningColumns(props.columns)
+
+const options = ref(Object.assign(defaultOptions, props.options))
+
+// 初始化
+const init = async () => {
+
+  // 收集数据列表
+  flatteningColumns.value.map(item  => {
+    if (item.cascaderItem && item.cascaderItem.length > 0) {
+      cascaderList.value.push(item.cascaderItem)
+    }
+  })
+
+  // 初始化数据
+  flatteningColumns.value.map(async item => {
+    
+    if (! form.value[item.dataIndex] && typeof form.value[item.dataIndex] == 'undefined') {
+      form.value[item.dataIndex] = undefined
+      if (arrayComponentDefault.includes(item.formType)) {
+        form.value[item.dataIndex] = []
+      }
+    }
+
+    if (! cascaderList.value.includes(item.dataIndex) && item.dict) {
+      await loadDict(dictList.value, item)
+    }
+  })
+
+}
+
+provide('options', options.value)
+provide('columns', flatteningColumns.value)
+provide('dictList', dictList.value)
+provide('formModel', form.value)
 maEvent.handleCommonEvent(options.value, 'onCreated')
+
 onMounted(() => {
   maEvent.handleCommonEvent(options.value, 'onMounted')
+  options.value.init && init()
 })
 
 const validateForm = async () => {
@@ -92,7 +156,6 @@ const formSubmit = async () => {
     emit('onSubmit', form.value)
   }
 }
-
 const getFormRef = () => maFormRef.value
 defineExpose({ getFormRef, validateForm })
 </script>
