@@ -12,7 +12,9 @@ import directives from './directives'
 // 官方样式
 // import '@arco-design/web-vue/dist/arco.css'
 // MineAdmin样式
-import '@arco-themes/vue-mine-admin/index.less'
+// import '@arco-themes/vue-mine-admin/index.less'
+// MineAdmin-V2样式
+import '@arco-themes/vue-mine-admin-v2/index.less'
 import './style/skin.less'
 import './style/index.css'
 import './style/global.less'
