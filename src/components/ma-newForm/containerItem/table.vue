@@ -12,7 +12,7 @@
                 :is="getComponentName(component?.formType ?? 'input')"
                 :component="component"
               >
-                <template v-for="slot in Object.keys($slots)" #[slot]="component" >
+                <template v-for="slot in Object.keys($slots)" #[slot]="component">
                   <slot :name="slot" v-bind="component" />
                 </template>
               </component>

@@ -3,6 +3,7 @@ import { isEmpty, isFunction, get } from 'lodash'
 
 export const containerItems = ['tabs', 'table', 'card', 'grid', 'grid-tailwind']
 export const inputType      = ['input', 'input-password', 'input-search']
+export const pickerType     = ['date', 'month', 'year', 'week', 'quarter', 'range', 'time']
 
 export const interactiveControl = (form, columns) => {
   const obj = []
@@ -47,8 +48,55 @@ export const getComponentName = (formType) => {
   if (containerItems.includes(formType)) {
     return `Ma${toHump(formType)}`
   }
+  if (pickerType.includes(formType)) {
+    return 'MaFormPicker'
+  }
   if (inputType.includes(formType)) {
     return 'MaFormInput'
   }
   return (`MaForm${toHump(formType)}`)
+}
+
+export const handleFlatteningColumns = (data, columns) => {
+  for (let key in data) {
+    const item = data[key]
+    if ( containerItems.includes(item.formType) ) {
+      switch ( item.formType ) {
+        case 'tabs': 
+          if ( item.tabs ) {
+            item.tabs.map(tab => {
+              tab.formList && handleFlatteningColumns(tab.formList, columns)
+            })
+          }
+          break
+        case 'card':
+          item.formList && handleFlatteningColumns(item.formList, columns)
+          break
+        case 'grid-tailwind':
+        case 'grid':
+          if ( item.cols ) {
+            item.cols.map(col => {
+              col.formList && handleFlatteningColumns(col.formList, columns)
+            })
+          }
+          break
+        case 'table':
+          if ( item.rows ) {
+            item.rows.map(row => {
+              if ( row.cols ) {
+                row.cols.map(col => {
+                  col.formList && handleFlatteningColumns(col.formList, columns)
+                })
+              }
+            })
+          }
+      }
+    } else if ( item.formType == 'children-form' && item.childrenForm ) {
+      if (item.dataIndex) {
+        columns[item.dataIndex] = item.childrenForm
+      }
+    } else {
+      columns.push(item)
+    }
+  }
 }

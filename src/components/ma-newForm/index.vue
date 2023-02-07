@@ -17,7 +17,7 @@
             :is="getComponentName(component?.formType ?? 'input')"
             :component="component"
           >
-            <template v-for="slot in Object.keys($slots)" #[slot]="component" >
+            <template v-for="slot in Object.keys($slots)" #[slot]="component">
               <slot :name="slot" v-bind="component" />
             </template>
           </component>
@@ -34,8 +34,11 @@ import {
 } from 'vue'
 import { isString, isFunction, isEmpty } from 'lodash'
 import defaultOptions from './js/defaultOptions.js'
-import { getComponentName, toHump, containerItems, interactiveControl } from './js/utils.js'
-import { arrayComponentDefault, loadDict } from './js/dict.js'
+import {
+  getComponentName, toHump, containerItems,
+  interactiveControl, handleFlatteningColumns
+} from './js/utils.js'
+import { arrayComponentDefault, loadDict } from './js/networkRequest.js'
 
 import { maEvent } from './js/formItemMixin.js'
 import { Message } from '@arco-design/web-vue'
@@ -88,35 +91,7 @@ watch(
   { deep: true }
 )
 
-const handleFlatteningColumns = (data) => {
-  for (let key in data) {
-    const item = data[key]
-    if ( containerItems.includes(item.formType) ) {
-      switch ( item.formType ) {
-        case 'tabs': 
-          if ( item.tabs ) {
-            item.tabs.map(tab => {
-              tab.formList && handleFlatteningColumns(tab.formList)
-            })
-          }
-          break
-        case 'card':
-          item.formList && handleFlatteningColumns(item.formList)
-          break
-      }
-    } else if ( item.formType == 'children-form' && item.childrenForm ) {
-      if (item.dataIndex) {
-        childrenFormColums.value[item.dataIndex] = item.childrenForm
-      } else {
-        Message.error('子表单未设置 dataIndex 属性')
-      }
-    } else {
-      flatteningColumns.value.push(item)
-    }
-  }
-}
-
-handleFlatteningColumns(props.columns)
+handleFlatteningColumns(props.columns, flatteningColumns.value)
 
 const options = ref(Object.assign(defaultOptions, props.options))
 
@@ -128,7 +103,7 @@ const init = async () => {
   // 收集数据列表
   flatteningColumns.value.map(item  => {
     if (item.cascaderItem && item.cascaderItem.length > 0) {
-      cascaderList.value.push(item.cascaderItem)
+      cascaderList.value.push(...item.cascaderItem)
     }
   })
 
@@ -156,10 +131,10 @@ provide('options', options.value)
 provide('columns', flatteningColumns.value)
 provide('dictList', dictList.value)
 provide('formModel', form.value)
+provide('formLoading', formLoading)
 maEvent.handleCommonEvent(options.value, 'onCreated')
 
 onMounted(() => {
-  
   maEvent.handleCommonEvent(options.value, 'onMounted')
   options.value.init && init()
 })

@@ -2,9 +2,13 @@
   <div class="ma-content-block p-4">
     <div>{{ form }}</div>
     <MaNewForm v-model="form" :columns="columns" :options="options" ref="aaa">
+      <template #switchChecked-ld>
+        On
+      </template>
+      <template #switchUnchecked-ld>
+        Off
+      </template>
     </MaNewForm>
-
-    <a-button @click="form.title = '2'">停用</a-button>
   </div>
 </template>
 
@@ -12,31 +16,29 @@
 import { ref } from "vue";
 import MaNewForm from "@cps/ma-newForm/index.vue";
 
-const form = ref({ 'title': '1' });
+const form = ref({});
 const aaa = ref();
 const options = ref({
   labelAlign: "right",
 });
-const columns = ref([{
-  formType: 'tabs',
-  tabs: [
-    {
-      formList: [ { formType: 'card', title: '卡片', formList: [ {
-        title: '标题', dataIndex: 'title', formType: 'select',
-        dict: {name: 'data_status'}, control: (value) => {
-          if (value ==1 ) {
-            return {
-              title2: { title : '我靠'}
-            }
-          } else {
-            return { title2: { title: '标题2' } }
-          }
-        }
-      } ] } ]
-    },
-    {
-      formList: [ { formType: 'card', title: '卡片2', formList: [ { title: '标题2', dataIndex: 'title2', formType: 'input' } ] } ]
-    }
-  ]
-}])
+const columns = ref([
+  {
+    formType: "tabs",
+    dataIndex: 'tabs',
+    tabs: [
+      {
+        formList: [{
+                title: "联动1",
+                dataIndex: "ld",
+                formType: "switch",
+              },{
+                title: "inpt",
+                dataIndex: "in",
+                formType: "input",
+                openSuffix: true,
+              }]
+      }
+    ]
+  }
+])
 </script>
