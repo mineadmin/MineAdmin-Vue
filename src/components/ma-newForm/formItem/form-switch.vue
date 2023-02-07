@@ -41,7 +41,6 @@ import { ref, inject, onMounted } from 'vue'
 import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
 const formModel = inject('formModel')
-const dictList  = inject('dictList')
 const props = defineProps({
   component: Object,
 })

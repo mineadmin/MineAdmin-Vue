@@ -26,14 +26,10 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted, nextTick } from 'vue'
+import { ref, inject, onMounted } from 'vue'
 import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
-import { handlerCascader } from '../js/networkRequest.js'
 const formModel = inject('formModel')
-const dictList  = inject('dictList')
-const formLoading = inject('formLoading')
-const columns = inject('columns')
 const props = defineProps({
   component: Object,
 })
