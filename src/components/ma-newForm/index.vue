@@ -9,11 +9,18 @@
 -->
 <template>
   <div class="w-full">
-    <a-spin :loading="formLoading" :tip="props.options?.loadingText ?? '加载中...'" class="w-full">
+    <a-spin :loading="formLoading" :tip="options.loadingText" class="w-full">
+      <div
+        v-if="options.showFormTitle"
+        :class="['ma-form-title', options.formTitleClass]"
+        :style="options.formTitleStyle"
+      >
+        {{ options.formTitle }}
+      </div>
       <a-form
         ref="maFormRef"
         :model="form"
-        :class="[options?.customClass]" class="ma-form"
+        :class="['ma-form', options?.customClass]"
         :label-align="options?.labelAlign"
         :layout="options?.layout"
         :size="options?.size"
@@ -31,6 +38,26 @@
             </template>
           </component>
         </template>
+        <div class="text-center">
+          <a-space>
+            <slot name="formBeforeButtons" />
+            <slot name="formButtons">
+              <a-button :type="options.submitType" :status="options.submitStatus" v-if="options.submitShowBtn" html-type="submit">
+                <template #icon v-if="options?.submitIcon">
+                  <component :is="options.submitIcon" />
+                </template>
+                {{ options.submitText }}
+              </a-button>
+              <a-button :type="options.resetType" :status="options.resetStatus" v-if="options.resetShowBtn" @click="resetForm">
+                <template #icon v-if="options?.resetIcon">
+                  <component :is="options.resetIcon" />
+                </template>
+                {{ options.resetText }}
+              </a-button>
+            </slot>
+            <slot name="formAfterButtons" />
+          </a-space>
+        </div>
       </a-form>
     </a-spin>
   </div>
@@ -148,22 +175,25 @@ onMounted(() => {
   options.value.init && init()
 })
 
-const validateForm = async () => {
-  const validResult = await maFormRef.value.validate()
-}
+const validateForm = async () => await maFormRef.value.validate()
+const resetForm = async() => await maFormRef.value.resetFields()
+const clearValidate = async() => await maFormRef.value.clearValidate()
 
-const formSubmit = async () => {
-  if ( await validateForm() ) {
-    emit('onSubmit', form.value)
-  }
-}
+const formSubmit = async () => await validateForm() || emit('onSubmit', form.value)
+
 const getFormRef = () => maFormRef.value
 const getDictlist = () => dictList.value
 const getColumns = () => flatteningColumns.value
 const getCascaderList = () => cascaderList.value
 
 defineExpose({
-  getFormRef, getColumns, getDictlist, getCascaderList,
-  validateForm
+  init, getFormRef, getColumns, getDictlist, getCascaderList,
+  validateForm, resetForm, clearValidate
 })
 </script>
+
+<style lang="less" scoped>
+.ma-form-title {
+  font-size: 18px; text-align: center;
+}
+</style>

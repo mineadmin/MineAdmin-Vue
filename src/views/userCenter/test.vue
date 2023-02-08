@@ -1,7 +1,7 @@
 <template>
   <div class="ma-content-block p-4">
     <div>{{ form }}</div>
-    <MaNewForm v-model="form" :columns="columns" :options="options" ref="aaa">
+    <MaNewForm v-model="form" :columns="columns" :options="options" @onSubmit="submitForm">
     </MaNewForm>
   </div>
 </template>
@@ -10,8 +10,10 @@
 import { ref } from "vue";
 import MaNewForm from "@cps/ma-newForm/index.vue";
 
-const form = ref({ld : 'ok'});
-const aaa = ref();
+const submitForm = (data) => {
+}
+
+const form = ref({});
 const options = ref({
   labelAlign: "right",
 });
@@ -21,23 +23,19 @@ const columns = ref([
     dataIndex: 'tabs',
     tabs: [
       {
+        title: 'Tab布局',
         formList: [{
-          title: "联动1",
-          dataIndex: "ld",
-          checkedValue: 'ok',
-          uncheckedValue: 'no',
-          formType: "switch",
+          title: "标题",
+          dataIndex: "title",
+          formType: "input",
+          rules: [{ required: true, message: '请输入标题'}],
         },{
-          title: "inpt",
-          dataIndex: "in",
-          formType: "slider",
+          title: "内容",
+          dataIndex: "content",
+          formType: "textarea",
         }]
       }
     ]
-  },
-  {
-    formType: 'card',
-    title: 'aaa',
   }
 ])
 </script>
