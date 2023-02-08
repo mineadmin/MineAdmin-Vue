@@ -3,6 +3,9 @@
     <div>{{ form }}</div>
     <MaNewForm v-model="form" :columns="columns" :options="options" @onSubmit="submitForm">
     </MaNewForm>
+
+    <div>{{ info }}</div>
+    <ma-upload v-model="info" title="本地上传" :multiple="true" />
   </div>
 </template>
 
@@ -14,6 +17,7 @@ const submitForm = (data) => {
 }
 
 const form = ref({});
+const info = ref([ "http://127.0.0.1:9501/uploadfile/20230208/481859079912824833.png", "http://127.0.0.1:9501/uploadfile/20230208/481858521525129217.png" ])
 const options = ref({
   labelAlign: "right",
 });
