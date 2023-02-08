@@ -13,23 +13,20 @@
     :component="props.component"
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
-      <a-auto-complete
+      <a-rate
         v-model="formModel[props.component.dataIndex]"
-        :disabled="props.component.disabled"
         :size="props.component.size"
-        :placeholder="props.component.placeholder ?? `请输入${props.component.title}`"
+        :allow-clear="props.component.allowClear"
+        :disabled="props.component.disabled"
         :readonly="props.component.readonly"
-        :data="props.component.data ?? []"
-        :strict="props.component.strict"
-        :filter-option="props.component.filterOption"
-        :allow-clear="props.component.allowClear ?? true"
-        @change="maEvent.customeEvent(props.component, $event, 'onChange')"
-        @search="maEvent.customeEvent(props.component, $event, 'onSearch')"
-        @select="maEvent.customeEvent(props.component, $event, 'onSelect')"
-        @clear="maEvent.customeEvent(props.component, $event, 'onClear')"
+        :count="props.component.count"
+        :allow-half="props.component.allowHalf"
+        :grading="props.component.grading"
+        :color="props.component.color"
+        @change="maEvent.handleInputEvent(props.component, $event)"
+        @hover-change="maEvent.customeEvent(props.component, $event, 'onHoverChange')"
       >
-        <slot :name="`autoCompleteFooter-${props.component.dataIndex}`"></slot>
-      </a-auto-complete>
+      </a-rate>
     </slot>
   </ma-form-item>
 </template>

@@ -13,23 +13,23 @@
     :component="props.component"
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
-      <a-auto-complete
+      <a-slider
         v-model="formModel[props.component.dataIndex]"
-        :disabled="props.component.disabled"
         :size="props.component.size"
-        :placeholder="props.component.placeholder ?? `请输入${props.component.title}`"
-        :readonly="props.component.readonly"
-        :data="props.component.data ?? []"
-        :strict="props.component.strict"
-        :filter-option="props.component.filterOption"
-        :allow-clear="props.component.allowClear ?? true"
-        @change="maEvent.customeEvent(props.component, $event, 'onChange')"
-        @search="maEvent.customeEvent(props.component, $event, 'onSearch')"
-        @select="maEvent.customeEvent(props.component, $event, 'onSelect')"
-        @clear="maEvent.customeEvent(props.component, $event, 'onClear')"
+        :allow-clear="props.component.allowClear"
+        :disabled="props.component.disabled"
+        :step="props.component.step"
+        :show-tooltip="props.component.showTooltip"
+        :range="props.component.range"
+        :direction="props.component.direction"
+        :max="props.component.max"
+        :min="props.component.min"
+        :marks="props.component.marks"
+        :show-input="props.component.showInput"
+        :show-ticks="props.component.showTicks"
+        @change="maEvent.handleInputEvent(props.component, $event)"
       >
-        <slot :name="`autoCompleteFooter-${props.component.dataIndex}`"></slot>
-      </a-auto-complete>
+      </a-slider>
     </slot>
   </ma-form-item>
 </template>

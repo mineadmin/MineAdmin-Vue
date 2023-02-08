@@ -30,11 +30,14 @@ const columns = ref([
         },{
           title: "inpt",
           dataIndex: "in",
-          formType: "input",
-          openSuffix: true,
+          formType: "slider",
         }]
       }
     ]
+  },
+  {
+    formType: 'card',
+    title: 'aaa',
   }
 ])
 </script>
