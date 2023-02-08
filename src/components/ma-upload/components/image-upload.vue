@@ -92,14 +92,14 @@ import { ref, inject } from 'vue'
 import commonApi from '@/api/common'
 import file2md5 from 'file2md5'
 import tool from '@/utils/tool'
-import { isArray, isString } from 'lodash'
+import { isArray, isString, isEmpty } from 'lodash'
 import { Message } from '@arco-design/web-vue'
 
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const props = defineProps({
-  modelValue: { type: [ String, Array, Object ], default: () => {} }
+  modelValue: { type: [ String, Array, Object, Number ], default: () => {} }
 })
 const emit = defineEmits(['update:modelValue'])
 const config = inject('config')
@@ -118,8 +118,11 @@ if (config.multiple) {
       fileList.value.push(Object.assign(data, isString(item) ? { url: item } : item))
     })
   }
-} else {
+} else if (!isEmpty(props.modelValue)) {
   signFile.value = props.modelValue
+  currentItem.value = {
+    percent: 100, status: 'complete'
+  }
 }
 
 const uploadImageHandler = async (options) => {

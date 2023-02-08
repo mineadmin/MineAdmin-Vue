@@ -28,7 +28,7 @@ const { t } = useI18n()
 const emit = defineEmits(['update:modelValue'])
 const file = ref()
 const props = defineProps({
-  modelValue: { type: [ String, Array, Object ], default: () => {} },
+  modelValue: { type: [ String, Array, Object, Number ], default: () => {} },
   title: { type: String, default: 'buttonText', },
   icon: { type: String, default: 'icon-plus'},
   rounded: { type: Boolean, default: false },
@@ -46,6 +46,11 @@ const props = defineProps({
   fileType: { type: String, default: 'button' },
   showList: { type: Boolean, default: true },
 })
+
+if (! ['id', 'url', 'hash'].includes(props.returnType)) {
+  Message.error('MaUpload组件props的returnType只能为：id, url, hash 其中一个')
+  console.error('MaUpload组件props的returnType只能为：id, url, hash 其中一个')
+}
 
 file.value = props.modelValue
 
