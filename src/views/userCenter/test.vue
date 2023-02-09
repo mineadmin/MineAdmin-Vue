@@ -40,7 +40,7 @@ const columns = ref([
           title: "颜色选择器",
           dataIndex: "color",
           formType: "city-linkage",
-          type:'cascader'
+          type:'select'
         },{
           title: "验证码",
           dataIndex: "code",
