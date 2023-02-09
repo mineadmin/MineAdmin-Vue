@@ -1,11 +1,11 @@
 <template>
   <div class="ma-content-block p-4">
-    <div>{{ form }}</div>
+    <!-- <div>{{ form }}</div>
     <MaNewForm v-model="form" :columns="columns" :options="options" @onSubmit="submitForm">
-    </MaNewForm>
+    </MaNewForm> -->
 
     <div>{{ info }}</div>
-    <ma-upload v-model="info" title="本地上传" :multiple="false" returnType="url" />
+    <ma-upload v-model="info" type="image" :showList="true" :multiple="true" returnType="id"/>
   </div>
 </template>
 
@@ -17,7 +17,9 @@ const submitForm = (data) => {
 }
 
 const form = ref({});
-const info = ref()
+const info = ref(
+  [3,4 ]
+)
 const options = ref({
   labelAlign: "right",
 });
