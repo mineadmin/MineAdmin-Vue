@@ -13,29 +13,33 @@
     :component="props.component"
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
-      <a-slider
+      <ma-upload
         v-model="formModel[props.component.dataIndex]"
-        :size="props.component.size"
-        :allow-clear="props.component.allowClear"
+        :title="props.component.title"
         :disabled="props.component.disabled"
-        :step="props.component.step"
-        :show-tooltip="props.component.showTooltip"
-        :range="props.component.range"
-        :direction="props.component.direction"
-        :max="props.component.max"
-        :min="props.component.min"
-        :marks="props.component.marks"
-        :show-input="props.component.showInput"
-        :show-ticks="props.component.showTicks"
-        @change="maEvent.handleChangeEvent(props.component, $event)"
+        :icon="props.component.icon"
+        :rounded="props.component.rounded"
+        :multiple="props.component.multiple"
+        :draggable="props.component.draggable"
+        :size="props.component.size"
+        :chunk="props.component.chunk"
+        :chunkSize="props.component.chunkSize"
+        :limit="props.component.limit"
+        :tip="props.component.tip"
+        :type="props.component.type"
+        :accept="props.component.accept"
+        :returnType="props.component.returnType"
+        :fileType="props.component.fileType"
+        :showList="props.component.showList"
       >
-      </a-slider>
+      </ma-upload>
     </slot>
   </ma-form-item>
 </template>
 
 <script setup>
 import { ref, inject, onMounted } from 'vue'
+import MaUpload from '@/components/ma-upload/index.vue'
 import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
 const formModel = inject('formModel')

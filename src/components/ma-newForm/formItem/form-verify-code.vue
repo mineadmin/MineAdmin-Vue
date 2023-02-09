@@ -13,38 +13,57 @@
     :component="props.component"
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
-      <a-slider
+      <a-input
         v-model="formModel[props.component.dataIndex]"
-        :size="props.component.size"
-        :allow-clear="props.component.allowClear"
-        :disabled="props.component.disabled"
-        :step="props.component.step"
-        :show-tooltip="props.component.showTooltip"
-        :range="props.component.range"
-        :direction="props.component.direction"
-        :max="props.component.max"
-        :min="props.component.min"
-        :marks="props.component.marks"
-        :show-input="props.component.showInput"
-        :show-ticks="props.component.showTicks"
-        @change="maEvent.handleChangeEvent(props.component, $event)"
+        :placeholder="props.component.placeholder ?? '请输入验证码'"
+        allow-clear
       >
-      </a-slider>
+        <template #append>
+          <ma-verify-code ref="formVerifyCode"
+            :height="props.component.height ?? 32"
+            :width="props.component.width"
+            :size="props.component.size"
+            :pool="props.component.pool"
+            :showError="false"
+          />
+        </template>
+      </a-input>
     </slot>
   </ma-form-item>
 </template>
 
 <script setup>
 import { ref, inject, onMounted } from 'vue'
+import MaVerifyCode from '@/components/ma-verifyCode/index.vue'
 import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
 const formModel = inject('formModel')
+const formVerifyCode = ref()
 const props = defineProps({
   component: Object,
 })
+
+const component = props.component
+component.rules = [
+  { required: true, message: '请输入验证码' },
+  {
+    validator: (value, callback) => {
+      if (! formVerifyCode.value.checkResult(value)) {
+        callback('验证码错误')
+        return false
+      }
+    }
+  }
+]
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
 onMounted(() => {
   maEvent.handleCommonEvent(props.component, 'onMounted')
 })
 </script>
+
+<style scoped>
+:deep(.arco-input-append) {
+  padding: 0;
+}
+</style>

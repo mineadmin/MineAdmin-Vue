@@ -79,7 +79,7 @@
     }
   })
 
-  const emit = defineEmits(['update:modelValue'])
+  const emit = defineEmits(['update:modelValue', 'change'])
 
   let content = computed({
     get() {
@@ -131,5 +131,9 @@
       resource.value.clearSelecteds()
       resourceVisible.value = false
     }
+  )
+  watch(
+    () => content.value,
+    vl => emit('change', vl)
   )
 </script>

@@ -13,29 +13,18 @@
     :component="props.component"
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
-      <a-slider
+      <ma-user-info
         v-model="formModel[props.component.dataIndex]"
-        :size="props.component.size"
-        :allow-clear="props.component.allowClear"
-        :disabled="props.component.disabled"
-        :step="props.component.step"
-        :show-tooltip="props.component.showTooltip"
-        :range="props.component.range"
-        :direction="props.component.direction"
-        :max="props.component.max"
-        :min="props.component.min"
-        :marks="props.component.marks"
-        :show-input="props.component.showInput"
-        :show-ticks="props.component.showTicks"
-        @change="maEvent.handleChangeEvent(props.component, $event)"
+        :field="props.component.field"
       >
-      </a-slider>
+      </ma-user-info>
     </slot>
   </ma-form-item>
 </template>
 
 <script setup>
 import { ref, inject, onMounted } from 'vue'
+import MaUserInfo from '@/components/ma-userInfo/index.vue'
 import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
 const formModel = inject('formModel')

@@ -1,11 +1,8 @@
 <template>
   <div class="ma-content-block p-4">
-    <!-- <div>{{ form }}</div>
+    <div>{{ form }}</div>
     <MaNewForm v-model="form" :columns="columns" :options="options" @onSubmit="submitForm">
-    </MaNewForm> -->
-
-    <div>{{ info }}</div>
-    <ma-upload v-model="info" type="image" :showList="true" :multiple="true" returnType="id"/>
+    </MaNewForm>
   </div>
 </template>
 
@@ -36,9 +33,14 @@ const columns = ref([
           formType: "input",
           rules: [{ required: true, message: '请输入标题'}],
         },{
-          title: "内容",
-          dataIndex: "content",
-          formType: "textarea",
+          title: "用户名",
+          dataIndex: "userinfo",
+          formType: "userinfo",
+          field: 'username',
+        },{
+          title: "验证码",
+          dataIndex: "code",
+          formType: "verify-code",
         }]
       }
     ]
