@@ -11,15 +11,12 @@ import directives from './directives'
 
 // 官方样式
 // import '@arco-design/web-vue/dist/arco.css'
-// MineAdmin样式
-// import '@arco-themes/vue-mine-admin/index.less'
 // MineAdmin-V2样式
 import '@arco-themes/vue-mine-admin-v2/index.less'
 import './style/skin.less'
 import './style/index.css'
 import './style/global.less'
 
-import * as maIcons from '@/assets/ma-icons'
 import tool from '@/utils/tool'
 import * as common from '@/utils/common'
 import packageJson from '../package.json'
@@ -35,8 +32,11 @@ app.use(ArcoVue, {})
 .use(globalComponents)
 
 // 注册ma-icon图标
-for (let icon in maIcons) {
-  app.component(`MaIcon${icon}`, maIcons[icon])
+const modules = import.meta.globEager('./assets/ma-icons/*.vue')
+for (const path in modules) {
+  const name = path.match(/([A-Za-z0-9_-]+)/g)[2]
+  const componentName = `MaIcon${name}`
+  app.component(componentName, modules[path].default)
 }
 
 app.config.globalProperties.$tool = tool
