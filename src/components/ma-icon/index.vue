@@ -8,8 +8,8 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div>
-    <a-input-group class="flex">
+  <div class="w-full">
+    <a-input-group class="w-full">
       <a-input placeholder="请点击右侧按钮选择图标" allow-clear v-model="currentIcon" />
       <div class="icon-container" v-if="props.preview">
         <component :is="currentIcon" v-if="currentIcon" />

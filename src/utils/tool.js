@@ -1,6 +1,5 @@
 import CryptoJS from 'crypto-js'
 import uploadConfig from '@/config/upload'
-import Clipboard from 'clipboard'
 import CityLinkageJson from "@/components/ma-cityLinkage/lib/city.json"
 
 const typeColor = (type = 'default') => {
@@ -134,24 +133,6 @@ tool.screen = (element) => {
       element.webkitRequestFullscreen();
     }
   }
-}
-
-tool.copyToClipboard = function (content, clickEvent, $message, successMsg, errorMsg) {
-  const clipboard = new Clipboard(clickEvent.target, {
-    text: () => content
-  })
-
-  clipboard.on('success', () => {
-    $message.success(successMsg)
-    clipboard.destroy()
-  })
-
-  clipboard.on('error', () => {
-    $message.error(errorMsg)
-    clipboard.destroy()
-  })
-
-  clipboard.onClick(clickEvent)
 }
 
 // 城市代码翻译成名称

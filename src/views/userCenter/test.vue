@@ -35,8 +35,12 @@ const columns = ref([
         },{
           title: "用户名",
           dataIndex: "userinfo",
-          formType: "userinfo",
-          field: 'username',
+          formType: "icon-picker",
+        },{
+          title: "颜色选择器",
+          dataIndex: "color",
+          formType: "city-linkage",
+          type:'cascader'
         },{
           title: "验证码",
           dataIndex: "code",

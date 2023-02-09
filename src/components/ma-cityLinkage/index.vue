@@ -10,6 +10,7 @@
 <template>
   <a-cascader
     v-if="props.type === 'cascader'"
+    path-mode
     v-model="val"
     :options="jsonData"
     :field-names="props.mode == 'name' ? { value: 'name', label: 'name' } : { value: 'code', label: 'name' }"
