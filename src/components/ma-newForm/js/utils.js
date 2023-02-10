@@ -1,7 +1,7 @@
 import tool from '@/utils/tool.js'
 import { isEmpty, isFunction, get } from 'lodash'
 
-export const containerItems = ['tabs', 'table', 'card', 'grid', 'grid-tailwind']
+export const containerItems = ['tabs', 'table', 'card', 'grid', 'grid-tailwind', 'children-form']
 export const inputType      = ['input', 'input-password', 'input-search']
 export const pickerType     = ['date', 'month', 'year', 'week', 'quarter', 'range', 'time']
 

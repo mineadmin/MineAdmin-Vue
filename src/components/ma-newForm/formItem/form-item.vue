@@ -9,6 +9,7 @@
 -->
 <template>
   <a-form-item
+    v-if="props.showFormItem"
     :label="props.component.title"
     :field="props.component.dataIndex"
     :tooltip="props.component.tooltip"
@@ -29,11 +30,15 @@
   >
     <slot></slot>
   </a-form-item>
+  <div v-else :class="[ props.component.customClass ]">
+    <slot></slot>
+  </div>
 </template>
 <script setup>
 import { inject } from 'vue'
 const options = inject('options')
 const props = defineProps({
-  component: Object
+  component: Object,
+  showFormItem: { type: Boolean, default: true }
 })
 </script>

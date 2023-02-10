@@ -11,10 +11,11 @@
   <ma-form-item
     v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
     :component="props.component"
+    :show-form-item="props.showFormItem"
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
       <a-input
-        v-model="formModel[props.component.dataIndex]"
+        v-model="value"
         :placeholder="props.component.placeholder ?? '请输入验证码'"
         allow-clear
       >
@@ -33,15 +34,24 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted } from 'vue'
+import { ref, inject, onMounted, watch } from 'vue'
+import { get, set } from 'lodash'
 import MaVerifyCode from '@/components/ma-verifyCode/index.vue'
 import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
-const formModel = inject('formModel')
-const formVerifyCode = ref()
+
 const props = defineProps({
   component: Object,
+  showFormItem: { type: Boolean, default: true }
 })
+
+const formVerifyCode = ref()
+const formModel = inject('formModel')
+const value = ref(get(formModel, props.component.dataIndex))
+
+watch(
+  () => value.value, v => set(formModel, props.component.dataIndex, v)
+)
 
 const component = props.component
 component.rules = [

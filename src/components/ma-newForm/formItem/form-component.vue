@@ -11,27 +11,37 @@
   <ma-form-item
     v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
     :component="props.component"
+    :show-form-item="props.showFormItem"
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
       <component
         :is="props.component.dataIndex"
         :component="props.component"
         :dict="dictList[props.component.dataIndex]"
-        :value="formModel[props.component.dataIndex]"
+        :value="value"
       />
     </slot>
   </ma-form-item>
 </template>
   
 <script setup>
-import { onMounted, getCurrentInstance } from 'vue'
+import { onMounted, getCurrentInstance, watch } from 'vue'
+import { get, set } from 'lodash'
 import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
-const formModel = inject('formModel')
-const dictList = inject('dictList')
+
 const props = defineProps({
   component: Object,
+  showFormItem: { type: Boolean, default: true }
 })
+
+const formModel = inject('formModel')
+const dictList = inject('dictList')
+const value = ref(get(formModel, props.component.dataIndex))
+
+watch(
+  () => value.value, v => set(formModel, props.component.dataIndex, v)
+)
 
 const app = getCurrentInstance().appContext.app
 

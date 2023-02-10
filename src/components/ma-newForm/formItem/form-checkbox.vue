@@ -11,10 +11,11 @@
   <ma-form-item
     v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
     :component="props.component"
+    :show-form-item="props.showFormItem"
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
       <a-checkbox-group
-        v-model="formModel[props.component.dataIndex]"
+        v-model="value"
         :size="props.component.size"
         :max="props.component.max"
         :direction="props.component.direction"
@@ -30,14 +31,23 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted } from 'vue'
+import { ref, inject, onMounted, watch } from 'vue'
+import { get, set } from 'lodash'
 import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
-const formModel = inject('formModel')
-const dictList  = inject('dictList')
+
 const props = defineProps({
   component: Object,
+  showFormItem: { type: Boolean, default: true }
 })
+
+const formModel = inject('formModel')
+const dictList  = inject('dictList')
+const value = ref(get(formModel, props.component.dataIndex))
+
+watch(
+  () => value.value, v => set(formModel, props.component.dataIndex, v)
+)
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
 onMounted(() => {
