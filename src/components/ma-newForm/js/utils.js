@@ -91,10 +91,6 @@ export const handleFlatteningColumns = (data, columns) => {
             })
           }
       }
-    } else if ( item.formType == 'children-form' && item.childrenForm ) {
-      if (item.dataIndex) {
-        columns[item.dataIndex] = item.childrenForm
-      }
     } else {
       columns.push(item)
     }

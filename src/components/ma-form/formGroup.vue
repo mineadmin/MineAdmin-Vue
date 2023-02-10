@@ -529,7 +529,7 @@ const done = (status) => {
 }
 
 const add = ( data = {} ) => {
-  let tmp = data.srcElement ? {} : data
+  let tmp = data ? {} : data
   if (props.addRow && isFunction(props.addRow)) {
     props.addRow()
   }

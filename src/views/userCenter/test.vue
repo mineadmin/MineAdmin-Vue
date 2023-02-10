@@ -13,10 +13,7 @@ import MaNewForm from "@cps/ma-newForm/index.vue";
 const submitForm = (data) => {
 }
 
-const form = ref({title: 'aaaa'});
-const info = ref(
-  [3,4 ]
-)
+const form = ref()
 const options = ref({
   labelAlign: "right",
 });
@@ -52,7 +49,35 @@ const columns = ref([
   {
     formType: "children-form",
     dataIndex: 'sub',
+    type: 'table',
+    title: '子表单哇塞',
     formList: [{
+      title: "标题",
+      dataIndex: "title",
+      formType: "input",
+      rules: [{ required: true, message: '请输入标题'}],
+    },{
+      title: "用户名",
+      dataIndex: "aad",
+      formType: "input",
+    },{
+      title: "颜色选择器",
+      dataIndex: "color",
+      formType: "city-linkage",
+      type:'select'
+    },{
+      title: "验证码",
+      dataIndex: "code",
+      formType: "verify-code",
+    }]
+  }
+])
+
+const columns2 = ref([
+  {
+    formType: "form-group",
+    dataIndex: 'sub',
+    childrenForm: [{
       title: "标题",
       dataIndex: "title",
       formType: "input",

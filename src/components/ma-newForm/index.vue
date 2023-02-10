@@ -107,9 +107,9 @@ const childrenFormColums = ref({})
 const form = ref({})
 
 const props = defineProps({
-  modelValue: Object,
+  modelValue: { type: Object, default: {} },
   columns: { type: Array },
-  options: { type: Object, default: () => {} },
+  options: { type: Object, default: {} },
 })
 const emit = defineEmits(['onSubmit', 'update:modelValue'])
 
