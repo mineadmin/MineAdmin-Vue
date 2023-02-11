@@ -56,7 +56,7 @@
 
     <a-table v-else class="w-full" :data="rows" :pagination="false" bordered stripe>
       <template #columns>
-        <!-- 新增、删除栏 -->
+        <!-- 新增、删除列 -->
         <a-table-column :width="50" fixed="left">
           <template #title>
             <a-button type="primary" @click="addItem({})" size="small" shape="round">
@@ -66,13 +66,19 @@
             </a-button>
           </template>
           <template #cell="{ rowIndex }">
-            <a-button type="primary" status="danger" size="small" shape="round" @click="deleteItem(rowIndex)" :disabled="value.length === 1">
+            <a-button type="primary"
+              status="danger"
+              size="small"
+              shape="round"
+              :disabled="value.length === 1"
+              @click="deleteItem(rowIndex)"
+            >
               <template #icon><icon-minus /></template>
             </a-button>
           </template>
         </a-table-column>
 
-        <template v-for="(item, itemIndex) in rows" :key="itemIndex">
+        <template v-for="(component, itemIndex) in formList" :key="itemIndex">
           <a-table-column
             :width="component.width ?? 100"
             :title="component.title ?? ''"
@@ -81,9 +87,9 @@
           >
             <template #cell="{ rowIndex }">
               <component
-                v-if="! containerItems.includes(component.formType)"
-                :is="getComponentName(component?.formType ?? 'input')"
-                :component="item"
+                v-if="! containerItems.includes(rows[rowIndex][itemIndex].formType)"
+                :is="getComponentName(rows[rowIndex][itemIndex].formType ?? 'input')"
+                :component="rows[rowIndex][itemIndex]"
               >
                 <template v-for="slot in Object.keys($slots)" #[slot]="component">
                   <slot :name="slot" v-bind="component" />
@@ -98,28 +104,33 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted, watch, nextTick } from 'vue'
+import { ref, inject, provide, onMounted, watch, nextTick } from 'vue'
 import { get, set } from 'lodash'
 import { getComponentName, containerItems } from '../js/utils.js'
 import MaFormItem from '../formitem/form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
+import { arrayComponentDefault, loadDict } from '../js/networkRequest.js'
 
 const props = defineProps({ component: Object })
 const formList = props.component.formList
 const rows = ref([])
 const show = ref(true)
 const formModel = inject('formModel')
+const dictList = inject('dictList')
 const value = ref(get(formModel, props.component.dataIndex, []))
+
+provide('childrenFormList', props.component.formList)
 
 const addItem = (data = {}, type = 'new') => {
   const index = rows.value.length
   const form = []
-  formList.map(item => {
+  formList.map(async item => {
     const tmp = JSON.parse(JSON.stringify(item))
     tmp['hideLabel'] = props.component.type === 'table' ? true : false
     tmp['source'] = item.dataIndex
     tmp['dataIndex'] = getChildrenDataIndex(index, tmp.dataIndex)
     form.push(tmp)
+    item.dict && await loadDict(dictList, tmp)
   })
   rows.value.push(form)
   type == 'new' && value.value.push(data)
@@ -130,7 +141,7 @@ const deleteItem = async (index) => {
   if (value.value.length > 1) {
     rows.value = []
     await value.value.splice(index, 1)
-    value.value.map(item => { addItem(item, 'viewData') })
+    value.value.map(async item => { await addItem(item, 'viewData') })
   }
 }
 
@@ -145,11 +156,12 @@ const getChildrenDataIndex = (index, dataIndex) => {
 }
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
-onMounted(() => {
-  value.value.map(item => { addItem(item, 'viewData') })
+
+onMounted(async () => {
+  value.value.map(async item => { await addItem(item, 'viewData') })
   if (value.value.length === 0) {
     for (let i = 0; i < (props.component.emptyRow ?? 1); i++) {
-      addItem()
+      await addItem()
     }
   }
   maEvent.handleCommonEvent(props.component, 'onMounted')

@@ -77,6 +77,15 @@ const formModel = inject('formModel')
 const dictList  = inject('dictList')
 const formLoading = inject('formLoading')
 const columns = inject('columns')
+const temp = inject('childrenFormList', [])
+const childrenFormList = temp ? JSON.parse(JSON.stringify(temp)) : []
+
+if (props.component.dataIndex.match(/^\w+\.\d+\./)) {
+  const prefix = props.component.dataIndex.match(/^\w+\.\d+\./)[0]
+  childrenFormList.map(item => {
+    item.dataIndex = prefix + item.dataIndex
+  })
+}
 
 const value = ref(get(formModel, props.component.dataIndex))
 
@@ -85,15 +94,19 @@ watch(
 )
 
 const handleCascaderChangeEvent = (value) => {
-
+  const component = props.component
   // 执行自定义事件
-  if (props.component.onChange) {
-    maEvent.handleChangeEvent(props.component, value)
+  if (component.onChange) {
+    maEvent.handleChangeEvent(component, value)
   }
 
   // 处理联动
   formLoading.value = true
-  handlerCascader(value, props.component, columns, dictList, formModel)
+  if (component.dataIndex.match(/^\w+\.\d+\./)) {
+    handlerCascader(value, component, childrenFormList, dictList, formModel)
+  } else {
+    handlerCascader(value, component, columns, dictList, formModel)
+  }
   nextTick(() => formLoading.value = false)
 
 }

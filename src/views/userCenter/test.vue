@@ -27,25 +27,25 @@ const columns = ref([
   //       formList: [{
   //         title: "标题",
   //         dataIndex: "title",
-  //         formType: "input",
-  //         rules: [{ required: true, message: '请输入标题'}],
+  //         formType: "select",
+  //         dict: { name:'data_status' },
+  //         cascaderItem: ['title2']
   //       },{
-  //         title: "用户名",
-  //         dataIndex: "userinfo",
-  //         formType: "icon-picker",
-  //       },{
-  //         title: "颜色选择器",
-  //         dataIndex: "color",
-  //         formType: "city-linkage",
-  //         type:'select'
-  //       },{
-  //         title: "验证码",
-  //         dataIndex: "code",
-  //         formType: "verify-code",
+  //         title: "标题2",
+  //         dataIndex: "title2",
+  //         formType: "select",
+  //         dict: { url: 'system/common/cascader' }
   //       }]
   //     }
   //   ]
   // }
+  {
+    formType: 'select',
+    dataIndex: 'haha',
+    title: '哈哈',
+    dict: { name:'data_status' },
+    childrenCascaderItem: ['sub.title'],
+  },
   {
     formType: "children-form",
     dataIndex: 'sub',
@@ -54,21 +54,13 @@ const columns = ref([
     formList: [{
       title: "标题",
       dataIndex: "title",
-      formType: "input",
-      rules: [{ required: true, message: '请输入标题'}],
+      formType: "select",
+      dict: { url: 'system/common/cascader' },
     },{
-      title: "用户名",
-      dataIndex: "aad",
-      formType: "input",
-    },{
-      title: "颜色选择器",
-      dataIndex: "color",
-      formType: "city-linkage",
-      type:'select'
-    },{
-      title: "验证码",
-      dataIndex: "code",
-      formType: "verify-code",
+      title: "标题2",
+      dataIndex: "title2",
+      formType: "select",
+      dict: { url: 'system/common/cascader2' }
     }]
   }
 ])

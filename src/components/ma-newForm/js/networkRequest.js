@@ -1,4 +1,4 @@
-import { isArray, isFunction } from 'lodash'
+import { isArray, isFunction, set } from 'lodash'
 import { request } from '@/utils/request'
 import commonApi from '@/api/common'
 
@@ -24,7 +24,8 @@ export const handlerDictProps = (item, tmpArr) => {
       let disabled = (typeof dicItem['disabled'] == 'undefined') ? false : ( dicItem['disabled'] === true ? true : false )
       let indeterminate = (typeof dicItem['indeterminate'] == 'undefined') ? false : ( dicItem['indeterminate'] === true ? true : false )
       let value
-      if (tmp === 'true') value = true
+      if (item.dict.name && (!item.dict.url || !item.dict.data)) value = tmp + ''
+      else if (tmp === 'true') value = true
       else if (tmp === 'false') value = false
       else if (typeof tmp == 'Number') value = tmp
       else value = tmp + ''
@@ -61,33 +62,55 @@ export const loadDict = async (dictList, item) => {
   }
 }
 
+const requestCascaderData = async (val, dict, dictList, name) => {
+  if (dict && dict.url) {
+    let response
+    if (dict && dict.url.indexOf('{{key}}') > 0) {
+      response = await requestDict(dict.url.replace('{{key}}', val), dict.method || 'GET', dict.params || {}, dict.data || {})
+    } else {
+      let temp = { key: val }
+      const params = Object.assign(dict.params || {}, temp)
+      const data   = Object.assign(dict.data || {}, temp)
+      response = await requestDict(dict.url, dict.method || 'GET', params || {}, data || {})
+    }
+    if (response.data && response.code === 200) {
+      dictList[name] = response.data.map(dicItem => {
+        return {
+          'label': dicItem[ (dict.props && dict.props.label) || 'label'  ],
+          'value': dicItem[ (dict.props && dict.props.value) || 'value' ],
+          'disabled': (typeof dicItem['disabled'] == 'undefined') ? false : ( dicItem['disabled'] === true ? true : false ),
+          'indeterminate': (typeof dicItem['indeterminate'] == 'undefined') ? false : ( dicItem['indeterminate'] === true ? true : false )
+        } 
+      })
+    } else {
+      console.error(response)
+    }
+  }
+}
+
 export const handlerCascader = async (val, column, columns, dictList, formModel) => {
   if (column.cascaderItem && isArray(column.cascaderItem)) {
     column.cascaderItem.map(async name => {
-      const dict = columns.filter(col => col.dataIndex === name && col.dict )[0].dict
-      formModel[name] = undefined
-      if (dict && dict.url) {
-        let response
-        if (dict && dict.url.indexOf('{{key}}') > 0) {
-          response = await requestDict(dict.url.replace('{{key}}', val), dict.method || 'GET', dict.params || {}, dict.data || {})
-        } else {
-          let temp = { key: val }
-          const params = Object.assign(dict.params || {}, temp)
-          const data   = Object.assign(dict.data || {}, temp)
-          response = await requestDict(dict.url, dict.method || 'GET', params || {}, data || {})
-        }
-        if (response.data && response.code === 200) {
-          dictList[name] = response.data.map(dicItem => {
-            return {
-              'label': dicItem[ (dict.props && dict.props.label) || 'label'  ],
-              'value': dicItem[ (dict.props && dict.props.value) || 'value' ],
-              'disabled': (typeof dicItem['disabled'] == 'undefined') ? false : ( dicItem['disabled'] === true ? true : false ),
-              'indeterminate': (typeof dicItem['indeterminate'] == 'undefined') ? false : ( dicItem['indeterminate'] === true ? true : false )
-            } 
-          })
-        } else {
-          console.error(response)
-        }
+      if (column.dataIndex.match(/^\w+\.\d+\./)) {
+        name = column.dataIndex.match(/^\w+\.\d+\./)[0] + name
+      }
+      const dict = columns.find(col => col.dataIndex === name && col.dict).dict
+      set(formModel, name, undefined)
+      requestCascaderData(val, dict, dictList, name)
+    })
+  }
+  if (column.childrenCascaderItem && isArray(column.childrenCascaderItem)) {
+    column.childrenCascaderItem.map(async name => {
+      if (name.indexOf('.') > -1) {
+        const parentDataIndex = name.split('.')[0]
+        const dataIndex = name.split('.')[1]
+        formModel[parentDataIndex].map((row, index) => {
+          const varIndex = [parentDataIndex, index, dataIndex].join('.')
+          const formIndex = [parentDataIndex, dataIndex].join('.')
+          set(formModel, varIndex, undefined)
+          const dict = columns.find(col => col.dataIndex === formIndex && col.dict).dict
+          requestCascaderData(val, dict, dictList, varIndex)
+        })
       }
     })
   }

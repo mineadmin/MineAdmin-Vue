@@ -103,6 +103,7 @@ const maFormRef = ref()
 const flatteningColumns = ref([])
 const dictList = ref({})
 const cascaderList = ref([])
+const childrenCascaderList = ref([])
 const childrenFormColums = ref({})
 const form = ref({})
 
@@ -140,6 +141,9 @@ const init = async () => {
   flatteningColumns.value.map(item  => {
     if (item.cascaderItem && item.cascaderItem.length > 0) {
       cascaderList.value.push(...item.cascaderItem)
+    }
+    if (item.childrenCascaderItem && item.childrenCascaderItem.length > 0) {
+      childrenCascaderList.value.push(...item.childrenCascaderItem)
     }
   })
 
