@@ -109,7 +109,8 @@ import { get, set } from 'lodash'
 import { getComponentName, containerItems } from '../js/utils.js'
 import MaFormItem from '../formitem/form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
-import { arrayComponentDefault, loadDict, handlerCascader } from '../js/networkRequest.js'
+import { loadDict, handlerCascader } from '../js/networkRequest.js'
+import arrayComponentDefault from '../js/defaultArrayComponent.js'
 
 const props = defineProps({ component: Object })
 const formList = props.component.formList

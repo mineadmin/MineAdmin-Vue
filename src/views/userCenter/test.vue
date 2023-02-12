@@ -13,7 +13,7 @@ import MaNewForm from "@cps/ma-newForm/index.vue";
 const submitForm = (data) => {
 }
 
-const form = ref({ "haha": "1" }
+const form = ref(
 )
 const options = ref({
   labelAlign: "right",
@@ -41,27 +41,29 @@ const columns = ref([
   //   ]
   // }
   {
-    formType: 'upload',
+    formType: 'resource',
     dataIndex: 'haha',
+    type: 'button',
     title: '哈哈',
+    multiple: true,
   },
-  {
-    formType: "children-form",
-    dataIndex: 'sub',
-    type: 'table',
-    title: '子表单哇塞',
-    formList: [{
-      title: "标题",
-      dataIndex: "title",
-      formType: "select",
-      dict: { name: 'data_status' },
-      cascaderItem: ['title2']
-    },{
-      title: "标题2",
-      dataIndex: "title2",
-      formType: "select",
-      dict: { url: 'system/common/cascader' }
-    }]
-  }
+  // {
+  //   formType: "children-form",
+  //   dataIndex: 'sub',
+  //   type: 'table',
+  //   title: '子表单哇塞',
+  //   formList: [{
+  //     title: "标题",
+  //     dataIndex: "title",
+  //     formType: "select",
+  //     dict: { name: 'data_status' },
+  //     cascaderItem: ['title2']
+  //   },{
+  //     title: "标题2",
+  //     dataIndex: "title2",
+  //     formType: "select",
+  //     dict: { url: 'system/common/cascader' }
+  //   }]
+  // }
 ])
 </script>

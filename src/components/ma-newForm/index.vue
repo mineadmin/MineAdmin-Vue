@@ -74,7 +74,8 @@ import {
   getComponentName, toHump, containerItems,
   interactiveControl, handleFlatteningColumns
 } from './js/utils.js'
-import { arrayComponentDefault, loadDict, handlerCascader } from './js/networkRequest.js'
+import { loadDict, handlerCascader } from './js/networkRequest.js'
+import arrayComponentDefault from './js/defaultArrayComponent.js'
 
 import { maEvent } from './js/formItemMixin.js'
 import { Message } from '@arco-design/web-vue'

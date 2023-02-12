@@ -4,7 +4,6 @@ import commonApi from '@/api/common'
 
 export const allowUseDictComponent  = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
 export const allowCoverComponent    = ['radio', 'checkbox', 'select', 'transfer', 'cascader']
-export const arrayComponentDefault  = ['checkbox', 'user-select', 'children-form']
 
 export const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
 

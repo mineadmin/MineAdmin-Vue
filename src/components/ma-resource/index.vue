@@ -27,8 +27,8 @@
     <div class="w-full lg:ml-3 mt-3 lg:mt-2 flex flex-col">
       
       <div class="lg:flex lg:justify-between">
-        <div>
-          <ma-upload v-model="uploadFile" multiple :show-list="false" chunk :resource="false" />
+        <div class="flex">
+          <ma-upload v-model="uploadFile" multiple :show-list="false" type="chunk" :resource="false" />
           <a-button class="ml-3" @click="openNetworkModal = true">
             <icon-image /> {{ $t('maResource.saveNetworkImage') }}
           </a-button>
