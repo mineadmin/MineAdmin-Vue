@@ -88,30 +88,30 @@ const requestCascaderData = async (val, dict, dictList, name) => {
   }
 }
 
-export const handlerCascader = async (val, column, columns, dictList, formModel) => {
+export const handlerCascader = async (val, column, columns, dictList, formModel, clearData = true) => {
   if (column.cascaderItem && isArray(column.cascaderItem)) {
     column.cascaderItem.map(async name => {
       if (column.dataIndex.match(/^\w+\.\d+\./)) {
         name = column.dataIndex.match(/^\w+\.\d+\./)[0] + name
       }
       const dict = columns.find(col => col.dataIndex === name && col.dict).dict
-      set(formModel, name, undefined)
+      clearData && set(formModel, name, undefined)
       requestCascaderData(val, dict, dictList, name)
     })
   }
-  if (column.childrenCascaderItem && isArray(column.childrenCascaderItem)) {
-    column.childrenCascaderItem.map(async name => {
-      if (name.indexOf('.') > -1) {
-        const parentDataIndex = name.split('.')[0]
-        const dataIndex = name.split('.')[1]
-        formModel[parentDataIndex].map((row, index) => {
-          const varIndex = [parentDataIndex, index, dataIndex].join('.')
-          const formIndex = [parentDataIndex, dataIndex].join('.')
-          set(formModel, varIndex, undefined)
-          const dict = columns.find(col => col.dataIndex === formIndex && col.dict).dict
-          requestCascaderData(val, dict, dictList, varIndex)
-        })
-      }
-    })
-  }
+  // if (column.childrenCascaderItem && isArray(column.childrenCascaderItem)) {
+  //   column.childrenCascaderItem.map(async name => {
+  //     if (name.indexOf('.') > -1) {
+  //       const parentDataIndex = name.split('.')[0]
+  //       const dataIndex = name.split('.')[1]
+  //       formModel[parentDataIndex].map((row, index) => {
+  //         const varIndex = [parentDataIndex, index, dataIndex].join('.')
+  //         const formIndex = [parentDataIndex, dataIndex].join('.')
+  //         clearData && set(formModel, varIndex, undefined)
+  //         const dict = columns.find(col => col.dataIndex === formIndex && col.dict).dict
+  //         requestCascaderData(val, dict, dictList, varIndex)
+  //       })
+  //     }
+  //   })
+  // }
 }

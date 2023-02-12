@@ -109,22 +109,23 @@ import { get, set } from 'lodash'
 import { getComponentName, containerItems } from '../js/utils.js'
 import MaFormItem from '../formitem/form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
-import { arrayComponentDefault, loadDict } from '../js/networkRequest.js'
+import { arrayComponentDefault, loadDict, handlerCascader } from '../js/networkRequest.js'
 
 const props = defineProps({ component: Object })
 const formList = props.component.formList
 const rows = ref([])
 const show = ref(true)
 const formModel = inject('formModel')
+const columns = inject('columns')
 const dictList = inject('dictList')
 const value = ref(get(formModel, props.component.dataIndex, []))
 
 provide('childrenFormList', props.component.formList)
 
-const addItem = (data = {}, type = 'new') => {
+const addItem = async (data = {}, type = 'new') => {
   const index = rows.value.length
   const form = []
-  formList.map(async item => {
+  await formList.map(async item => {
     const tmp = JSON.parse(JSON.stringify(item))
     tmp['hideLabel'] = props.component.type === 'table' ? true : false
     tmp['source'] = item.dataIndex
@@ -134,6 +135,11 @@ const addItem = (data = {}, type = 'new') => {
   })
   rows.value.push(form)
   type == 'new' && value.value.push(data)
+  // columns.map(item => {
+  //   if (item.childrenCascaderItem) {
+  //     handlerCascader( get(formModel, item.dataIndex), item, columns, dictList, formModel, false )
+  //   }
+  // })
   maEvent.handleCommonEvent(props.component, 'onAdd')
 }
 
@@ -142,12 +148,13 @@ const deleteItem = async (index) => {
     rows.value = []
     await value.value.splice(index, 1)
     value.value.map(async item => { await addItem(item, 'viewData') })
+    maEvent.handleCommonEvent(props.component, 'onDelete')
   }
 }
 
 watch(
   () => value.value, v => {
-    set(formModel, props.component.dataIndex, v)
+    formModel[props.component.dataIndex] = v
   }, { deep: true }
 )
 

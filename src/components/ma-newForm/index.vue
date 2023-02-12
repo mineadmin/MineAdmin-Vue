@@ -68,13 +68,13 @@ import {
   ref, reactive, watch, provide,
   onMounted, nextTick, getCurrentInstance
 } from 'vue'
-import { isString, isFunction, isEmpty } from 'lodash'
+import { isString, isFunction, isEmpty, get } from 'lodash'
 import defaultOptions from './js/defaultOptions.js'
 import {
   getComponentName, toHump, containerItems,
   interactiveControl, handleFlatteningColumns
 } from './js/utils.js'
-import { arrayComponentDefault, loadDict } from './js/networkRequest.js'
+import { arrayComponentDefault, loadDict, handlerCascader } from './js/networkRequest.js'
 
 import { maEvent } from './js/formItemMixin.js'
 import { Message } from '@arco-design/web-vue'
@@ -157,9 +157,19 @@ const init = async () => {
       }
     }
 
+    // 字典
     if (! cascaderList.value.includes(item.dataIndex) && item.dict) {
       await loadDict(dictList.value, item)
     }
+    
+    // 联动
+    handlerCascader(
+      get(form.value, item.dataIndex),
+      item,
+      flatteningColumns.value,
+      dictList.value,
+      form.value
+    )
   })
 
   nextTick(() => {

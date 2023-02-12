@@ -13,7 +13,8 @@ import MaNewForm from "@cps/ma-newForm/index.vue";
 const submitForm = (data) => {
 }
 
-const form = ref()
+const form = ref({ "haha": "1", sub: [{ title: 'blue' }] }
+)
 const options = ref({
   labelAlign: "right",
 });

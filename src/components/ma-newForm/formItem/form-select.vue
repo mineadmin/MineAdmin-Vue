@@ -15,7 +15,7 @@
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
       <a-select
-        v-model="value"
+        v-model:model-value="value"
         :multiple="props.component.multiple"
         :size="props.component.size"
         :allow-clear="props.component.allowClear ?? true"
@@ -90,7 +90,9 @@ if (props.component.dataIndex.match(/^\w+\.\d+\./)) {
 const value = ref(get(formModel, props.component.dataIndex))
 
 watch(
-  () => value.value, v => set(formModel, props.component.dataIndex, v)
+  () => value.value, v => {
+    set(formModel, props.component.dataIndex, v)
+  }
 )
 
 const handleCascaderChangeEvent = (value) => {
