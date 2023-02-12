@@ -18,7 +18,7 @@
         v-model="value"
         :show-search="props.component.showSearch"
         :show-select-all="props.component.showSelectAll"
-        :title="props.component.title ?? ['源数据', '目标数据']"
+        :title="typeof props.component.title == 'array' ? props.component.title : ['源数据', '目标数据']"
         :disabled="props.component.disabled"
         :simple="props.component.simple"
         :data="props.component.data ?? dictList[props.component.dataIndex] ?? []"

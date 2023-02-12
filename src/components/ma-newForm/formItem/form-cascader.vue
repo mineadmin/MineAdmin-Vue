@@ -16,13 +16,14 @@
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
       <a-cascader
         v-model="value"
+        :path-mode="props.component.pathMode"
         :placeholder="props.component.placeholder || `请选择${props.component.title}`"
         :allow-clear="props.component.allowClear ?? true"
         :allow-search="props.component.allowSearch ?? true"
         :size="props.component.size"
         :disabled="props.component.disabled"
         :multiple="props.component.multiple"
-        :options="props.component.data ?? dictList[props.component.dataIndex] ?? []"
+        :options="props.component.options ?? dictList[props.component.dataIndex] ?? []"
         :input-value="props.component.inputValue"
         :default-input-value="props.component.defaultInputValue"
         :popup-visible="props.component.popupVisible"
@@ -69,6 +70,10 @@ const props = defineProps({
 const formModel = inject('formModel')
 const dictList  = inject('dictList')
 const value = ref(get(formModel, props.component.dataIndex))
+
+if (props.component.dict && props.component.dict.name && !props.component.pathMode && !value.value) {
+  value.value = ''
+}
 
 watch(
   () => value.value, v => set(formModel, props.component.dataIndex, v)

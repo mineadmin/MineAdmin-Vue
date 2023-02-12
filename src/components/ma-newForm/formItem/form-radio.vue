@@ -57,6 +57,9 @@ if (props.component.dataIndex.match(/^\w+\.\d+\./)) {
 }
 
 const value = ref(get(formModel, props.component.dataIndex))
+if (props.component.dict && props.component.dict.name) {
+  value.value = value.value + ''
+}
 
 watch(
   () => value.value, v => set(formModel, props.component.dataIndex, v)

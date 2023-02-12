@@ -133,13 +133,11 @@ const addItem = async (data = {}, type = 'new') => {
     form.push(tmp)
     item.dict && await loadDict(dictList, tmp)
   })
+  form.map(async item => {
+    await handlerCascader( get(formModel, item.dataIndex), item, form, dictList, formModel, false )
+  })
   rows.value.push(form)
   type == 'new' && value.value.push(data)
-  // columns.map(item => {
-  //   if (item.childrenCascaderItem) {
-  //     handlerCascader( get(formModel, item.dataIndex), item, columns, dictList, formModel, false )
-  //   }
-  // })
   maEvent.handleCommonEvent(props.component, 'onAdd')
 }
 

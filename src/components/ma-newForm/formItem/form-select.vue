@@ -73,7 +73,7 @@ const props = defineProps({
   showFormItem: { type: Boolean, default: true }
 })
 
-const formModel = inject('formModel')
+let formModel = inject('formModel')
 const dictList  = inject('dictList')
 const formLoading = inject('formLoading')
 const columns = inject('columns')
@@ -87,7 +87,10 @@ if (props.component.dataIndex.match(/^\w+\.\d+\./)) {
   })
 }
 
-const value = ref(get(formModel, props.component.dataIndex))
+const value = ref(get(formModel, props.component.dataIndex, ''))
+if (props.component.dict && props.component.dict.name && !props.component.multiple) {
+  value.value = value.value + ''
+}
 
 watch(
   () => value.value, v => {

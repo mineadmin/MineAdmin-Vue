@@ -57,7 +57,7 @@ export const getComponentName = (formType) => {
   return (`MaForm${toHump(formType)}`)
 }
 
-export const handleFlatteningColumns = (data, columns, parentDataIndex = undefined) => {
+export const handleFlatteningColumns = (data, columns, isChildrenForm = undefined) => {
   for (let key in data) {
     const item = data[key]
     if ( containerItems.includes(item.formType) ) {
@@ -91,18 +91,15 @@ export const handleFlatteningColumns = (data, columns, parentDataIndex = undefin
             })
           }
           break
-        case 'children-form':
-          item.formList && handleFlatteningColumns(item.formList, columns, item.dataIndex)
-          break
+        // case 'children-form':
+        //   item.formList && handleFlatteningColumns(item.formList, columns, item.dataIndex, true)
+        //   break
       }
     } else {
-      if (parentDataIndex) {
-        const tmp = JSON.parse(JSON.stringify(item))
-        tmp['dataIndex'] = [ parentDataIndex, tmp.dataIndex ].join('.')
-        columns.push(tmp)
-      } else {
-        columns.push(item)
-      }
+      // if (isChildrenForm) {
+      //   item['isChildrenForm'] = true
+      // }
+      columns.push(item)
     }
   }
 }

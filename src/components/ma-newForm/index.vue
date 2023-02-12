@@ -142,17 +142,14 @@ const init = async () => {
     if (item.cascaderItem && item.cascaderItem.length > 0) {
       cascaderList.value.push(...item.cascaderItem)
     }
-    if (item.childrenCascaderItem && item.childrenCascaderItem.length > 0) {
-      childrenCascaderList.value.push(...item.childrenCascaderItem)
-    }
   })
 
   // 初始化数据
   flatteningColumns.value.map(async item => {
 
-    if ( isEmpty(form.value[item.dataIndex]) ) {
+    if ( isEmpty(form.value[item.dataIndex]) && ! item.isChildrenForm ) {
       form.value[item.dataIndex] = undefined
-      if (arrayComponentDefault.includes(item.formType)) {
+      if (arrayComponentDefault.includes(item.formType) && ! item.isChildrenForm) {
         form.value[item.dataIndex] = []
       }
     }
@@ -161,7 +158,7 @@ const init = async () => {
     if (! cascaderList.value.includes(item.dataIndex) && item.dict) {
       await loadDict(dictList.value, item)
     }
-    
+
     // 联动
     handlerCascader(
       get(form.value, item.dataIndex),

@@ -13,7 +13,7 @@ import MaNewForm from "@cps/ma-newForm/index.vue";
 const submitForm = (data) => {
 }
 
-const form = ref({ "haha": "1", sub: [{ title: 'blue' }] }
+const form = ref({ "haha": "1" }
 )
 const options = ref({
   labelAlign: "right",
@@ -41,11 +41,9 @@ const columns = ref([
   //   ]
   // }
   {
-    formType: 'select',
+    formType: 'upload',
     dataIndex: 'haha',
     title: '哈哈',
-    dict: { name:'data_status' },
-    childrenCascaderItem: ['sub.title'],
   },
   {
     formType: "children-form",
@@ -56,39 +54,13 @@ const columns = ref([
       title: "标题",
       dataIndex: "title",
       formType: "select",
-      dict: { url: 'system/common/cascader' },
+      dict: { name: 'data_status' },
+      cascaderItem: ['title2']
     },{
       title: "标题2",
       dataIndex: "title2",
       formType: "select",
-      dict: { url: 'system/common/cascader2' }
-    }]
-  }
-])
-
-const columns2 = ref([
-  {
-    formType: "form-group",
-    dataIndex: 'sub',
-    childrenForm: [{
-      title: "标题",
-      dataIndex: "title",
-      formType: "input",
-      rules: [{ required: true, message: '请输入标题'}],
-    },{
-      title: "用户名",
-      dataIndex: "aad",
-      formType: "radio",
-      dict: {name: 'data_status' }
-    },{
-      title: "颜色选择器",
-      dataIndex: "color",
-      formType: "city-linkage",
-      type:'select'
-    },{
-      title: "验证码",
-      dataIndex: "code",
-      formType: "verify-code",
+      dict: { url: 'system/common/cascader' }
     }]
   }
 ])

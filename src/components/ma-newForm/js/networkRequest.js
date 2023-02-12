@@ -3,7 +3,7 @@ import { request } from '@/utils/request'
 import commonApi from '@/api/common'
 
 export const allowUseDictComponent  = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
-export const allowCoverComponent    = ['radio', 'checkbox', 'select', 'transfer']
+export const allowCoverComponent    = ['radio', 'checkbox', 'select', 'transfer', 'cascader']
 export const arrayComponentDefault  = ['checkbox', 'user-select', 'children-form']
 
 export const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
@@ -17,15 +17,14 @@ export const handlerDictProps = (item, tmpArr) => {
     labelName = 'title'
     valueName = 'key'
   }
-  if (allowUseDictComponent.includes(item.formType)) {
+  if (allowCoverComponent.includes(item.formType)) {
     data = tmpArr.map(dicItem => {
       const label = dicItem[(item.dict.props && item.dict.props.label) || labelName]
       let tmp = dicItem[(item.dict.props && item.dict.props.value) || valueName]
       let disabled = (typeof dicItem['disabled'] == 'undefined') ? false : ( dicItem['disabled'] === true ? true : false )
       let indeterminate = (typeof dicItem['indeterminate'] == 'undefined') ? false : ( dicItem['indeterminate'] === true ? true : false )
       let value
-      if (item.dict.name && (!item.dict.url || !item.dict.data)) value = tmp + ''
-      else if (tmp === 'true') value = true
+      if (tmp === 'true') value = true
       else if (tmp === 'false') value = false
       else if (typeof tmp == 'Number') value = tmp
       else value = tmp + ''
@@ -40,7 +39,7 @@ export const handlerDictProps = (item, tmpArr) => {
 }
 
 export const loadDict = async (dictList, item) => {
-  if (allowCoverComponent.includes(item.formType)) {
+  if (allowUseDictComponent.includes(item.formType)) {
     if (item.dict.name) {
       const response = await commonApi.getDict(item.dict.name)
       if (response.data) {
@@ -99,19 +98,4 @@ export const handlerCascader = async (val, column, columns, dictList, formModel,
       requestCascaderData(val, dict, dictList, name)
     })
   }
-  // if (column.childrenCascaderItem && isArray(column.childrenCascaderItem)) {
-  //   column.childrenCascaderItem.map(async name => {
-  //     if (name.indexOf('.') > -1) {
-  //       const parentDataIndex = name.split('.')[0]
-  //       const dataIndex = name.split('.')[1]
-  //       formModel[parentDataIndex].map((row, index) => {
-  //         const varIndex = [parentDataIndex, index, dataIndex].join('.')
-  //         const formIndex = [parentDataIndex, dataIndex].join('.')
-  //         clearData && set(formModel, varIndex, undefined)
-  //         const dict = columns.find(col => col.dataIndex === formIndex && col.dict).dict
-  //         requestCascaderData(val, dict, dictList, varIndex)
-  //       })
-  //     }
-  //   })
-  // }
 }
