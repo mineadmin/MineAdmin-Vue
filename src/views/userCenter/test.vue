@@ -41,11 +41,11 @@ const columns = ref([
   //   ]
   // }
   {
-    formType: 'resource',
+    formType: 'user-select',
     dataIndex: 'haha',
     type: 'button',
     title: '哈哈',
-    multiple: true,
+    isEcho: true,
   },
   // {
   //   formType: "children-form",
