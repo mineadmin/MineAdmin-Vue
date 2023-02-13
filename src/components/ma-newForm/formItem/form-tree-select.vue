@@ -14,7 +14,7 @@
     :show-form-item="props.showFormItem"
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
-      <a-select
+      <a-tree-select
         v-model="value"
         :data="props.component.data ?? dictList[props.component.dataIndex] ?? []"
         :disabled="props.component.disabled"
@@ -51,7 +51,7 @@
         @clear="maEvent.handleCommonEvent(props.component, 'onClear')"
         @search="maEvent.customeEvent(props.component, $event, 'onSearch')"
       >
-      </a-select>
+      </a-tree-select>
     </slot>
   </ma-form-item>
 </template>
