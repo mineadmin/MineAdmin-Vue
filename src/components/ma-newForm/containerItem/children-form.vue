@@ -29,7 +29,7 @@
     :class="[ props.component.customClass ]"
   >
     <a-collapse
-      :default-active-key="[0]"
+      :default-active-key="defaultOpenKeys"
       expand-icon-position="right"
       v-if=" (props.component?.type ?? 'group') === 'group'"
      :show-expand-icon="false"
@@ -38,7 +38,7 @@
         <template #extra>
           <a-space>
             <a-tooltip content="添加新子项">
-              <a-button @click.stop="addItem({})" type="primary" size="small" shape="round">
+              <a-button @click.stop="addItem()" type="primary" size="small" shape="round">
                 <template #icon><icon-plus /></template>
               </a-button>
             </a-tooltip>
@@ -61,7 +61,7 @@
             v-if="! containerItems.includes(component.formType)"
             :is="getComponentName(component?.formType ?? 'input')"
             :component="component"
-            :customField="getChildrenDataIndex(rowIndex, component.dataIndex)"
+            :customField="getChildrenDataIndex(itemIndex, component.dataIndex)"
           >
             <template v-for="slot in Object.keys($slots)" #[slot]="component">
               <slot :name="slot" v-bind="component" />
@@ -76,7 +76,7 @@
         <!-- 新增、删除列 -->
         <a-table-column :width="60" fixed="left">
           <template #title>
-            <a-button type="primary" @click="addItem({})" size="small" shape="round">
+            <a-button type="primary" @click="addItem()" size="small" shape="round">
               <template #icon>
                 <icon-plus />
               </template>
@@ -139,45 +139,39 @@ const formList = props.component.formList
 const options = inject('options')
 const formModel = inject('formModel')
 const dictList = inject('dictList')
-
-if (props.component.type == 'table') {
-  formList.map(item => {
-    item['hideLabel'] = true
-  })
-}
+const defaultOpenKeys = [0]
 
 if (! formModel[props.component.dataIndex]) {
   formModel[props.component.dataIndex] = []
 }
 
-
-provide('childrenFormList', props.component.formList)
+if (props.component.type == 'table') {
+  formList.map(item => {
+    item['hideLabel'] = true
+  })
+} else {
+  formModel[props.component.dataIndex].map( (item, index) => {
+    if (index > 0) defaultOpenKeys.push(index)
+  })
+}
+formList.map(async item => {
+  const tmp = JSON.parse(JSON.stringify(item))
+  tmp['dataIndex'] = [props.component.dataIndex, tmp.dataIndex].join('.')
+  await loadDict(dictList, tmp)
+})
 
 const addItem = async (data = {}) => {
   formModel[props.component.dataIndex].push(data)
-  const index = formModel[props.component.dataIndex].length - 1
-  await requestDict(index)
   maEvent.handleCommonEvent(props.component, 'onAdd')
 }
 
 const deleteItem = async (index) => {
-  if (formModel[props.component.dataIndex].length > 1) {
-    formModel[props.component.dataIndex].splice(index, 1)
-    await requestDict(index)
-    maEvent.handleCommonEvent(props.component, 'onDelete')
-  }
+  formModel[props.component.dataIndex].splice(index, 1)
+  maEvent.handleCommonEvent(props.component, 'onDelete')
 }
 
 const getChildrenDataIndex = (index, dataIndex) => {
   return [ props.component.dataIndex, index, dataIndex ].join('.')
-}
-
-const requestDict = async (index) => {
-  await formList.map(async item => {
-    const tmp = JSON.parse(JSON.stringify(item))
-    tmp['dataIndex'] = getChildrenDataIndex(index, tmp.dataIndex)
-    await loadDict(dictList, tmp)
-  })
 }
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
@@ -185,10 +179,6 @@ onMounted(async () => {
   if (formModel[props.component.dataIndex].length === 0) {
     for (let i = 0; i < (props.component.emptyRow ?? 1); i++) {
       await addItem()
-    }
-  } else {
-    for (let i = 0; i < formModel[props.component.dataIndex].length; i++) {
-      requestDict(i)
     }
   }
   maEvent.handleCommonEvent(props.component, 'onMounted')

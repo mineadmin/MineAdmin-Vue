@@ -73,7 +73,7 @@ const index = props.customField ?? props.component.dataIndex
 const value = ref(get(formModel, index))
 
 watch( () => get(formModel, index), vl => value.value = vl )
-watch( () => value.value, v => set(formModel, index, v) )
+watch( () => value.value, v => v && set(formModel, index, v) )
 
 if (props.component.dict && props.component.dict.name && !props.component.pathMode && !value.value) {
   value.value = ''

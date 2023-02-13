@@ -53,7 +53,7 @@
         @blur="maEvent.handleCommonEvent(props.component, 'onBlur')"
         @search="maEvent.customeEvent(props.component, $event, 'onSearch')"
       >
-        <template v-for="(item, index) in dictList[index]">
+        <template v-for="(item, index) in dictList[dictIndex]">
           <a-option :value="item.value" :disabled="item.disabled">{{ item.label }}</a-option>
         </template>
       </a-select>
@@ -73,31 +73,34 @@ const props = defineProps({
   customField: { type: String, default: undefined }
 })
 
-let formModel = inject('formModel')
+const formModel = inject('formModel')
 const dictList  = inject('dictList')
 const formLoading = inject('formLoading')
 const columns = inject('columns')
 
 const index = props.customField ?? props.component.dataIndex
+const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1] + props.component.dataIndex : props.component.dataIndex
 const value = ref(get(formModel, index, ''))
 
 watch( () => get(formModel, index), vl => value.value = vl )
-watch( () => value.value, v => set(formModel, index, v) )
+watch( () => value.value, v => v && set(formModel, index, v) )
 
-if (props.component.dict && props.component.dict.name && !props.component.multiple) {
+if (props.component.dict && props.component.dict.name && !props.component.multiple) { 
   value.value = value.value + ''
 }
 
-const handleCascaderChangeEvent = (value) => {
+const handleCascaderChangeEvent = async (value) => {
   formLoading.value = true
   const component = props.component
   // 执行自定义事件
   if (component.onChange) {
     maEvent.handleChangeEvent(component, value)
   }
-
+  
   // 处理联动
-  handlerCascader(value, component, columns, dictList, formModel)
+  if (! index.match(/^(\w+)\.\d+\./)) {
+    await handlerCascader(value, component, columns, dictList, formModel)
+  }
   nextTick(() => formLoading.value = false)
 
 }

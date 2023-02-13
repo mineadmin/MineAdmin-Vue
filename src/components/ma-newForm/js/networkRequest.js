@@ -38,7 +38,7 @@ export const handlerDictProps = (item, tmpArr) => {
 }
 
 export const loadDict = async (dictList, item) => {
-  if (allowUseDictComponent.includes(item.formType)) {
+  if (allowUseDictComponent.includes(item.formType) && item.dict) {
     if (item.dict.name) {
       const response = await commonApi.getDict(item.dict.name)
       if (response.data) {
@@ -89,9 +89,6 @@ const requestCascaderData = async (val, dict, dictList, name) => {
 export const handlerCascader = async (val, column, columns, dictList, formModel, clearData = true) => {
   if (column.cascaderItem && isArray(column.cascaderItem)) {
     column.cascaderItem.map(async name => {
-      if (column.dataIndex.match(/^\w+\.\d+\./)) {
-        name = column.dataIndex.match(/^\w+\.\d+\./)[0] + name
-      }
       const dict = columns.find(col => col.dataIndex === name && col.dict).dict
       clearData && set(formModel, name, undefined)
       requestCascaderData(val, dict, dictList, name)

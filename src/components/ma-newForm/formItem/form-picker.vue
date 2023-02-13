@@ -30,6 +30,7 @@
         :trigger-props="props.component.triggerProps"
         :unmount-on-close="props.component.unmountOnClose"
         :disabled="props.component.disabled"
+        :disabled-input="props.component.disabledInput"
         :disabled-date="props.component.disabledDate"
         :disabled-time="props.component.disabledTime"
         :value-format="props.component.valueFormat"
@@ -69,7 +70,7 @@ const index = props.customField ?? props.component.dataIndex
 const value = ref(get(formModel, index))
 
 watch( () => get(formModel, index), vl => value.value = vl )
-watch( () => value.value, v => set(formModel, index, v) )
+watch( () => value.value, v => v && set(formModel, index, v) )
 
 const getComponentName = () => {
   if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(props.component.formType)) {

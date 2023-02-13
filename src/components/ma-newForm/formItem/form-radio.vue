@@ -46,40 +46,32 @@ const formModel = inject('formModel')
 const dictList  = inject('dictList')
 const formLoading = inject('formLoading')
 const columns = inject('columns')
-const temp = inject('childrenFormList', [])
-const childrenFormList = temp ? JSON.parse(JSON.stringify(temp)) : []
 
-if (props.component.dataIndex.match(/^\w+\.\d+\./)) {
-  const prefix = props.component.dataIndex.match(/^\w+\.\d+\./)[0]
-  childrenFormList.map(item => {
-    item.dataIndex = prefix + item.dataIndex
-  })
-}
+const index = props.customField ?? props.component.dataIndex
+const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1] + props.component.dataIndex : props.component.dataIndex
+const value = ref(get(formModel, index, ''))
 
-const value = ref(get(formModel, props.component.dataIndex))
-if (props.component.dict && props.component.dict.name) {
+watch( () => get(formModel, index), vl => value.value = vl )
+watch( () => value.value, v => v && set(formModel, index, v) )
+
+if (props.component.dict && props.component.dict.name && !props.component.multiple) { 
   value.value = value.value + ''
 }
 
-watch(
-  () => value.value, v => set(formModel, props.component.dataIndex, v)
-)
-
-const handleCascaderChangeEvent = (value) => {
+const handleCascaderChangeEvent = async (value) => {
+  formLoading.value = true
   const component = props.component
   // 执行自定义事件
   if (component.onChange) {
     maEvent.handleChangeEvent(component, value)
   }
-
+  
   // 处理联动
-  formLoading.value = true
-  if (component.dataIndex.match(/^\w+\.\d+\./)) {
-    handlerCascader(value, component, childrenFormList, dictList, formModel)
-  } else {
-    handlerCascader(value, component, columns, dictList, formModel)
+  if (! index.match(/^(\w+)\.\d+\./)) {
+    await handlerCascader(value, component, columns, dictList, formModel)
   }
   nextTick(() => formLoading.value = false)
+
 }
 
 maEvent.handleCommonEvent(props.component, 'onCreated')

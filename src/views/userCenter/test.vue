@@ -10,9 +10,9 @@
 import { ref } from "vue";
 import MaNewForm from "@cps/ma-newForm/index.vue";
 
-const submitForm = (data) => {sub: [{title: 1}]}
+const submitForm = (data) => {}
 
-const form = ref(
+const form = ref({sub: [{title: 1},{title: 2}]}
 )
 const options = ref({
   labelAlign: "right",
