@@ -11,7 +11,7 @@
   <ma-form-item
     v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
     :component="props.component"
-    :show-form-item="props.showFormItem"
+    :custom-field="props.customField"
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
       <a-select
@@ -53,7 +53,7 @@
         @blur="maEvent.handleCommonEvent(props.component, 'onBlur')"
         @search="maEvent.customeEvent(props.component, $event, 'onSearch')"
       >
-        <template v-for="(item, index) in dictList[props.component.dataIndex]">
+        <template v-for="(item, index) in dictList[index]">
           <a-option :value="item.value" :disabled="item.disabled">{{ item.label }}</a-option>
         </template>
       </a-select>
@@ -70,35 +70,26 @@ import { handlerCascader } from '../js/networkRequest.js'
 
 const props = defineProps({
   component: Object,
-  showFormItem: { type: Boolean, default: true }
+  customField: { type: String, default: undefined }
 })
 
 let formModel = inject('formModel')
 const dictList  = inject('dictList')
 const formLoading = inject('formLoading')
 const columns = inject('columns')
-const temp = inject('childrenFormList', [])
-const childrenFormList = temp ? JSON.parse(JSON.stringify(temp)) : []
 
-if (props.component.dataIndex.match(/^\w+\.\d+\./)) {
-  const prefix = props.component.dataIndex.match(/^\w+\.\d+\./)[0]
-  childrenFormList.map(item => {
-    item.dataIndex = prefix + item.dataIndex
-  })
-}
+const index = props.customField ?? props.component.dataIndex
+const value = ref(get(formModel, index, ''))
 
-const value = ref(get(formModel, props.component.dataIndex, ''))
+watch( () => get(formModel, index), vl => value.value = vl )
+watch( () => value.value, v => set(formModel, index, v) )
+
 if (props.component.dict && props.component.dict.name && !props.component.multiple) {
   value.value = value.value + ''
 }
 
-watch(
-  () => value.value, v => {
-    set(formModel, props.component.dataIndex, v)
-  }
-)
-
 const handleCascaderChangeEvent = (value) => {
+  formLoading.value = true
   const component = props.component
   // 执行自定义事件
   if (component.onChange) {
@@ -106,12 +97,7 @@ const handleCascaderChangeEvent = (value) => {
   }
 
   // 处理联动
-  formLoading.value = true
-  if (component.dataIndex.match(/^\w+\.\d+\./)) {
-    handlerCascader(value, component, childrenFormList, dictList, formModel)
-  } else {
-    handlerCascader(value, component, columns, dictList, formModel)
-  }
+  handlerCascader(value, component, columns, dictList, formModel)
   nextTick(() => formLoading.value = false)
 
 }

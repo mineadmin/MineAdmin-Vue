@@ -11,7 +11,7 @@
   <ma-form-item
     v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
     :component="props.component"
-    :show-form-item="props.showFormItem"
+    :custom-field="props.customField"
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
       <ma-user-info
@@ -31,15 +31,15 @@ import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
 const props = defineProps({
   component: Object,
-  showFormItem: { type: Boolean, default: true }
+  customField: { type: String, default: undefined }
 })
 
 const formModel = inject('formModel')
-const value = ref(get(formModel, props.component.dataIndex))
+const index = props.customField ?? props.component.dataIndex
+const value = ref(get(formModel, index))
 
-watch(
-  () => value.value, v => set(formModel, props.component.dataIndex, v)
-)
+watch( () => get(formModel, index), vl => value.value = vl )
+watch( () => value.value, v => set(formModel, index, v) )
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
 onMounted(() => {

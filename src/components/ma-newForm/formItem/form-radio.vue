@@ -11,7 +11,7 @@
   <ma-form-item
     v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
     :component="props.component"
-    :show-form-item="props.showFormItem"
+    :custom-field="props.customField"
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
       <a-radio-group
@@ -39,7 +39,7 @@ import { handlerCascader } from '../js/networkRequest.js'
 
 const props = defineProps({
   component: Object,
-  showFormItem: { type: Boolean, default: true }
+  customField: { type: String, default: undefined }
 })
 
 const formModel = inject('formModel')

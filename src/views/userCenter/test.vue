@@ -10,8 +10,7 @@
 import { ref } from "vue";
 import MaNewForm from "@cps/ma-newForm/index.vue";
 
-const submitForm = (data) => {
-}
+const submitForm = (data) => {sub: [{title: 1}]}
 
 const form = ref(
 )
@@ -39,31 +38,31 @@ const columns = ref([
   //       }]
   //     }
   //   ]
-  // }
-  {
-    formType: 'user-select',
-    dataIndex: 'haha',
-    type: 'button',
-    title: '哈哈',
-    isEcho: true,
-  },
+  // },
   // {
-  //   formType: "children-form",
-  //   dataIndex: 'sub',
-  //   type: 'table',
-  //   title: '子表单哇塞',
-  //   formList: [{
-  //     title: "标题",
-  //     dataIndex: "title",
-  //     formType: "select",
-  //     dict: { name: 'data_status' },
-  //     cascaderItem: ['title2']
-  //   },{
-  //     title: "标题2",
-  //     dataIndex: "title2",
-  //     formType: "select",
-  //     dict: { url: 'system/common/cascader' }
-  //   }]
-  // }
+  //   formType: 'user-select',
+  //   dataIndex: 'haha',
+  //   type: 'button',
+  //   title: '哈哈',
+  //   isEcho: true,
+  // },
+  {
+    formType: "children-form",
+    dataIndex: 'sub',
+    type: 'table',
+    title: '子表单哇塞',
+    formList: [{
+      title: "标题",
+      dataIndex: "title",
+      formType: "select",
+      dict: { name: 'data_status' },
+      cascaderItem: ['title2']
+    },{
+      title: "标题2",
+      dataIndex: "title2",
+      formType: "select",
+      dict: { url: 'system/common/cascader' }
+    }]
+  }
 ])
 </script>

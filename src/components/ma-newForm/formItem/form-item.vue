@@ -9,9 +9,8 @@
 -->
 <template>
   <a-form-item
-    v-if="props.showFormItem"
     :label="props.component.title"
-    :field="props.component.dataIndex"
+    :field="props.customField ?? props.component.dataIndex"
     :tooltip="props.component.tooltip"
     :show-colon="props.component.showColon"
     :label-col-flex="props.component.labelColFlex ?? 'auto'"
@@ -30,15 +29,12 @@
   >
     <slot></slot>
   </a-form-item>
-  <div v-else :class="[ props.component.customClass ]">
-    <slot></slot>
-  </div>
 </template>
 <script setup>
 import { inject } from 'vue'
 const options = inject('options')
 const props = defineProps({
   component: Object,
-  showFormItem: { type: Boolean, default: true }
+  customField: { type: String, default: null }
 })
 </script>
