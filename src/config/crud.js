@@ -6,7 +6,7 @@ export default {
   // 响应返回解析
   parseResponseData: (res) => {
 
-    return res.data.items
+    return res?.data?.items
     ?
     // 分页响应字段结构定义
     {
@@ -18,9 +18,9 @@ export default {
     :
     // 无分页响应字段结构定义
     {
-      rows: res.data,           // 分析行数据字段结构
-      message: res.message,     // 分析描述字段结构
-      code: res.code            // 分析状态字段结构
+      rows: res?.data,           // 分析行数据字段结构
+      message: res?.message,     // 分析描述字段结构
+      code: res?.code            // 分析状态字段结构
     }
 
   },

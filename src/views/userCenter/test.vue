@@ -21,7 +21,6 @@ const columns = ref([
   {
     formType: "tabs",
     dataIndex: 'tabs',
-    hideContent: true,
     tabs: [
       {
         title: 'Tab布局',

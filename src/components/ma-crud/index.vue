@@ -223,6 +223,7 @@ import config from '@/config/crud'
 import { isFunction } from '@vue/shared'
 import { ref, watch, provide, nextTick } from 'vue'
 import defaultOptions from './js/defaultOptions'
+import { loadDict } from '@cps/ma-newForm/js/networkRequest.js'
 
 import MaSearch from './components/search.vue'
 import MaForm from './components/form.vue'
@@ -241,12 +242,16 @@ const props = defineProps({
   // 表格数据
   data: { type: [ Function, Array ], default: () => null },
   // 增删改查设置
-  options: Object,
+  options: { type: Object, default: {} },
+  crud: { type: Object, default: {} },
   // 字段列设置
   columns: { type: Array, default: [] }
 })
 
 const loading = ref(true)
+const dicts = ref({})
+const cascaders = ref([])
+
 const reloadColumn = ref(true)
 const openPagination = ref(false)
 const imgVisible = ref(false)
@@ -278,10 +283,51 @@ const maCrudSetting = ref(null)
 const maCrudForm = ref(null)
 const maCrudImport = ref(null)
 
-const options = ref(Object.assign(defaultOptions, props.options))
+const options = ref(Object.assign(defaultOptions, props.options, props.crud))
+
+// 初始化
+const init = async() => {
+
+  // 收集数据
+  props.columns.map(item => {
+    if (item.cascaderItem && item.cascaderItem.length > 0) {
+      cascaders.value.push(...item.cascaderItem)
+    }
+  })
+
+  props.columns.map(async item => {
+    // 字典
+    if (! cascaders.value.includes(item.dataIndex) && item.dict) {
+      await loadDict(dicts.value, item)
+    }
+  })
+}
+
+const dictTrans = (dataIndex, value) => {
+  if (dicts.value[dataIndex] && dicts.value[dataIndex].tran) {
+    return dicts.value[dataIndex].tran[value]
+  } else {
+    return value
+  }
+}
+
+const dictColors = (dataIndex, value) => {
+  if (dicts.value[dataIndex] && dicts.value[dataIndex].colors) {
+    return dicts.value[dataIndex].colors[value]
+  } else {
+    return undefined
+  }
+}
 
 provide('options', options.value)
 provide('columns', props.columns)
+provide('dicts', dicts.value)
+provide('dictColors', dictColors.value)
+provide('requestParams', requestParams.value)
+provide('dictTrans', dictTrans)
+provide('dictColors', dictColors)
+
+options.value.autoRequest && init()
 
 watch(() => options.pageSizeOption, (val) => {
   pageSizeOption.value = val
@@ -624,8 +670,8 @@ if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest
 }
 
 nextTick(() => {
-  document.querySelector('.arco-table-body').className += ' customer-scrollbar'
-  toggleSearch()
+  // document.querySelector('.arco-table-body').className += ' customer-scrollbar'
+  // toggleSearch()
 })
 
 const settingFixedPage = (openPage = false) => {

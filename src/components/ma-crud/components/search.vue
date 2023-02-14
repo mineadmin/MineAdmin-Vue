@@ -17,17 +17,14 @@
       @submit="handlerSearch"
     >
       <div :class="[ gridClass, options?.searchCustomClass ]">
-        <template v-for="(item, index) in searchColumns" :key="index">
+        <template v-for="(component, index) in searchColumns" :key="index">
           <a-form-item
-            :field="item.dataIndex"
-            :label="item.title"
-            :label-col-style="{ width: item.searchLabelWidth ?? options.searchLabelWidth }"
+            :field="component.dataIndex"
+            :label="component.title"
+            :label-col-style="{ width: component.searchLabelWidth ?? options.searchLabelWidth }"
           >
-            <slot :name="`${item.dataIndex}`" v-bind="{ searchForm, item }">
-              <component
-                :is="getComponentName(item)"
-                v-bind="item"
-              />
+            <slot :name="`${component.dataIndex}`" v-bind="{ searchForm, component }">
+              <component :is="getComponentName(component.formType)" :component="component" />
             </slot>
           </a-form-item>
         </template>
@@ -35,7 +32,7 @@
       <div class="text-center mt-5 w-full">
         <a-space size="medium">
           <a-button type="primary" html-type="submit"><icon-search /> 提交</a-button>
-          <a-button @click="reset"><icon-delete /> 清空</a-button>
+          <a-button @click="() => { search.resetField() }"><icon-delete /> 清空</a-button>
           <slot name="searchButtons" />
         </a-space>
       </div>
@@ -44,12 +41,12 @@
 </template>
 
 <script setup>
-import { ref, watch, inject, provide } from 'vue'
-import MaFormInput from '@/components/ma-newForm/formItem/form-input.vue'
-import MaFormPicker from '@/components/ma-newForm/formItem/form-picker.vue'
-import MaFormSelect from '@/components/ma-newForm/formItem/form-select.vue'
-import MaFormCascader from '@/components/ma-newForm/formItem/form-cascader.vue'
-import MaFormTreeSelect from '@/components/ma-newForm/formItem/form-tree-select.vue'
+import { ref, watch, inject, provide, markRaw } from 'vue'
+import MaFormInput from './searchFormItem/form-input.vue'
+import MaFormPicker from './searchFormItem/form-picker.vue'
+import MaFormSelect from './searchFormItem/form-select.vue'
+import MaFormCascader from './searchFormItem/form-cascader.vue'
+import MaFormTreeSelect from './searchFormItem/form-tree-select.vue'
 import { upperCaseFirst } from '@/components/ma-newForm/js/utils'
 import { isFunction, isArray, concat } from 'lodash'
 import { Message } from '@arco-design/web-vue'
@@ -58,6 +55,7 @@ import { handlerProps } from '../js/common'
 
 const options = inject('options')
 const columns = inject('columns')
+const requestParams = inject('requestParams')
 
 const gridClass = ref(['ma-search-grid', 'w-full', 'grid', 'lg:grid-cols-' + options.searchColNumber ?? 4])
 
@@ -68,7 +66,7 @@ const searchColumns = ref([])
 
 const searchForm = ref({})
 
-provide('formModel', searchForm.value)
+provide('searchForm', searchForm.value)
 
 const emits = defineEmits(['search'])
 
@@ -76,17 +74,29 @@ if (columns.length > 0) {
   searchColumns.value = columns.filter( item => item.search === true )
 }
 
+const handlerSearch = () => {
+  emit('search', Object.assign(requestParams, searchForm.value))
+}
+
+const componentList = ref({
+  'MaFormSelect': markRaw(MaFormSelect),
+  'MaFormPicker': markRaw(MaFormPicker),
+  'MaFormCascader': markRaw(MaFormCascader),
+  'MaFormTreeSelect': markRaw(MaFormTreeSelect),
+  'MaFormInput': markRaw(MaFormInput),
+}) 
+
 const getComponentName = (formType) => {
   if (['select', 'radio', 'checkbox', 'transfer'].includes(formType)) {
-    return `MaForm${upperCaseFirst(formType)}`
+    return componentList.value['MaFormSelect']
   } else if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(formType)) {
-    return `MaFormPicker`
+    return componentList.value['MaFormPicker']
   } else if (formType === 'cascader') {
-    return 'MaFormCascader'
+    return componentList.value['MaFormCascader']
   } else if (formType === 'tree-select') {
-    return 'MaFormTreeSelect'
+    return componentList.value['MaFormTreeSelect']
   } else {
-    return 'MaFormInput'
+    return componentList.value['MaFormInput']
   }
 }
 </script>
