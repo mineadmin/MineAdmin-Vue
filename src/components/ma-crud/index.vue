@@ -11,10 +11,6 @@
   <a-layout-content class="flex flex-col lg:h-full relative w-full">
     <div class="_crud-header flex flex-col mb-2" ref="crudHeaderRef">
       <ma-search
-        :columns="settingProps.columns"
-        :search-label-width="defaultCrud.searchLabelWidth"
-        :search-label-align="defaultCrud.searchLabelAlign"
-        :search-customer-layout="defaultCrud.searchCustomerLayout"
         @search="searchHandler"
         class="__search-panel"
         ref="maCrudSearch"
@@ -31,18 +27,18 @@
         </template>
       </ma-search>
     </div>
-    <div class="_crud-content">
+    <!-- <div class="_crud-content">
       <div class="operation-tools lg:flex justify-between mb-3" ref="crudOperationRef">
         <a-space class="lg:flex block lg:inline-block" >
           <slot name="tableBeforeButtons"></slot>
           <slot name="tableButtons">
             <a-button
-              v-if="defaultCrud.add.show"
-              v-auth="defaultCrud.add.auth || []"
-              v-role="defaultCrud.add.role || []"
+              v-if="options.add.show"
+              v-auth="options.add.auth || []"
+              v-role="options.add.role || []"
               @click="addAction" type="primary"
               class="w-full lg:w-auto mt-2 lg:mt-0"
-            ><icon-plus /> {{ defaultCrud.add.text || '新增' }}</a-button>
+            ><icon-plus /> {{ options.add.text || '新增' }}</a-button>
 
             <a-popconfirm
               content="确定要删除数据吗?"
@@ -50,12 +46,12 @@
               @ok="deletesMultipleAction"
             >
               <a-button
-                v-if="defaultCrud.delete.show"
-                v-auth="defaultCrud.delete.auth || []"
-                v-role="defaultCrud.delete.role || []"
+                v-if="options.delete.show"
+                v-auth="options.delete.auth || []"
+                v-role="options.delete.role || []"
                 type="primary" status="danger"
                 class="w-full lg:w-auto mt-2 lg:mt-0"
-              ><icon-delete /> {{ isRecovery ? defaultCrud.delete.realText || '删除' : defaultCrud.delete.text || '删除' }}</a-button>
+              ><icon-delete /> {{ isRecovery ? options.delete.realText || '删除' : options.delete.text || '删除' }}</a-button>
             </a-popconfirm>
 
             <a-popconfirm
@@ -64,34 +60,34 @@
               @ok="recoverysMultipleAction"
             >
               <a-button
-                v-if="defaultCrud.recovery.show && isRecovery"
-                v-auth="defaultCrud.recovery.auth || []"
-                v-role="defaultCrud.recovery.role || []"
+                v-if="options.recovery.show && isRecovery"
+                v-auth="options.recovery.auth || []"
+                v-role="options.recovery.role || []"
                 type="primary" status="success"
                 class="w-full lg:w-auto mt-2 lg:mt-0"
-              ><icon-undo /> {{ defaultCrud.recovery.text || '恢复' }}</a-button>
+              ><icon-undo /> {{ options.recovery.text || '恢复' }}</a-button>
             </a-popconfirm>
 
             <a-button
-              v-if="defaultCrud.import.show"
-              v-auth="defaultCrud.import.auth || []"
-              v-role="defaultCrud.import.role || []"
+              v-if="options.import.show"
+              v-auth="options.import.auth || []"
+              v-role="options.import.role || []"
               @click="importAction"
               class="w-full lg:w-auto mt-2 lg:mt-0"
-            ><icon-upload /> {{ defaultCrud.import.text || '导入' }}</a-button>
+            ><icon-upload /> {{ options.import.text || '导入' }}</a-button>
 
             <a-button
-              v-if="defaultCrud.export.show"
-              v-auth="defaultCrud.export.auth || []"
-              v-role="defaultCrud.export.role || []"
+              v-if="options.export.show"
+              v-auth="options.export.auth || []"
+              v-role="options.export.role || []"
               @click="exportAction"
               class="w-full lg:w-auto mt-2 lg:mt-0"
-            ><icon-download /> {{ defaultCrud.export.text || '导出' }}</a-button>
+            ><icon-download /> {{ options.export.text || '导出' }}</a-button>
 
             <a-button
               type="secondary"
               @click="handlerExpand"
-              v-if="defaultCrud.isExpand"
+              v-if="options.isExpand"
               class="w-full lg:w-auto mt-2 lg:mt-0"
             >
               <icon-expand v-if="! expandState" />
@@ -101,11 +97,11 @@
           </slot>
           <slot name="tableAfterButtons"></slot>
         </a-space>
-        <a-space class="lg:mt-0 mt-2" v-if="defaultCrud.showTools">
+        <a-space class="lg:mt-0 mt-2" v-if="options.showTools">
           <slot name="tools"></slot>
           <a-tooltip
             :content="isRecovery ? '显示正常数据' : '显示回收站数据'"
-            v-if="defaultCrud.recycleApi && isFunction(defaultCrud.recycleApi)"
+            v-if="options.recycleApi && isFunction(options.recycleApi)"
           >
             <a-button
               shape="circle"
@@ -122,21 +118,21 @@
           <a-table
             v-bind="$attrs"
             ref="tableRef"
-            :key="defaultCrud.pk"
+            :key="options.pk"
             :data="tableData"
             :loading="loading"
-            :sticky-header="defaultCrud.stickyHeader"
-            :pagination="settingProps.pagination"
-            :stripe="defaultCrud.stripe"
-            :bordered="defaultCrud.bordered"
-            :rowSelection="defaultCrud.rowSelection || undefined"
-            :row-key="defaultCrud.rowSelection && defaultCrud.rowSelection.key || 'id'"
-            :scroll="defaultCrud.scroll"
-            :column-resizable="defaultCrud.resizable"
-            :size="defaultCrud.size"
-            :hide-expand-button-on-empty="defaultCrud.hideExpandButtonOnEmpty"
-            :default-expand-all-rows="defaultCrud.expandAllRows"
-            :summary="defaultCrud.customerSummary || __summary || defaultCrud.showSummary"
+            :sticky-header="options.stickyHeader"
+            :pagination="props.pagination"
+            :stripe="options.stripe"
+            :bordered="options.bordered"
+            :rowSelection="options.rowSelection || undefined"
+            :row-key="options.rowSelection && options.rowSelection.key || 'id'"
+            :scroll="options.scroll"
+            :column-resizable="options.resizable"
+            :size="options.size"
+            :hide-expand-button-on-empty="options.hideExpandButtonOnEmpty"
+            :default-expand-all-rows="options.expandAllRows"
+            :summary="options.customerSummary || __summary || options.showSummary"
             @selection-change="setSelecteds"
             @sorter-change="handlerSort"
           >
@@ -144,13 +140,13 @@
               <tr class="ma-crud-table-tr" @dblclick="dbClickOpenEdit(record)" />
             </template>
 
-            <template #expand-row="record" v-if="defaultCrud.showExpandRow">
+            <template #expand-row="record" v-if="options.showExpandRow">
               <slot name="expand-row" v-bind="record"></slot>
             </template>
             <template #columns>
               <ma-column
                 v-if="reloadColumn"
-                :options="defaultCrud"
+                :options="options"
                 :columns="columns"
                 :searchRef="maCrudSearch"
                 :formRef="maCrudForm"
@@ -180,14 +176,14 @@
                 </template>
               </ma-column>
             </template>
-            <template #summary-cell="{ column, record, rowIndex }" v-if="defaultCrud.customerSummary || defaultCrud.showSummary">
+            <template #summary-cell="{ column, record, rowIndex }" v-if="options.customerSummary || options.showSummary">
               <slot name="summaryCell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
             </template>
           </a-table>
         </slot>
       </div>
     </div>
-    <div class="_crud-footer mt-3 text-right" ref="crudFooterRef" v-if="total > 0 && openPagination && !settingProps.pagination">
+    <div class="_crud-footer mt-3 text-right" ref="crudFooterRef" v-if="total > 0 && openPagination && !props.pagination">
       <a-pagination
         :total="total"
         show-total show-jumper show-page-size
@@ -198,34 +194,35 @@
         :page-size="requestParams[config.request.pageSize]"
         style="display: inline-flex"
       />
-    </div>
+    </div> -->
 
-    <ma-setting
+    <!-- <ma-setting
       ref="maCrudSetting"
       v-model="columns"
-      v-model:crud="defaultCrud"
+      v-model:crud="options"
     />
 
     <ma-form
       ref="maCrudForm"
       v-model="columns"
-      v-model:crud="defaultCrud"
+      v-model:crud="options"
       @success="requestSuccess"
     />
 
     <ma-import
       ref="maCrudImport"
-      v-model="defaultCrud.import"
+      v-model="options.import"
     />
 
-    <a-image-preview :src="imgUrl" v-model:visible="imgVisible" />
+    <a-image-preview :src="imgUrl" v-model:visible="imgVisible" /> -->
   </a-layout-content>
 </template>
 
 <script setup>
 import config from '@/config/crud'
 import { isFunction } from '@vue/shared'
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, provide, nextTick } from 'vue'
+import defaultOptions from './js/defaultOptions'
 
 import MaSearch from './components/search.vue'
 import MaForm from './components/form.vue'
@@ -239,6 +236,15 @@ import { request } from '@/utils/request'
 import tool from '@/utils/tool'
 import { isArray } from 'lodash'
 import globalColumn from '@/config/column.js'
+
+const props = defineProps({
+  // 表格数据
+  data: { type: [ Function, Array ], default: () => null },
+  // 增删改查设置
+  options: Object,
+  // 字段列设置
+  columns: { type: Array, default: [] }
+})
 
 const loading = ref(true)
 const reloadColumn = ref(true)
@@ -272,185 +278,19 @@ const maCrudSetting = ref(null)
 const maCrudForm = ref(null)
 const maCrudImport = ref(null)
 
-const defaultCrud = ref({
-  // 主键名称
-  pk: 'id',
-  // 设置选择列
-  rowSelection: undefined,
-  // 是否显示边框
-  bordered: { wrapper: true, cell: false },
-  // 是否开启拖拽排序
-  dragSort: false,
-  // 子节点为空隐藏节点按钮
-  hideExpandButtonOnEmpty: true,
-  // 默认展开所有行
-  expandAllRows: false,
-  // 默认展开搜索
-  expandSearch: true,
-  // 斑马线
-  stripe: true,
-  // 新增、编辑、删除完成后是否刷新表格
-  dataCompleteRefresh: true,
-  // 表格大小
-  size: 'large',
-  // 是否开启双击编辑数据
-  isDbClickEdit: true,
-  // 是否显示展开/折叠按钮
-  isExpand: false,
-  // 是否显示自定义
-  showExpandRow: false,
-  // 是否显示总结行
-  showSummary: false,
-  // 自定义总结行，要传入函数
-  customerSummary: false,
-  // 是否显示工具栏
-  showTools: true,
-  // 表头是否吸顶
-  stickyHeader: true,
-  // 开启新增编辑组件显示顺序自定义
-  openViewOrdered: false,
-  // 页面布局方式，支持 normal（标准）和 fixed（固定）两种
-  pageLayout: 'normal',
-  // 默认统一设置列宽度
-  columnWidth: 100,
-  // 新增和编辑显示设置
-  viewLayoutSetting: {
-    // 布局方式, 支持 auto（自动） 和 customer（自定义）两种
-    layout: 'auto',
-    // 显示方式支持模态框和抽屉: modal drawer
-    viewType: 'modal',
-    // 显示宽度
-    width: 600,
-    // 是否全屏，只有modal有效
-    isFull: false,
-    // 表单设置一行多少列，会自适应，在布局为 auto 下生效
-    cols: 1,
-    // 标签对齐方式
-    labelAlign: 'right'
-  },
-  // 搜索栏是否自定义布局
-  searchCustomerLayout: false,
-  add: {
-    // 新增api
-    api: undefined,
-    // 显示新增按钮的权限
-    auth: [],
-    // 显示新增按钮的角色
-    role: [],
-    // 按钮文案
-    text: '新增',
-    // 是否显示
-    show: false,
-  },
-  edit: {
-    // 编辑api
-    api: undefined,
-    // 显示编辑按钮的权限
-    auth: [],
-    // 显示编辑按钮的角色
-    role: [],
-    // 按钮文案
-    text: '编辑',
-    // 是否显示
-    show: false,
-  },
-  delete: {
+const options = ref(Object.assign(defaultOptions, props.options))
 
-    // 删除api
-    api: undefined,
-    // 显示删除按钮的权限
-    auth: [],
-    // 显示删除按钮的角色
-    role: [],
-    // 按钮文案
-    text: '删除',
+provide('options', options.value)
+provide('columns', props.columns)
 
-    // 真实删除api
-    realApi: undefined,
-    // 显示真实删除按钮的权限
-    realAuth: [],
-    // 显示真实删除按钮的角色
-    realRole: [],
-    // 真实按钮文案
-    realText: '删除',
-
-    // 是否显示
-    show: false,
-  },
-  recovery: {
-    // 恢复api
-    api: undefined,
-    // 显示恢复按钮的权限
-    auth: [],
-    // 显示恢复按钮的角色
-    role: [],
-    // 按钮文案
-    text: '恢复',
-    // 是否显示
-    show: false,
-  },
-  // see: {
-  //   // 显示查看按钮的权限
-  //   auth: [],
-  //   // 显示查看按钮的角色
-  //   role: [],
-  //   // 按钮文案
-  //   text: '查看',
-  //   // 是否显示
-  //   show: false,
-  // },
-  import: {
-    // 导入url
-    url: undefined,
-    // 下载模板地址
-    templateUrl: undefined,
-    // 显示导入按钮的权限
-    auth: [],
-    // 显示导入按钮的角色
-    role: [],
-    // 按钮文案
-    text: '导入',
-    // 是否显示
-    show: false,
-  },
-  export: {
-    // 导出url
-    url: undefined,
-    // 显示导出按钮的权限
-    auth: [],
-    // 显示导出按钮的角色
-    role: [],
-    // 按钮文案
-    text: '导出',
-    // 是否显示
-    show: false,
-  },
-  // 是否显示索引列
-  showIndex: false,
-  // 索引列名称
-  indexLabel: '序号',
-  // 设置请求数据label
-  requestParamsLabel: undefined,
-  // 表格滚动默认宽高
-  scroll: { x: '100%', y: '100%' },
-  // 调整列宽
-  resizable: true,
-  // 是否显示操作列
-  operationColumn: false,
-  // 操作列宽度
-  operationWidth: 160,
-  // 操作列名称
-  operationColumnText: '操作',
-})
-
-watch(() => settingProps.pageSizeOption, (val) => {
+watch(() => options.pageSizeOption, (val) => {
   pageSizeOption.value = val
 })
 
 watch(
   () => {
     return {
-      pageLayout: defaultCrud.value.pageLayout,
+      pageLayout: options.value.pageLayout,
       openPagination: openPagination.value,
     }
   },
@@ -464,11 +304,11 @@ watch(
   }
 )
 
-watch(() => settingProps.crud.requestParams, (val) => {
+watch(() => options.value.requestParams, (val) => {
   requestParams.value = val
 }, { deep: true })
 
-watch(() => settingProps.api, () => {
+watch(() => props.api, () => {
   requestData()
 }, { deep: true })
 
@@ -492,7 +332,7 @@ const showImage = url => {
 
 const getSearchSlot = () => {
   let sls = []
-  settingProps.columns.map(item => {
+  props.columns.map(item => {
     if (item.search && item.search === true) {
       sls.push(item.dataIndex)
     }
@@ -500,37 +340,37 @@ const getSearchSlot = () => {
   return sls
 }
 
-slots.value = getSlot(settingProps.columns)
-searchSlots.value = getSearchSlot(settingProps.columns)
+slots.value = getSlot(props.columns)
+searchSlots.value = getSearchSlot(props.columns)
 
 const requestData = async () => {
-  defaultCrud.value = Object.assign(defaultCrud.value, settingProps.crud)
-  columns.value = Object.assign(settingProps.columns, {})
+  options.value = Object.assign(options.value, options.value)
+  columns.value = Object.assign(props.columns, {})
   columns.value.map((item, index) => {
     // 公用模板
     if (item.common && globalColumn[item.dataIndex]) {
       columns.value[index] = globalColumn[item.dataIndex]
     }
-    !item.width && (item.width = defaultCrud.value.columnWidth)
+    !item.width && (item.width = options.value.columnWidth)
   })
-  if (defaultCrud.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {
-    columns.value.unshift({ title: defaultCrud.value.indexLabel, dataIndex: '__index', width: 70, fixed: 'left' })
+  if (options.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {
+    columns.value.unshift({ title: options.value.indexLabel, dataIndex: '__index', width: 70, fixed: 'left' })
   }
-  if (defaultCrud.value.operationColumn && columns.value.length > 0 && columns.value[columns.value.length - 1].dataIndex !== '__operation') {
-    columns.value.push({ title: defaultCrud.value.operationColumnText, dataIndex: '__operation', width: defaultCrud.value.operationWidth, align: 'right', fixed: 'right' })
+  if (options.value.operationColumn && columns.value.length > 0 && columns.value[columns.value.length - 1].dataIndex !== '__operation') {
+    columns.value.push({ title: options.value.operationColumnText, dataIndex: '__operation', width: options.value.operationWidth, align: 'right', fixed: 'right' })
   }
-  showSearch.value = !defaultCrud.value.expandSearch
+  showSearch.value = !options.value.expandSearch
   initRequestParams()
   await refresh()
 }
 
 const initRequestParams = () => {
   requestParams.value[config.request.page] = 1
-  requestParams.value[config.request.pageSize] = settingProps.pageSize ?? config.pageSize
-  if (settingProps.crud.requestParamsLabel) {
-    requestParams.value[settingProps.crud.requestParamsLabel] = settingProps.crud.requestParams
+  requestParams.value[config.request.pageSize] = props.pageSize ?? config.pageSize
+  if (options.value.requestParamsLabel) {
+    requestParams.value[options.value.requestParamsLabel] = options.value.requestParams
   } else {
-    requestParams.value = Object.assign(requestParams.value, settingProps.crud.requestParams)
+    requestParams.value = Object.assign(requestParams.value, options.value.requestParams)
   }
 }
 
@@ -538,7 +378,7 @@ const requestHandle = async () => {
 
   loading.value = true
 
-  isFunction(settingProps.crud.beforeRequest) && settingProps.crud.beforeRequest(requestParams.value)
+  isFunction(options.value.beforeRequest) && options.value.beforeRequest(requestParams.value)
 
   if (isFunction(currentApi.value)) {
     const response = config.parseResponseData(await currentApi.value(requestParams.value))
@@ -554,14 +394,14 @@ const requestHandle = async () => {
   } else {
     console.error(`ma-crud error：crud.api not is Function.`)
   }
-  isFunction(settingProps.crud.afterRequest) && settingProps.crud.afterRequest(tableData.value)
+  isFunction(options.value.afterRequest) && options.value.afterRequest(tableData.value)
   loading.value = false
 }
 
 const refresh = async () => {
-  if (settingProps.data) {
+  if (props.data) {
     loading.value = true
-    const data = isArray(settingProps.data) ? settingProps.data : config.parseResponseData(await settingProps.data(requestParams.value))
+    const data = isArray(props.data) ? props.data : config.parseResponseData(await props.data(requestParams.value))
     if (data.rows) {
       tableData.value = data.rows
       openPagination.value = true
@@ -570,23 +410,23 @@ const refresh = async () => {
     }
     loading.value = false
   } else {
-    currentApi.value = isRecovery.value && defaultCrud.value.recycleApi && isFunction(defaultCrud.value.recycleApi)
-    ? defaultCrud.value.recycleApi
-    : defaultCrud.value.api
+    currentApi.value = isRecovery.value && options.value.recycleApi && isFunction(options.value.recycleApi)
+    ? options.value.recycleApi
+    : options.value.api
     await requestHandle()
   }
 }
 
 const searchHandler = (formData) => {
-  if (settingProps.crud.requestParamsLabel && requestParams.value[settingProps.crud.requestParamsLabel]) {
-    requestParams.value[settingProps.crud.requestParamsLabel] = Object.assign(requestParams.value[settingProps.crud.requestParamsLabel], formData)
-  } else if (settingProps.crud.requestParamsLabel) {
-    requestParams.value[settingProps.crud.requestParamsLabel] = Object.assign({}, formData)
+  if (options.value.requestParamsLabel && requestParams.value[options.value.requestParamsLabel]) {
+    requestParams.value[options.value.requestParamsLabel] = Object.assign(requestParams.value[options.value.requestParamsLabel], formData)
+  } else if (options.value.requestParamsLabel) {
+    requestParams.value[options.value.requestParamsLabel] = Object.assign({}, formData)
   } else {
     requestParams.value = Object.assign(requestParams.value, formData)
   }
-  if (settingProps.crud.beforeSearch && isFunction(settingProps.crud.beforeSearch)) {
-    settingProps.crud.beforeSearch(requestParams.value)
+  if (options.value.beforeSearch && isFunction(options.value.beforeSearch)) {
+    options.value.beforeSearch(requestParams.value)
   }
   pageChangeHandler(1)
 }
@@ -612,7 +452,7 @@ const toggleSearch = () => {
     } else {
       headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? -8 : crudHeaderRef.value.offsetHeight
     }
-    defaultCrud.value.pageLayout == 'fixed' && settingFixedPage()
+    options.value.pageLayout == 'fixed' && settingFixedPage()
   }
 }
 
@@ -622,7 +462,7 @@ const tableSetting = () => {
 
 const requestSuccess = async response => {
   if (response && response.code && response.code == 200) {
-    defaultCrud.value.dataCompleteRefresh && await refresh()
+    options.value.dataCompleteRefresh && await refresh()
     if (reloadColumn.value) {
       reloadColumn.value = false
       nextTick(() => {
@@ -641,31 +481,31 @@ const getIndex = (rowIndex) => {
 }
 
 const addAction = () => {
-  isFunction(defaultCrud.value.beforeOpenAdd) && defaultCrud.value.beforeOpenAdd()
+  isFunction(options.value.beforeOpenAdd) && options.value.beforeOpenAdd()
   maCrudForm.value.add()
 }
 
 const editAction = (record) => {
-  isFunction(defaultCrud.value.beforeOpenEdit) && defaultCrud.value.beforeOpenEdit(record)
+  isFunction(options.value.beforeOpenEdit) && options.value.beforeOpenEdit(record)
   maCrudForm.value.edit(record)
 }
 
 const dbClickOpenEdit = (record) => {
-  if (defaultCrud.value.isDbClickEdit) {
+  if (options.value.isDbClickEdit) {
     if (isRecovery.value) {
       Message.error('回收站数据不可编辑')
       return
     }
 
-    if (isArray(defaultCrud.value.edit.auth)) {
-      for (let index in defaultCrud.value.edit.auth) {
-        if (! checkAuth(defaultCrud.value.edit.auth[index])) {
+    if (isArray(options.value.edit.auth)) {
+      for (let index in options.value.edit.auth) {
+        if (! checkAuth(options.value.edit.auth[index])) {
           Message.error('没有编辑数据的权限')
           return
         }
       }
 
-      if (defaultCrud.value.edit.api && isFunction(defaultCrud.value.edit.api)) {
+      if (options.value.edit.api && isFunction(options.value.edit.api)) {
         editAction(record)
       }
     }
@@ -677,10 +517,10 @@ const importAction = () => maCrudImport.value.open()
 
 const exportAction = () => {
   Message.info('请求服务器下载文件中...')
-  const data = settingProps.crud.requestParamsLabel ? requestParams.value[settingProps.crud.requestParamsLabel] : requestParams.value
+  const data = options.value.requestParamsLabel ? requestParams.value[options.value.requestParamsLabel] : requestParams.value
   const download = (url) => request({ url, data, method: 'post', timeout: 60 * 1000, responseType: 'blob' })
 
-  download(defaultCrud.value.export.url).then(res => {
+  download(options.value.export.url).then(res => {
     tool.download(res)
     Message.success('请求成功，文件开始下载')
   }).catch(e => {
@@ -690,14 +530,14 @@ const exportAction = () => {
 
 const deletesMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
-    const api = isRecovery.value ? defaultCrud.value.delete.realApi : defaultCrud.value.delete.api
+    const api = isRecovery.value ? options.value.delete.realApi : options.value.delete.api
     let data = {}
-    if (defaultCrud.value.beforeDelete && isFunction(defaultCrud.value.beforeDelete)) {
-      data = defaultCrud.value.beforeDelete()
+    if (options.value.beforeDelete && isFunction(options.value.beforeDelete)) {
+      data = options.value.beforeDelete()
     }
     const response = await api(Object.assign( { ids: selecteds.value }, data ))
-    if (defaultCrud.value.afterDelete && isFunction(defaultCrud.value.afterDelete)) {
-      defaultCrud.value.afterDelete(response)
+    if (options.value.afterDelete && isFunction(options.value.afterDelete)) {
+      options.value.afterDelete(response)
     }
     Message.success(response.message || `删除成功！`)
     refresh()
@@ -708,7 +548,7 @@ const deletesMultipleAction = async () => {
 
 const recoverysMultipleAction = async() => {
   if (selecteds.value && selecteds.value.length > 0) {
-    const response = await defaultCrud.value.recovery.api({ ids: selecteds.value })
+    const response = await options.value.recovery.api({ ids: selecteds.value })
     Message.success(response.message || `恢复成功！`)
     refresh()
   } else {
@@ -722,9 +562,9 @@ const setSelecteds = (key) => {
 
 const switchDataType = () => {
   isRecovery.value = ! isRecovery.value
-  currentApi.value = isRecovery.value && defaultCrud.value.recycleApi && isFunction(defaultCrud.value.recycleApi)
-    ? defaultCrud.value.recycleApi
-    : defaultCrud.value.api
+  currentApi.value = isRecovery.value && options.value.recycleApi && isFunction(options.value.recycleApi)
+    ? options.value.recycleApi
+    : options.value.api
   requestData()
 }
 
@@ -752,8 +592,8 @@ const getTableData = () => {
 }
 
 const __summary = ({ data }) => {
-  if (defaultCrud.value.showSummary && isArray(defaultCrud.value.summary)) {
-    const summary = defaultCrud.value.summary
+  if (options.value.showSummary && isArray(options.value.summary)) {
+    const summary = options.value.summary
     let summaryData = {}
     let length = data.length || 0
     summary.map( item => {
@@ -778,45 +618,7 @@ const __summary = ({ data }) => {
   }
 }
 
-const settingProps = defineProps({
-
-  // 表格数据
-  data: { type: [ Function, Array ], default: () => null },
-  // 是否开启表格分页
-  pagination: { type: Boolean, default: false },
-  // 设置每页记录数
-  pageSizeOption: { type: Array, default: () => [] },
-  // 每页记录数，会覆盖掉 config/crud.js 的全局配置
-  pageSize: undefined,
-
-  // 增删改查设置
-  crud: {
-    type: Object,
-    default: () => { return {
-        // 请求api方法
-        api: () => {},
-        // 请求回收站api方法
-        recycleApi: undefined,
-        // 请求前置处理
-        beforeRequest: () => {},
-        // 请求后置处理
-        afterRequest: () => {},
-        // 请求参数
-        requestParams: {},
-        // 是否自动请求
-        autoRequest: true,
-      }
-    }
-  },
-
-  // 字段列设置
-  columns: {
-    type: Object,
-    default: () => {}
-  }
-})
-
-if (typeof settingProps.crud.autoRequest == 'undefined' || settingProps.crud.autoRequest) {
+if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {
   nextTick()
   requestData()
 }

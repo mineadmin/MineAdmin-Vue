@@ -18,27 +18,28 @@ const options = ref({
   labelAlign: "right",
 });
 const columns = ref([
-  // {
-  //   formType: "tabs",
-  //   dataIndex: 'tabs',
-  //   tabs: [
-  //     {
-  //       title: 'Tab布局',
-  //       formList: [{
-  //         title: "标题",
-  //         dataIndex: "title",
-  //         formType: "select",
-  //         dict: { name:'data_status' },
-  //         cascaderItem: ['title2']
-  //       },{
-  //         title: "标题2",
-  //         dataIndex: "title2",
-  //         formType: "select",
-  //         dict: { url: 'system/common/cascader' }
-  //       }]
-  //     }
-  //   ]
-  // },
+  {
+    formType: "tabs",
+    dataIndex: 'tabs',
+    hideContent: true,
+    tabs: [
+      {
+        title: 'Tab布局',
+        formList: [{
+          title: "标题",
+          dataIndex: "title",
+          formType: "select",
+          dict: { name:'data_status' },
+          cascaderItem: ['title2']
+        },{
+          title: "标题2",
+          dataIndex: "title2",
+          formType: "select",
+          dict: { url: 'system/common/cascader' }
+        }]
+      }
+    ]
+  },
   // {
   //   formType: 'user-select',
   //   dataIndex: 'haha',
@@ -46,23 +47,23 @@ const columns = ref([
   //   title: '哈哈',
   //   isEcho: true,
   // },
-  {
-    formType: "children-form",
-    dataIndex: 'sub',
-    type: 'table',
-    title: '子表单哇塞',
-    formList: [{
-      title: "标题",
-      dataIndex: "title",
-      formType: "select",
-      dict: { name: 'data_status' },
-      cascaderItem: ['title2']
-    },{
-      title: "标题2",
-      dataIndex: "title2",
-      formType: "select",
-      dict: { url: 'system/common/cascader' }
-    }]
-  }
+  // {
+  //   formType: "children-form",
+  //   dataIndex: 'sub',
+  //   type: 'table',
+  //   title: '子表单哇塞',
+  //   formList: [{
+  //     title: "标题",
+  //     dataIndex: "title",
+  //     formType: "select",
+  //     dict: { name: 'data_status' },
+  //     cascaderItem: ['title2']
+  //   },{
+  //     title: "标题2",
+  //     dataIndex: "title2",
+  //     formType: "select",
+  //     dict: { url: 'system/common/cascader' }
+  //   }]
+  // }
 ])
 </script>
