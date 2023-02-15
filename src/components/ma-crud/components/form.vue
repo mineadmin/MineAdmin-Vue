@@ -541,53 +541,6 @@
                     />
                   </template>
 
-                  <ma-form-table
-                    v-else-if="item.formType === 'form-table'"
-                    v-model="form[item.dataIndex]"
-                    :columns="item.childrenForm"
-                    :config="item.formTableConfig ?? {}"
-                    :dataIndex="item.dataIndex"
-                    :parentColumns="columns"
-                    :emptyRow="item.emptyRow ?? 0"
-                    :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
-                  >
-                    <template #formTableButton>
-                      <slot name="formTableButton" />
-                    </template>
-                    <template
-                      v-for="(tableItem, tableIndex) in item.childrenForm"
-                      :key="tableIndex"
-                      #[tableItem.dataIndex]="{ record }"
-                    >
-                      <slot
-                        :name="`${item.dataIndex}-${tableItem.dataIndex}`"
-                        v-bind="{ record, tableItem, tableIndex }"
-                      />
-                    </template>
-                  </ma-form-table>
-
-                  <ma-form-group
-                    v-else
-                    v-model="form[item.dataIndex]"
-                    :options="item.childrenOptions"
-                    :columns="item.childrenForm"
-                    :config="item.formTableConfig ?? {}"
-                    :dataIndex="item.dataIndex"
-                    :emptyRow="item.emptyRow ?? 0"
-                    :cascaderKeys="formTableKeys[item.dataIndex] ?? {}"
-                  >
-                    <template
-                      v-for="(groupItem, groupIndex) in item.childrenForm"
-                      :key="groupIndex"
-                      #[groupItem.dataIndex]="{ data }"
-                    >
-                      <slot
-                        :name="`${item.dataIndex}-${groupItem.dataIndex}`"
-                        v-bind="{ data, groupItem, groupIndex }"
-                      />
-                    </template>
-                  </ma-form-group>
-
                   <template #extra v-if="item.formExtra">{{ item.formExtra }}</template>
                 </a-form-item>
               </a-col>
@@ -604,10 +557,7 @@ import { ref, nextTick, watch, toRaw, getCurrentInstance, provide } from 'vue'
 import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
-import { handlerProps } from '../js/common'
 import { isArray, isFunction, concat, get } from 'lodash'
-import MaFormGroup from '@/components/ma-form/formGroup.vue'
-import MaFormTable from '@/components/ma-form/formTable.vue'
 
 const app = getCurrentInstance().appContext.app
 const componentName = ref('a-modal')

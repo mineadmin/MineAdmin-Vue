@@ -8,12 +8,12 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <a-spin :loading="searchLoading" tip="加载数据中..." v-if="showSearch">
+  <a-spin :loading="searchLoading" :tip="options.searchLoadingText" v-if="showSearch">
     <a-form
       :model="searchForm"
       layout="inline"
       :label-align="options?.searchLabelAlign"
-      ref="search"
+      ref="searchRef"
       @submit="handlerSearch"
     >
       <div :class="[ gridClass, options?.searchCustomClass ]">
@@ -21,6 +21,7 @@
           <a-form-item
             :field="component.dataIndex"
             :label="component.title"
+            label-col-flex="auto"
             :label-col-style="{ width: component.searchLabelWidth ?? options.searchLabelWidth }"
           >
             <slot :name="`${component.dataIndex}`" v-bind="{ searchForm, component }">
@@ -31,9 +32,18 @@
       </div>
       <div class="text-center mt-5 w-full">
         <a-space size="medium">
-          <a-button type="primary" html-type="submit"><icon-search /> 提交</a-button>
-          <a-button @click="() => { search.resetField() }"><icon-delete /> 清空</a-button>
-          <slot name="searchButtons" />
+          <slot name="searchBeforeButtons" />
+          <slot name="searchButtons">
+            <a-button type="primary" html-type="submit">
+              <template #icon><icon-search /></template>
+              {{ options.searchSubmitButtonText }}
+            </a-button>
+            <a-button @click="resetSearch">
+              <template #icon><icon-delete /></template>
+              {{ options.searchResetButtonText }}
+            </a-button>
+          </slot>
+          <slot name="searchAfterButtons" />
         </a-space>
       </div>
     </a-form>
@@ -47,11 +57,7 @@ import MaFormPicker from './searchFormItem/form-picker.vue'
 import MaFormSelect from './searchFormItem/form-select.vue'
 import MaFormCascader from './searchFormItem/form-cascader.vue'
 import MaFormTreeSelect from './searchFormItem/form-tree-select.vue'
-import { upperCaseFirst } from '@/components/ma-newForm/js/utils'
-import { isFunction, isArray, concat } from 'lodash'
-import { Message } from '@arco-design/web-vue'
-import commonApi from '@/api/common'
-import { handlerProps } from '../js/common'
+import { upperCaseFirst } from '@/components/ma-form/js/utils'
 
 const options = inject('options')
 const columns = inject('columns')
@@ -61,21 +67,26 @@ const gridClass = ref(['ma-search-grid', 'w-full', 'grid', 'lg:grid-cols-' + opt
 
 const searchLoading = ref(false)
 const showSearch = ref(true)
-const search = ref(null)
+const searchRef = ref(null)
 const searchColumns = ref([])
 
 const searchForm = ref({})
 
 provide('searchForm', searchForm.value)
 
-const emits = defineEmits(['search'])
+const emit = defineEmits(['search'])
 
 if (columns.length > 0) {
   searchColumns.value = columns.filter( item => item.search === true )
 }
 
 const handlerSearch = () => {
-  emit('search', Object.assign(requestParams, searchForm.value))
+  emit('search', searchForm.value)
+}
+
+const resetSearch = () => {
+  searchRef.value.resetFields()
+  emit('search', searchForm.value)
 }
 
 const componentList = ref({
@@ -99,6 +110,18 @@ const getComponentName = (formType) => {
     return componentList.value['MaFormInput']
   }
 }
+
+const setSearchHidden = () => showSearch.value = false
+const setSearchDisplay = () => showSearch.value = true
+const setSearchLoading = () => searchLoading.value = true
+const setSearchUnLoading = () => searchLoading.value = false
+const getSearchFormRef = () => searchRef.value
+const getSearchColumns = () => searchColumns.value
+
+defineExpose({
+  getSearchFormRef, getSearchColumns,
+  setSearchHidden, setSearchDisplay, setSearchLoading, setSearchUnLoading
+})
 </script>
 
 <style scoped lang="less">

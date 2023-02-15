@@ -12,12 +12,9 @@
 
     <template #title>设置</template>
 
-    <a-alert>表格总宽度是配合固定列使用，默认100%，支持px</a-alert>
-    <a-input @change="changeTableWidth" v-model="tableWidth" placeholder="设置表格总宽度" class="mt-1" />
-
     <a-space class="mt-3">
       <span>表格大小：</span>
-      <a-radio-group type="button" v-model="crud.size">
+      <a-radio-group type="button" v-model="options.size">
         <a-radio value="mini">迷你</a-radio>
         <a-radio value="small">小</a-radio>
         <a-radio value="medium">中</a-radio>
@@ -30,12 +27,12 @@
         <a-radio value="row">不显示行</a-radio>
         <a-radio value="column">不显示列</a-radio>
       </a-radio-group>
-      <a-checkbox v-model="crud.stripe" class="ml-3">斑马纹</a-checkbox>
+      <a-checkbox v-model="options.stripe" class="ml-3">斑马纹</a-checkbox>
     </a-space>
 
     <a-alert type="warning" class="mt-2">排序：本页是指当前页排序；服务器是指后台排序，若自定义服务器排序可用 <a-tag>@sorterChange</a-tag> 事件来实现</a-alert>
     <a-table
-      :data="data"
+      :data="columns"
       :pagination="false"
       :bordered="{ wrapper: true, cell: false }"
       :draggable="{ type: 'handle', width: 40 }"
@@ -89,41 +86,17 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, inject } from 'vue'
 
-const props = defineProps({
-  modelValue: Array,
-  crud: Object
-})
+const options = inject('options')
+const columns = inject('columns')
 
 const visible = ref(false)
-const data = ref([])
-const crud = ref([])
-const sourceScroll = ref({})
 const tableWidth = ref('100%')
 const bordered = ref('column')
 
-const emits = defineEmits(['update:modelValue', 'update:crud'])
-
-watch(
-  () => data.value,
-  (val) => {
-    emits('update:modelValue', val)
-  }
-)
-
-watch(
-  () => crud.value,
-  (val) => {
-    emits('update:crud', val)
-  }
-)
-
 const open = () => {
   visible.value = true
-  data.value = props.modelValue
-  crud.value = props.crud
-  sourceScroll.value = Object.assign(crud.value.scroll, {})
 }
 
 const onCancel = () => {
@@ -131,43 +104,37 @@ const onCancel = () => {
 }
 
 const changeColumn = (ev, type, name) => {
-  let index
-  data.value.map((item, idx) => { if (item.dataIndex === name) index = idx })
+  const column = columns.find( item =>  item.dataIndex === name )
   switch (type) {
     case 'order':
       if (ev === 'page') {
-        data.value[index].sortable = { sortDirections: ['ascend', 'descend'], sorter: false }
+        column.sortable = { sortDirections: ['ascend', 'descend'], sorter: false }
       } else if (ev === 'serve') {
-        data.value[index].sortable = { sortDirections: ['ascend', 'descend'], sorter: true }
+        column.sortable = { sortDirections: ['ascend', 'descend'], sorter: true }
       } else {
-        data.value[index].sortable = undefined
+        column.sortable = undefined
       }
       break
   }
 }
 
-const changeTableWidth = (val) => {
-  tableWidth.value = val
-  crud.value.scroll.x = val
-}
-
 const changeBordered = (v) => {
   if (v === 'hide') {
-    crud.value.bordered = { wrapper: false, cell: false }
+    options.bordered = { wrapper: false, cell: false }
   }
   if (v === 'show') {
-    crud.value.bordered = { wrapper: true, cell: true }
+    options.bordered = { wrapper: true, cell: true }
   }
   if (v === 'row') {
-    crud.value.bordered = { wrapper: false, cell: true }
+    options.bordered = { wrapper: false, cell: true }
   }
   if (v === 'column') {
-    crud.value.bordered = { wrapper: true, cell: false }
+    options.bordered = { wrapper: true, cell: false }
   }
 }
 
 const onTableChange = (_data) => {
-  data.value = _data
+  columns = _data
 }
 
 defineExpose({ open })

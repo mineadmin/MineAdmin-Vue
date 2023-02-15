@@ -14,7 +14,7 @@ export default {
   // 请求参数
   requestParams: {},
   // 设置分页组件每页记录数
-  pageSizeOption: [],
+  pageSizeOption: [10, 20, 30, 50, 100],
   // 是否开启表格分页
   tablePagination: false,
   // 设置选择列
@@ -51,31 +51,37 @@ export default {
   showTools: true,
   // 表头是否吸顶
   stickyHeader: true,
-  // 开启新增编辑组件显示顺序自定义
-  openViewOrdered: false,
   // 页面布局方式，支持 normal（标准）和 fixed（固定）两种
   pageLayout: 'normal',
   // 默认统一设置列宽度
   columnWidth: 100,
+
+  // 搜索标签对齐方式
+  searchLabelAlign: 'right',
+  // 全局搜索标签宽度
+  searchLabelWidth: '80px',
   // 搜索每行列数
   searchColNumber: 4,
-  // 新增和编辑显示设置
-  viewLayoutSetting: {
-    // 布局方式, 支持 auto（自动） 和 customer（自定义）两种
-    layout: 'auto',
-    // 显示方式支持模态框和抽屉: modal drawer
+  // 搜索提交按钮文案
+  searchSubmitButtonText: '提交',
+  // 搜索重置按钮文案
+  searchResetButtonText: '重置',
+  // 搜索栏加载提示文案
+  searchLoadingText: '加载数据中...',
+  // 搜索提交前置方法
+  beforeSearch: (requestParams) => {},
+  
+  // 表单配置项
+  formOption: {
+    // 显示方式支持模态框和抽屉: modal drawer tag
     viewType: 'modal',
     // 显示宽度
     width: 600,
     // 是否全屏，只有modal有效
     isFull: false,
-    // 表单设置一行多少列，会自适应，在布局为 auto 下生效
-    cols: 1,
-    // 标签对齐方式
-    labelAlign: 'right'
+    // 表单布局
+    layout: []
   },
-  // 搜索栏是否自定义布局
-  searchCustomerLayout: false,
   add: {
     // 新增api
     api: undefined,

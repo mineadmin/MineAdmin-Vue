@@ -1,16 +1,8 @@
 <template>
-  <template v-for="row in props.columns" :key="row[props.options.pk]">
+  <template v-for="row in columns" :key="row[options.pk]">
     <template v-if="!row.hide">
       <a-table-column :title="row.title" v-if="row.children && row.children.length > 0">
-        <column
-          :options="props.options"
-          :columns="row.children"
-          :searchRef="props.searchRef"
-          :formRef="props.formRef"
-          :isRecovery="props.isRecovery"
-          :params="props.params"
-          @refresh="() => refresh()"
-        >
+        <column @refresh="() => refresh()" >
           <template
             v-for="(childRow, childIndex) in row.children"
             :key="childIndex"
@@ -38,48 +30,48 @@
               <slot name="operationCell" v-bind="{ record, column, rowIndex }">
                 <!-- <a-link
                   v-if="
-                    props.options.see.show
-                    && ($common.auth(props.options.see.auth || [])
-                    || (props.options.see.role || []))
+                    options.see.show
+                    && ($common.auth(options.see.auth || [])
+                    || (options.see.role || []))
                   "
                   type="primary"
-                ><icon-eye /> {{ props.options.see.text || '查看' }}</a-link> -->
+                ><icon-eye /> {{ options.see.text || '查看' }}</a-link> -->
 
                 <a-link
-                  v-if="(isFunction(props.options.edit.show) ? props.options.edit.show(record):props.options.edit.show) && !props.isRecovery"
-                  v-auth="props.options.edit.auth || []"
-                  v-role="props.options.edit.role || []"
+                  v-if="(isFunction(options.edit.show) ? options.edit.show(record):options.edit.show) && !isRecovery"
+                  v-auth="options.edit.auth || []"
+                  v-role="options.edit.role || []"
                   type="primary"
                   @click="editAction(record)"
                 >
-                  <icon-edit /> {{ props.options.edit.text || '编辑' }}
+                  <icon-edit /> {{ options.edit.text || '编辑' }}
                 </a-link>
 
                 <a-popconfirm
                   content="确定要恢复该数据吗?"
                   position="bottom"
                   @ok="recoveryAction(record)"
-                  v-if="(isFunction(props.options.recovery.show) ? props.options.recovery.show(record):props.options.recovery.show) && props.isRecovery"
-                  v-auth="props.options.recovery.auth || []"
-                  v-role="props.options.recovery.role || []"
+                  v-if="(isFunction(options.recovery.show) ? options.recovery.show(record):options.recovery.show) && isRecovery"
+                  v-auth="options.recovery.auth || []"
+                  v-role="options.recovery.role || []"
                 >
-                  <a-link type="primary"> <icon-undo /> {{ props.options.recovery.text || '恢复' }} </a-link>
+                  <a-link type="primary"> <icon-undo /> {{ options.recovery.text || '恢复' }} </a-link>
                 </a-popconfirm>
 
                 <a-popconfirm
                   content="确定要删除该数据吗?"
                   position="bottom"
                   @ok="deleteAction(record)"
-                  v-if="(isFunction(props.options.delete.show) ? props.options.delete.show(record):props.options.delete.show)"
+                  v-if="(isFunction(options.delete.show) ? options.delete.show(record):options.delete.show)"
                 >
                   <a-link
                     type="primary"
-                    v-auth="props.options.delete.auth || []"
-                    v-role="props.options.delete.role || []"
+                    v-auth="options.delete.auth || []"
+                    v-role="options.delete.role || []"
                   >
                     <icon-delete />
                     {{
-                      props.isRecovery ? props.options.delete.realText || '删除' : props.options.delete.text || '删除'
+                      isRecovery ? options.delete.realText || '删除' : options.delete.text || '删除'
                     }}
                   </a-link>
                 </a-popconfirm>
@@ -120,22 +112,23 @@
 </template>
 
 <script setup>
-import { Message } from '@arco-design/web-vue'
+import { inject } from 'vue'
 import config from '@/config/crud'
+import { Message } from '@arco-design/web-vue'
 import { isFunction, get } from 'lodash'
 import CustomRender from '../js/custom-render'
 import tool from '@/utils/tool'
 import commonApi from '@/api/common'
 
 const emit = defineEmits(['refresh', 'showImage'])
-const props = defineProps({
-  options: Object,
-  searchRef: Object,
-  formRef: Object,
-  columns: Array,
-  params: Object,
-  isRecovery: Boolean,
-})
+
+const options = inject('options')
+const columns = inject('columns')
+const crudFormRef = inject('crudFormRef')
+const requestParams = inject('requestParams')
+const isRecovery = inject('isRecovery')
+const dictTrans = inject('dictTrans')
+const dictColors = inject('dictColors')
 
 const storageMode = {
   '1': 'LOCAL',
@@ -180,42 +173,42 @@ const imageSee = async (row, record) => {
 }
 
 const getTagColor = (row, record) => {
-  return props.searchRef.dictColors( row.dataIndex, (row.dataIndex.indexOf('.') > -1 ) ? get(record, row.dataIndex) : record[row.dataIndex] )
+  return dictColors( row.dataIndex, (row.dataIndex.indexOf('.') > -1 ) ? get(record, row.dataIndex) : record[row.dataIndex] )
 }
 
 const getDataIndex = (row, record) => {
-  return props.searchRef.dictTrans( row.dataIndex, (row.dataIndex.indexOf('.') > -1 ) ? get(record, row.dataIndex) : record[row.dataIndex] )
+  return dictTrans( row.dataIndex, (row.dataIndex.indexOf('.') > -1 ) ? get(record, row.dataIndex) : record[row.dataIndex] )
 }
 
 const getIndex = rowIndex => {
   const index = rowIndex + 1
-  if (props.params[config.request.page] == 1) {
+  if (requestParams[config.request.page] == 1) {
     return index
   } else {
-    return (props.params[config.request.page] - 1) * props.params[config.request.pageSize] + index
+    return (requestParams[config.request.page] - 1) * requestParams[config.request.pageSize] + index
   }
 }
 
 const editAction = record => {
-  isFunction(props.options.beforeOpenEdit) && props.options.beforeOpenEdit(record)
-  props.formRef.edit(record)
+  isFunction(options.beforeOpenEdit) && options.beforeOpenEdit(record)
+  crudFormRef.edit(record)
 }
 
 const recoveryAction = async record => {
-  const response = await props.options.recovery.api({ ids: [record[props.options.pk]] })
+  const response = await options.recovery.api({ ids: [record[options.pk]] })
   Message.success(response.message || `恢复成功！`)
   emit('refresh')
 }
 
 const deleteAction = async record => {
   let data = {}
-  if (props.options.beforeDelete && isFunction(props.options.beforeDelete)) {
-    data = props.options.beforeDelete(record)
+  if (options.beforeDelete && isFunction(options.beforeDelete)) {
+    data = options.beforeDelete(record)
   }
-  const api = props.isRecovery ? props.options.delete.realApi : props.options.delete.api
-  const response = await api(Object.assign({ ids: [record[props.options.pk]] }, data))
-  if (props.options.afterDelete && isFunction(props.options.afterDelete)) {
-    props.options.afterDelete(response, record)
+  const api = isRecovery ? options.delete.realApi : options.delete.api
+  const response = await api(Object.assign({ ids: [record[options.pk]] }, data))
+  if (options.afterDelete && isFunction(options.afterDelete)) {
+    options.afterDelete(response, record)
   }
   Message.success(response.message || `删除成功！`)
   emit('refresh')

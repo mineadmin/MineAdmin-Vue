@@ -11,34 +11,43 @@
   <a-layout-content class="flex flex-col lg:h-full relative w-full">
     <div class="_crud-header flex flex-col mb-2" ref="crudHeaderRef">
       <ma-search
-        @search="searchHandler"
+        @search="searchSubmitHandler"
         class="__search-panel"
-        ref="maCrudSearch"
+        ref="crudSearchRef"
       >
         <template
           v-for="(slot, slotIndex) in searchSlots"
           :key="slotIndex"
-          #[slot]="{ searchForm, item }"
+          #[slot]="{ searchForm, component }"
         >
-          <slot :name="`search-${slot}`" v-bind="{ searchForm, item }" />
+          <slot :name="`search-${slot}`" v-bind="{ searchForm, component }" />
+        </template>
+        <template #searchBeforeButtons>
+          <slot name="searchBeforeButtons"></slot>
         </template>
         <template #searchButtons>
           <slot name="searchButtons"></slot>
         </template>
+        <template #searchAfterButtons>
+          <slot name="searchAfterButtons"></slot>
+        </template>
       </ma-search>
     </div>
-    <!-- <div class="_crud-content">
+    <div class="_crud-content">
       <div class="operation-tools lg:flex justify-between mb-3" ref="crudOperationRef">
         <a-space class="lg:flex block lg:inline-block" >
           <slot name="tableBeforeButtons"></slot>
           <slot name="tableButtons">
+          {{ options.add }}
             <a-button
               v-if="options.add.show"
               v-auth="options.add.auth || []"
               v-role="options.add.role || []"
               @click="addAction" type="primary"
               class="w-full lg:w-auto mt-2 lg:mt-0"
-            ><icon-plus /> {{ options.add.text || '新增' }}</a-button>
+            >
+              <template #icon><icon-plus /></template>{{ options.add.text || '新增' }}
+            </a-button>
 
             <a-popconfirm
               content="确定要删除数据吗?"
@@ -51,7 +60,10 @@
                 v-role="options.delete.role || []"
                 type="primary" status="danger"
                 class="w-full lg:w-auto mt-2 lg:mt-0"
-              ><icon-delete /> {{ isRecovery ? options.delete.realText || '删除' : options.delete.text || '删除' }}</a-button>
+              >
+                <template #icon><icon-delete /></template>
+                {{ isRecovery ? options.delete.realText || '删除' : options.delete.text || '删除' }}
+              </a-button>
             </a-popconfirm>
 
             <a-popconfirm
@@ -122,7 +134,7 @@
             :data="tableData"
             :loading="loading"
             :sticky-header="options.stickyHeader"
-            :pagination="props.pagination"
+            :pagination="options.tablePagination"
             :stripe="options.stripe"
             :bordered="options.bordered"
             :rowSelection="options.rowSelection || undefined"
@@ -146,12 +158,6 @@
             <template #columns>
               <ma-column
                 v-if="reloadColumn"
-                :options="options"
-                :columns="columns"
-                :searchRef="maCrudSearch"
-                :formRef="maCrudForm"
-                :isRecovery="isRecovery"
-                :params="requestParams"
                 @refresh="() => refresh()"
                 @showImage="showImage"
               >
@@ -183,47 +189,39 @@
         </slot>
       </div>
     </div>
-    <div class="_crud-footer mt-3 text-right" ref="crudFooterRef" v-if="total > 0 && openPagination && !props.pagination">
+    <div class="_crud-footer mt-3 text-right" ref="crudFooterRef" v-if="total > 0 && openPagination && !options.tablePagination">
       <a-pagination
         :total="total"
         show-total show-jumper show-page-size
-        :page-size-options="pageSizeOption"
+        :page-size-options="options.pageSizeOption"
         @page-size-change="pageSizeChangeHandler"
         @change="pageChangeHandler"
         v-model:current="requestParams[config.request.page]"
         :page-size="requestParams[config.request.pageSize]"
         style="display: inline-flex"
       />
-    </div> -->
+    </div>
 
-    <!-- <ma-setting
-      ref="maCrudSetting"
-      v-model="columns"
-      v-model:crud="options"
-    />
+    <ma-setting ref="crudSettingRef" />
 
-    <ma-form
-      ref="maCrudForm"
+    <!-- <ma-form
+      ref="crudFormRef"
       v-model="columns"
       v-model:crud="options"
       @success="requestSuccess"
-    />
+    /> -->
 
-    <ma-import
-      ref="maCrudImport"
-      v-model="options.import"
-    />
-
-    <a-image-preview :src="imgUrl" v-model:visible="imgVisible" /> -->
+    <ma-import ref="crudImportRef" />
+    
+    <a-image-preview :src="imgUrl" v-model:visible="imgVisible" />
   </a-layout-content>
 </template>
 
 <script setup>
 import config from '@/config/crud'
-import { isFunction } from '@vue/shared'
 import { ref, watch, provide, nextTick } from 'vue'
 import defaultOptions from './js/defaultOptions'
-import { loadDict } from '@cps/ma-newForm/js/networkRequest.js'
+import { loadDict } from '@cps/ma-form/js/networkRequest.js'
 
 import MaSearch from './components/search.vue'
 import MaForm from './components/form.vue'
@@ -235,7 +233,7 @@ import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
-import { isArray } from 'lodash'
+import { isArray, isFunction } from 'lodash'
 import globalColumn from '@/config/column.js'
 
 const props = defineProps({
@@ -256,13 +254,11 @@ const reloadColumn = ref(true)
 const openPagination = ref(false)
 const imgVisible = ref(false)
 const imgUrl = ref('not-image.png')
-const pageSizeOption = ref([10, 20, 30, 50, 100])
 const total = ref(0)
 const requestParams = ref({})
 const columns = ref([])
 const slots = ref([])
 const searchSlots = ref([])
-const showSearch = ref(true)
 const isRecovery = ref(false)
 const expandState = ref(false)
 
@@ -270,6 +266,12 @@ const crudHeaderRef = ref(null)
 const crudOperationRef = ref(null)
 const crudContentRef = ref(null)
 const crudFooterRef = ref(null)
+const crudSearchRef = ref(null)
+const crudSettingRef = ref(null)
+const crudFormRef = ref(null)
+const crudImportRef = ref(null)
+
+
 const headerHeight = ref(0)
 
 const selecteds = ref([])
@@ -278,12 +280,9 @@ const tableData = ref([])
 const tableRef = ref()
 const currentApi = ref()
 
-const maCrudSearch = ref(null)
-const maCrudSetting = ref(null)
-const maCrudForm = ref(null)
-const maCrudImport = ref(null)
-
-const options = ref(Object.assign(defaultOptions, props.options, props.crud))
+const propsCrud = ref(props.crud)
+const propsOptions = ref(props.options)
+const options = ref(Object.assign(propsCrud, propsOptions, defaultOptions))
 
 // 初始化
 const init = async() => {
@@ -312,6 +311,7 @@ const dictTrans = (dataIndex, value) => {
 }
 
 const dictColors = (dataIndex, value) => {
+  console.log(dicts.value, dataIndex, value)
   if (dicts.value[dataIndex] && dicts.value[dataIndex].colors) {
     return dicts.value[dataIndex].colors[value]
   } else {
@@ -324,8 +324,10 @@ provide('columns', props.columns)
 provide('dicts', dicts.value)
 provide('dictColors', dictColors.value)
 provide('requestParams', requestParams.value)
+provide('isRecovery', isRecovery.value)
 provide('dictTrans', dictTrans)
 provide('dictColors', dictColors)
+provide('crudFormRef', crudFormRef.value)
 
 options.value.autoRequest && init()
 
@@ -333,28 +335,11 @@ watch(() => options.pageSizeOption, (val) => {
   pageSizeOption.value = val
 })
 
-watch(
-  () => {
-    return {
-      pageLayout: options.value.pageLayout,
-      openPagination: openPagination.value,
-    }
-  },
-  (val, oldValue) => {
-    if (val.pageLayout == 'fixed') {
-      nextTick(() => {
-        headerHeight.value = crudHeaderRef.value.offsetHeight
-        settingFixedPage(val.openPagination)
-      })
-    }
-  }
-)
-
 watch(() => options.value.requestParams, (val) => {
   requestParams.value = val
 }, { deep: true })
 
-watch(() => props.api, () => {
+watch(() => options.api, () => {
   requestData()
 }, { deep: true })
 
@@ -405,14 +390,14 @@ const requestData = async () => {
   if (options.value.operationColumn && columns.value.length > 0 && columns.value[columns.value.length - 1].dataIndex !== '__operation') {
     columns.value.push({ title: options.value.operationColumnText, dataIndex: '__operation', width: options.value.operationWidth, align: 'right', fixed: 'right' })
   }
-  showSearch.value = !options.value.expandSearch
+  ! options.value.expandSearch && crudSearchRef.value.setSearchHidden()
   initRequestParams()
   await refresh()
 }
 
 const initRequestParams = () => {
   requestParams.value[config.request.page] = 1
-  requestParams.value[config.request.pageSize] = props.pageSize ?? config.pageSize
+  requestParams.value[config.request.pageSize] = options.value.pageSize ?? 10
   if (options.value.requestParamsLabel) {
     requestParams.value[options.value.requestParamsLabel] = options.value.requestParams
   } else {
@@ -463,7 +448,7 @@ const refresh = async () => {
   }
 }
 
-const searchHandler = (formData) => {
+const searchSubmitHandler = (formData) => {
   if (options.value.requestParamsLabel && requestParams.value[options.value.requestParamsLabel]) {
     requestParams.value[options.value.requestParamsLabel] = Object.assign(requestParams.value[options.value.requestParamsLabel], formData)
   } else if (options.value.requestParamsLabel) {
@@ -528,12 +513,12 @@ const getIndex = (rowIndex) => {
 
 const addAction = () => {
   isFunction(options.value.beforeOpenAdd) && options.value.beforeOpenAdd()
-  maCrudForm.value.add()
+  crudFormRef.value.add()
 }
 
 const editAction = (record) => {
   isFunction(options.value.beforeOpenEdit) && options.value.beforeOpenEdit(record)
-  maCrudForm.value.edit(record)
+  crudFormRef.value.edit(record)
 }
 
 const dbClickOpenEdit = (record) => {
@@ -555,7 +540,6 @@ const dbClickOpenEdit = (record) => {
         editAction(record)
       }
     }
-    
   }
 }
 
@@ -684,7 +668,7 @@ const settingFixedPage = (openPage = false) => {
 defineExpose({
   refresh, requestData, addAction, editAction, getTableData, setSelecteds,
   requestParams, isRecovery, tableRef,
-  maCrudForm, maCrudSearch, maCrudImport, maCrudSetting
+  crudFormRef, crudSearchRef, crudImportRef, crudSettingRef
 })
 
 </script>

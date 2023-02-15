@@ -10,6 +10,7 @@ export const requestDict = (url, method, params, data, timeout = 10 * 1000) => r
 export const handlerDictProps = (item, tmpArr) => {
   let data = []
   let tran = {}
+  let colors = {}
   let labelName = 'label'
   let valueName = 'value'
   if (item.dict.name && (!item.dict.url || !item.dict.data)) {
@@ -28,12 +29,14 @@ export const handlerDictProps = (item, tmpArr) => {
       else if (typeof tmp == 'Number') value = tmp
       else value = tmp + ''
       tran[value] = label
+      colors[value] = item.dict.tagColors && item.dict.tagColors[value] || undefined
       return { label, value, disabled, indeterminate }
     })
   } else {
     data = tmpArr
   }
   data.tran = tran
+  data.colors = colors
   return data
 }
 
