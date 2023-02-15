@@ -38,7 +38,7 @@
             </template>
           </component>
         </template>
-        <div class="text-center">
+        <div class="text-center" v-if="options.showButtons">
           <a-space>
             <slot name="formBeforeButtons" />
             <slot name="formButtons">

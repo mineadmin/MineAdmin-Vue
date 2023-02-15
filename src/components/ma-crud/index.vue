@@ -38,7 +38,6 @@
         <a-space class="lg:flex block lg:inline-block" >
           <slot name="tableBeforeButtons"></slot>
           <slot name="tableButtons">
-          {{ options.add }}
             <a-button
               v-if="options.add.show"
               v-auth="options.add.auth || []"
@@ -204,12 +203,7 @@
 
     <ma-setting ref="crudSettingRef" />
 
-    <!-- <ma-form
-      ref="crudFormRef"
-      v-model="columns"
-      v-model:crud="options"
-      @success="requestSuccess"
-    /> -->
+    <ma-form ref="crudFormRef" @success="requestSuccess" />
 
     <ma-import ref="crudImportRef" />
     
@@ -242,6 +236,8 @@ const props = defineProps({
   // 增删改查设置
   options: { type: Object, default: {} },
   crud: { type: Object, default: {} },
+  // 表单布局设置
+  layout: { type: Array, default: [] },
   // 字段列设置
   columns: { type: Array, default: [] }
 })
@@ -256,7 +252,6 @@ const imgVisible = ref(false)
 const imgUrl = ref('not-image.png')
 const total = ref(0)
 const requestParams = ref({})
-const columns = ref([])
 const slots = ref([])
 const searchSlots = ref([])
 const isRecovery = ref(false)
@@ -270,7 +265,10 @@ const crudSearchRef = ref(null)
 const crudSettingRef = ref(null)
 const crudFormRef = ref(null)
 const crudImportRef = ref(null)
-
+const options = ref(
+  Object.assign(JSON.parse(JSON.stringify(defaultOptions)), props.options, props.crud)
+)
+const columns = ref(props.columns)
 
 const headerHeight = ref(0)
 
@@ -280,13 +278,8 @@ const tableData = ref([])
 const tableRef = ref()
 const currentApi = ref()
 
-const propsCrud = ref(props.crud)
-const propsOptions = ref(props.options)
-const options = ref(Object.assign(propsCrud, propsOptions, defaultOptions))
-
 // 初始化
 const init = async() => {
-
   // 收集数据
   props.columns.map(item => {
     if (item.cascaderItem && item.cascaderItem.length > 0) {
@@ -302,6 +295,7 @@ const init = async() => {
   })
 }
 
+
 const dictTrans = (dataIndex, value) => {
   if (dicts.value[dataIndex] && dicts.value[dataIndex].tran) {
     return dicts.value[dataIndex].tran[value]
@@ -311,7 +305,6 @@ const dictTrans = (dataIndex, value) => {
 }
 
 const dictColors = (dataIndex, value) => {
-  console.log(dicts.value, dataIndex, value)
   if (dicts.value[dataIndex] && dicts.value[dataIndex].colors) {
     return dicts.value[dataIndex].colors[value]
   } else {
@@ -321,6 +314,7 @@ const dictColors = (dataIndex, value) => {
 
 provide('options', options.value)
 provide('columns', props.columns)
+provide('layout', props.layout)
 provide('dicts', dicts.value)
 provide('dictColors', dictColors.value)
 provide('requestParams', requestParams.value)
@@ -328,16 +322,6 @@ provide('isRecovery', isRecovery.value)
 provide('dictTrans', dictTrans)
 provide('dictColors', dictColors)
 provide('crudFormRef', crudFormRef.value)
-
-options.value.autoRequest && init()
-
-watch(() => options.pageSizeOption, (val) => {
-  pageSizeOption.value = val
-})
-
-watch(() => options.value.requestParams, (val) => {
-  requestParams.value = val
-}, { deep: true })
 
 watch(() => options.api, () => {
   requestData()
@@ -375,8 +359,7 @@ slots.value = getSlot(props.columns)
 searchSlots.value = getSearchSlot(props.columns)
 
 const requestData = async () => {
-  options.value = Object.assign(options.value, options.value)
-  columns.value = Object.assign(props.columns, {})
+  init()
   columns.value.map((item, index) => {
     // 公用模板
     if (item.common && globalColumn[item.dataIndex]) {
@@ -406,11 +389,8 @@ const initRequestParams = () => {
 }
 
 const requestHandle = async () => {
-
   loading.value = true
-
   isFunction(options.value.beforeRequest) && options.value.beforeRequest(requestParams.value)
-
   if (isFunction(currentApi.value)) {
     const response = config.parseResponseData(await currentApi.value(requestParams.value))
     if (response.rows) {

@@ -15,6 +15,8 @@ export default {
   disabled: false,
   // 表单项验证规则整体配置，例子：{ title: [{ required: true, message: '请输入标题'}] }
   rules: [],
+  // 是否显示按钮
+  showButtons: true,
 
   // 提交按钮图标
   submitIcon: 'icon-send',
