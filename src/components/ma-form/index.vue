@@ -166,7 +166,8 @@ const init = async () => {
       item,
       flatteningColumns.value,
       dictList.value,
-      form.value
+      form.value,
+      false
     )
   })
 
