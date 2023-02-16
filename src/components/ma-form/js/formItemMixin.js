@@ -2,24 +2,24 @@ import { isString, isFunction } from 'lodash'
 export const maEvent = {
   customeEvent: async (component, value, evName) => {
     if (component[evName]) {
+      if ( isFunction(component[evName]) ) {
+        return await component[evName](value)
+      }
       if ( isString(component[evName]) ) {
         let customFn = new Function('value', component[evName])
         return await customFn.call(component, value)
-      }
-      if ( isFunction(component[evName]) ) {
-        return await component[evName](value)
       }
     }
   },
 
   handleCommonEvent: async (component, evName) => {
     if (component[evName]) {
+      if ( isFunction(component[evName]) ) {
+        return await component[evName]()
+      }
       if ( isString(component[evName]) ) {
         let customFn = new Function('value', component[evName])
         return await customFn.call(component)
-      }
-      if ( isFunction(component[evName]) ) {
-        return await component[evName]()
       }
     }
   },

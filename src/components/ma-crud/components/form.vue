@@ -187,7 +187,7 @@ const settingFormLayout = (layout) => {
       columns.map((column, idx) => {
         if (column.dataIndex == item.dataIndex) {
           column['__formLayoutSetting'] = true
-          item = JSON.parse(JSON.stringify(column))
+          item = column
           layout[index] = item
         }
       })
@@ -249,5 +249,5 @@ const getRules = (item) => {
     return toRules(item.editRules ?? item.commonRules ?? [])
   }
 }
-defineExpose({ add, edit })
+defineExpose({ add, edit, currentAction, form })
 </script>

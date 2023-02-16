@@ -76,7 +76,24 @@
       realApi: app.realDeletes, realAuth: ['system:app:realDeletes']
     },
     recovery: { show: true, api: app.recoverys, auth: ['system:app:recovery']},
-    formOption: { width: '850px' }
+    formOption: {
+      width: '850px',
+      layout: [
+        { formType: 'grid', cols: [ { span: 12, formList: [ { dataIndex: 'group_id' }] }, { span: 12, formList: [{ dataIndex: 'app_name' }] }]  },
+        { formType: 'grid', cols: 
+          [
+            { span: 18, formList: [ { dataIndex: 'app_id' }] },
+            { span: 5, offset: 1, formList: [{ dataIndex: 'app_id_button' }] }
+          ]
+        },
+        { formType: 'grid', cols: 
+          [
+            { span: 18, formList: [ { dataIndex: 'app_secret' }] },
+            { span: 5, offset: 1, formList: [{ dataIndex: 'app_secret_button' }] }
+          ]
+        },
+      ]
+    }
   })
 
   const columns = reactive([
@@ -84,24 +101,26 @@
     {
       title: '所属组', dataIndex: 'group_id', search: true, commonRules: [{ required: true, message: '所属组必选' }],
       formType: 'select', dict: { url: 'system/appGroup/list', props: { label: 'name', value: 'id' }, translation: true },
-      span: 12, labelWidth: '140px', width: 140,
+      labelWidth: '140px', width: 140, editDefaultValue: (form) => form.group_id.toString() 
     },
     {
       title: '应用名称', dataIndex: 'app_name', search: true, commonRules: [{ required: true, message: '应用名称必填' }],
-      span: 12, labelWidth: '120px', width: 150,
+      labelWidth: '120px', width: 150,
     },
     {
       title: 'APP ID', dataIndex: 'app_id', search: true, commonRules: [{ required: true, message: 'APP ID必填' }],
-      labelWidth: '120px', span: 19, disabled: true, width: 120,
+      labelWidth: '120px', disabled: true, width: 120,
       addDefaultValue: async () => {
         const res = await app.getAppId()
         return res.data.app_id
       }
     },
     {
-      labelWidth: '0px', span: 5, formType: 'button', type: 'primary', text: '刷新APP ID',
-      click: async (ev, props) => {
-        if (props.currentAction === 'edit') {
+      formType: 'button', dataIndex: 'app_id_button', hide: true,
+      type: 'primary', title: '刷新APP ID', long: true,
+      onClick: async () => {
+        const form = crudRef.value.getFormData()
+        if (crudRef.value.getCurrentAction() === 'edit') {
           Modal.info({
             simple: false,
             hideCancel: false,
@@ -109,14 +128,14 @@
             content: '此操作会造成已使用的应用验证失败，确定执行吗？',
             onOk: async () => {
               const res = await app.getAppId()
-              props.form.app_id = res.data.app_id
+              form.app_id = res.data.app_id
             }
           })
           return
         }
         const res = await app.getAppId()
-        props.form.app_id = res.data.app_id
-      }
+        form.app_id = res.data.app_id
+      },
     },
     {
       title: 'APP SECRET', dataIndex: 'app_secret', commonRules: [{ required: true, message: 'APP SECRET必填' }],
@@ -127,9 +146,11 @@
       }
     },
     {
-      labelWidth: '0px', span: 5, formType: 'button', type: 'primary', text: '刷新APP SECRET',
-      click: async (ev, props) => {
-        if (props.currentAction === 'edit') {
+      formType: 'button', type: 'primary', title: '刷新APP SECRET', long: true,
+      dataIndex: 'app_secret_button', hide: true,
+      onClick: async () => {
+        const form = crudRef.value.getFormData()
+        if (crudRef.value.getCurrentAction() === 'edit') {
           Modal.info({
             simple: false,
             hideCancel: false,
@@ -137,13 +158,13 @@
             content: '此操作会造成已使用的应用验证失败，确定执行吗？',
             onOk: async () => {
               const res = await app.getAppSecret()
-              props.form.app_secret = res.data.app_secret
+              form.app_secret = res.data.app_secret
             }
           })
           return
         }
         const res = await app.getAppSecret()
-        props.form.app_secret = res.data.app_secret
+        form.app_secret = res.data.app_secret
       }
     },
     {

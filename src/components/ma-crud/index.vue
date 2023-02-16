@@ -646,9 +646,12 @@ const settingFixedPage = (openPage = false) => {
   crudContentRef.value.style.height = tableHeight + 'px'
 }
 
+const getCurrentAction = () => crudFormRef.value.currentAction
+const getFormData = () => crudFormRef.value.form
+
 defineExpose({
   refresh, requestData, addAction, editAction, getTableData, setSelecteds,
-  requestParams, isRecovery, tableRef,
+  requestParams, isRecovery, tableRef, getCurrentAction, getFormData,
   crudFormRef, crudSearchRef, crudImportRef, crudSettingRef
 })
 
