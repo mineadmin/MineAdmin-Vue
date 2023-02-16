@@ -16,7 +16,7 @@
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
       <a-tree-select
         v-model="value"
-        :data="props.component.data ?? dictList[props.component.dataIndex] ?? []"
+        :data="props.component.data ?? dictList[dictIndex] ?? []"
         :disabled="props.component.disabled"
         :readonly="props.component.readonly"
         :loading="props.component.loading"
@@ -71,6 +71,7 @@ const props = defineProps({
 const formModel = inject('formModel')
 const dictList  = inject('dictList')
 const index = props.customField ?? props.component.dataIndex
+const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1] + props.component.dataIndex : props.component.dataIndex
 const value = ref(get(formModel, index))
 
 watch( () => get(formModel, index), vl => value.value = vl )

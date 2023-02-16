@@ -174,7 +174,7 @@
     recovery: { show: true, api: user.recoverys, auth: ['system:user:recovery']},
     import: { show: true, url: 'system/user/import', templateUrl: 'system/user/downloadTemplate', auth: ['system:user:import'] },
     export: { show: true, url: 'system/user/export', auth: ['system:user:export'] },
-    viewLayoutSetting: { layout: 'customer', width: 800 },
+    formOption: { width: 800 },
     isDbClickEdit: false
   })
 
@@ -201,7 +201,7 @@
     { 
       title: '密码', dataIndex: 'password', hide: true, autocomplete: 'off',
       addDefaultValue: '123456', editDefaultValue: '', editDisabled: true, type: 'password', 
-      span: 12, addRules: [{ required: true, message: '密码必填' }],
+      span: 12, rules: [{ required: true, message: '密码必填' }],
     },
     { title: '昵称', dataIndex: 'nickname', width: 120, span: 12 },
     { 
@@ -216,7 +216,7 @@
     },
     {
       title: '手机', dataIndex: 'phone', width: 150, search: true, span: 12,
-      addRules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
+      rules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
     },
     { 
       title: '岗位', dataIndex: 'post_ids', width: 120, span: 12, formType: 'select', multiple: true,
@@ -229,7 +229,7 @@
     },
     {
       title: '邮箱', dataIndex: 'email', width: 200, search: true, span: 12,
-      addRules: [{ type: 'email', message: '请输入正确的邮箱' }]
+      rules: [{ type: 'email', message: '请输入正确的邮箱' }]
     },
     {
       title: '状态', dataIndex: 'status', width: 100, search: true, formType: 'radio',

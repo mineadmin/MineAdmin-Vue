@@ -101,7 +101,7 @@
       realApi: menu.realDeletes, realAuth: ['system:menu:realDeletes']
     },
     recovery: { show: true, api: menu.recoverys, auth: ['system:menu:recovery']},
-    viewLayoutSetting: { viewType: 'drawer', width: 600 },
+    formOption: { viewType: 'drawer', width: 600 },
     isExpand: true,
     beforeOpenAdd: () => columns[1].addDefaultValue = 0
   })
@@ -172,11 +172,10 @@
     {
       title: '隐藏', dataIndex: 'is_hidden', search: true, formType: 'radio',
       dict: {
-        data: [ { title: '是', key: '1' }, { title: '否', key: '2' } ],
-        props: { label: 'title', value: 'key' },
+        data: [ { label: '是', value: '1' }, { label: '否', value: '2' } ],
         translation: true
       },
-      addDefaultValue: '2', width: 80,
+      addDefaultValue: '2', editDefaultValue: (form) => form.is_hidden.toString(), width: 80,
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',

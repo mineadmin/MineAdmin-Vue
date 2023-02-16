@@ -120,10 +120,6 @@ export interface BasicColumn {
   searchPlaceholder?: string;
   //编辑|创建 通用规则
   rules?: FieldRule | FieldRule[];
-  // 创建时规则
-  addRules?: FieldRule | FieldRule[];
-  // 编辑时规则
-  editRules?: FieldRule | FieldRule[];
   // 子表单数据
   children?: BasicColumn[];
 }

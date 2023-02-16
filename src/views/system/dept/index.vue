@@ -104,7 +104,7 @@
     { title: '负责人', dataIndex: 'leader', search: true, width: 120 },
     {
       title: '手机', dataIndex: 'phone', search: true, width: 150,
-      addRules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
+      rules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
     },
     {
       title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1, width: 180,

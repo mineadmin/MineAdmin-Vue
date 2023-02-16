@@ -21,7 +21,7 @@
   >
     <template #title>{{ actionTitle }}</template>
     <a-spin :loading="dataLoading" tip="加载中..." class="w-full">
-      <ma-form v-model="form" :columns="formColumns" :options="{ showButtons: false }" />
+      <ma-form v-model="form" :columns="formColumns" :options="{ showButtons: false }" ref="maFormRef"/>
     </a-spin>
   </component>
 </template>
@@ -34,10 +34,11 @@ import commonApi from '@/api/common'
 import { isArray, isFunction, concat, get } from 'lodash'
 
 const app = getCurrentInstance().appContext.app
+const maFormRef = ref()
 const componentName = ref('a-modal')
 const columns = inject('columns')
 const options = inject('options')
-const layout = inject('layout')
+const layout = ref(options?.layout ?? [])
 const formColumns = ref([])
 const currentAction = ref('')
 const dataVisible = ref(false)
@@ -49,38 +50,33 @@ const emit = defineEmits(['success', 'error'])
 
 provide('form', toRaw(form))
 
-const submit = async (done) => {
-  return crudForm.value.validate()
-  .then(async result => {
-    if (result) {
-      done(false)
-      return false
-    }
-    let response
-    if (currentAction.value === 'add') {
-      isFunction(props.crud.beforeAdd) && await props.crud.beforeAdd(form.value)
-      response = await props.crud.add.api(form.value)
-      isFunction(props.crud.afterAdd) && await props.crud.afterAdd(response, form.value)
-    } else {
-      isFunction(props.crud.beforeEdit) && await props.crud.beforeEdit(form.value)
-      response = await props.crud.edit.api(form.value[props.crud.pk], form.value)
-      isFunction(props.crud.afterEdit) && await props.crud.afterEdit(response, form.value)
-    }
-    if ( response.success ) {
-      Message.success(response.message || `${actionTitle.value}成功！`)
-      emit('success', response)
-      done(true)
-      return true
-    }
-    done(false)
-  })
+const submit = async () => {
+  const formData = maFormRef.value.getFormData()
+  if (await maFormRef.value.validateForm()) {
+    return false
+  }
+
+  let response
+  if (currentAction.value === 'add') {
+    isFunction(options.beforeAdd) && await options.beforeAdd(formData)
+    response = await options.add.api(formData)
+    isFunction(options.afterAdd) && await options.afterAdd(response, formData)
+  } else {
+    isFunction(options.beforeEdit) && await options.beforeEdit(formData)
+    response = await options.edit.api(formData[options.pk], formData)
+    isFunction(options.afterEdit) && await options.afterEdit(response, formData)
+  }
+  if ( response.success ) {
+    Message.success(response.message || `${actionTitle.value}成功！`)
+    emit('success', response)
+    return true
+  }
 }
 const open = () => {
-  nextTick(() => {
-    init()
-    componentName.value = options.formOption.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
-    dataVisible.value = true
-  })
+  formColumns.value = []
+  componentName.value = options.formOption.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
+  init()
+  dataVisible.value = true
 }
 const close = () => {
   dataVisible.value = false
@@ -103,6 +99,8 @@ const init = () => {
   dataLoading.value = true
   columns.map(async item => {
     if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
+    formColumns.value.push(item)
+
     // 针对带点的数据处理
     if (item.dataIndex.indexOf('.') > -1) {
       form.value[item.dataIndex] = get(form.value, item.dataIndex)
@@ -126,33 +124,17 @@ const init = () => {
     }
     
     // 其他处理
-    if (item.display !== false) {
-      item.display = formItemShow(item)
-    }
-    
-    if (item.disabled !== false) {
-      item.disabled = formItemDisabled(item)
-    }
-
-    if (item.readonly !== false) {
-      item.readonly = formItemReadonly(item)
-    }
-
-    if (item.readonly !== false) {
-      item.readonly = formItemReadonly(item)
-    }
-
-    if (! item.rules) {
-      item.rules = getRules(item)
-    }
-
-    formColumns.value.push(item)
+    item.display = formItemShow(item)
+    item.disabled = formItemDisabled(item)
+    item.readonly = formItemReadonly(item)
+    item.rules = getRules(item)
   })
+
   // 设置表单布局
-  settingFormLayout(layout)
+  settingFormLayout(layout.value)
   
-  if (layout.length > 0) {
-    formColumns.value = layout
+  if (layout.value.length > 0) {
+    formColumns.value = layout.value
   }
   dataLoading.value = false
 }
@@ -172,28 +154,28 @@ const settingFormLayout = (formLayout) => {
 }
 
 const formItemShow = (item) => {
-  if (currentAction.value === 'add' && typeof item.addDisplay == 'undefined' || item.addDisplay) {
+  if (currentAction.value === 'add' && item?.addDisplay !== false) {
     return true
   }
-  if (currentAction.value === 'edit' && typeof item.editDisplay == 'undefined' || item.editDisplay) {
+  if (currentAction.value === 'edit' && item?.editDisplay !== false) {
     return true
   }
   return false
 }
 const formItemDisabled = (item) => {
-  if (currentAction.value === 'add' && item.addDisabled) {
+  if (currentAction.value === 'add' && item?.addDisabled === true) {
     return true
   }
-  if (currentAction.value === 'edit' && item.editDisabled) {
+  if (currentAction.value === 'edit' && item?.editDisabled === true) {
     return true
   }
   return false
 }
 const formItemReadonly = (item) => {
-  if (currentAction.value === 'add' && item.addReadonly) {
+  if (currentAction.value === 'add' && item?.addReadonly === true) {
     return true
   }
-  if (currentAction.value === 'edit' && item.editReadonly) {
+  if (currentAction.value === 'edit' && item?.editReadonly === true) {
     return true
   }
   return false
@@ -219,10 +201,10 @@ const toRules = (rules) => {
 
 const getRules = (item) => {
   if (currentAction.value === 'add') {
-    return toRules(item.addRules ? item.addRules : item.rules || [])
+    return toRules(item.rules ?? [])
   }
   if (currentAction.value === 'edit') {
-    return toRules(item.editRules ? item.editRules : item.rules || [])
+    return toRules(item.rules ?? [])
   }
 }
 defineExpose({ add, edit })

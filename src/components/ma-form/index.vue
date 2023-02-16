@@ -68,7 +68,7 @@ import {
   ref, reactive, watch, provide,
   onMounted, nextTick, getCurrentInstance
 } from 'vue'
-import { isString, isFunction, isEmpty, get } from 'lodash'
+import { isString, isFunction, isNil, get } from 'lodash'
 import defaultOptions from './js/defaultOptions.js'
 import {
   getComponentName, toHump, containerItems,
@@ -148,7 +148,7 @@ const init = async () => {
   // 初始化数据
   flatteningColumns.value.map(async item => {
 
-    if ( isEmpty(form.value[item.dataIndex]) && ! item.isChildrenForm ) {
+    if ( isNil(form.value[item.dataIndex]) && ! item.isChildrenForm ) {
       form.value[item.dataIndex] = undefined
       if (arrayComponentDefault.includes(item.formType) && ! item.isChildrenForm) {
         form.value[item.dataIndex] = []
@@ -161,7 +161,7 @@ const init = async () => {
     }
 
     // 联动
-    handlerCascader(
+    await handlerCascader(
       get(form.value, item.dataIndex),
       item,
       flatteningColumns.value,
@@ -198,9 +198,10 @@ const getFormRef = () => maFormRef.value
 const getDictlist = () => dictList.value
 const getColumns = () => flatteningColumns.value
 const getCascaderList = () => cascaderList.value
+const getFormData = () => form.value
 
 defineExpose({
-  init, getFormRef, getColumns, getDictlist, getCascaderList,
+  init, getFormRef, getColumns, getDictlist, getCascaderList, getFormData,
   validateForm, resetForm, clearValidate
 })
 </script>

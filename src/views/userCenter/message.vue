@@ -178,7 +178,7 @@
     delete: { show: true, api: queueMessage.deletes },
     operationColumn: true,
     operationWidth: 240,
-    viewLayoutSetting: { width: 800 },
+    formOption: { width: 800 },
     api: () => {}
   })
 

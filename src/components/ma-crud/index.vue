@@ -76,7 +76,8 @@
                 v-role="options.recovery.role || []"
                 type="primary" status="success"
                 class="w-full lg:w-auto mt-2 lg:mt-0"
-              ><icon-undo /> {{ options.recovery.text || '恢复' }}</a-button>
+              >
+                <template #icon><icon-undo /></template>{{ options.recovery.text || '恢复' }}</a-button>
             </a-popconfirm>
 
             <a-button
@@ -85,7 +86,7 @@
               v-role="options.import.role || []"
               @click="importAction"
               class="w-full lg:w-auto mt-2 lg:mt-0"
-            ><icon-upload /> {{ options.import.text || '导入' }}</a-button>
+            ><template #icon><icon-upload /></template>{{ options.import.text || '导入' }}</a-button>
 
             <a-button
               v-if="options.export.show"
@@ -93,7 +94,7 @@
               v-role="options.export.role || []"
               @click="exportAction"
               class="w-full lg:w-auto mt-2 lg:mt-0"
-            ><icon-download /> {{ options.export.text || '导出' }}</a-button>
+            ><template #icon><icon-download /></template>{{ options.export.text || '导出' }}</a-button>
 
             <a-button
               type="secondary"
@@ -101,8 +102,10 @@
               v-if="options.isExpand"
               class="w-full lg:w-auto mt-2 lg:mt-0"
             >
-              <icon-expand v-if="! expandState" />
-              <icon-shrink v-else />
+              <template #icon>
+                <icon-expand v-if="! expandState" />
+                <icon-shrink v-else />
+              </template>
               {{ expandState ? ' 折叠' : ' 展开' }}
             </a-button>
           </slot>
@@ -157,6 +160,7 @@
             <template #columns>
               <ma-column
                 v-if="reloadColumn"
+                :isRecovery="isRecovery"
                 @refresh="() => refresh()"
                 @showImage="showImage"
               >
@@ -236,8 +240,6 @@ const props = defineProps({
   // 增删改查设置
   options: { type: Object, default: {} },
   crud: { type: Object, default: {} },
-  // 表单布局设置
-  layout: { type: Array, default: [] },
   // 字段列设置
   columns: { type: Array, default: [] }
 })
@@ -318,7 +320,6 @@ provide('layout', props.layout)
 provide('dicts', dicts.value)
 provide('dictColors', dictColors.value)
 provide('requestParams', requestParams.value)
-provide('isRecovery', isRecovery.value)
 provide('dictTrans', dictTrans)
 provide('dictColors', dictColors)
 provide('crudFormRef', crudFormRef.value)
@@ -570,12 +571,12 @@ const setSelecteds = (key) => {
   selecteds.value = key
 }
 
-const switchDataType = () => {
+const switchDataType = async () => {
   isRecovery.value = ! isRecovery.value
   currentApi.value = isRecovery.value && options.value.recycleApi && isFunction(options.value.recycleApi)
     ? options.value.recycleApi
     : options.value.api
-  requestData()
+  await requestData()
 }
 
 const handlerExpand = () => {

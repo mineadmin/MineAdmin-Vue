@@ -2,7 +2,7 @@
   <template v-for="row in columns" :key="row[options.pk]">
     <template v-if="!row.hide">
       <a-table-column :title="row.title" v-if="row.children && row.children.length > 0">
-        <column @refresh="() => refresh()" >
+        <column @refresh="() => refresh()" :isRecovery="props.isRecovery" >
           <template
             v-for="(childRow, childIndex) in row.children"
             :key="childIndex"
@@ -36,9 +36,8 @@
                   "
                   type="primary"
                 ><icon-eye /> {{ options.see.text || '查看' }}</a-link> -->
-
                 <a-link
-                  v-if="(isFunction(options.edit.show) ? options.edit.show(record):options.edit.show) && !isRecovery"
+                  v-if="(isFunction(options.edit.show) ? options.edit.show(record):options.edit.show) && !props.isRecovery"
                   v-auth="options.edit.auth || []"
                   v-role="options.edit.role || []"
                   type="primary"
@@ -51,11 +50,11 @@
                   content="确定要恢复该数据吗?"
                   position="bottom"
                   @ok="recoveryAction(record)"
-                  v-if="(isFunction(options.recovery.show) ? options.recovery.show(record):options.recovery.show) && isRecovery"
+                  v-if="(isFunction(options.recovery.show) ? options.recovery.show(record):options.recovery.show) && props.isRecovery"
                   v-auth="options.recovery.auth || []"
                   v-role="options.recovery.role || []"
                 >
-                  <a-link type="primary"> <icon-undo /> {{ options.recovery.text || '恢复' }} </a-link>
+                  <a-link type="primary"><icon-undo /> {{ options.recovery.text || '恢复' }} </a-link>
                 </a-popconfirm>
 
                 <a-popconfirm
@@ -71,7 +70,7 @@
                   >
                     <icon-delete />
                     {{
-                      isRecovery ? options.delete.realText || '删除' : options.delete.text || '删除'
+                      props.isRecovery ? options.delete.realText || '删除' : options.delete.text || '删除'
                     }}
                   </a-link>
                 </a-popconfirm>
@@ -121,12 +120,14 @@ import tool from '@/utils/tool'
 import commonApi from '@/api/common'
 
 const emit = defineEmits(['refresh', 'showImage'])
+const props = defineProps({
+  isRecovery: Boolean
+})
 
 const options = inject('options')
 const columns = inject('columns')
 const crudFormRef = inject('crudFormRef')
 const requestParams = inject('requestParams')
-const isRecovery = inject('isRecovery')
 const dictTrans = inject('dictTrans')
 const dictColors = inject('dictColors')
 

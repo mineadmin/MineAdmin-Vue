@@ -58,7 +58,7 @@
       realApi: notice.realDeletes, realAuth: ['system:notice:realDeletes']
     },
     recovery: { show: true, api: notice.recoverys, auth: ['system:notice:recovery']},
-    viewLayoutSetting: { width: 800 }
+    formOption: { width: 800 }
   })
 
   const columns = reactive([

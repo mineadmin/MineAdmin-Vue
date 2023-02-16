@@ -21,7 +21,7 @@
         :title="typeof props.component.title == 'array' ? props.component.title : ['源数据', '目标数据']"
         :disabled="props.component.disabled"
         :simple="props.component.simple"
-        :data="props.component.data ?? dictList[props.component.dataIndex] ?? []"
+        :data="props.component.data ?? dictList[dictIndex] ?? []"
         :fallback="props.component.fallback"
         @change="maEvent.handleChangeEvent(props.component, $event)"
         @select="maEvent.customeEvent(props.component, $event, 'onSelect')"
@@ -45,6 +45,7 @@ const props = defineProps({
 const formModel = inject('formModel')
 const dictList  = inject('dictList')
 const index = props.customField ?? props.component.dataIndex
+const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1] + props.component.dataIndex : props.component.dataIndex
 const value = ref(get(formModel, index))
 
 watch( () => get(formModel, index), vl => value.value = vl )

@@ -67,7 +67,7 @@ const crud = reactive({
   import: { show: true, url: 'system/apiColumn/import', templateUrl: 'system/apiColumn/downloadTemplate' },
   export: { show: true, url: 'system/apiColumn/export' },
   recovery: { show: true, api: apiColumn.recoverys, auth: ['system:api:recovery'] },
-  viewLayoutSetting: { layout: 'customer', width: '800px' },
+  formOption: { width: '800px' },
   beforeAdd: (form) => form.api_id = currentRow.value.id,
   beforeRequest: (params) => {
     params.api_id = currentRow.value.id

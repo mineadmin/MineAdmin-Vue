@@ -23,7 +23,7 @@
         :size="props.component.size"
         :disabled="props.component.disabled"
         :multiple="props.component.multiple"
-        :options="props.component.options ?? dictList[props.component.dataIndex] ?? []"
+        :options="props.component.options ?? dictList[dictIndex] ?? []"
         :input-value="props.component.inputValue"
         :default-input-value="props.component.defaultInputValue"
         :popup-visible="props.component.popupVisible"
@@ -70,6 +70,7 @@ const props = defineProps({
 const formModel = inject('formModel')
 const dictList  = inject('dictList')
 const index = props.customField ?? props.component.dataIndex
+const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1] + props.component.dataIndex : props.component.dataIndex
 const value = ref(get(formModel, index))
 
 watch( () => get(formModel, index), vl => value.value = vl )

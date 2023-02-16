@@ -76,9 +76,7 @@
       realApi: app.realDeletes, realAuth: ['system:app:realDeletes']
     },
     recovery: { show: true, api: app.recoverys, auth: ['system:app:recovery']},
-    viewLayoutSetting: {
-      layout: 'customer', width: '850px'
-    }
+    formOption: { width: '850px' }
   })
 
   const columns = reactive([

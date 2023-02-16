@@ -56,7 +56,7 @@ const crud = reactive({
       record.config_select_data = record.config_select_data.replace(',]', ']')
     }
   },
-  viewLayoutSetting: { width: '700px' }
+  formOption: { width: '700px' }
 })
 
 const columns = reactive([
