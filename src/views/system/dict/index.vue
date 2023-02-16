@@ -81,11 +81,11 @@
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     {
       title: '字典名称', dataIndex: 'name', search: true, width: 220,
-      rules: [{ required: true, message: '字典名称必填' }],
+      commonRules: [{ required: true, message: '字典名称必填' }],
     },
     {
       title: '字典标识', dataIndex: 'code', search: true, width: 260,
-      rules: [{ required: true, message: '字典标识必填' }],
+      commonRules: [{ required: true, message: '字典标识必填' }],
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',

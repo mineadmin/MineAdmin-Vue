@@ -37,6 +37,7 @@
 import { onMounted } from 'vue'
 import MaTableCell from './table-cell.vue'
 import { getComponentName } from '../js/utils.js'
+import { maEvent } from '../js/formItemMixin.js'
 const props = defineProps({ component: Object })
 
 maEvent.handleCommonEvent(props.component, 'onCreated')

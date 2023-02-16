@@ -78,11 +78,11 @@ const crud = reactive({
 const columns = reactive([
   { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
   {
-    title: '字段名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '字段名称必填' }],
+    title: '字段名称', dataIndex: 'name', search: true, commonRules: [{ required: true, message: '字段名称必填' }],
     span: 12, labelWidth: '120px',
   },
   {
-    title: '数据类型', dataIndex: 'data_type', formType: 'select', rules: [{ required: true, message: '数据类型必选' }],
+    title: '数据类型', dataIndex: 'data_type', formType: 'select', commonRules: [{ required: true, message: '数据类型必选' }],
     dict: { name: 'api_data_type', props: { label: 'title', value: 'key' }, translation: true},
     span: 12, search: true
   },

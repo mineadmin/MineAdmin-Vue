@@ -82,16 +82,16 @@
   const columns = reactive([
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     {
-      title: '所属组', dataIndex: 'group_id', search: true, rules: [{ required: true, message: '所属组必选' }],
+      title: '所属组', dataIndex: 'group_id', search: true, commonRules: [{ required: true, message: '所属组必选' }],
       formType: 'select', dict: { url: 'system/appGroup/list', props: { label: 'name', value: 'id' }, translation: true },
       span: 12, labelWidth: '140px', width: 140,
     },
     {
-      title: '应用名称', dataIndex: 'app_name', search: true, rules: [{ required: true, message: '应用名称必填' }],
+      title: '应用名称', dataIndex: 'app_name', search: true, commonRules: [{ required: true, message: '应用名称必填' }],
       span: 12, labelWidth: '120px', width: 150,
     },
     {
-      title: 'APP ID', dataIndex: 'app_id', search: true, rules: [{ required: true, message: 'APP ID必填' }],
+      title: 'APP ID', dataIndex: 'app_id', search: true, commonRules: [{ required: true, message: 'APP ID必填' }],
       labelWidth: '120px', span: 19, disabled: true, width: 120,
       addDefaultValue: async () => {
         const res = await app.getAppId()
@@ -119,7 +119,7 @@
       }
     },
     {
-      title: 'APP SECRET', dataIndex: 'app_secret', rules: [{ required: true, message: 'APP SECRET必填' }],
+      title: 'APP SECRET', dataIndex: 'app_secret', commonRules: [{ required: true, message: 'APP SECRET必填' }],
       labelWidth: '120px', disabled: true, span: 19, width: 500,
       addDefaultValue: async () => {
         const res = await app.getAppSecret()

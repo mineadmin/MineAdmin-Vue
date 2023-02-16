@@ -47,13 +47,13 @@ const columns = reactive([
     title: '组名称（中文）',
     labelWidth: '145px',
     dataIndex: 'name',
-    rules: [{ required: true, message: '组名称必填' }]
+    commonRules: [{ required: true, message: '组名称必填' }]
   },
   {
     title: '组标识（英文）',
     labelWidth: '145px',
     dataIndex: 'code',
-    rules: [{ required: true, message: '组标识必填' }]
+    commonRules: [{ required: true, message: '组标识必填' }]
   },
   {
     title: '备注',

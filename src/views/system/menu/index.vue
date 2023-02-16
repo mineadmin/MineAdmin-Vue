@@ -116,7 +116,7 @@
       }
     },
     { 
-      title: '菜单名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '菜单名称必填' }], width: 180,
+      title: '菜单名称', dataIndex: 'name', search: true, commonRules: [{ required: true, message: '菜单名称必填' }], width: 180,
     },
     { 
       title: '菜单类型', dataIndex: 'type', formType: 'radio', addDefaultValue: 'M', width: 100,
@@ -160,7 +160,7 @@
     },
     {  title: '图标', dataIndex: 'icon', width: 80, formType: 'icon', style: { width: '100%' } },
     { 
-      title: '菜单标识', dataIndex: 'code', search: true, rules: [{ required: true, message: '菜单标识必填' }], width: 150,
+      title: '菜单标识', dataIndex: 'code', search: true, commonRules: [{ required: true, message: '菜单标识必填' }], width: 150,
     },
     { title: '路由地址', dataIndex: 'route', width: 150,},
     { title: '视图组件', dataIndex: 'component', width: 200,},

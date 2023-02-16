@@ -45,6 +45,7 @@
     api: notice.getPageList,
     recycleApi: notice.getRecyclePageList,
     showIndex: false,
+    searchColNumber: 3,
     searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
@@ -65,11 +66,11 @@
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { 
       title: '公告标题', dataIndex: 'title', search: true, width: 500,
-      rules: [{ required: true, message: '公告标题必填' }],
+      commonRules: [{ required: true, message: '公告标题必填' }],
     },
     { 
       title: '公告类型', dataIndex: 'type', search: true, width: 180,
-      rules: [{ required: true, message: '公告类型必选' }], formType: 'radio',
+      commonRules: [{ required: true, message: '公告类型必选' }], formType: 'radio',
       dict: { name: 'backend_notice_type', props: { label: 'title', value: 'key' }, translation: true },
       addDefaultValue: 1
     },
@@ -79,7 +80,7 @@
     },
     {
       title: '公告内容', dataIndex: 'content', formType: 'editor', hide: true,
-      rules: [{ required: true, message: '公告内容必填' }]
+      commonRules: [{ required: true, message: '公告内容必填' }]
     },
     {
       title: '备注', dataIndex: 'remark', hide: true, formType: 'textarea',

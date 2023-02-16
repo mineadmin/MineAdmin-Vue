@@ -109,6 +109,7 @@
     pk: 'name',
     api: module.getPageList,
     showIndex: false,
+    searchColNumber: 3,
     searchLabelWidth: '75px',
     pageLayout: 'fixed',
     operationColumn: true,
@@ -120,7 +121,7 @@
     { 
       title: '模块名称', dataIndex: 'name', search: true, width: 120,
       placeholder: '请输入模块名称（英文标识）',
-      rules: [
+      commonRules: [
         { required: true, message: '模块名称必填' },
         { validator: (value, callback) => {
             if (! /^[A-Za-z]{2,}$/g.test(value)) {
@@ -133,11 +134,11 @@
     { 
       title: '模块标签', dataIndex: 'label', search: true, width: 120,
       placeholder: '请输入模块标签（中文名称）',
-      rules: [ { required: true, message: '模块标签必填' } ],
+      commonRules: [ { required: true, message: '模块标签必填' } ],
     },
     {
       title: '版本号', dataIndex: 'version', width: 100, placeholder: '请输入版本号',
-      rules: [
+      commonRules: [
         { required: true, message: '版本号必填' },
         { validator: (value, callback) => {
             if (! /^[0-9\.]{3,}$/g.test(value)) {
@@ -150,7 +151,7 @@
     {
       title: '描述', dataIndex: 'description', formType: 'textarea',
       placeholder: '请输入模块的功能描述', width: 400,
-      rules: [{ required: true, message: '描述必填' }],
+      commonRules: [{ required: true, message: '描述必填' }],
     },
     {
       title: '状态', dataIndex: 'enabled', formType: 'radio', addDisplay: false, editDisplay: false, width: 120,

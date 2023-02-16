@@ -27,15 +27,6 @@ const homePageRoutes = [
       type: 'M',
     },
     component: () => import('@/views/userCenter/message.vue'),
-  }, {
-    name: 'test',
-    path: '/test',
-    meta: {
-      title: '测试页面',
-      icon: 'icon-message',
-      type: 'M',
-    },
-    component: () => import('@/views/userCenter/test.vue'),
   }
 ]
 

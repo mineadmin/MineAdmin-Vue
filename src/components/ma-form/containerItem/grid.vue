@@ -40,6 +40,7 @@
 import { onMounted } from 'vue'
 import MaGridCol from './grid-col.vue'
 import { getComponentName } from '../js/utils.js'
+import { maEvent } from '../js/formItemMixin.js'
 const props = defineProps({ component: Object })
 
 maEvent.handleCommonEvent(props.component, 'onCreated')

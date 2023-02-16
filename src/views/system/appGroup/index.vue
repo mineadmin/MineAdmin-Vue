@@ -42,6 +42,7 @@
     api: appGroup.getList,
     recycleApi: appGroup.getRecycleList,
     showIndex: false,
+    searchColNumber: 3,
     searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
@@ -61,7 +62,7 @@
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { 
       title: '组名称', dataIndex: 'name', search: true, width: 220,
-      rules: [{ required: true, message: '组名称必填' }],
+      commonRules: [{ required: true, message: '组名称必填' }],
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',

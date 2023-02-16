@@ -83,7 +83,7 @@
   const crud = reactive({
     api: queueLog.getPageList,
     showIndex: false,
-    searchLabelWidth: '90px',
+    searchLabelWidth: '100px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     requestParams: { orderBy: 'created_at', orderType: 'desc' },

@@ -37,6 +37,7 @@
     showIndex: false,
     operationColumn: true,
     operationWidth: 120,
+    searchColNumber: 2,
     pageLayout: 'fixed',
   })
 

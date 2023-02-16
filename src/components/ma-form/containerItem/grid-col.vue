@@ -38,6 +38,5 @@
 <script setup>
 import { ref, getCurrentInstance } from 'vue'
 import { getComponentName } from '../js/utils.js'
-import { maEvent } from '../js/formItemMixin.js'
 const props = defineProps({ component: Object })
 </script>

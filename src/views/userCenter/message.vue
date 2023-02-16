@@ -187,7 +187,7 @@
       title: '消息标题',
       dataIndex: 'title',
       search: true,
-      rules: [{
+      commonRules: [{
         required: true,
         message: '消息标题必填',
       }],
@@ -206,7 +206,7 @@
       dataIndex: 'users',
       formType: 'select-user',
       isEcho: true,
-      rules: [{
+      commonRules: [{
         required: true,
         message: '请选择接收用户',
       }],

@@ -31,14 +31,14 @@ import { ref, nextTick, watch, toRaw, getCurrentInstance, inject, provide } from
 import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
-import { isArray, isFunction, concat, get } from 'lodash'
+import { containerItems } from '@cps/ma-form/js/utils'
+import { isArray, isFunction, isEmpty, get } from 'lodash'
 
 const app = getCurrentInstance().appContext.app
 const maFormRef = ref()
 const componentName = ref('a-modal')
 const columns = inject('columns')
 const options = inject('options')
-const layout = ref(options?.layout ?? [])
 const formColumns = ref([])
 const currentAction = ref('')
 const dataVisible = ref(false)
@@ -73,10 +73,14 @@ const submit = async () => {
   }
 }
 const open = () => {
-  formColumns.value = []
-  componentName.value = options.formOption.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
-  init()
-  dataVisible.value = true
+  if (options.formOption.viewType === 'tag') {
+    console.log(options)
+  } else {
+    formColumns.value = []
+    componentName.value = options.formOption.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
+    init()
+    dataVisible.value = true
+  }
 }
 const close = () => {
   dataVisible.value = false
@@ -97,8 +101,9 @@ const edit = (data) => {
 
 const init = () => {
   dataLoading.value = true
+  const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
   columns.map(async item => {
-    if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
+    if (! formItemShow(item) || ['__index', '__operation', options.pk].includes(item.dataIndex)) return
     formColumns.value.push(item)
 
     // 针对带点的数据处理
@@ -131,22 +136,59 @@ const init = () => {
   })
 
   // 设置表单布局
-  settingFormLayout(layout.value)
-  
-  if (layout.value.length > 0) {
-    formColumns.value = layout.value
+  settingFormLayout(layout)
+
+
+  if (layout.length > 0) {
+    formColumns.value = layout
+    columns.map(item => {
+      if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
+      ! item.__formLayoutSetting && formColumns.value.push(item)
+    })
   }
   dataLoading.value = false
 }
 
-const settingFormLayout = (formLayout) => {
-  formLayout.map(item => {
-    if (formLayout.formList) {
-      settingFormLayout(formLayout.formList)
+const settingFormLayout = (layout) => {
+  layout.map((item, index) => {
+    if ( containerItems.includes(item.formType) ) {
+      switch ( item.formType ) {
+        case 'tabs': 
+          if ( item.tabs ) {
+            item.tabs.map(tab => {
+              tab.formList && settingFormLayout(tab.formList)
+            })
+          }
+          break
+        case 'card':
+          item.formList && settingFormLayout(item.formList)
+          break
+        case 'grid-tailwind':
+        case 'grid':
+          if ( item.cols ) {
+            item.cols.map(col => {
+              col.formList && settingFormLayout(col.formList)
+            })
+          }
+          break
+        case 'table':
+          if ( item.rows ) {
+            item.rows.map(row => {
+              if ( row.cols ) {
+                row.cols.map(col => {
+                  col.formList && settingFormLayout(col.formList)
+                })
+              }
+            })
+          }
+          break
+      }
     } else {
-      columns.map(column => {
+      columns.map((column, idx) => {
         if (column.dataIndex == item.dataIndex) {
-          item = column
+          column['__formLayoutSetting'] = true
+          item = JSON.parse(JSON.stringify(column))
+          layout[index] = item
         }
       })
     }
@@ -201,10 +243,10 @@ const toRules = (rules) => {
 
 const getRules = (item) => {
   if (currentAction.value === 'add') {
-    return toRules(item.rules ?? [])
+    return toRules(item.addRules ?? item.commonRules ?? [])
   }
   if (currentAction.value === 'edit') {
-    return toRules(item.rules ?? [])
+    return toRules(item.editRules ?? item.commonRules ?? [])
   }
 }
 defineExpose({ add, edit })

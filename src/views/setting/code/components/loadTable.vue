@@ -54,6 +54,7 @@
   const crud = reactive({
     pk: 'name',
     autoRequest: false,
+    searchColNumber: 1,
     api: dataMaintain.getPageList,
     showIndex: true,
     rowSelection: { showCheckedAll: true, key: 'name', onlyCurrent: true },

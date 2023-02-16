@@ -85,19 +85,19 @@
   const columns = reactive([
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     {
-      title: '任务名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '任务名称必填' }],
+      title: '任务名称', dataIndex: 'name', search: true, commonRules: [{ required: true, message: '任务名称必填' }],
       width: 200,
     },
     {
-      title: '任务类型', dataIndex: 'type', search: true, rules: [{ required: true, message: '任务类型必选' }],
+      title: '任务类型', dataIndex: 'type', search: true, commonRules: [{ required: true, message: '任务类型必选' }],
       dict: { data: types, translation: true }, formType: 'select', width: 150
     },
     {
-      title: '定时规则', dataIndex: 'rule', rules: [{ required: true, message: '定时规则必填' }],
+      title: '定时规则', dataIndex: 'rule', commonRules: [{ required: true, message: '定时规则必填' }],
       formExtra: '例如：30 */5 * * * *，代表每隔5分钟的第30秒执行任务', width: 150
     },
     {
-      title: '调用目标', dataIndex: 'target', formType: 'textarea', rules: [{ required: true, message: '调用目标必填' }],
+      title: '调用目标', dataIndex: 'target', formType: 'textarea', commonRules: [{ required: true, message: '调用目标必填' }],
       width: 260,
     },
     {

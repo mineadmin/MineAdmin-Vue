@@ -39,6 +39,7 @@
   const crud = reactive({
     autoRequest: false,
     api: dept.getLeaderList,
+    searchColNumber: 3,
     showIndex: false,
     searchLabelWidth: '75px',
     pageLayout: 'fixed',

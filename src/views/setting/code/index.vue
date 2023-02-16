@@ -113,6 +113,7 @@
   const crud = reactive({
     api: generate.getPageList,
     showIndex: false,
+    searchColNumber: 3,
     searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },

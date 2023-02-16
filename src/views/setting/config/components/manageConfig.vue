@@ -66,21 +66,21 @@ const columns = reactive([
     formType: 'select',
     hide: true,
     dict: { url: 'setting/configGroup/index', props: { label: 'name', value: 'id' } },
-    rules: [{ required: true, message: '所属组必选' }],
+    commonRules: [{ required: true, message: '所属组必选' }],
     width: 180,
   },
   {
     title: '配置标题',
     dataIndex: 'name',
     search: true,
-    rules: [{ required: true, message: '配置标题必填' }],
+    commonRules: [{ required: true, message: '配置标题必填' }],
     width: 220,
   },
   {
     title: '配置标识',
     dataIndex: 'key',
     search: true,
-    rules: [{ required: true, message: '配置标识必填' }],
+    commonRules: [{ required: true, message: '配置标识必填' }],
     disabled: true,
     width: 180,
   },
@@ -101,7 +101,7 @@ const columns = reactive([
     title: '输入组件',
     dataIndex: 'input_type',
     formType: 'select',
-    rules: [{ required: true, message: '输入组件必选' }],
+    commonRules: [{ required: true, message: '输入组件必选' }],
     dict: { data: inputComponent },
     control: (val) => {
       const temp = ['select', 'radio', 'checkbox']

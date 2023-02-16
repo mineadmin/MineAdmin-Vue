@@ -185,6 +185,7 @@
   const crud = reactive({
     api: attachment.getPageList,
     recycleApi: attachment.getRecyclePageList,
+    searchColNumber: 3,
     requestParams: {},
     showIndex: false,
     searchLabelWidth: '75px',

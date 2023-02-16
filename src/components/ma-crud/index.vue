@@ -161,6 +161,7 @@
               <ma-column
                 v-if="reloadColumn"
                 :isRecovery="isRecovery"
+                :crudFormRef="crudFormRef"
                 @refresh="() => refresh()"
                 @showImage="showImage"
               >
@@ -322,7 +323,6 @@ provide('dictColors', dictColors.value)
 provide('requestParams', requestParams.value)
 provide('dictTrans', dictTrans)
 provide('dictColors', dictColors)
-provide('crudFormRef', crudFormRef.value)
 
 watch(() => options.api, () => {
   requestData()
@@ -469,7 +469,7 @@ const toggleSearch = () => {
 }
 
 const tableSetting = () => {
-  maCrudSetting.value.open()
+  crudSettingRef.value.open()
 }
 
 const requestSuccess = async response => {
@@ -524,7 +524,7 @@ const dbClickOpenEdit = (record) => {
   }
 }
 
-const importAction = () => maCrudImport.value.open()
+const importAction = () => crudImportRef.value.open()
 
 const exportAction = () => {
   Message.info('请求服务器下载文件中...')
