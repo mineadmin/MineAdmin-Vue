@@ -5,10 +5,6 @@ export default {
   api: () => {},
   // 请求回收站api方法
   recycleApi: () => {},
-  // 请求前置处理
-  beforeRequest: () => {},
-  // 请求后置处理
-  afterRequest: () => {},
   // 是否自动请求
   autoRequest: true,
   // 请求参数
@@ -70,6 +66,29 @@ export default {
   searchLoadingText: '加载数据中...',
   // 搜索提交前置方法
   beforeSearch: (requestParams) => {},
+
+
+  // 请求前置处理
+  beforeRequest: () => {},
+  // 请求后置处理
+  afterRequest: () => {},
+  // 新增打开前方法
+  beforeOpenAdd: () => {},
+  // 新增提交前方法
+  beforeAdd: (formData) => {},
+  // 新增提交后方法
+  afterAdd: (response, formData) => {},
+  // 编辑打开前方法
+  beforeOpenEdit: (record) => {},
+  // 编辑提交前方法
+  beforeEdit: (formData) => {},
+  // 编辑提交后方法
+  afterEdit: (response, formData) => {},
+  // 删除前方法
+  beforeDelete: () => {},
+  // 删除后方法
+  afterDelete: (response) => {},
+
   
   // 表单配置项
   formOption: {
