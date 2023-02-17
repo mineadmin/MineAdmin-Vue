@@ -33,7 +33,9 @@ import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { containerItems } from '@cps/ma-form/js/utils'
 import { isArray, isFunction, isEmpty, get } from 'lodash'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const app = getCurrentInstance().appContext.app
 const maFormRef = ref()
 const componentName = ref('a-modal')
@@ -74,7 +76,7 @@ const submit = async () => {
 }
 const open = () => {
   if (options.formOption.viewType === 'tag') {
-    console.log(options)
+    router.push('/openForm')
   } else {
     formColumns.value = []
     componentName.value = options.formOption.viewType === 'drawer' ? 'a-drawer' : 'a-modal'

@@ -176,6 +176,8 @@
     import: { show: true, url: 'system/user/import', templateUrl: 'system/user/downloadTemplate', auth: ['system:user:import'] },
     export: { show: true, url: 'system/user/export', auth: ['system:user:export'] },
     formOption: {
+      viewType: 'tag',
+      tagId: 'addUser',
       width: 800,
       layout: [
         { formType: 'grid', cols: [ { span: 24, formList: [ { dataIndex: 'avatar' }] }]  },

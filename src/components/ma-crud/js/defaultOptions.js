@@ -96,6 +96,8 @@ export default {
     viewType: 'modal',
     // 只有 viewType 为 tag 时生效，此值在所有 MaCrud 内唯一
     tagId: '',
+    // tag标题名称
+    tagTitle: '',
     // 显示宽度
     width: 600,
     // 是否全屏，只有modal有效
