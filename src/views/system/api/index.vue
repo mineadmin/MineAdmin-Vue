@@ -77,50 +77,81 @@
       realApi: api.realDeletes, realAuth: ['system:api:realDeletes']
     },
     recovery: { show: true, api: api.recoverys, auth: ['system:api:recovery']},
-    formOption: { width: '850px' }
+    formOption: {
+      width: '850px',
+      viewType: 'drawer',
+      layout: [
+        {
+          formType: 'tabs',
+          tabs: [
+            { 
+              title: '基础信息',
+              formList: [
+                { dataIndex: 'group_id' },
+                { dataIndex: 'name' },
+                { dataIndex: 'access_name' },
+                { dataIndex: 'request_mode' },
+                { dataIndex: 'class_name' },
+                { dataIndex: 'method_name' },
+                { dataIndex: 'status' },
+                { dataIndex: 'auth_mode' },
+                { dataIndex: 'remark' },
+              ]
+            },
+            { 
+              title: '其他信息',
+              formList: [
+                { dataIndex: 'description' },
+                { dataIndex: 'response' },
+              ]
+            }
+          ]  
+        },
+      ]
+    }
   })
 
   const columns = reactive([
     {
       title: '所属组', dataIndex: 'group_id', search: true, commonRules: [{ required: true, message: '所属组必选' }],
       formType: 'select', dict: { url: 'system/apiGroup/list', props: { label: 'name', value: 'id' }, translation: true },
-      span: 12, width: 140,
+      width: 140, editDefaultValue: (form) => form.group_id.toString(),
     },
     {
       title: '接口名称', dataIndex: 'name', search: true, commonRules: [{ required: true, message: '应用名称必填' }],
-      span: 12, width: 150,
+      width: 150,
     },
     {
-      title: '访问名称', dataIndex: 'access_name', span: 12, width: 140,
+      title: '访问名称', dataIndex: 'access_name', width: 140,
       commonRules: [{ required: true, message: '访问名称必填' }],
-      formExtra: '接口实际访问的路由，可以使用"."来区分层级，不支持"/"'
+      extra: '接口实际访问的路由，可以使用"."来区分层级，不支持"/"'
     },
     {
       title: '请求模式', dataIndex: 'request_mode', search: true, formType: 'select',
       commonRules: [{ required: true, message: '请求模式必选' }],
       dict: { name: 'request_mode', props: { label: 'title', value: 'key' }, translation: true },
-      span: 12, width: 140,
+      width: 140,
     },
     {
       title: '类名称', dataIndex: 'class_name', commonRules: [{ required: true, message: '类名称必填' }],
-      span: 12, width: 150,
+      width: 150,
     },
     {
       title: '方法名称', dataIndex: 'method_name', commonRules: [{ required: true, message: '方法名称必填' }],
-      span: 12, width: 150,
+      width: 150,
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',
       dict: { name: 'data_status', props: { label: 'title', value: 'key' } },
-      addDefaultValue: '1', width: 80, span: 12,
+      addDefaultValue: '1', width: 80,
     },
     {
       title: '认证模式', dataIndex: 'auth_mode', formType: 'radio',
-      dict: { data: [{ label: '简易模式', value: 1 }, { label: '复杂模式', value: 2 }], translation: true },
-      addDefaultValue: 1, width: 130, span: 12,
+      dict: { data: [{ label: '简易模式', value: '1' }, { label: '复杂模式', value: '2' }], translation: true },
+      addDefaultValue: '1', editDefaultValue: (form) => form.auth_mode.toString(), width: 130
     },
     {
-      title: '应用介绍', dataIndex: 'description', hide: true, formType: 'editor',
+      title: '应用介绍', dataIndex: 'description', hide: true, formType: 'editor', height: 300,
     },
     {
       title: '返回示例', dataIndex: 'response', hide: true, formType: 'code-editor', height: 300,

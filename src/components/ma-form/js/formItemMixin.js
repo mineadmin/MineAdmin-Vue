@@ -12,14 +12,14 @@ export const maEvent = {
     }
   },
 
-  handleCommonEvent: async (component, evName) => {
+  handleCommonEvent: (component, evName) => {
     if (component[evName]) {
       if ( isFunction(component[evName]) ) {
-        return await component[evName]()
+        return component[evName]()
       }
       if ( isString(component[evName]) ) {
         let customFn = new Function('value', component[evName])
-        return await customFn.call(component)
+        return customFn.call(component[evName])
       }
     }
   },

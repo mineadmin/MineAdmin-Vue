@@ -204,7 +204,7 @@
     {
       title: '接收用户',
       dataIndex: 'users',
-      formType: 'select-user',
+      formType: 'user-select',
       isEcho: true,
       commonRules: [{
         required: true,

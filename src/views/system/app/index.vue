@@ -79,7 +79,12 @@
     formOption: {
       width: '850px',
       layout: [
-        { formType: 'grid', cols: [ { span: 12, formList: [ { dataIndex: 'group_id' }] }, { span: 12, formList: [{ dataIndex: 'app_name' }] }]  },
+        { formType: 'grid', cols:
+          [
+            { span: 12, formList: [ { dataIndex: 'group_id' }] },
+            { span: 12, formList: [{ dataIndex: 'app_name' }] }
+          ]
+        },
         { formType: 'grid', cols: 
           [
             { span: 18, formList: [ { dataIndex: 'app_id' }] },

@@ -19,7 +19,7 @@
 
 "@arco-design/web-vue@^2.43.0":
   version "2.43.0"
-  resolved "https://registry.npmmirror.com/@arco-design/web-vue/-/web-vue-2.43.0.tgz"
+  resolved "https://registry.yarnpkg.com/@arco-design/web-vue/-/web-vue-2.43.0.tgz#9d15f94231f5bf70d2a47ab6d4cee0a6e6db07e0"
   integrity sha512-saGi7H4kzcg6A88C7h6g1/nOfLUDvSFEYV9nlzqWnHW5Qq/kaUi9pXHvB9nEYVqS4WDdXFzqiVxX4muKiFnUzQ==
   dependencies:
     "@arco-design/color" "^0.4.0"

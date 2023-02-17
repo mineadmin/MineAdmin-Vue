@@ -75,7 +75,7 @@
       addDefaultValue: 1
     },
     {
-      title: '接收用户', dataIndex: 'users', formType: 'select-user', editDisplay: false, hide: true,
+      title: '接收用户', dataIndex: 'users', formType: 'user-select', editDisplay: false, hide: true,
       formExtra: '如不选择，默认将为所有用户发送'
     },
     {

@@ -131,7 +131,7 @@ watch(
 
 handleFlatteningColumns(props.columns, flatteningColumns.value)
 
-const options = ref(Object.assign(defaultOptions, props.options))
+const options = ref(Object.assign(JSON.parse(JSON.stringify(defaultOptions)), props.options))
 
 // 初始化
 const init = async () => {

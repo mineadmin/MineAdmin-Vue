@@ -89,7 +89,7 @@
 import { ref, watch, inject } from 'vue'
 
 const options = inject('options')
-const columns = inject('columns')
+let columns = inject('columns')
 
 const visible = ref(false)
 const tableWidth = ref('100%')

@@ -101,7 +101,8 @@ const edit = (data) => {
 
 const init = () => {
   dataLoading.value = true
-  const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
+  // const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
+  const layout = options?.formOption?.layout ?? []
   columns.map(async item => {
     if (! formItemShow(item) || ['__index', '__operation', options.pk].includes(item.dataIndex)) return
     formColumns.value.push(item)
