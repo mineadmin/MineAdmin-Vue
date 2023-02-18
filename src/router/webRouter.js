@@ -16,7 +16,7 @@ const routes = [
         name: 'openForm',
         path: '/openForm',
         meta: {
-          title: 'CRUD表单页',
+          title: '公共表单',
           type: 'M',
         },
         component: () => import('@/layout/form.vue'),

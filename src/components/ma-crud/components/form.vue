@@ -34,7 +34,9 @@ import commonApi from '@/api/common'
 import { containerItems } from '@cps/ma-form/js/utils'
 import { isArray, isFunction, isEmpty, get } from 'lodash'
 import { useRouter } from 'vue-router'
+import { useFormStore } from '@/store/index'
 
+const formStore = useFormStore()
 const router = useRouter()
 const app = getCurrentInstance().appContext.app
 const maFormRef = ref()
@@ -75,12 +77,26 @@ const submit = async () => {
   }
 }
 const open = () => {
+  formColumns.value = []
+  init()
   if (options.formOption.viewType === 'tag') {
-    router.push('/openForm')
+    if (! options.formOption.tagId ) {
+      Message.info('未配置 tagId')
+      return
+    }
+    if (! options.formOption.tagName ) {
+      Message.info('未配置 tagName')
+      return
+    }
+    const config = {
+      options,
+      data: form.value,
+      formColumns: formColumns.value
+    }
+    formStore.formList[options.formOption.tagId] = config
+    router.push('/openForm?tagId=' + options.formOption.tagId + '&op=' + currentAction.value)
   } else {
-    formColumns.value = []
     componentName.value = options.formOption.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
-    init()
     dataVisible.value = true
   }
 }
