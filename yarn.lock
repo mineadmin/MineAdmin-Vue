@@ -17,10 +17,10 @@
   dependencies:
     color "^3.1.3"
 
-"@arco-design/web-vue@^2.43.0":
-  version "2.43.0"
-  resolved "https://registry.yarnpkg.com/@arco-design/web-vue/-/web-vue-2.43.0.tgz#9d15f94231f5bf70d2a47ab6d4cee0a6e6db07e0"
-  integrity sha512-saGi7H4kzcg6A88C7h6g1/nOfLUDvSFEYV9nlzqWnHW5Qq/kaUi9pXHvB9nEYVqS4WDdXFzqiVxX4muKiFnUzQ==
+"@arco-design/web-vue@^2.43.1":
+  version "2.43.1"
+  resolved "https://registry.npmmirror.com/@arco-design/web-vue/-/web-vue-2.43.1.tgz#c6eee0b9f7fe7e53e9bd327e986fefc7598abd9a"
+  integrity sha512-bke0yfGcKjvXTbx/ndQNSY5u+dyMsizVJQrjOfG8Qa0omJr96XnkStnn48EomSuzmHzmw6wBu0FsKE2Z51Fg3w==
   dependencies:
     "@arco-design/color" "^0.4.0"
     b-tween "^0.3.3"
@@ -885,11 +885,6 @@ debug@^4.1.0:
   integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
   dependencies:
     ms "2.1.2"
-
-default-passive-events@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/default-passive-events/-/default-passive-events-2.0.0.tgz"
-  integrity sha512-eMtt76GpDVngZQ3ocgvRcNCklUMwID1PaNbCNxfpDXuiOXttSh0HzBbda1HU9SIUsDc02vb7g9+3I5tlqe/qMQ==
 
 defined@^1.0.0:
   version "1.0.1"
