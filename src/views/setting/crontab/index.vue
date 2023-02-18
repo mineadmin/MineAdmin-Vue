@@ -90,7 +90,7 @@
     },
     {
       title: '任务类型', dataIndex: 'type', search: true, commonRules: [{ required: true, message: '任务类型必选' }],
-      dict: { data: types, translation: true }, formType: 'select', width: 150, editDefaultValue: (form) => form.type.toString(),
+      dict: { data: types, translation: true }, formType: 'select', width: 150,
     },
     {
       title: '定时规则', dataIndex: 'rule', commonRules: [{ required: true, message: '定时规则必填' }],
@@ -104,8 +104,8 @@
       title: '任务参数', dataIndex: 'parameter', formType: 'textarea', width: 200, hide: true,
     },
     {
-      title: '单次执行', dataIndex: 'singleton', formType: 'radio', addDefaultValue: '2', editDefaultValue: (form) => form.singleton.toString(),
-      dict: { data: [{ label: '是', value: '1' }, { label: '否', value: '2' }]}, hide: true
+      title: '单次执行', dataIndex: 'singleton', formType: 'radio', addDefaultValue: 2,
+      dict: { data: [{ label: '是', value: 1 }, { label: '否', value: 2 }]}, hide: true
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',

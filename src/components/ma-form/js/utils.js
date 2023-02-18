@@ -1,4 +1,3 @@
-import tool from '@/utils/tool.js'
 import { isEmpty, isFunction, get } from 'lodash'
 
 export const containerItems = ['tabs', 'table', 'card', 'grid', 'grid-tailwind', 'children-form']

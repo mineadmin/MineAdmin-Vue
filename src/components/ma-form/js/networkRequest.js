@@ -26,8 +26,7 @@ export const handlerDictProps = (item, tmpArr) => {
       let value
       if (tmp === 'true') value = true
       else if (tmp === 'false') value = false
-      else if (typeof tmp == 'Number') value = tmp
-      else value = tmp + ''
+      else value = tmp
       tran[value] = label
       colors[value] = item.dict.tagColors && item.dict.tagColors[value] || undefined
       return { label, value, disabled, indeterminate }

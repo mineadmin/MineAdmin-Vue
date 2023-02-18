@@ -106,7 +106,7 @@
     {
       title: '所属组', dataIndex: 'group_id', search: true, commonRules: [{ required: true, message: '所属组必选' }],
       formType: 'select', dict: { url: 'system/appGroup/list', props: { label: 'name', value: 'id' }, translation: true },
-      labelWidth: '140px', width: 140, editDefaultValue: (form) => form.group_id.toString() 
+      labelWidth: '140px', width: 140 
     },
     {
       title: '应用名称', dataIndex: 'app_name', search: true, commonRules: [{ required: true, message: '应用名称必填' }],

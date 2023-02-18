@@ -115,7 +115,7 @@
     {
       title: '所属组', dataIndex: 'group_id', search: true, commonRules: [{ required: true, message: '所属组必选' }],
       formType: 'select', dict: { url: 'system/apiGroup/list', props: { label: 'name', value: 'id' }, translation: true },
-      width: 140, editDefaultValue: (form) => form.group_id.toString(),
+      width: 140
     },
     {
       title: '接口名称', dataIndex: 'name', search: true, commonRules: [{ required: true, message: '应用名称必填' }],
@@ -147,8 +147,8 @@
     },
     {
       title: '认证模式', dataIndex: 'auth_mode', formType: 'radio',
-      dict: { data: [{ label: '简易模式', value: '1' }, { label: '复杂模式', value: '2' }], translation: true },
-      addDefaultValue: '1', editDefaultValue: (form) => form.auth_mode.toString(), width: 130
+      dict: { data: [{ label: '简易模式', value: 1 }, { label: '复杂模式', value: 2 }], translation: true },
+      addDefaultValue: 1, width: 130
     },
     {
       title: '应用介绍', dataIndex: 'description', hide: true, formType: 'editor', height: 300,
