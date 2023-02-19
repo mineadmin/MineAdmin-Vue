@@ -74,6 +74,7 @@
 
 <script setup>
   import { ref, reactive } from 'vue'
+  import maCodeEditor from '@cps/ma-codeEditor/index.vue'
   import operLog from '@/api/system/operLog'
   import { formatJson } from '@/utils/common'
 

@@ -62,6 +62,7 @@
 
 <script setup>
   import { ref, reactive } from 'vue'
+  import maCodeEditor from '@cps/ma-codeEditor/index.vue'
   import queueLog from '@/api/system/queueLog'
   import { formatJson } from '@/utils/common'
 

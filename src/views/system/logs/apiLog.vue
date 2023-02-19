@@ -66,6 +66,7 @@
 
 <script setup>
   import { ref, reactive } from 'vue'
+  import maCodeEditor from '@cps/ma-codeEditor/index.vue'
   import apiLog from '@/api/system/apiLog'
   import { formatJson } from '@/utils/common'
 

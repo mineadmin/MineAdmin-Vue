@@ -158,7 +158,7 @@
         }
       },
     },
-    {  title: '图标', dataIndex: 'icon', width: 80, formType: 'icon', style: { width: '100%' } },
+    {  title: '图标', dataIndex: 'icon', width: 80, formType: 'icon-picker', style: { width: '100%' } },
     { 
       title: '菜单标识', dataIndex: 'code', search: true, commonRules: [{ required: true, message: '菜单标识必填' }], width: 150,
     },

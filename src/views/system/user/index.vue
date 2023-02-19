@@ -77,6 +77,7 @@
 
 <script setup>
   import { ref, onMounted, reactive, computed } from 'vue'
+  import MaTreeSlider from '@cps/ma-treeSlider/index.vue'
   import dept from '@/api/system/dept'
   import user from '@/api/system/user'
   import commonApi from '@/api/common'

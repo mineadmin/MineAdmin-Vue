@@ -107,6 +107,7 @@
 
 <script setup>
   import { ref, onMounted, reactive, computed, nextTick } from 'vue'
+  import MaTreeSlider from '@cps/ma-treeSlider/index.vue'
   import attachment from '@/api/system/attachment'
   import commonApi from '@/api/common'
   import { useI18n } from 'vue-i18n'

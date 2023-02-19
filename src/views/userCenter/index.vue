@@ -63,6 +63,7 @@
 
 <script setup>
   import { ref, reactive, onMounted, watch } from 'vue'
+  import MaUpload from '@cps/ma-upload/index.vue'
   import { useUserStore } from '@/store'
   import { Message } from '@arco-design/web-vue'
   import user from '@/api/system/user'

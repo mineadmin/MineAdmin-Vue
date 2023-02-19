@@ -20,6 +20,7 @@
 
 <script setup>
   import { reactive, ref, watch, computed } from 'vue'
+  import MaResource from '@cps/ma-resource/index.vue'
   import { useAppStore } from '@/store'
 
   import Editor from '@tinymce/tinymce-vue'

@@ -90,6 +90,8 @@
 
 <script setup>
   import { ref, onMounted, watch } from 'vue'
+  import MaUpload from '@cps/ma-upload/index.vue'
+  import MaTreeSlider from '@cps/ma-treeSlider/index.vue'
   import commonApi from '@/api/common'
   import attachmentApi from '@/api/system/attachment'
   import tool from '@/utils/tool'

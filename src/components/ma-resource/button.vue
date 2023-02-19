@@ -38,6 +38,7 @@
 
 <script setup>
   import { onMounted, ref, watch } from 'vue'
+  import MaResource from '@cps/ma-resource/index.vue'
   import { isArray } from 'lodash'
 
   const list = ref()
