@@ -328,6 +328,8 @@ watch(() => options.api, () => {
   requestData()
 }, { deep: true })
 
+watch( () => openPagination.value, vl => settingFixedPage() )
+
 const getSlot = (cls = []) => {
   let sls = []
   cls.map(item => {
@@ -398,6 +400,8 @@ const requestHandle = async () => {
       if (response.pageInfo) {
         total.value = response.pageInfo.total
         openPagination.value = true
+      } else {
+        openPagination.value = false
       }
     } else {
       tableData.value = response
@@ -467,9 +471,9 @@ const toggleSearch = async () => {
   }
 }
 
-const settingFixedPage = (openPage = false) => {
+const settingFixedPage = () => {
   const workAreaHeight = document.querySelector('.work-area').offsetHeight
-  const tableHeight = workAreaHeight - headerHeight.value - 152
+  const tableHeight = workAreaHeight - headerHeight.value - (openPagination.value ? 152 : 108)
   crudContentRef.value.style.height = tableHeight + 'px'
 }
 

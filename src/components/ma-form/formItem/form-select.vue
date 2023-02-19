@@ -80,10 +80,10 @@ const columns = inject('columns')
 
 const index = props.customField ?? props.component.dataIndex
 const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1] + props.component.dataIndex : props.component.dataIndex
-const value = ref(get(formModel, index, ''))
+const value = ref(get(formModel.value, index, ''))
 
-watch( () => get(formModel, index), vl => value.value = vl )
-watch( () => value.value, v => set(formModel, index, v) )
+watch( () => get(formModel.value, index), vl => value.value = vl )
+watch( () => value.value, v => set(formModel.value, index, v) )
 
 if (props.component.dict && props.component.dict.name && !props.component.multiple) { 
   value.value = value.value + ''
@@ -99,7 +99,7 @@ const handleCascaderChangeEvent = async (value) => {
   
   // 处理联动
   if (! index.match(/^(\w+)\.\d+\./)) {
-    await handlerCascader(value, component, columns, dictList, formModel)
+    await handlerCascader(value, component, columns.value, dictList.value, formModel.value)
   }
   nextTick(() => formLoading.value = false)
 

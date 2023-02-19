@@ -72,10 +72,10 @@ const formModel = inject('formModel')
 const dictList  = inject('dictList')
 const index = props.customField ?? props.component.dataIndex
 const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1] + props.component.dataIndex : props.component.dataIndex
-const value = ref(get(formModel, index))
+const value = ref(get(formModel.value, index))
 
-watch( () => get(formModel, index), vl => value.value = vl )
-watch( () => value.value, v => set(formModel, index, v) )
+watch( () => get(formModel.value, index), vl => value.value = vl )
+watch( () => value.value, v => set(formModel.value, index, v) )
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
 onMounted(() => {

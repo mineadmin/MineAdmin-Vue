@@ -51,10 +51,10 @@ const props = defineProps({
 
 const formModel = inject('formModel')
 const index = props.customField ?? props.component.dataIndex
-const value = ref(get(formModel, index))
+const value = ref(get(formModel.value, index))
 
-watch( () => get(formModel, index), vl => value.value = vl )
-watch( () => value.value, v => set(formModel, index, v) )
+watch( () => get(formModel.value, index), vl => value.value = vl )
+watch( () => value.value, v => set(formModel.value, index, v) )
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
 onMounted(() => {

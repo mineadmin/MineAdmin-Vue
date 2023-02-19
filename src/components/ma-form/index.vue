@@ -120,6 +120,7 @@ watch(
   vl => form.value = vl,
   { immediate: true, deep: true }
 )
+
 watch(
   () => form.value,
   vl => {
@@ -129,7 +130,6 @@ watch(
   { deep: true }
 )
 
-handleFlatteningColumns(props.columns, flatteningColumns.value)
 
 const options = ref(Object.assign(JSON.parse(JSON.stringify(defaultOptions)), props.options))
 
@@ -137,6 +137,8 @@ const options = ref(Object.assign(JSON.parse(JSON.stringify(defaultOptions)), pr
 const init = async () => {
 
   formLoading.value = true
+  
+  handleFlatteningColumns(props.columns, flatteningColumns.value)
 
   // 收集数据列表
   flatteningColumns.value.map(item  => {
@@ -178,8 +180,8 @@ const init = async () => {
 
 provide('options', options.value)
 provide('columns', flatteningColumns.value)
-provide('dictList', dictList.value)
-provide('formModel', form.value)
+provide('dictList', dictList)
+provide('formModel', form)
 provide('formLoading', formLoading)
 maEvent.handleCommonEvent(options.value, 'onCreated')
 
