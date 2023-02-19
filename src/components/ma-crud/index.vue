@@ -218,7 +218,7 @@
 
 <script setup>
 import config from '@/config/crud'
-import { ref, watch, provide, nextTick } from 'vue'
+import { ref, watch, provide, nextTick, onMounted, onUnmounted } from 'vue'
 import defaultOptions from './js/defaultOptions'
 import { loadDict } from '@cps/ma-form/js/networkRequest.js'
 
@@ -260,14 +260,14 @@ const searchSlots = ref([])
 const isRecovery = ref(false)
 const expandState = ref(false)
 
-const crudHeaderRef = ref(null)
-const crudOperationRef = ref(null)
-const crudContentRef = ref(null)
-const crudFooterRef = ref(null)
-const crudSearchRef = ref(null)
-const crudSettingRef = ref(null)
-const crudFormRef = ref(null)
-const crudImportRef = ref(null)
+const crudHeaderRef = ref()
+const crudOperationRef = ref()
+const crudContentRef = ref()
+const crudFooterRef = ref()
+const crudSearchRef = ref()
+const crudSettingRef = ref()
+const crudFormRef = ref()
+const crudImportRef = ref()
 const options = ref(
   Object.assign(JSON.parse(JSON.stringify(defaultOptions)), props.options, props.crud)
 )
@@ -374,7 +374,6 @@ const requestData = async () => {
   if (options.value.operationColumn && columns.value.length > 0 && columns.value[columns.value.length - 1].dataIndex !== '__operation') {
     columns.value.push({ title: options.value.operationColumnText, dataIndex: '__operation', width: options.value.operationWidth, align: 'right', fixed: 'right' })
   }
-  ! options.value.expandSearch && crudSearchRef.value.setSearchHidden()
   initRequestParams()
   await refresh()
 }
@@ -454,18 +453,24 @@ const pageChangeHandler = (currentPage) => {
   refresh()
 }
 
-const toggleSearch = () => {
+const toggleSearch = async () => {
   const dom = crudHeaderRef.value?.style
   if (dom) {
-    dom.display = showSearch.value ? 'none' : 'block'
-    showSearch.value = ! showSearch.value
-    if (openPagination.value) {
-      headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? 24 : crudHeaderRef.value.offsetHeight + 32
-    } else {
-      headerHeight.value = crudHeaderRef.value.offsetHeight == 0 ? -8 : crudHeaderRef.value.offsetHeight
-    }
-    options.value.pageLayout == 'fixed' && settingFixedPage()
+    crudSearchRef.value.showSearch
+    ? crudSearchRef.value.setSearchHidden()
+    : crudSearchRef.value.setSearchDisplay()
+
+    await nextTick(() => {
+      headerHeight.value = crudHeaderRef.value.offsetHeight
+      options.value.pageLayout == 'fixed' && settingFixedPage()
+    })
   }
+}
+
+const settingFixedPage = (openPage = false) => {
+  const workAreaHeight = document.querySelector('.work-area').offsetHeight
+  const tableHeight = workAreaHeight - headerHeight.value - 152
+  crudContentRef.value.style.height = tableHeight + 'px'
 }
 
 const tableSetting = () => {
@@ -630,21 +635,29 @@ const __summary = ({ data }) => {
 }
 
 if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {
-  nextTick()
-  requestData()
+  nextTick( () => requestData() )
 }
 
-nextTick(() => {
-  // document.querySelector('.arco-table-body').className += ' customer-scrollbar'
-  // toggleSearch()
+const resizeHandler = () => {
+  headerHeight.value = crudHeaderRef.value.offsetHeight
+  settingFixedPage()
+}
+
+onMounted(() => {
+  if (! options.value.expandSearch && crudSearchRef.value) {
+    crudSearchRef.value.setSearchHidden()
+  }
+  if (options.value.pageLayout == 'fixed') {
+    headerHeight.value = crudHeaderRef.value.offsetHeight
+    settingFixedPage()
+  }
+
+  window.addEventListener('resize', resizeHandler, false);
 })
 
-const settingFixedPage = (openPage = false) => {
-  const workAreaHeight = document.querySelector('.work-area').offsetHeight
-  const tempHeight = headerHeight.value + 120 + (openPage ? 32 : -12)
-  const tableHeight = workAreaHeight - tempHeight
-  crudContentRef.value.style.height = tableHeight + 'px'
-}
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeHandler, false);
+})
 
 const getCurrentAction = () => crudFormRef.value.currentAction
 const getFormData = () => crudFormRef.value.form

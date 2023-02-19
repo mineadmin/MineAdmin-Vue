@@ -120,7 +120,7 @@ const getSearchFormRef = () => searchRef.value
 const getSearchColumns = () => searchColumns.value
 
 defineExpose({
-  getSearchFormRef, getSearchColumns,
+  getSearchFormRef, getSearchColumns, showSearch,
   setSearchHidden, setSearchDisplay, setSearchLoading, setSearchUnLoading
 })
 </script>
