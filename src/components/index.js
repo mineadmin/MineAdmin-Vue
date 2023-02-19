@@ -42,5 +42,15 @@ export default {
     Vue.component('MaChart', MaChart)
     Vue.component('MaCrud', MaCrud)
     Vue.component('MaForm', MaForm)
+    Vue.component('MaUpload', MaUpload)
+    Vue.component('MaTreeSlider', MaTreeSlider)
+    Vue.component('MaResource', MaResource)
+    Vue.component('MaResourceButton', MaResourceButton)
+    Vue.component('MaUser', MaUser)
+    Vue.component('MaEditor', MaEditor)
+    Vue.component('MaIcon', MaIcon)
+    Vue.component('MaCodeEditor', MaCodeEditor)
+    Vue.component('MaUserInfo', MaUserInfo)
+    Vue.component('MaCityLinkage', MaCityLinkage)
   }
 }
