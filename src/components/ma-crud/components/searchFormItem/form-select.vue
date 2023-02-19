@@ -25,13 +25,17 @@
   
 <script setup>
 import { ref, inject } from 'vue'
+import { handlerCascader } from '@cps/ma-form/js/networkRequest'
 const props = defineProps({
   component: Object,
 })
 const searchForm = inject('searchForm')
+const columns = inject('columns')
 const dicts = inject('dicts')
 
 const handlerChangeeEvent = (value) => {
-
+  handlerCascader(
+    value, props.component, columns, dicts, searchForm
+  )
 }
 </script>

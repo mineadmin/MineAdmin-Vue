@@ -73,6 +73,7 @@ const searchColumns = ref([])
 const searchForm = ref({})
 
 provide('searchForm', searchForm.value)
+provide('columns', columns)
 
 const emit = defineEmits(['search'])
 
