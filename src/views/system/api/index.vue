@@ -79,7 +79,10 @@
     recovery: { show: true, api: api.recoverys, auth: ['system:api:recovery']},
     formOption: {
       width: '850px',
-      viewType: 'drawer',
+      // viewType: 'drawer',
+      viewType: 'tag',
+      tagId: 'apiform',
+      tagName: '接口',
       layout: [
         {
           formType: 'tabs',
