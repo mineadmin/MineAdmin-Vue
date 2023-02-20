@@ -74,7 +74,7 @@
 
   const openAdd = (id) => {
     columns[1].addDefaultValue = id
-    crudRef.value.maCrudForm.add()
+    crudRef.value.crudFormRef.add()
   }
 
   const changeSort = async (value, id) => {
