@@ -58,6 +58,8 @@ export default {
     error: '验证码错误',
     notice: '请输入验证码'
   },
+  i18n: '开启多语言',
+  i18nHelp: '是否开启多语言功能',
   animation: '切换动画',
   animationHelp: '工作区页面切换的进场和出场动画效果',
   animate: {

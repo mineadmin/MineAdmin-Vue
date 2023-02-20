@@ -5,7 +5,7 @@
         <a v-for="tag in tagStore.tags" :key="tag.path" @contextmenu.prevent="openContextMenu($event, tag)"
           :class="route.fullPath == tag.path ? 'active' : ''"
           @click="tagJump(tag)">
-          {{ tag.customTitle ? tag.customTitle : $t('menus.' + tag.name).indexOf('.') > 0 ? tag.title : $t('menus.' + tag.name) }}
+          {{ tag.customTitle ? tag.customTitle : appStore.i18n ? ($t('menus.' + tag.name).indexOf('.') > 0 ? tag.title : $t('menus.' + tag.name)) : tag.title }}
           <icon-close class="tag-icon" v-if="!tag.affix" @click.stop="closeTag(tag)" />
         </a>
       </div>

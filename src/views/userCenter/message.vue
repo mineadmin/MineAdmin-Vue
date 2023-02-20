@@ -19,7 +19,7 @@
         <span class="pl-3">{{ item.title }}</span></li>
     </ul>
     <div class="h-hull w-full lg:ml-3 lg:mr-2 pt-2">
-      <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+      <ma-crud :options="crud" :columns="columns" ref="crudRef">
 
         <template #tableAfterButtons>
           <a-radio-group
@@ -69,7 +69,7 @@
 
     <a-modal v-model:visible="receiveListVisible" width="1000px">
       <template #title>接收用户列表</template>
-      <ma-crud :crud="receiveCrud" :columns="receiveColumns" ref="receiveCrudRef" />
+      <ma-crud :options="receiveCrud" :columns="receiveColumns" ref="receiveCrudRef" />
     </a-modal>
   </div>
 
@@ -135,7 +135,7 @@
     } else if (key !== 'send_box' && columns.value[0].title !== '发送人') {
       columns.value.unshift(sendBy)
     }
-    crudRef.value.requestData()
+    nextTick(() => crudRef.value.requestData())
   }
 
   const changeReadStatus = (key) => {
@@ -178,7 +178,7 @@
     delete: { show: true, api: queueMessage.deletes },
     operationColumn: true,
     operationWidth: 240,
-    viewLayoutSetting: { width: 800 },
+    formOption: { width: 800 },
     api: () => {}
   })
 
@@ -187,7 +187,7 @@
       title: '消息标题',
       dataIndex: 'title',
       search: true,
-      rules: [{
+      commonRules: [{
         required: true,
         message: '消息标题必填',
       }],
@@ -204,9 +204,9 @@
     {
       title: '接收用户',
       dataIndex: 'users',
-      formType: 'select-user',
+      formType: 'user-select',
       isEcho: true,
-      rules: [{
+      commonRules: [{
         required: true,
         message: '请选择接收用户',
       }],
@@ -228,7 +228,6 @@
       editDisplay: false 
     },
   ])
-
 </script>
 <script>
 export default { name: 'message' }

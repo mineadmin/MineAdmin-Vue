@@ -19,7 +19,7 @@
               <template #icon v-if="menu.meta.icon">
                 <component :is="menu.meta.icon" :class="menu.meta.icon.indexOf('ma') > 0 ? 'icon' : ''" />
               </template>
-              {{ $t(`menus.${menu.name}`).indexOf('.') > 0 ? menu.meta.title : $t(`menus.${menu.name}`) }}
+              {{ appStore.i18n ? ( $t(`menus.${menu.name}`).indexOf('.') > 0 ? menu.meta.title : $t(`menus.${menu.name}`) ) : menu.meta.title }}
             </a-menu-item>
           </template>
           <!-- 有子菜单的进入 -->
@@ -33,12 +33,13 @@
   </template>
   <script setup>
     import { ref, watch, onMounted } from 'vue'
-    import { useTagStore } from '@/store'
+    import { useTagStore, useAppStore } from '@/store'
     import { useRouter, useRoute } from 'vue-router'
     import SubMenu from './sub-menu.vue'
     defineProps({ modelValue: Array })
     const router = useRouter()
     const emits = defineEmits(['go'])
+    const appStore = useAppStore()
     const tagStore = useTagStore()
     const route = useRoute()
     const actives = ref([])

@@ -1,4 +1,7 @@
 export default {
+  // 特殊页
+  'openForm': '公共表单',
+
   // 首页菜单
   'home': '首页',
   'dashboard': '仪表盘',

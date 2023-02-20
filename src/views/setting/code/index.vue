@@ -10,7 +10,7 @@
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef" @selection-change="selectionChange">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef" @selection-change="selectionChange">
       <!-- 表格按钮后置扩展 -->
       <template #tableAfterButtons>
         <a-button
@@ -115,6 +115,7 @@
   const crud = reactive({
     api: generate.getPageList,
     showIndex: false,
+    searchColNumber: 3,
     searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },

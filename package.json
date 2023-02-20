@@ -1,6 +1,6 @@
 {
   "name": "mineadmin-vue",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "scripts": {
     "dev": "vite serve --mode development",
@@ -9,39 +9,39 @@
   },
   "dependencies": {
     "@arco-design/color": "^0.4.0",
-    "@arco-design/web-vue": "^2.40.0",
-    "@arco-themes/vue-mine-admin": "^0.0.10",
+    "@arco-design/web-vue": "^2.43.1",
+    "@arco-themes/vue-mine-admin-v2": "^0.0.2",
     "@tinymce/tinymce-vue": "^5.0.0",
     "autoprefixer": "^10.4.0",
     "axios": "^0.27.2",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.2",
-    "default-passive-events": "^2.0.0",
     "echarts": "^5.3.2",
     "file2md5": "^1.3.0",
     "lodash": "^4.17.21",
     "monaco-editor": "^0.33.0",
     "nprogress": "^0.2.0",
-    "pinia": "^2.0.15",
+    "pinia": "^2.0.30",
     "postcss-import": "^14.0.2",
     "qs": "^6.10.3",
     "resize-observer-polyfill": "^1.5.1",
     "sortablejs": "^1.15.0",
     "tailwindcss": "^3.0.24",
     "tinymce": "^6.1.0",
-    "vue": "^3.2.38",
+    "vue": "^3.2.47",
     "vue-clipboard3": "^2.0.0",
     "vue-color-kit": "^1.0.5",
     "vue-echarts": "^6.0.2",
     "vue-i18n": "^9.1.10",
-    "vue-router": "^4.1.2"
+    "vue-router": "^4.1.6",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^3.1.2",
-    "@vitejs/plugin-vue-jsx": "^2.0.0",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "@vitejs/plugin-vue-jsx": "^3.0.0",
     "less": "^4.1.3",
     "less-loader": "^11.0.0",
     "typescript": "^4.7.4",
-    "vite": "^3.0.0"
+    "vite": "^4.1.1"
   }
 }

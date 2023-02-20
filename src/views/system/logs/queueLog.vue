@@ -10,7 +10,7 @@
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" @row-click="openDetails" ref="crudRef"></ma-crud>
+    <ma-crud :options="crud" :columns="columns" @row-click="openDetails" ref="crudRef"></ma-crud>
 
     <!-- 抽屉 -->
     <a-drawer v-model:visible="visible" width="600px" :footer="false">
@@ -62,6 +62,7 @@
 
 <script setup>
   import { ref, reactive } from 'vue'
+  import maCodeEditor from '@cps/ma-codeEditor/index.vue'
   import queueLog from '@/api/system/queueLog'
   import { formatJson } from '@/utils/common'
 
@@ -83,7 +84,7 @@
   const crud = reactive({
     api: queueLog.getPageList,
     showIndex: false,
-    searchLabelWidth: '90px',
+    searchLabelWidth: '100px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     requestParams: { orderBy: 'created_at', orderType: 'desc' },

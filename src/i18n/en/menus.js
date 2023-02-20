@@ -1,4 +1,7 @@
 export default {
+  // 特殊页
+  'openForm': 'CRUD',
+
   // 首页菜单
   'home': 'Home',
   'dashboard': 'Dashboard',

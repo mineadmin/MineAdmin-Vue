@@ -119,7 +119,7 @@ export interface BasicColumn {
   // 搜索描述
   searchPlaceholder?: string;
   //编辑|创建 通用规则
-  rules?: FieldRule | FieldRule[];
+  commonRules?: FieldRule | FieldRule[];
   // 创建时规则
   addRules?: FieldRule | FieldRule[];
   // 编辑时规则
