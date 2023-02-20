@@ -21,7 +21,7 @@
 
     <div class="lg:w-10/12 w-full lg:ml-4 mt-5 lg:mt-0">
       <!-- CRUD 组件 -->
-      <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+      <ma-crud :options="crud" :columns="columns" ref="crudRef">
         <!-- 状态列 -->
         <template #status="{ record }">
           <a-switch

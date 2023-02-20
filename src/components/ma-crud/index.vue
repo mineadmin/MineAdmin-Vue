@@ -324,9 +324,15 @@ provide('requestParams', requestParams.value)
 provide('dictTrans', dictTrans)
 provide('dictColors', dictColors)
 
-watch(() => options.api, () => {
-  requestData()
-}, { deep: true })
+watch(
+  () => props.options.api,
+  vl => options.value.api = vl
+)
+
+watch(
+  () => props.crud.api,
+  vl => options.value.api = vl
+)
 
 watch( () => openPagination.value, vl => settingFixedPage() )
 

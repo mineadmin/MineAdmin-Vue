@@ -11,7 +11,7 @@
   <a-modal width="1000px" v-model:visible="visible" :on-before-ok="loadTable" :align-center="false" top="50px">
     <template #title>装载数据表</template>
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef" @selection-change="handlerSelection"></ma-crud>
+    <ma-crud :options="crud" :columns="columns" ref="crudRef" @selection-change="handlerSelection"></ma-crud>
   </a-modal>
 </template>
 

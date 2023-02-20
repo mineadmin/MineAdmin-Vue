@@ -13,7 +13,7 @@
       维护 {{ currentRow.name }} 的{{ currentType == 'request' ? '请求参数' : '响应参数' }}
     </template>
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef">
       <!-- 状态列 -->
       <template #status="{ record }">
         <a-switch :checked-value="1" unchecked-value="2" @change="changeStatus($event, record.id)"

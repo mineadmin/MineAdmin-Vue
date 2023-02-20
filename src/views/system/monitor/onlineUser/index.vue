@@ -10,7 +10,7 @@
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef">
       <template #operationCell="{ record }">
         <a-popconfirm content="确实要将该用户强制退出吗?" position="bottom" @ok="kick(record)">
           <a-link v-auth="['system:onlineUser:kick']"><icon-import /> 强制退出</a-link>

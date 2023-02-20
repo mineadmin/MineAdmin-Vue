@@ -20,7 +20,7 @@
 
       <ma-crud
         ref="crudRef"
-        :crud="crud"
+        :options="crud"
         :columns="columns"
         v-model:selected-keys="selecteds"
         @selection-change="selectHandler"

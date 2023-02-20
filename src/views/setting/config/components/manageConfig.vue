@@ -11,7 +11,7 @@
   <a-modal fullscreen v-model:visible="visible" :footer="false">
     <template #title>管理配置</template>
     <div class="h-full">
-      <ma-crud ref="crudRef" :crud="crud" :columns="columns" />
+      <ma-crud ref="crudRef" :options="crud" :columns="columns" />
     </div>
   </a-modal>
 </template>

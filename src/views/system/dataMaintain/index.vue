@@ -10,7 +10,7 @@
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef" @selection-change="selectChange">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef" @selection-change="selectChange">
       <!-- 表格操作按钮扩展 -->
       <template #tableButtons>
         <a-button @click="operate('optimize')" v-auth="['system:dataMaintain:optimize']">
@@ -31,7 +31,7 @@
 
     <a-modal v-model:visible="visible" width="900px" :footer="false">
       <template #title>表结构数据</template>
-      <ma-crud ref="tableRef" :crud="tableCrud" :columns="[
+      <ma-crud ref="tableRef" :options="tableCrud" :columns="[
         { title: '字段名称', dataIndex: 'column_name' },
         { title: '字段类型', dataIndex: 'column_type' },
         { title: '字段注释', dataIndex: 'column_comment' },

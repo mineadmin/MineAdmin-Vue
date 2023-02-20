@@ -11,7 +11,7 @@
   <a-modal v-model:visible="visible" fullscreen :footer="false">
     <template #title>维护 {{ currentRow.name }} 字典数据</template>
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef">
       <!-- 排序列 -->
       <template #sort="{ record }">
         <a-input-number
