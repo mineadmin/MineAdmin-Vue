@@ -8,7 +8,7 @@
         <a-breadcrumb-item
           v-if="index > 0 && !['/', '/home', '/dashboard'].includes(r.path)"
         >
-          {{ $t('menus.' + r.name).indexOf('.') > 0 ? r.meta.title : $t('menus.' + r.name) }}
+          {{ appStore.i18n ? ( $t('menus.' + r.name).indexOf('.') > 0 ? r.meta.title : $t('menus.' + r.name) ) : r.meta.title }}
         </a-breadcrumb-item>
       </template>
     </a-breadcrumb>
@@ -17,6 +17,9 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
+import { useAppStore } from '@/store'
+
+const appStore = useAppStore()
 const route = useRoute()
 const router = useRouter()
 </script>

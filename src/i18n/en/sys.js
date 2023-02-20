@@ -58,6 +58,8 @@ export default {
     error: 'The verification code is incorrect',
     notice: 'Please enter the verification code'
   },
+  i18n: 'open multi-language',
+  i18nHelp: 'Whether to enable the multi-language feature',
   animation: 'Animation',
   animationHelp: 'Page transition animation effect',
   animate: {
