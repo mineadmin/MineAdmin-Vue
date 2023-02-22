@@ -11,6 +11,7 @@
   <div
     v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
     :class="[ gridClass, props.component?.customClass ]"
+    :style="props.component?.style"
   >
     <template v-for="(col, colIndex) in (props.component?.cols ?? [])" :key="colIndex">
       <ma-grid-tailwind-col :component="col">

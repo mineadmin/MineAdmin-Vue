@@ -11,6 +11,7 @@
   <div
     v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
     :class="['grid-responsive-padding', props.component?.customClass]"
+    :style="props.component?.style"
     :span="props.component?.span ?? 12"
     :offset="props.component?.offset"
     :suffix="props.component?.suffix"

@@ -11,9 +11,15 @@
   <table
     v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
     :class="['table-container', props.component?.customClass]"
+    :style="props.component?.style"
   > 
     <tbody>
-      <tr v-for="(row, rowIndex) in (props.component?.rows ?? [])" :key="rowIndex">
+      <tr
+        v-for="(row, rowIndex) in (props.component?.rows ?? [])"
+        :key="rowIndex"
+        :class="['table-row', row?.customClass]"
+        :style="row?.style"
+      >
         <template v-for="(col, colIndex) in (row.cols ?? [])" :key="colIndex">
           <ma-table-cell :component="col">
             <template v-for="(component, componentIndex) in (col.formList ?? [])" :key="componentIndex">
