@@ -17,8 +17,7 @@
       <component
         :is="props.component.dataIndex"
         :component="props.component"
-        :dict="dictList[dictIndex]"
-        :value="value"
+        :customField="props.customField"
       />
     </slot>
   </ma-form-item>
