@@ -10,7 +10,7 @@
 <template>
   <component
     :is="getComponentName()"
-    v-model="searchForm[props.component.dataIndex]"
+    v-model="value"
     :placeholder="props.component.formType === 'range' ? ['请选择开始时间', '请选择结束时间'] : `请选择${props.component.title}`"
     :time-picker-props="props.component.formType == 'range' ? { defaultValue: ['00:00:00', '23:59:59'] } : {}"
     :show-time="props.component.showTime"
@@ -27,11 +27,16 @@ const props = defineProps({
   component: Object,
 })
 const searchForm = inject('searchForm')
-const dicts = inject('dicts')
 
 const getComponentName = () => {
   if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(props.component.formType)) {
     return `a-${props.component.formType}-picker`
   }
 }
+
+const value = ref(get(searchForm.value, index, ''))
+
+watch( () => get(searchForm.value, index), vl => value.value = vl )
+watch( () => value.value, v => set(searchForm.value, index, v) )
+
 </script>

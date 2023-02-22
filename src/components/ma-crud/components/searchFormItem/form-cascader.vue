@@ -9,7 +9,7 @@
 -->
 <template>
   <a-cascader
-    v-model="searchForm[props.component.dataIndex]"
+    v-model="value"
     :placeholder="props.component.searchPlaceholder || `请选择${props.component.title}`"
     allow-clear
     allow-search
@@ -26,4 +26,9 @@ const props = defineProps({
 })
 const searchForm = inject('searchForm')
 const dicts = inject('dicts')
+
+const value = ref(get(searchForm.value, index, ''))
+
+watch( () => get(searchForm.value, index), vl => value.value = vl )
+watch( () => value.value, v => set(searchForm.value, index, v) )
 </script>
