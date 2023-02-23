@@ -113,6 +113,7 @@
 <script setup>
 import { inject } from 'vue'
 import config from '@/config/crud'
+import uploadConfig from '@/config/upload'
 import { Message } from '@arco-design/web-vue'
 import { isFunction, get } from 'lodash'
 import CustomRender from '../js/custom-render'
@@ -130,13 +131,6 @@ const columns = inject('columns')
 const requestParams = inject('requestParams')
 const dictTrans = inject('dictTrans')
 const dictColors = inject('dictColors')
-
-const storageMode = {
-  '1': 'LOCAL',
-  '2': 'OSS',
-  '3': 'COS',
-  '4': 'QINIU'
-}
 
 const imageSee = async (row, record) => {
   if (row.returnType) {
@@ -161,7 +155,7 @@ const imageSee = async (row, record) => {
     const isImage = res.data.mime_type.indexOf('image') > -1
     result && emit(
       'showImage',
-      isImage ? tool.attachUrl(res.data.url, storageMode[res.data.storage_mode]) : 'not-image.png'
+      isImage ? tool.attachUrl(res.data.url, uploadConfig.storageMode[res.data.storage_mode]) : 'not-image.png'
     )
 
   } else {

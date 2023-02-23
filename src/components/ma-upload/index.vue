@@ -18,6 +18,7 @@
 import { ref, watch, nextTick, provide } from 'vue'
 import { Message } from '@arco-design/web-vue'
 
+import uploadConfig from '@/config/upload'
 import { isArray, isObject, isString } from '@vue/shared'
 import MaImageUpload from './components/image-upload.vue'
 import MaFileUpload from './components/file-upload.vue'
@@ -60,7 +61,7 @@ const storageMode = {
   '4': 'QINIU'
 }
 
-provide('storageMode', storageMode)
+provide('storageMode', uploadConfig.storageMode)
 provide('config', props)
 
 watch(

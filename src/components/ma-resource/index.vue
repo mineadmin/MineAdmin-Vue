@@ -91,6 +91,7 @@
 <script setup>
   import { ref, onMounted, watch } from 'vue'
   import MaUpload from '@cps/ma-upload/index.vue'
+  import uploadConfig from '@/config/upload'
   import MaTreeSlider from '@cps/ma-treeSlider/index.vue'
   import commonApi from '@/api/common'
   import attachmentApi from '@/api/system/attachment'
@@ -135,12 +136,7 @@
   })
 
   const getStoreMode = (mode) => {
-    switch(mode) {
-      case 1: return 'LOCAL'
-      case 2: return 'OSS'
-      case 3: return 'COS'
-      case 4: return 'QINIU'
-    }
+    return uploadConfig.storageMode[mode.toString()]
   }
 
   const getAttachmentList = async (params = {}) => {
