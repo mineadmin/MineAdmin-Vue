@@ -55,7 +55,7 @@ export default {
   // 搜索标签对齐方式
   searchLabelAlign: 'right',
   // 全局搜索标签宽度
-  searchLabelWidth: '80px',
+  searchLabelWidth: '85px',
   // 搜索每行列数
   searchColNumber: 4,
   // 搜索提交按钮文案
