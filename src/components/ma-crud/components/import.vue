@@ -29,26 +29,24 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import commonApi from '@/api/common'
 import tool from '@/utils/tool'
 import { Message } from '@arco-design/web-vue'
 
 const visible = ref(false)
 
-const props = defineProps({
-  modelValue: Object
-})
+const options = inject('options')
 
 const open = () => visible.value = true
 const close = () => visible.value = false
 
-const upload = (options) => {
+const upload = (fileOption) => {
   Message.info('文件上传导入中...')
 
   const dataForm = new FormData()
-  dataForm.append('file', options.fileItem.file)
-  commonApi.importExcel(props.modelValue.url, dataForm).then( res => {
+  dataForm.append('file', fileOption.fileItem.file)
+  commonApi.importExcel(options.import.url, dataForm).then( res => {
     res.success && Message.success(res.message || '导入成功')
     close()
   })
@@ -56,7 +54,7 @@ const upload = (options) => {
 
 const sendDownload = () => {
   Message.info('请求服务器下载文件中...')
-  const url = props.modelValue.templateUrl
+  const url = options.import.templateUrl
   if ( /^(http|https)/g.test(url) ) {
     window.open(url)
   } else {

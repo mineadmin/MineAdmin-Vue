@@ -45,7 +45,10 @@
           <a-option value="banner">{{ $t('sys.layout.banner') }}</a-option>
         </a-select>
       </a-form-item>
-      <a-form-item :label="$t('sys.language')" :help="$t('sys.languageHelp')">
+      <a-form-item :label="$t('sys.i18n')" :help="$t('sys.i18nHelp')">
+        <a-switch v-model="form.i18n" @change="handleI18n" />
+      </a-form-item>
+      <a-form-item :label="$t('sys.language')" :help="$t('sys.languageHelp')" v-if="form.i18n">
         <a-select v-model="form.language" @change="handleLanguage">
           <a-option value="zh_CN">{{ $t('sys.chinese') }}</a-option>
           <a-option value="en">{{ $t('sys.english') }}</a-option>
@@ -105,6 +108,7 @@ const form = reactive({
   layout: appStore.layout,
   language: appStore.language,
   animation: appStore.animation,
+  i18n: appStore.i18n,
 })
 
 const defaultColorList = reactive([
@@ -130,6 +134,7 @@ const open = () => visible.value = true
 const close = () => visible.value = false
 
 const handleLayout = (val) => appStore.changeLayout(val)
+const handleI18n = (val) => appStore.toggleI18n(val)
 const handleLanguage = (val) => appStore.changeLanguage(val)
 const handleAnimation = (val) => appStore.changeAnimation(val)
 const handleSettingMode = (val) => appStore.toggleMode(val ? 'dark' : 'light')
@@ -147,6 +152,7 @@ const save = async (done) => {
     menuWidth: appStore.menuWidth,
     layout: appStore.layout,
     skin: appStore.skin,
+    i18n: appStore.i18n,
     language: appStore.language,
     animation: appStore.animation,
     color: appStore.color

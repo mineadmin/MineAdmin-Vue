@@ -8,44 +8,9 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <div>
-    <a-input-group class="flex">
-      <a-select
-        placeholder="输入、下拉选择或点击右侧按钮选择"
-        allow-search
-        allow-clear
-        v-model="currentIcon"
-        @change="handlerChange"
-        v-if="props.type === 'select'"
-      >
-        <a-optgroup label="Arco Design">
-          <a-option
-            v-for="icon in arcodesignIcons"
-            :key="icon"
-            :value="icon"
-            class="w-full"
-          >
-            <div class="flex justify-between items-center w-full">
-              {{ icon }}
-              <component :is="icon" />
-            </div>
-          </a-option>
-        </a-optgroup>
-        <a-optgroup label="MineAdmin">
-          <a-option
-            v-for="icon in mineadminIcons"
-            :key="icon"
-            :value="icon"
-            class="w-full"
-          >
-            <div class="flex justify-between items-center w-full">
-              {{ icon }}
-              <component :is="icon" />
-            </div>
-          </a-option>
-        </a-optgroup>
-      </a-select>
-      <a-input v-else-if="props.type === 'input'" placeholder="请点击右侧按钮选择图标" allow-clear v-model="currentIcon" />
+  <div class="w-full">
+    <a-input-group class="w-full">
+      <a-input placeholder="请点击右侧按钮选择图标" allow-clear v-model="currentIcon" />
       <div class="icon-container" v-if="props.preview">
         <component :is="currentIcon" v-if="currentIcon" />
       </div>
@@ -85,7 +50,6 @@
 <script setup>
   import { reactive, ref, onMounted } from 'vue'
   import * as arcoIcons from '@arco-design/web-vue/es/icon'
-  import * as maIcons from '@/assets/ma-icons'
 
   const mineadminIcons = reactive([])
   const arcodesignIcons = reactive([])
@@ -94,7 +58,6 @@
 
   const props = defineProps({
     modelValue: { type: String },
-    type: { type: String, default: 'select' },
     preview: { type: Boolean, default: true },
   })
   
@@ -108,8 +71,10 @@
 
   arcodesignIcons.pop()
 
-  for (let icon in maIcons) {
-    mineadminIcons.push(`ma-icon-${icon}`.toLowerCase())
+  const modules = import.meta.globEager('../../assets/ma-icons/*.vue')
+  for (const path in modules) {
+    const name = path.match(/([A-Za-z0-9_-]+)/g)[2]
+    mineadminIcons.push(`MaIcon${name}`)
   }
 
   const selectIcon = (icon, className) => {

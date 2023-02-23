@@ -10,7 +10,9 @@
 <template>
   <a-cascader
     v-if="props.type === 'cascader'"
+    path-mode
     v-model="val"
+    placeholder="请选择省市区"
     :options="jsonData"
     :field-names="props.mode == 'name' ? { value: 'name', label: 'name' } : { value: 'code', label: 'name' }"
     check-strictly

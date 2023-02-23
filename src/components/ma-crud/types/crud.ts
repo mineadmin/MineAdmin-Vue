@@ -55,19 +55,13 @@ export interface BasicCrud {
   // 是否显示工具栏
   showTools?: boolean;
   // 新增和编辑显示设置
-  viewLayoutSetting?: {
-    // 布局方式, 支持 auto（自动） 和 customer（自定义）两种
-    layout?: "auto" | "customer";
+  formOption?: {
     // 显示方式支持模态框和抽屉?: modal drawer
     viewType?: "modal" | "drawer";
     // 显示宽度
     width?: number;
     // 是否全屏，只有modal有效
     isFull?: boolean;
-    // 表单设置一行多少列，会自适应，在布局为 auto 下生效
-    cols?: number;
-    // 标签对齐方式
-    labelAlign?: "center" | "right" | "left";
   };
   //新增确定之前修改form值
   beforeAdd?: (form) => void;

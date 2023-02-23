@@ -58,6 +58,7 @@
 
 <script setup>
   import { ref } from 'vue'
+  import MaTreeSlider from '@cps/ma-treeSlider/index.vue'
   import role from '@/api/system/role'
   import dept from '@/api/system/dept'
   import { Message } from '@arco-design/web-vue';

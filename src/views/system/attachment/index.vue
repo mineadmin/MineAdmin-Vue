@@ -22,7 +22,7 @@
 
     <div class="lg:w-10/12 w-full lg:ml-4 mt-5 lg:mt-0">
       <!-- CRUD 组件 -->
-      <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+      <ma-crud :options="crud" :columns="columns" ref="crudRef">
         <!-- 表格按钮后置扩展 -->
         <template #tableAfterButtons>
           <a-input-group v-if="mode === 'window'">
@@ -107,6 +107,8 @@
 
 <script setup>
   import { ref, onMounted, reactive, computed, nextTick } from 'vue'
+  import uploadConfig from '@/config/upload'
+  import MaTreeSlider from '@cps/ma-treeSlider/index.vue'
   import attachment from '@/api/system/attachment'
   import commonApi from '@/api/common'
   import { useI18n } from 'vue-i18n'
@@ -174,17 +176,13 @@
   }
 
   const getStoreMode = (mode) => {
-    switch(mode) {
-      case 1: return 'LOCAL'
-      case 2: return 'OSS'
-      case 3: return 'COS'
-      case 4: return 'QINIU'
-    }
+    return uploadConfig.storageMode[mode.toString()]
   }
 
   const crud = reactive({
     api: attachment.getPageList,
     recycleApi: attachment.getRecyclePageList,
+    searchColNumber: 3,
     requestParams: {},
     showIndex: false,
     searchLabelWidth: '75px',

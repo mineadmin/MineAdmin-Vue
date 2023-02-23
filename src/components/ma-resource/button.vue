@@ -11,10 +11,11 @@
   <div class="inline-block">
     <a-input-group class="w-full">
       <a-trigger position="bottom" auto-fit-position :unmount-on-close="false">
-        <a-input v-model="inputValue" placeholder="请点击左侧按钮选择资源" readonly />
+        <a-input v-model="inputValue" placeholder="请点击左侧按钮选择资源" readonly v-if="! props.multiple" />
+        <a-button v-else>预览已选</a-button>
         <template #content>
           <div class="trigger-content">
-            <a-empty v-if="! list" />
+            <a-empty v-if="list && list.length == 0" />
             <a-image :src="inputValue" v-else-if="list && ! isArray(list)" />
             <div v-else>
               <a-image-preview-group infinite>
@@ -37,6 +38,7 @@
 
 <script setup>
   import { onMounted, ref, watch } from 'vue'
+  import MaResource from '@cps/ma-resource/index.vue'
   import { isArray } from 'lodash'
 
   const list = ref()
@@ -52,14 +54,16 @@
     width: { type: Number, default: 1080 },
   })
 
-  onMounted(() => list.value = props.modelValue )
+  list.value = props.modelValue
+  // onMounted(() =>  )
 
   watch(
     () => list.value,
     vl => {
       emit('update:modelValue', list.value)
       if ( props.multiple ) {
-        inputValue.value = list.value.join(',')
+        console.log(vl)
+        inputValue.value = isArray(list) ? list.value.join(',') : []
       } else {
         inputValue.value = list.value
       }

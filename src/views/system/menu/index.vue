@@ -10,7 +10,7 @@
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef">
       
       <!-- 排序列 -->
       <template #sort="{ record }">
@@ -74,7 +74,7 @@
 
   const openAdd = (id) => {
     columns[1].addDefaultValue = id
-    crudRef.value.maCrudForm.add()
+    crudRef.value.crudFormRef.add()
   }
 
   const changeSort = async (value, id) => {
@@ -101,7 +101,7 @@
       realApi: menu.realDeletes, realAuth: ['system:menu:realDeletes']
     },
     recovery: { show: true, api: menu.recoverys, auth: ['system:menu:recovery']},
-    viewLayoutSetting: { viewType: 'drawer', width: 600 },
+    formOption: { viewType: 'drawer', width: 600 },
     isExpand: true,
     beforeOpenAdd: () => columns[1].addDefaultValue = 0
   })
@@ -116,7 +116,7 @@
       }
     },
     { 
-      title: '菜单名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '菜单名称必填' }], width: 180,
+      title: '菜单名称', dataIndex: 'name', search: true, commonRules: [{ required: true, message: '菜单名称必填' }], width: 180,
     },
     { 
       title: '菜单类型', dataIndex: 'type', formType: 'radio', addDefaultValue: 'M', width: 100,
@@ -158,9 +158,9 @@
         }
       },
     },
-    {  title: '图标', dataIndex: 'icon', width: 80, formType: 'icon', style: { width: '100%' } },
+    {  title: '图标', dataIndex: 'icon', width: 80, formType: 'icon-picker', style: { width: '100%' } },
     { 
-      title: '菜单标识', dataIndex: 'code', search: true, rules: [{ required: true, message: '菜单标识必填' }], width: 150,
+      title: '菜单标识', dataIndex: 'code', search: true, commonRules: [{ required: true, message: '菜单标识必填' }], width: 150,
     },
     { title: '路由地址', dataIndex: 'route', width: 150,},
     { title: '视图组件', dataIndex: 'component', width: 200,},
@@ -172,11 +172,10 @@
     {
       title: '隐藏', dataIndex: 'is_hidden', search: true, formType: 'radio',
       dict: {
-        data: [ { title: '是', key: '1' }, { title: '否', key: '2' } ],
-        props: { label: 'title', value: 'key' },
+        data: [ { label: '是', value: '1' }, { label: '否', value: '2' } ],
         translation: true
       },
-      addDefaultValue: '2', width: 80,
+      addDefaultValue: '2', editDefaultValue: (form) => form.is_hidden.toString(), width: 80,
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',

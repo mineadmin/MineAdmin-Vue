@@ -15,7 +15,7 @@
       v-model="form"
       :columns="columns"
       class="mt-7"
-      @submit="submit"
+      @onSubmit="submit"
     ></ma-form>
   </div>
 </template>
@@ -38,9 +38,8 @@ const inputComponent = [
   { label: '富文本编辑器', value: 'editor' },
 ]
 
-const submit = async (data, done) => {
+const submit = async (data) => {
   if (data) {
-    done(true)
     if (data.config_select_data) {
       data.config_select_data = data.config_select_data.replace(/\r|\n|\s/g, '')
       data.config_select_data = data.config_select_data.replace(',]', ']')
@@ -48,8 +47,7 @@ const submit = async (data, done) => {
     }
     const response = await config.save(data)
     emit('success', response.success)
-    response.success && formRef.value.reset()
-    done(false)
+    response.success && formRef.value.resetForm()
   }
 }
 

@@ -16,6 +16,10 @@ export default ({ mode }) => {
       },
     },
 
+    build: {
+      chunkSizeWarningLimit: 3000,
+    },
+
     server: {
       host: '0.0.0.0',
       port: env.VITE_APP_PORT || process.env.port,

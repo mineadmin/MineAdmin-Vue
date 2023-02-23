@@ -20,6 +20,7 @@
 
 <script setup>
   import { reactive, ref, watch, computed } from 'vue'
+  import MaResource from '@cps/ma-resource/index.vue'
   import { useAppStore } from '@/store'
 
   import Editor from '@tinymce/tinymce-vue'
@@ -79,7 +80,7 @@
     }
   })
 
-  const emit = defineEmits(['update:modelValue'])
+  const emit = defineEmits(['update:modelValue', 'change'])
 
   let content = computed({
     get() {
@@ -131,5 +132,9 @@
       resource.value.clearSelecteds()
       resourceVisible.value = false
     }
+  )
+  watch(
+    () => content.value,
+    vl => emit('change', vl)
   )
 </script>

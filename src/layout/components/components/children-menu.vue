@@ -20,14 +20,14 @@
           <template #icon v-if="menu.meta.icon">
             <component :is="menu.meta.icon" :class="menu.meta.icon.indexOf('ma') > 0 ? 'icon' : ''" />
           </template>
-          {{ $t(`menus.${menu.name}`).indexOf('.') > 0 ? menu.meta.title : $t(`menus.${menu.name}`) }}
+          {{ appStore.i18n ? ( $t(`menus.${menu.name}`).indexOf('.') > 0 ? menu.meta.title : $t(`menus.${menu.name}`) ) : menu.meta.title }}
         </a-menu-item>
         <a-sub-menu v-else :key="menu.name">
           <template #icon v-if="menu.meta.icon">
             <component :is="menu.meta.icon" :class="menu.meta.icon.indexOf('ma') > 0 ? 'icon' : ''" />
           </template>
           <template #title @click="routerPush(menu.path)">
-            {{ $t(`menus.${menu.name}`).indexOf('.') > 0 ? menu.meta.title : $t(`menus.${menu.name}`) }}
+            {{ appStore.i18n ? ( $t(`menus.${menu.name}`).indexOf('.') > 0 ? menu.meta.title : $t(`menus.${menu.name}`) ) : menu.meta.title }}
           </template>
           <template v-if="menu.children">
             <children-menu v-model="menu.children" />
@@ -38,13 +38,14 @@
   </a-layout-content>
 </template>
 <script setup>
-  import { useTagStore } from '@/store'
+  import { useTagStore, useAppStore } from '@/store'
   import { useRouter } from 'vue-router'
 
   defineProps({ modelValue: Array })
 
   const router = useRouter()
   const emits  = defineEmits(['go'])
+  const appStore = useAppStore()
   const tagStore = useTagStore()
 
   const routerPush = (menu) => {
