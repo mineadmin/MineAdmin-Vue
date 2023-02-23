@@ -24,8 +24,9 @@
 </template>
   
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, inject, watch } from 'vue'
 import { handlerCascader } from '@cps/ma-form/js/networkRequest'
+import { get, set } from 'lodash'
 const props = defineProps({
   component: Object,
 })
@@ -33,10 +34,10 @@ const searchForm = inject('searchForm')
 const columns = inject('columns')
 const dicts = inject('dicts')
 
-const value = ref(get(searchForm.value, index, ''))
+const value = ref(get(searchForm.value, props.component.dataIndex, []))
 
-watch( () => get(searchForm.value, index), vl => value.value = vl )
-watch( () => value.value, v => set(searchForm.value, index, v) )
+watch( () => get(searchForm.value, props.component.dataIndex), vl => value.value = vl )
+watch( () => value.value, v => set(searchForm.value, props.component.dataIndex, v) )
 
 const handlerChangeeEvent = (value) => {
   handlerCascader(
