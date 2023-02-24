@@ -32,7 +32,7 @@ import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { containerItems } from '@cps/ma-form/js/utils'
-import { isArray, isFunction, isEmpty, get } from 'lodash'
+import {isArray, isFunction, isEmpty, get, cloneDeep} from 'lodash'
 import { useRouter } from 'vue-router'
 import { useFormStore } from '@/store/index'
 
@@ -53,7 +53,11 @@ const dataLoading = ref(true)
 const emit = defineEmits(['success', 'error'])
 
 provide('form', toRaw(form))
-
+// dataIndex => item 哈希映射关系建立
+let columnMap = {}
+columns.forEach(item => {
+  columnMap[item.dataIndex] = item
+})
 const submit = async () => {
   const formData = maFormRef.value.getFormData()
   if (await maFormRef.value.validateForm()) {
@@ -76,7 +80,20 @@ const submit = async () => {
     return true
   }
 }
-const open = () => {
+const open = (data = {}) => {
+  // 根据formType转换，值类型
+  for (let i in data) {
+    let columnItem = columnMap[i]
+    if (columnItem && columnItem.formType === 'select') {
+      form.value[i] = data[i].toString()
+      continue
+    }
+    if (columnItem && columnItem.formType === 'input-number') {
+      form.value[i] = Number(data[i])
+      continue
+    }
+    form.value[i] = data[i]
+  }
   formColumns.value = []
   init()
   if (options.formOption.viewType === 'tag') {
@@ -90,11 +107,12 @@ const open = () => {
     }
     const config = {
       options,
-      data: form.value,
+      data: cloneDeep(form.value),
       formColumns: formColumns.value
     }
-    formStore.formList[options.formOption.tagId] = config
-    router.push('/openForm?tagId=' + options.formOption.tagId + '&op=' + currentAction.value)
+    formStore.formList[options.formOption.tagId +'_'+ currentAction.value] = config
+    form.value = {}
+    router.push('/openForm?tagId=' + options.formOption.tagId + '_' + currentAction.value + '&op=' + currentAction.value)
   } else {
     componentName.value = options.formOption.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
     dataVisible.value = true
@@ -113,8 +131,7 @@ const add = () => {
 const edit = (data) => {
   actionTitle.value = '编辑'
   currentAction.value = 'edit'
-  for (let i in data) form.value[i] = data[i]
-  open()
+  open(data)
 }
 
 const init = () => {
@@ -158,7 +175,7 @@ const init = () => {
   settingFormLayout(layout)
 
 
-  if (layout.length > 0) {
+  if (isArray(layout) && layout.length > 0) {
     formColumns.value = layout
     columns.map(item => {
       if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
@@ -169,6 +186,9 @@ const init = () => {
 }
 
 const settingFormLayout = (layout) => {
+  if (!isArray(layout)) {
+    return ;
+  }
   layout.map((item, index) => {
     if ( containerItems.includes(item.formType) ) {
       switch ( item.formType ) {

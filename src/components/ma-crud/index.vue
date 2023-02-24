@@ -315,6 +315,15 @@ const dictColors = (dataIndex, value) => {
   }
 }
 
+columns.value.map((item, index) => {
+  // 公用模板
+  if (item.common && globalColumn[item.dataIndex]) {
+    columns.value[index] = globalColumn[item.dataIndex]
+    item = columns.value[index]
+  }
+  !item.width && (item.width = options.value.columnWidth)
+})
+
 provide('options', options.value)
 provide('columns', props.columns)
 provide('layout', props.layout)
@@ -369,13 +378,6 @@ searchSlots.value = getSearchSlot(props.columns)
 
 const requestData = async () => {
   init()
-  columns.value.map((item, index) => {
-    // 公用模板
-    if (item.common && globalColumn[item.dataIndex]) {
-      columns.value[index] = globalColumn[item.dataIndex]
-    }
-    !item.width && (item.width = options.value.columnWidth)
-  })
   if (options.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {
     columns.value.unshift({ title: options.value.indexLabel, dataIndex: '__index', width: 70, fixed: 'left' })
   }
