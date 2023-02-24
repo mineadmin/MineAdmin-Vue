@@ -140,7 +140,7 @@
             :stripe="options.stripe"
             :bordered="options.bordered"
             :rowSelection="options.rowSelection || undefined"
-            :row-key="options.rowSelection && options.rowSelection.key || 'id'"
+            :row-key="options?.rowSelection?.key ?? options.id"
             :scroll="options.scroll"
             :column-resizable="options.resizable"
             :size="options.size"
