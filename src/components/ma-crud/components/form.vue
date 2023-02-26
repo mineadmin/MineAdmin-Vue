@@ -84,10 +84,6 @@ const open = (data = {}) => {
   // 根据formType转换，值类型
   for (let i in data) {
     let columnItem = columnMap[i]
-    if (columnItem && columnItem.formType === 'select') {
-      form.value[i] = data[i].toString()
-      continue
-    }
     if (columnItem && columnItem.formType === 'input-number') {
       form.value[i] = Number(data[i])
       continue
@@ -136,8 +132,8 @@ const edit = (data) => {
 
 const init = () => {
   dataLoading.value = true
-  // const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
-  const layout = options?.formOption?.layout ?? []
+  const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
+  // const layout = options?.formOption?.layout ?? []
   columns.map(async item => {
     if (! formItemShow(item) || ['__index', '__operation', options.pk].includes(item.dataIndex)) return
     formColumns.value.push(item)
