@@ -122,6 +122,7 @@ const close = () => {
 const add = () => {
   actionTitle.value = '新增'
   currentAction.value = 'add'
+  form.value = {}
   open()
 }
 const edit = (data) => {
