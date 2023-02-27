@@ -144,6 +144,7 @@
             :scroll="options.scroll"
             :column-resizable="options.resizable"
             :size="options.size"
+            :row-class="options.rowClass"
             :hide-expand-button-on-empty="options.hideExpandButtonOnEmpty"
             :default-expand-all-rows="options.expandAllRows"
             :summary="options.customerSummary || __summary || options.showSummary"
