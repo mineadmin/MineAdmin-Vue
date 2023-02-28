@@ -10,7 +10,7 @@
 <template>
   <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
     <a-divider
-      v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
+      v-if="(typeof props.component.display == 'undefined' || props.component.display === true)"
       :class="[ props.component.customClass ]"
       :margin="props.component.margin"
       :direction="props.component.direction"

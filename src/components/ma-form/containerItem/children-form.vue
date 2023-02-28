@@ -9,7 +9,7 @@
 -->
 <template>
   <a-form-item
-    v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
+    v-if="(typeof props.component.display == 'undefined' || props.component.display === true)"
     :label="props.component.title"
     :field="props.component.dataIndex"
     :tooltip="props.component.tooltip"

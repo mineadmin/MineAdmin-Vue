@@ -9,7 +9,7 @@
 -->
 <template>
   <ma-form-item
-    v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
+    v-if="(typeof props.component.display == 'undefined' || props.component.display === true)"
     :component="props.component"
     :custom-field="props.customField"
   >
