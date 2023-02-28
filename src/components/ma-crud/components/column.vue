@@ -102,6 +102,9 @@
               <a-tag v-if="row.dict.tagColors" :color="getTagColor(row, record)">
                 {{ getDataIndex(row, record) }}
               </a-tag>
+              <template v-else-if="isArray(get(record, row.dataIndex))">
+                <a-tag v-for="item in get(record, row.dataIndex)" class="ml-1">{{ getDataIndex(row, item) }}</a-tag>
+              </template>
               <a-tag v-else-if="row.dict.tagColor" :color="row.dict.tagColor">{{ getDataIndex(row, record) }}</a-tag>
               <span v-else>{{ getDataIndex(row, record) }}</span>
             </template>
@@ -124,7 +127,7 @@ import { inject } from 'vue'
 import config from '@/config/crud'
 import uploadConfig from '@/config/upload'
 import { Message } from '@arco-design/web-vue'
-import { isFunction, get } from 'lodash'
+import {isFunction, get, isArray, isObject} from 'lodash'
 import CustomRender from '../js/custom-render'
 import tool from '@/utils/tool'
 import commonApi from '@/api/common'
@@ -181,7 +184,11 @@ const getTagColor = (row, record) => {
 }
 
 const getDataIndex = (row, record) => {
-  return dictTrans( row.dataIndex, (row.dataIndex.indexOf('.') > -1 ) ? get(record, row.dataIndex) : record[row.dataIndex] )
+  if (isObject(record)) {
+    return dictTrans( row.dataIndex, (row.dataIndex.indexOf('.') > -1 ) ? get(record, row.dataIndex) : record[row.dataIndex] )
+  }else{
+    return dictTrans( row.dataIndex, record)
+  }
 }
 
 const getIndex = rowIndex => {
