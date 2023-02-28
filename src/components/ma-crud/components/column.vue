@@ -99,12 +99,12 @@
             <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
             
             <template v-if="row.dict && row.dict.translation">
-              <a-tag v-if="row.dict.tagColors" :color="getTagColor(row, record)">
-                {{ getDataIndex(row, record) }}
-              </a-tag>
-              <template v-else-if="isArray(get(record, row.dataIndex))">
+              <template v-if="isArray(get(record, row.dataIndex))">
                 <a-tag v-for="item in get(record, row.dataIndex)" class="ml-1">{{ getDataIndex(row, item) }}</a-tag>
               </template>
+              <a-tag v-else-if="row.dict.tagColors" :color="getTagColor(row, record)">
+                {{ getDataIndex(row, record) }}
+              </a-tag>
               <a-tag v-else-if="row.dict.tagColor" :color="row.dict.tagColor">{{ getDataIndex(row, record) }}</a-tag>
               <span v-else>{{ getDataIndex(row, record) }}</span>
             </template>
