@@ -26,7 +26,7 @@
         :header-cell-style="row.headerCellStyle"
         :body-cell-style="row.bodyCellStyle"
         :summary-cell-style="row.summaryCellStyle"
-        :tooltip="row.dataIndex === '__operation' ? false : true"
+        :tooltip="row.dataIndex === '__operation' ? false : (row.tooltip ?? true)"
         :align="row.align || 'left'"
         :fixed="row.fixed"
         :sortable="row.sortable"
