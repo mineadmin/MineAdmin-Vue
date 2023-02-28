@@ -140,10 +140,11 @@
             :stripe="options.stripe"
             :bordered="options.bordered"
             :rowSelection="options.rowSelection || undefined"
-            :row-key="options.rowSelection && options.rowSelection.key || 'id'"
+            :row-key="options?.rowSelection?.key ?? options.pk"
             :scroll="options.scroll"
             :column-resizable="options.resizable"
             :size="options.size"
+            :row-class="options.rowClass"
             :hide-expand-button-on-empty="options.hideExpandButtonOnEmpty"
             :default-expand-all-rows="options.expandAllRows"
             :summary="options.customerSummary || __summary || options.showSummary"
@@ -284,10 +285,16 @@ const currentApi = ref()
 // 初始化
 const init = async() => {
   // 收集数据
-  props.columns.map(item => {
+  props.columns.map((item, index) => {
     if (item.cascaderItem && item.cascaderItem.length > 0) {
       cascaders.value.push(...item.cascaderItem)
     }
+
+    if (item.common && globalColumn[item.dataIndex]) {
+      columns.value[index] = globalColumn[item.dataIndex]
+      item = columns.value[index]
+    }
+    !item.width && (item.width = options.value.columnWidth)
   })
 
   props.columns.map(async item => {
@@ -314,15 +321,6 @@ const dictColors = (dataIndex, value) => {
     return undefined
   }
 }
-
-columns.value.map((item, index) => {
-  // 公用模板
-  if (item.common && globalColumn[item.dataIndex]) {
-    columns.value[index] = globalColumn[item.dataIndex]
-    item = columns.value[index]
-  }
-  !item.width && (item.width = options.value.columnWidth)
-})
 
 provide('options', options.value)
 provide('columns', props.columns)

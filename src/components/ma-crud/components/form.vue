@@ -53,11 +53,7 @@ const dataLoading = ref(true)
 const emit = defineEmits(['success', 'error'])
 
 provide('form', toRaw(form))
-// dataIndex => item 哈希映射关系建立
-let columnMap = {}
-columns.forEach(item => {
-  columnMap[item.dataIndex] = item
-})
+
 const submit = async () => {
   const formData = maFormRef.value.getFormData()
   if (await maFormRef.value.validateForm()) {
@@ -80,20 +76,7 @@ const submit = async () => {
     return true
   }
 }
-const open = (data = {}) => {
-  // 根据formType转换，值类型
-  for (let i in data) {
-    let columnItem = columnMap[i]
-    if (columnItem && columnItem.dict) {
-      form.value[i] = data[i]?.toString()
-      continue
-    }
-    if (columnItem && columnItem.formType === 'input-number') {
-      form.value[i] = Number(data[i])
-      continue
-    }
-    form.value[i] = data[i]
-  }
+const open = () => {
   formColumns.value = []
   init()
   if (options.formOption.viewType === 'tag') {
@@ -126,18 +109,20 @@ const close = () => {
 const add = () => {
   actionTitle.value = '新增'
   currentAction.value = 'add'
+  form.value = {}
   open()
 }
 const edit = (data) => {
   actionTitle.value = '编辑'
   currentAction.value = 'edit'
+  for (let i in data) form.value[i] = data[i]
   open(data)
 }
 
 const init = () => {
   dataLoading.value = true
-  // const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
-  const layout = options?.formOption?.layout ?? []
+  const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
+  // const layout = options?.formOption?.layout ?? []
   columns.map(async item => {
     if (! formItemShow(item) || ['__index', '__operation', options.pk].includes(item.dataIndex)) return
     formColumns.value.push(item)

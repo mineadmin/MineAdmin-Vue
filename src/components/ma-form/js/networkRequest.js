@@ -24,7 +24,8 @@ export const handlerDictProps = (item, tmpArr) => {
       let disabled = (typeof dicItem['disabled'] == 'undefined') ? false : ( dicItem['disabled'] === true ? true : false )
       let indeterminate = (typeof dicItem['indeterminate'] == 'undefined') ? false : ( dicItem['indeterminate'] === true ? true : false )
       let value
-      if (tmp === 'true') value = true
+      if (item.dict.name || item.dict.data) value = tmp.toString()
+      else if (tmp === 'true') value = true
       else if (tmp === 'false') value = false
       else value = tmp
       tran[value] = label
