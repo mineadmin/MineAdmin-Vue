@@ -76,8 +76,8 @@ const value = ref(get(formModel.value, index))
 watch( () => get(formModel.value, index), vl => value.value = vl )
 watch( () => value.value, v => set(formModel.value, index, v) )
 
-if (props.component.dict && props.component.dict.name && !props.component.pathMode && !value.value) {
-  value.value = ''
+if (props.component.dict && (props.component.dict.name || props.component.dict.data) && !value.value && !props.component.multiple && !props.component.pathMode) {
+  value.value = value.value + ''
 }
 
 maEvent.handleCommonEvent(props.component, 'onCreated')

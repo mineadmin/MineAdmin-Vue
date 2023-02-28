@@ -16,7 +16,7 @@
         :title="row.title"
         :data-index="row.dataIndex"
         :width="row.width"
-        :ellipsis="row.ellipsis"
+        :ellipsis="row.ellipsis ?? true"
         :filterable="row.filterable"
         :cell-class="row.cellClass"
         :header-cell-class="row.headerCellClass"
