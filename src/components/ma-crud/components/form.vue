@@ -84,8 +84,8 @@ const open = (data = {}) => {
   // 根据formType转换，值类型
   for (let i in data) {
     let columnItem = columnMap[i]
-    if (columnItem && columnItem.formType === 'select') {
-      form.value[i] = data[i].toString()
+    if (columnItem && columnItem.dict) {
+      form.value[i] = data[i]?.toString()
       continue
     }
     if (columnItem && columnItem.formType === 'input-number') {
