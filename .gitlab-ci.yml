@@ -1,0 +1,34 @@
+# usermod -aG docker gitlab-runner
+
+stages:
+  - build
+  - deploy
+
+variables:
+  PROJECT_NAME: mineadmin-vue
+  REGISTRY_URL: registry-docker.org
+
+build_dev_docker:
+  stage: build
+  before_script:
+    - docker login -u "$username" -p "$password" registry-docker.org
+  script:
+    - docker build . -t $PROJECT_NAME
+    - docker tag $PROJECT_NAME $REGISTRY_URL/$PROJECT_NAME:dev
+    - docker push $REGISTRY_URL/$PROJECT_NAME:dev
+# 打包镜像后推送钩子,触发自动部署
+#  after_script:
+#    - 'curl -H ''X-Gitlab-Token: token'' -d ''{"ref": "_/tags/自动发布"}'' http://127.0.0.1:80/api/apis/deploy/2/tag/'
+  only:
+    - dev
+  tags:
+    - builder
+
+deploy_docker:
+  stage: deploy
+  script:
+    - echo SUCCESS
+  only:
+    - tags
+  tags:
+    - builder
