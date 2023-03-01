@@ -59,7 +59,7 @@ export default {
   // 搜索每行列数
   searchColNumber: 4,
   // 搜索提交按钮文案
-  searchSubmitButtonText: '提交',
+  searchSubmitButtonText: '搜索',
   // 搜索重置按钮文案
   searchResetButtonText: '重置',
   // 搜索栏加载提示文案

@@ -69,7 +69,6 @@
   const crud = reactive({
     api: crontab.getPageList,
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
