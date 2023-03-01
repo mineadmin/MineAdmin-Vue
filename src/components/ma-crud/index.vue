@@ -219,7 +219,7 @@
 
 <script setup>
 import config from '@/config/crud'
-import { ref, watch, provide, nextTick, onMounted, onUnmounted } from 'vue'
+import {ref, watch, provide, nextTick, onMounted, onUnmounted, onUpdated} from 'vue'
 import defaultOptions from './js/defaultOptions'
 import { loadDict } from '@cps/ma-form/js/networkRequest.js'
 
@@ -235,6 +235,7 @@ import { request } from '@/utils/request'
 import tool from '@/utils/tool'
 import { isArray, isFunction } from 'lodash'
 import globalColumn from '@/config/column.js'
+import {useRoute} from "vue-router";
 
 const props = defineProps({
   // 表格数据
@@ -282,19 +283,24 @@ const tableData = ref([])
 const tableRef = ref()
 const currentApi = ref()
 
+const route = useRoute()
+
+watch(
+    () => route,
+    value => {
+      refresh()
+    },
+    { deep: true }
+)
+
+
 // 初始化
 const init = async() => {
   // 收集数据
-  props.columns.map((item, index) => {
+  props.columns.map(item => {
     if (item.cascaderItem && item.cascaderItem.length > 0) {
       cascaders.value.push(...item.cascaderItem)
     }
-
-    if (item.common && globalColumn[item.dataIndex]) {
-      columns.value[index] = globalColumn[item.dataIndex]
-      item = columns.value[index]
-    }
-    !item.width && (item.width = options.value.columnWidth)
   })
 
   props.columns.map(async item => {
@@ -321,6 +327,15 @@ const dictColors = (dataIndex, value) => {
     return undefined
   }
 }
+
+ // 公用模板
+columns.value.map((item, index) => {
+  if (item.common && globalColumn[item.dataIndex]) {
+    columns.value[index] = globalColumn[item.dataIndex]
+    item = columns.value[index]
+  }
+  !item.width && (item.width = options.value.columnWidth)
+})
 
 provide('options', options.value)
 provide('columns', props.columns)
