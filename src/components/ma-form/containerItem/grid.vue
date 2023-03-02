@@ -11,13 +11,11 @@
   <a-row
     v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
     :class="[props.component?.customClass]"
-    :extra="props.component?.extra"
-    :bordered="props.component?.bordered"
-    :loading="props.component?.loading"
-    :hoverable="props.component?.hoverable"
-    :size="props.component?.size"
-    :header-style="props.component?.headerStyle"
-    :body-style="props.component?.bodyStyle"
+    :gutter="props.component?.gutter"
+    :justify="props.component?.justify"
+    :align="props.component?.align"
+    :div="props.component?.div"
+    :wrap="props.component?.wrap"
   >
     <template v-for="(col, colIndex) in (props.component?.cols ?? [])" :key="colIndex">
       <ma-grid-col :component="col">

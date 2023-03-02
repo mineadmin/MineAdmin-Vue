@@ -32,7 +32,7 @@ import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { containerItems } from '@cps/ma-form/js/utils'
-import { isArray, isFunction, isEmpty, get } from 'lodash'
+import {isArray, isFunction, isEmpty, get, cloneDeep} from 'lodash'
 import { useRouter } from 'vue-router'
 import { useFormStore } from '@/store/index'
 
@@ -90,11 +90,12 @@ const open = () => {
     }
     const config = {
       options,
-      data: form.value,
+      data: cloneDeep(form.value),
       formColumns: formColumns.value
     }
-    formStore.formList[options.formOption.tagId] = config
-    router.push('/openForm?tagId=' + options.formOption.tagId + '&op=' + currentAction.value)
+    formStore.formList[options.formOption.tagId +'_'+ currentAction.value] = config
+    form.value = {}
+    router.push('/openForm?tagId=' + options.formOption.tagId + '_' + currentAction.value + '&op=' + currentAction.value)
   } else {
     componentName.value = options.formOption.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
     dataVisible.value = true
@@ -108,19 +109,20 @@ const close = () => {
 const add = () => {
   actionTitle.value = '新增'
   currentAction.value = 'add'
+  form.value = {}
   open()
 }
 const edit = (data) => {
   actionTitle.value = '编辑'
   currentAction.value = 'edit'
   for (let i in data) form.value[i] = data[i]
-  open()
+  open(data)
 }
 
 const init = () => {
   dataLoading.value = true
-  // const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
-  const layout = options?.formOption?.layout ?? []
+  const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
+  // const layout = options?.formOption?.layout ?? []
   columns.map(async item => {
     if (! formItemShow(item) || ['__index', '__operation', options.pk].includes(item.dataIndex)) return
     formColumns.value.push(item)
@@ -158,7 +160,7 @@ const init = () => {
   settingFormLayout(layout)
 
 
-  if (layout.length > 0) {
+  if (isArray(layout) && layout.length > 0) {
     formColumns.value = layout
     columns.map(item => {
       if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
@@ -169,6 +171,9 @@ const init = () => {
 }
 
 const settingFormLayout = (layout) => {
+  if (!isArray(layout)) {
+    return ;
+  }
   layout.map((item, index) => {
     if ( containerItems.includes(item.formType) ) {
       switch ( item.formType ) {

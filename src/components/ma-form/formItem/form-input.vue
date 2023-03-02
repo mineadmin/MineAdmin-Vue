@@ -9,7 +9,7 @@
 -->
 <template>
   <ma-form-item
-    v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
+    v-if="(typeof props.component.display == 'undefined' || props.component.display === true)"
     :component="props.component"
     :custom-field="props.customField"
   >
@@ -43,7 +43,7 @@
         <template #prepend v-if="props.component.openPrepend">
           <slot :name="`inputPrepend-${props.component.dataIndex}`" />
         </template>
-        <template #append v-if="props.component.openApppend">
+        <template #append v-if="props.component.openAppend">
           <slot :name="`inputAppend-${props.component.dataIndex}`" />
         </template>
         <template #suffix v-if="props.component.openSuffix">

@@ -10,7 +10,7 @@
 <template>
   <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
     <div
-      v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
+      v-if="(typeof props.component.display == 'undefined' || props.component.display === true)"
       :class="[ 'static-text', props.component.customClass ]"
       :style="props.component.style"
     >{{ props.component.title ?? '' }}</div>

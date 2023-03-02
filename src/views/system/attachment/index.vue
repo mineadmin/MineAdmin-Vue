@@ -26,8 +26,8 @@
         <!-- 表格按钮后置扩展 -->
         <template #tableAfterButtons>
           <a-input-group v-if="mode === 'window'">
-            <a-button @click="selectAll"><icon-select-all /> 全选</a-button>
-            <a-button @click="flushAll"><icon-eraser /> 清除</a-button>
+            <a-button @click="selectAll"><template #icon><icon-select-all /></template>全选</a-button>
+            <a-button @click="flushAll"><template #icon><icon-eraser /></template>清除</a-button>
           </a-input-group>
         </template>
         <!-- 工具按钮扩展 -->
@@ -185,7 +185,6 @@
     searchColNumber: 3,
     requestParams: {},
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,

@@ -140,10 +140,11 @@
             :stripe="options.stripe"
             :bordered="options.bordered"
             :rowSelection="options.rowSelection || undefined"
-            :row-key="options.rowSelection && options.rowSelection.key || 'id'"
+            :row-key="options?.rowSelection?.key ?? options.pk"
             :scroll="options.scroll"
             :column-resizable="options.resizable"
             :size="options.size"
+            :row-class="options.rowClass"
             :hide-expand-button-on-empty="options.hideExpandButtonOnEmpty"
             :default-expand-all-rows="options.expandAllRows"
             :summary="options.customerSummary || __summary || options.showSummary"
@@ -218,7 +219,7 @@
 
 <script setup>
 import config from '@/config/crud'
-import { ref, watch, provide, nextTick, onMounted, onUnmounted } from 'vue'
+import { ref, watch, provide, nextTick, onMounted, onUnmounted, onUpdated } from 'vue'
 import defaultOptions from './js/defaultOptions'
 import { loadDict } from '@cps/ma-form/js/networkRequest.js'
 
@@ -315,6 +316,15 @@ const dictColors = (dataIndex, value) => {
   }
 }
 
+ // 公用模板
+columns.value.map((item, index) => {
+  if (item.common && globalColumn[item.dataIndex]) {
+    columns.value[index] = globalColumn[item.dataIndex]
+    item = columns.value[index]
+  }
+  !item.width && (item.width = options.value.columnWidth)
+})
+
 provide('options', options.value)
 provide('columns', props.columns)
 provide('layout', props.layout)
@@ -369,13 +379,6 @@ searchSlots.value = getSearchSlot(props.columns)
 
 const requestData = async () => {
   init()
-  columns.value.map((item, index) => {
-    // 公用模板
-    if (item.common && globalColumn[item.dataIndex]) {
-      columns.value[index] = globalColumn[item.dataIndex]
-    }
-    !item.width && (item.width = options.value.columnWidth)
-  })
   if (options.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {
     columns.value.unshift({ title: options.value.indexLabel, dataIndex: '__index', width: 70, fixed: 'left' })
   }

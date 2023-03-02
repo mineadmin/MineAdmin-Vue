@@ -9,7 +9,7 @@
 -->
 <template>
   <a-form-item
-    v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
+    v-if="(typeof props.component.display == 'undefined' || props.component.display === true)"
     :label="props.component.title"
     :field="props.component.dataIndex"
     :tooltip="props.component.tooltip"
@@ -141,8 +141,8 @@ const formModel = inject('formModel')
 const dictList = inject('dictList')
 const defaultOpenKeys = [0]
 
-if (! formModel[props.component.dataIndex]) {
-  formModel[props.component.dataIndex] = []
+if (! formModel.value[props.component.dataIndex]) {
+  formModel.value[props.component.dataIndex] = []
 }
 
 if (props.component.type == 'table') {
@@ -150,7 +150,7 @@ if (props.component.type == 'table') {
     item['hideLabel'] = true
   })
 } else {
-  formModel[props.component.dataIndex].map( (item, index) => {
+  formModel.value[props.component.dataIndex].map( (item, index) => {
     if (index > 0) defaultOpenKeys.push(index)
   })
 }
@@ -161,12 +161,12 @@ formList.map(async item => {
 })
 
 const addItem = async (data = {}) => {
-  formModel[props.component.dataIndex].push(data)
+  formModel.value[props.component.dataIndex].push(data)
   maEvent.handleCommonEvent(props.component, 'onAdd')
 }
 
 const deleteItem = async (index) => {
-  formModel[props.component.dataIndex].splice(index, 1)
+  formModel.value[props.component.dataIndex].splice(index, 1)
   maEvent.handleCommonEvent(props.component, 'onDelete')
 }
 
@@ -176,7 +176,7 @@ const getChildrenDataIndex = (index, dataIndex) => {
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
 onMounted(async () => {
-  if (formModel[props.component.dataIndex].length === 0) {
+  if (formModel.value[props.component.dataIndex].length === 0) {
     for (let i = 0; i < (props.component.emptyRow ?? 1); i++) {
       await addItem()
     }

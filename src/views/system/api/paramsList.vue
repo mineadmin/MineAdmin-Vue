@@ -52,7 +52,6 @@ const crud = reactive({
   api: apiColumn.getList,
   recycleApi: apiColumn.getRecycleList,
   showIndex: false,
-  searchLabelWidth: '75px',
   pageLayout: 'fixed',
   rowSelection: { showCheckedAll: true },
   operationColumn: true,

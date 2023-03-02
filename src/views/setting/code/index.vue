@@ -17,13 +17,13 @@
           v-auth="['setting:code:generate']"
           type="outline"
           @click="batchGenerate"
-        ><icon-code /> 生成代码</a-button>
+        ><template #icon><icon-code /></template>生成代码</a-button>
         <a-button
           v-auth="['setting:code:loadTable']"
           @click="() => loadTableRef.open()"
           type="outline"
           status="success"
-        ><icon-export /> 装载数据表</a-button>
+        ><template #icon><icon-export /></template>装载数据表</a-button>
       </template>
       <!-- 操作前置扩展 -->
       <template #operationBeforeExtend="{ record }">

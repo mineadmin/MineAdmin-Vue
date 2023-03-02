@@ -13,12 +13,12 @@
     <ma-crud :options="crud" :columns="columns" ref="crudRef" @selection-change="selectChange">
       <!-- 表格操作按钮扩展 -->
       <template #tableButtons>
-        <a-button @click="operate('optimize')" v-auth="['system:dataMaintain:optimize']">
-          <icon-tool /> 优化表
+        <a-button @click="operate('optimize')" type="primary" status="success" v-auth="['system:dataMaintain:optimize']">
+          <template #icon><icon-tool /></template>优化表
         </a-button>
 
-        <a-button @click="operate('clear')" v-auth="['system:dataMaintain:fragment']">
-          <icon-experiment /> 清理碎片
+        <a-button @click="operate('clear')" type="primary" status="success" v-auth="['system:dataMaintain:fragment']">
+          <template #icon><icon-experiment /></template>清理碎片
         </a-button>
       </template>
       <!-- 操作 -->
@@ -79,7 +79,6 @@ const tableStruct = (name) => {
 const crud = reactive({
   api: dataMaintain.getPageList,
   searchColNumber: 2,
-  searchLabelWidth: '75px',
   pageLayout: 'fixed',
   showIndex: false,
   rowSelection: { showCheckedAll: true, key: 'name' },

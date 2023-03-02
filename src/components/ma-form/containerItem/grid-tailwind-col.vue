@@ -13,12 +13,10 @@
     :class="['grid-responsive-padding', props.component?.customClass]"
     :style="props.component?.style"
     :span="props.component?.span ?? 12"
-    :offset="props.component?.offset"
-    :suffix="props.component?.suffix"
   >
     <template v-for="(component, componentIndex) in (props.component?.formList ?? [])" :key="componentIndex">
       <component
-        :is="getComponentName(component.formType)"
+        :is="getComponentName(component.formType ?? 'input')"
         :component="component"
       >
         <template v-for="slot in Object.keys($slots)" #[slot]="component" >

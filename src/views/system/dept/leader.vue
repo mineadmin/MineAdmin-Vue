@@ -41,7 +41,6 @@
     api: dept.getLeaderList,
     searchColNumber: 3,
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,

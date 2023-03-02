@@ -84,7 +84,6 @@
   const crud = reactive({
     api: apiLog.getPageList,
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     requestParams: { orderBy: 'access_time', orderType: 'desc' },

@@ -110,7 +110,6 @@
     api: module.getPageList,
     showIndex: false,
     searchColNumber: 3,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     operationColumn: true,
     operationWidth: 240,

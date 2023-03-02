@@ -9,7 +9,7 @@
 -->
 <template>
   <ma-form-item
-    v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
+    v-if="(typeof props.component.display == 'undefined' || props.component.display === true)"
     :component="props.component"
     :custom-field="props.customField"
   >
@@ -50,6 +50,10 @@ const value = ref(get(formModel.value, index))
 
 watch( () => get(formModel.value, index), vl => value.value = vl )
 watch( () => value.value, v => set(formModel.value, index, v) )
+
+if (props.component.dict && (props.component.dict.name || props.component.dict.data)) { 
+  value.value = value.value + ''
+}
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
 onMounted(() => {

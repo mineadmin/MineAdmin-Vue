@@ -36,7 +36,6 @@ import MaGridTailwindCol from './grid-tailwind-col.vue'
 import { getComponentName } from '../js/utils.js'
 import { maEvent } from '../js/formItemMixin.js'
 const props = defineProps({ component: Object })
-const updateComponent = ref(false)
 const gridClass = ref(['ma-grid', 'grid', 'lg:grid-cols-' + props.component?.colNumber ?? 1])
 
 maEvent.handleCommonEvent(props.component, 'onCreated')

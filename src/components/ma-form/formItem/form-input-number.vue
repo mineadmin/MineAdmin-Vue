@@ -9,7 +9,7 @@
 -->
 <template>
   <ma-form-item
-    v-show="(typeof props.component.display == 'undefined' || props.component.display === true)"
+    v-if="(typeof props.component.display == 'undefined' || props.component.display === true)"
     :component="props.component"
     :custom-field="props.customField"
   >
@@ -49,7 +49,7 @@
 
 <script setup>
 import { ref, inject, onMounted, watch } from 'vue'
-import { get, set } from 'lodash'
+import { get, set, toNumber } from 'lodash'
 import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
 const props = defineProps({
@@ -59,9 +59,9 @@ const props = defineProps({
 
 const formModel = inject('formModel')
 const index = props.customField ?? props.component.dataIndex
-const value = ref(get(formModel.value, index))
+const value = ref(toNumber(get(formModel.value, index)))
 
-watch( () => get(formModel.value, index), vl => value.value = vl )
+watch( () => get(formModel.value, index), vl => value.value = toNumber(vl) )
 watch( () => value.value, v => set(formModel.value, index, v) )
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
