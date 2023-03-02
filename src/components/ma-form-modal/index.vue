@@ -25,6 +25,8 @@
  *  @visible(show = true|false) 显示关闭事件
  */
 import { reactive, ref, watch } from "vue";
+import MaForm from "@/components/ma-form/index.vue"
+import {Message} from "@arco-design/web-vue";;
 const emit = defineEmits(["visible", "validateError", "open", "cancel", "close"]);
 const form = ref({});
 const prop = defineProps({
@@ -50,7 +52,7 @@ const modal = reactive({
     modal.visible = false;
   },
   async submit() {
-    let validate = await maFormRef.value.formRef.validate();
+    let validate = await maFormRef.value.validateForm();
     if (validate) {
       emit("validateError", validate);
       return false;
