@@ -102,7 +102,6 @@
   const crud = reactive({
     api: operLog.getPageList,
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     requestParams: { orderBy: 'created_at', orderType: 'desc' },

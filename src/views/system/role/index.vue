@@ -96,7 +96,6 @@
     api: role.getPageList,
     recycleApi: role.getRecyclePageList,
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,

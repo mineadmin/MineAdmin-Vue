@@ -25,7 +25,6 @@
   const crud = reactive({
     api: loginLog.getPageList,
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     requestParams: { orderBy: 'login_time', orderType: 'desc' },

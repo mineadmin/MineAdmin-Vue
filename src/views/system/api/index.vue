@@ -64,7 +64,6 @@
     api: api.getList,
     recycleApi: api.getRecycleList,
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,

@@ -53,7 +53,6 @@
     autoRequest: false,
     api: crontab.getLogPageList,
     showIndex: false,
-    searchLabelWidth: '75px',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 100,

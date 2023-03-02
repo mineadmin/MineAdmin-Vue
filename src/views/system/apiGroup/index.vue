@@ -43,7 +43,6 @@
     recycleApi: apiGroup.getRecycleList,
     showIndex: false,
     searchColNumber: 3,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,

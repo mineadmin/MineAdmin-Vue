@@ -65,7 +65,6 @@ const crud = reactive({
   api: dict.getPageList,
   recycleApi: dict.getRecyclePageList,
   showIndex: false,
-  searchLabelWidth: '75px',
   pageLayout: 'fixed',
   rowSelection: { showCheckedAll: true },
   operationColumn: true,

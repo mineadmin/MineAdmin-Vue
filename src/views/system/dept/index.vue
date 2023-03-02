@@ -72,7 +72,6 @@
     api: dept.getList,
     recycleApi: dept.getRecycleList,
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,

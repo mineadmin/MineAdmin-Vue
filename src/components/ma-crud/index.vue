@@ -219,7 +219,7 @@
 
 <script setup>
 import config from '@/config/crud'
-import {ref, watch, provide, nextTick, onMounted, onUnmounted, onUpdated} from 'vue'
+import { ref, watch, provide, nextTick, onMounted, onUnmounted, onUpdated } from 'vue'
 import defaultOptions from './js/defaultOptions'
 import { loadDict } from '@cps/ma-form/js/networkRequest.js'
 
@@ -235,7 +235,6 @@ import { request } from '@/utils/request'
 import tool from '@/utils/tool'
 import { isArray, isFunction } from 'lodash'
 import globalColumn from '@/config/column.js'
-import {useRoute} from "vue-router";
 
 const props = defineProps({
   // 表格数据
@@ -282,17 +281,6 @@ const selecteds = ref([])
 const tableData = ref([])
 const tableRef = ref()
 const currentApi = ref()
-
-const route = useRoute()
-
-watch(
-    () => route,
-    value => {
-      refresh()
-    },
-    { deep: true }
-)
-
 
 // 初始化
 const init = async() => {
