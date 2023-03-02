@@ -190,11 +190,12 @@ onMounted(() => {
   options.value.init && init()
 })
 
+const done = (status) => formLoading.value = status
 const validateForm = async () => await maFormRef.value.validate()
 const resetForm = async() => await maFormRef.value.resetFields()
 const clearValidate = async() => await maFormRef.value.clearValidate()
 
-const formSubmit = async () => await validateForm() || emit('onSubmit', form.value)
+const formSubmit = async () =>  (await validateForm() && !formLoading.value ) || emit('onSubmit', form.value, done)
 
 const getFormRef = () => maFormRef.value
 const getDictlist = () => dictList.value
