@@ -34,15 +34,15 @@
       v-if=" (props.component?.type ?? 'group') === 'group'"
      :show-expand-icon="false"
     >
-      <a-collapse-item v-for="(item, itemIndex) in formModel[props.component.dataIndex]" :key="itemIndex" :header="`子项目 ${itemIndex + 1}`">
+      <a-collapse-item v-for="(item, itemIndex) in formModel[props.component.dataIndex]" :key="itemIndex" :header="`${props.component.title} ${itemIndex + 1}项`">
         <template #extra>
           <a-space>
-            <a-tooltip content="添加新子项">
+            <a-tooltip content="添加新子项" v-if="!(props.component.hideAdd ?? false)">
               <a-button @click.stop="addItem()" type="primary" size="small" shape="round">
                 <template #icon><icon-plus /></template>
               </a-button>
             </a-tooltip>
-            <a-tooltip content="删除该子项">
+            <a-tooltip content="删除该子项" v-if="!(props.component.hideDelete ?? false)">
               <a-button
                 @click.stop="deleteItem(itemIndex)"
                 :disabled="formModel[props.component.dataIndex].length === 1"
@@ -56,7 +56,7 @@
             </a-tooltip>
           </a-space>
         </template>
-        <template v-for="(component, componentIndex) in formList" :key="componentIndex">
+        <template v-for="(component, componentIndex) in viewFormList[itemIndex]" :key="componentIndex">
           <component
             v-if="! containerItems.includes(component.formType)"
             :is="getComponentName(component?.formType ?? 'input')"
@@ -72,7 +72,7 @@
     </a-collapse>
 
     <a-table v-else class="w-full" :data="formModel[props.component.dataIndex]" :pagination="false" bordered stripe>
-      <template #columns>
+      <template #columns id="children-columns">
         <!-- 新增、删除列 -->
         <a-table-column :width="60" fixed="left">
           <template #title>
@@ -100,35 +100,36 @@
           <template #cell="{ rowIndex }"> {{ rowIndex + 1}} </template>
         </a-table-column>
 
-        <template v-for="(component, itemIndex) in formList" :key="itemIndex">
+        <template  v-for="(component, itemIndex) in viewFormList[0]" :key="itemIndex">
           <a-table-column
-            :width="component.width"
-            :title="component.title ?? '未命名'"
-            :align="component.align || 'left'"
-            :fixed="component.fixed"
+              :width="component.width"
+              :title="component.title ?? '未命名'"
+              :align="component.align || 'left'"
+              :fixed="component.fixed"
           >
             <template #cell="{ rowIndex }">
               <component
-                v-if="! containerItems.includes(component.formType)"
-                :is="getComponentName(component.formType ?? 'input')"
-                :component="component"
-                :customField="getChildrenDataIndex(rowIndex, component.dataIndex)"
+                  v-if="! containerItems.includes(component.formType)"
+                  :is="getComponentName(component.formType ?? 'input')"
+                  :component="component"
+                  :customField="getChildrenDataIndex(rowIndex, component.dataIndex)"
               >
                 <template v-for="slot in Object.keys($slots)" #[slot]="component">
-                  <slot :name="slot" v-bind="component" />
+                  <slot :name="slot" v-bind="component"/>
                 </template>
               </component>
             </template>
           </a-table-column>
         </template>
+
       </template>
     </a-table>
   </a-form-item>
 </template>
 
 <script setup>
-import { ref, inject, provide, onMounted, watch, nextTick } from 'vue'
-import { get, set } from 'lodash'
+import {ref, inject, provide, onMounted, watch, nextTick, shallowRef} from 'vue'
+import {cloneDeep, get, isUndefined, set} from 'lodash'
 import { getComponentName, containerItems } from '../js/utils.js'
 import { maEvent } from '../js/formItemMixin.js'
 import { loadDict, handlerCascader } from '../js/networkRequest.js'
@@ -136,6 +137,7 @@ import arrayComponentDefault from '../js/defaultArrayComponent.js'
 
 const props = defineProps({ component: Object })
 const formList = props.component.formList
+const viewFormList = ref([])
 const options = inject('options')
 const formModel = inject('formModel')
 const dictList = inject('dictList')
@@ -144,6 +146,16 @@ const defaultOpenKeys = [0]
 if (! formModel.value[props.component.dataIndex]) {
   formModel.value[props.component.dataIndex] = []
 }
+
+watch(() => formModel.value[props.component.dataIndex], (value) => {
+  value.forEach((data, index) => {
+    let tmpFormList = cloneDeep(formList)
+    maEvent.handleCommonEvent(props.component, 'onAdd', {formList: tmpFormList, data, index})
+    viewFormList.value[index] = tmpFormList
+  })
+},{
+  immediate: true,
+})
 
 if (props.component.type == 'table') {
   formList.map(item => {
@@ -161,13 +173,19 @@ formList.map(async item => {
 })
 
 const addItem = async (data = {}) => {
+  let index = formModel.value[props.component.dataIndex].length
+  let tmpFormList = cloneDeep(formList)
+  maEvent.handleCommonEvent(props.component, 'onAdd', {formList: tmpFormList, data, index: index})
+  viewFormList.value[index] = tmpFormList
   formModel.value[props.component.dataIndex].push(data)
-  maEvent.handleCommonEvent(props.component, 'onAdd')
 }
 
 const deleteItem = async (index) => {
-  formModel.value[props.component.dataIndex].splice(index, 1)
-  maEvent.handleCommonEvent(props.component, 'onDelete')
+  let res = maEvent.handleCommonEvent(props.component, 'onDelete', {index})
+  if (isUndefined(res) || res === true) {
+    viewFormList.value.splice(index, 1)
+    formModel.value[props.component.dataIndex].splice(index, 1)
+  }
 }
 
 const getChildrenDataIndex = (index, dataIndex) => {
