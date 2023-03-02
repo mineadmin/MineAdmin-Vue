@@ -123,8 +123,10 @@ const init = () => {
   dataLoading.value = true
   const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
   // const layout = options?.formOption?.layout ?? []
+  const excludeColumns = ['__index', '__operation']
+  if (options.formExcludePk) excludeColumns.push(options.pk)
   columns.map(async item => {
-    if (! formItemShow(item) || ['__index', '__operation', options.pk].includes(item.dataIndex)) return
+    if (! formItemShow(item) || excludeColumns.includes(item.dataIndex)) return
     formColumns.value.push(item)
 
     // 针对带点的数据处理

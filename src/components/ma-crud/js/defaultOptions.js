@@ -1,6 +1,8 @@
 export default {
   // 主键名称
   pk: 'id',
+  // 表单是否排除PK
+  formExcludePk: true,
   // 请求api方法
   api: () => {},
   // 请求回收站api方法
