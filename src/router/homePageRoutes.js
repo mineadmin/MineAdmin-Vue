@@ -27,7 +27,26 @@ const homePageRoutes = [
       type: 'M',
     },
     component: () => import('@/views/userCenter/message.vue'),
+  }, {
+    name: 'formDemo1',
+    path: '/formDemo1',
+    meta: {
+      title: '简历示例',
+      icon: 'icon-message',
+      type: 'M',
+    },
+    component: () => import('@/views/demo.vue'),
   }
+  // , {
+  //   name: 'formDemo2',
+  //   path: '/formDemo2',
+  //   meta: {
+  //     title: '发布商品示例',
+  //     icon: 'icon-message',
+  //     type: 'M',
+  //   },
+  //   component: () => import('@/views/demo2.vue'),
+  // }
 ]
 
 export const homePage = {
