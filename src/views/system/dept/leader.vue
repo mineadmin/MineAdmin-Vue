@@ -3,7 +3,7 @@
     <template #title>部门领导列表</template>
     <a-alert>部门的领导人可以跨部门设置</a-alert>
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef" class="mt-3">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef" class="mt-3">
       <template #tableBeforeButtons>
         <ma-user text="新增领导" :onlyId="false" :isEcho="false" v-model="users" @success="selectedSuccess" />
       </template>
@@ -39,8 +39,8 @@
   const crud = reactive({
     autoRequest: false,
     api: dept.getLeaderList,
+    searchColNumber: 3,
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,

@@ -8,174 +8,42 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <a-spin :loading="searchLoading" tip="加载数据中..." v-if="isShowSearch">
+  <a-spin :loading="searchLoading" :tip="options.searchLoadingText" v-if="showSearch">
     <a-form
       :model="searchForm"
       layout="inline"
-      :label-align="props.searchLabelAlign"
-      ref="search"
+      :label-align="options?.searchLabelAlign"
+      ref="searchRef"
       @submit="handlerSearch"
     >
-      <div class="w-full">
-        <template v-if="! props.searchCustomerLayout">
-          <div :class="`grid grid-cols-1 lg:grid-cols-${ props.searchCustomerLayout ? 1 : 4 }`">
-            <template v-for="(item, index) in columns" :key="index">
-              <a-form-item
-                :field="item.dataIndex"
-                :label="item.title"
-                :label-col-style="{ width: item.searchLabelWidth || props.searchLabelWidth }"
-              >
-                <slot :name="`${item.dataIndex}`" v-bind="{ searchForm, item }">
-                  <a-select
-                    v-if="['select', 'radio', 'checkbox', 'transfer'].includes(item.formType)"
-                    v-model="searchForm[item.dataIndex]"
-                    :virtual-list-props="item.virtualList ? { height: 200 } : undefined"
-                    :placeholder="item.searchPlaceholder || `请选择${item.title}`"
-                    allow-clear
-                    allow-search
-                    :max-tag-count="1"
-                    :options="formDictData[item.dataIndex]"
-                    :multiple="item.multiple || ['transfer', 'checkbox'].includes(item.formType)"
-                    @change="handlerCascader($event, item)"
-                  />
-
-                  <a-cascader
-                    v-else-if="item.formType === 'cascader'"
-                    v-model="searchForm[item.dataIndex]"
-                    :placeholder="item.searchPlaceholder || `请选择${item.title}`"
-                    allow-clear
-                    allow-search
-                    :disabled="item.disabled"
-                    :readonly="item.readonly"
-                    :expand-trigger="item.trigger || 'click'"
-                    :options="formDictData[item.dataIndex]"
-                    :multiple="item.multiple"
-                  />
-
-                  <a-tree-select
-                    v-else-if="item.formType === 'treeSelect' || item.formType === 'tree-select'"
-                    v-model="searchForm[item.dataIndex]"
-                    :treeProps="{ virtualListProps: item.virtualList ? { height: 240 } : undefined }"
-                    :placeholder="item.searchPlaceholder || `请选择${item.title}`"
-                    :disabled="item.disabled"
-                    :readonly="item.readonly"
-                    allow-clear
-                    allow-search
-                    :field-names="item.dict.props || { key: 'value', title: 'label' }"
-                    :tree-checkable="item.multiple"
-                    :multiple="item.multiple"
-                    :data="formDictData[item.dataIndex]"
-                  />
-
-                  <component
-                      v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
-                      :is="getComponent({formType: 'range'})"
-                      v-model="searchForm[item.dataIndex]"
-                      :placeholder="['请选择开始时间', '请选择结束时间']"
-                      :time-picker-props="{ defaultValue: ['00:00:00', '23:59:59'] }"
-                      :show-time="item.showTime"
-                      :format="item.format || ''"
-                      :mode="item.mode"
-                      allow-clear
-                      style="width: 100%;"
-                  />
-
-
-                  <component
-                    v-else
-                    :is="getComponent(item)"
-                    v-model="searchForm[item.dataIndex]"
-                    :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请输入${item.title}`"
-                    allow-clear
-                  />
-                </slot>
-              </a-form-item>
-            </template>
-          </div>
+      <div :class="[ gridClass, options?.searchCustomClass ]">
+        <template v-for="(component, index) in searchColumns" :key="index">
+          <a-form-item
+            :field="component.dataIndex"
+            :label="component.title"
+            label-col-flex="auto"
+            :label-col-style="{ width: component.searchLabelWidth ?? options.searchLabelWidth }"
+          >
+            <slot :name="`${component.dataIndex}`" v-bind="{ searchForm, component }">
+              <component :is="getComponentName(component.formType, component)" :component="component" />
+            </slot>
+          </a-form-item>
         </template>
-        <a-row v-else>
-          <template v-for="(item, index) in columns" :key="index">
-            <a-col :span="props.searchCustomerLayout ? item.searchSpan || 24 : 24">
-              <a-form-item
-                :field="item.dataIndex"
-                :label="item.title"
-                :label-col-style="{ width: item.searchLabelWidth || props.searchLabelWidth }"
-              >
-                <slot :name="`${item.dataIndex}`" v-bind="{ searchForm, item }">
-                  <a-select
-                    v-if="['select', 'radio', 'checkbox', 'transfer'].includes(item.formType)"
-                    v-model="searchForm[item.dataIndex]"
-                    :virtual-list-props="item.virtualList ? { height: 200 } : undefined"
-                    :placeholder="item.searchPlaceholder || `请选择${item.title}`"
-                    allow-clear
-                    allow-search
-                    :max-tag-count="1"
-                    :options="formDictData[item.dataIndex]"
-                    :multiple="item.multiple || ['transfer', 'checkbox'].includes(item.formType)"
-                    @change="handlerCascader($event, item)"
-                  />
-
-                  <a-cascader
-                    v-else-if="item.formType === 'cascader'"
-                    v-model="searchForm[item.dataIndex]"
-                    :placeholder="item.searchPlaceholder || `请选择${item.title}`"
-                    allow-clear
-                    allow-search
-                    :disabled="item.disabled"
-                    :readonly="item.readonly"
-                    :expand-trigger="item.trigger || 'click'"
-                    :options="formDictData[item.dataIndex]"
-                    :multiple="item.multiple"
-                  />
-
-                  <a-tree-select
-                    v-else-if="item.formType === 'treeSelect' || item.formType === 'tree-select'"
-                    v-model="searchForm[item.dataIndex]"
-                    :treeProps="{ virtualListProps: item.virtualList ? { height: 240 } : undefined }"
-                    :placeholder="item.searchPlaceholder || `请选择${item.title}`"
-                    :disabled="item.disabled"
-                    :readonly="item.readonly"
-                    allow-clear
-                    allow-search
-                    :field-names="item.dict.props || { key: 'value', title: 'label' }"
-                    :tree-checkable="item.multiple"
-                    :multiple="item.multiple"
-                    :data="formDictData[item.dataIndex]"
-                  />
-
-                   <component
-                      v-else-if="['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)"
-                      :is="getComponent({formType: 'range'})"
-                      v-model="searchForm[item.dataIndex]"
-                      :placeholder="['请选择开始时间', '请选择结束时间']"
-                      :time-picker-props="{ defaultValue: ['00:00:00', '23:59:59'] }"
-                      :show-time="item.showTime"
-                      :format="item.format || ''"
-                      :mode="item.mode"
-                      allow-clear
-                      style="width: 100%;"
-                  />
-
-
-
-                  <component
-                    v-else
-                    :is="getComponent(item)"
-                    v-model="searchForm[item.dataIndex]"
-                    :placeholder="item.searchPlaceholder ? item.searchPlaceholder : `请输入${item.title}`"
-                    allow-clear
-                  />
-                </slot>
-              </a-form-item>
-            </a-col>
-          </template>
-        </a-row>
       </div>
       <div class="text-center mt-5 w-full">
         <a-space size="medium">
-          <a-button type="primary" html-type="submit"><icon-search /> 提交</a-button>
-          <a-button @click="reset"><icon-delete /> 清空</a-button>
-          <slot name="searchButtons" />
+          <slot name="searchBeforeButtons" />
+          <slot name="searchButtons">
+            <a-button type="primary" html-type="submit">
+              <template #icon><icon-search /></template>
+              {{ options.searchSubmitButtonText }}
+            </a-button>
+            <a-button @click="resetSearch">
+              <template #icon><icon-delete /></template>
+              {{ options.searchResetButtonText }}
+            </a-button>
+          </slot>
+          <slot name="searchAfterButtons" />
         </a-space>
       </div>
     </a-form>
@@ -183,162 +51,122 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue'
-import { request } from '@/utils/request'
-import { isFunction, isArray, concat } from 'lodash'
-import { Message } from '@arco-design/web-vue'
-import commonApi from '@/api/common'
-import { handlerProps } from '../js/common'
+import { ref, watch, inject, provide, markRaw } from 'vue'
+import MaFormInput from './searchFormItem/form-input.vue'
+import MaFormPicker from './searchFormItem/form-picker.vue'
+import MaFormSelect from './searchFormItem/form-select.vue'
+import MaFormCascader from './searchFormItem/form-cascader.vue'
+import MaFormTreeSelect from './searchFormItem/form-tree-select.vue'
+import { upperCaseFirst } from '@/components/ma-form/js/utils'
+import {cloneDeep} from "lodash";
 
-const searchLoading = ref(true)
-const formDictData = ref({})
-const isShowSearch = ref(false)
-const search = ref(null)
-const columns = ref([])
+const options = inject('options')
+const columns = inject('columns')
+const requestParams = inject('requestParams')
 
-let searchForm = reactive({})
+const gridClass = ref(['ma-search-grid', 'w-full', 'grid', 'lg:grid-cols-' + options.searchColNumber ?? 4])
 
-const emits = defineEmits(['search'])
+const searchLoading = ref(false)
+const showSearch = ref(true)
+const searchRef = ref(null)
+const searchColumns = ref([])
 
-watch(() => props.columns, () => {
-  init()
-}, { deep: true })
+const searchForm = ref({})
 
-const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
+provide('searchForm', searchForm)
+provide('columns', columns)
 
-const init = async () => {
-  if (props.columns.length > 0) {
-    columns.value = props.columns.filter( item => item.search === true )
-  }
+const emit = defineEmits(['search'])
 
-  const allowRequestFormType = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
-  const allowCoverFormType = ['radio', 'checkbox', 'select', 'transfer']
-  if (props.columns.length > 0) {
-    isShowSearch.value = columns.value.length > 0 ? true : false
-    let cascaders = []
-    props.columns.map(item => {
-      if (item.cascaderItem && item.cascaderItem.length > 0) {
-        cascaders = concat(cascaders, item.cascaderItem)
-      }
-    })
-    props.columns.map(async item => {
-      if (item.search || item.dict) {
-        if (item.dataIndex && item.search) {
-          searchForm[item.dataIndex] = item.searchDefaultValue || undefined
-        }
-
-        if (allowRequestFormType.includes(item.formType) && item.dict && ! cascaders.includes(item.dataIndex)) {
-          if (item.dict.name) {
-            const response = await commonApi.getDict(item.dict.name)
-            if (response.data) {
-              formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
-            }
-          } else if (item.dict.url) {
-            const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
-            if (response.data) {
-              formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response.data)
-            }
-          } else if (item.dict.data) {
-            if (isArray(item.dict.data)) {
-              formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, item.dict.data)
-            } else if (isFunction(item.dict.data)) {
-              const response = await item.dict.data()
-              formDictData.value[item.dataIndex] = handlerProps(allowCoverFormType, item, response)
-            }
-          }
-        }
-      }
-    })
-  }
-  searchLoading.value = false
+if (columns.length > 0) {
+  searchColumns.value = cloneDeep(columns.filter( item => item.search === true ))
 }
-
-const getComponent = (item => {
-  if (! item.formType) {
-    return `a-input`
-  }
-  if (['input', 'password', 'textarea'].includes(item.formType)) {
-    return 'a-input'
-  } else if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(item.formType)) {
-    return `a-${item.formType}-picker`
-  } else {
-    return `a-input`
-  }
-})
 
 const handlerSearch = () => {
-  emits('search', searchForm)
+  emit('search', searchForm.value)
 }
 
-const reset = () => {
-  search.value.resetFields()
-  emits('search', searchForm)
+const resetSearch = () => {
+  searchRef.value.resetFields()
+  emit('search', searchForm.value)
 }
 
-// 处理联动
-const handlerCascader = (val, column) => {
-  if (column.cascaderItem && isArray(column.cascaderItem) && column.cascaderItem.length > 0 && val) {
-    searchLoading.value = true
-    column.cascaderItem.map(async name => {
-      const dict = columns.value.filter(col => col.dataIndex === name && col.dict )[0].dict
-      searchForm[name] = undefined
-      if (dict && dict.url && dict.props) {
-        let response
-        if (dict && dict.url.indexOf('{{key}}') > 0) {
-          response = await requestDict(dict.url.replace('{{key}}', val), dict.method || 'GET', dict.params || {}, dict.data || {})
-        } else {
-          let temp = { key: val }
-          const params = Object.assign(dict.params || {}, temp)
-          const data   = Object.assign(dict.data || {}, temp)
-          response = await requestDict(dict.url, dict.method || 'GET', params || {}, data || {})
-        }
-        if (response.data && response.code === 200) {
-          formDictData.value[name] = response.data.map(dicItem => {
-            return {
-              'label': dicItem[ (dict.props && dict.props.label) || 'label'  ],
-              'value': dicItem[ (dict.props && dict.props.value) || 'value' ]
-            } 
-          })
-        } else {
-          Message.error('字典联动请求失败：' + name)
-          console.error(response)
-        }
-      }
-    })
-    searchLoading.value = false
+const componentList = ref({
+  'MaFormSelect': markRaw(MaFormSelect),
+  'MaFormPicker': markRaw(MaFormPicker),
+  'MaFormCascader': markRaw(MaFormCascader),
+  'MaFormTreeSelect': markRaw(MaFormTreeSelect),
+  'MaFormInput': markRaw(MaFormInput),
+}) 
+
+const getComponentName = (formType, component) => {
+  if (['select', 'radio', 'checkbox', 'transfer'].includes(formType)) {
+    return componentList.value['MaFormSelect']
+  } else if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(formType)) {
+    component.formType = 'range'
+    return componentList.value['MaFormPicker']
+  } else if (formType === 'cascader') {
+    return componentList.value['MaFormCascader']
+  } else if (formType === 'tree-select') {
+    return componentList.value['MaFormTreeSelect']
+  } else {
+    return componentList.value['MaFormInput']
   }
 }
 
-const props = defineProps({
-  columns: { type: Array },
-  searchLabelWidth: { type: String, default: () => 'auto' },
-  searchLabelAlign: { type: String, default: () => 'right' },
-  searchCustomerLayout: { type: Boolean },
+const setSearchHidden = () => showSearch.value = false
+const setSearchDisplay = () => showSearch.value = true
+const setSearchLoading = () => searchLoading.value = true
+const setSearchUnLoading = () => searchLoading.value = false
+const getSearchFormRef = () => searchRef.value
+const getSearchColumns = () => searchColumns.value
+
+defineExpose({
+  getSearchFormRef, getSearchColumns, showSearch,
+  setSearchHidden, setSearchDisplay, setSearchLoading, setSearchUnLoading
 })
-
-const dictTrans = (dataIndex, value) => {
-  if (formDictData.value[dataIndex] && formDictData.value[dataIndex].tran) {
-    return formDictData.value[dataIndex].tran[value]
-  } else {
-    return value
-  }
-}
-
-const dictColors = (dataIndex, value) => {
-  if (formDictData.value[dataIndex] && formDictData.value[dataIndex].colors) {
-    return formDictData.value[dataIndex].colors[value]
-  } else {
-    return undefined
-  }
-}
-
-init()
-
-defineExpose({ dictColors, dictTrans, searchForm })
 </script>
 
 <style scoped lang="less">
 :deep(.arco-form-item-label-required-symbol svg) {
   vertical-align: baseline !important;
+}
+@media (min-width: 1024px) {
+  .lg\:grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr))
+  }
+  .lg\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+  }
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+  }
+  .lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr))
+  }
+  .lg\:grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr))
+  }
+  .lg\:grid-cols-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr))
+  }
+  .lg\:grid-cols-7 {
+    grid-template-columns: repeat(7, minmax(0, 1fr))
+  }
+  .lg\:grid-cols-8 {
+    grid-template-columns: repeat(8, minmax(0, 1fr))
+  }
+  .lg\:grid-cols-9 {
+    grid-template-columns: repeat(9, minmax(0, 1fr))
+  }
+  .lg\:grid-cols-10 {
+    grid-template-columns: repeat(10, minmax(0, 1fr))
+  }
+  .lg\:grid-cols-11 {
+    grid-template-columns: repeat(11, minmax(0, 1fr))
+  }
+  .lg\:grid-cols-12 {
+    grid-template-columns: repeat(12, minmax(0, 1fr))
+  }
 }
 </style>

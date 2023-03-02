@@ -1,26 +1,23 @@
 export default {
-
-  // 每页记录数，全局配置，但会被ma-crud组件的option配置项覆盖
-  pageSize: 10,
-
+  
   // 响应返回解析
   parseResponseData: (res) => {
 
-    return res.data.items
+    return res?.data?.items
     ?
     // 分页响应字段结构定义
     {
-      rows: res.data.items,      // 分析行数据字段结构
-      pageInfo: res.data.pageInfo,    // 分析总数字段结构
-      message: res.message,      // 分析描述字段结构
-      code: res.code            // 分析状态字段结构
+      rows: res?.data?.items ?? [],      // 分析行数据字段结构
+      pageInfo: res?.data?.pageInfo,    // 分析总数字段结构
+      message: res?.message,      // 分析描述字段结构
+      code: res?.code            // 分析状态字段结构
     }
     :
     // 无分页响应字段结构定义
     {
-      rows: res.data,           // 分析行数据字段结构
-      message: res.message,     // 分析描述字段结构
-      code: res.code            // 分析状态字段结构
+      rows: res?.data ?? [],           // 分析行数据字段结构
+      message: res?.message,     // 分析描述字段结构
+      code: res?.code            // 分析状态字段结构
     }
 
   },

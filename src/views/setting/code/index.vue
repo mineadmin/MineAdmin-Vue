@@ -10,20 +10,20 @@
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef" @selection-change="selectionChange">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef" @selection-change="selectionChange">
       <!-- 表格按钮后置扩展 -->
       <template #tableAfterButtons>
         <a-button
           v-auth="['setting:code:generate']"
           type="outline"
           @click="batchGenerate"
-        ><icon-code /> 生成代码</a-button>
+        ><template #icon><icon-code /></template>生成代码</a-button>
         <a-button
           v-auth="['setting:code:loadTable']"
           @click="() => loadTableRef.open()"
           type="outline"
           status="success"
-        ><icon-export /> 装载数据表</a-button>
+        ><template #icon><icon-export /></template>装载数据表</a-button>
       </template>
       <!-- 操作前置扩展 -->
       <template #operationBeforeExtend="{ record }">
@@ -113,6 +113,7 @@
   const crud = reactive({
     api: generate.getPageList,
     showIndex: false,
+    searchColNumber: 3,
     searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },

@@ -157,7 +157,14 @@ tool.cityToCode = function(province, city = undefined, area = undefined, split =
 
 /* 复制对象 */
 tool.objCopy = (obj) => {
+  if (obj === undefined) {
+    return undefined
+  }
   return JSON.parse(JSON.stringify(obj));
+}
+
+tool.generateId = function() {
+  return Math.floor(Math.random() * 100000 + Math.random() * 20000 + Math.random() * 5000)
 }
 
 tool.viewImage = function(path, defaultStorage = 'LOCAL') {

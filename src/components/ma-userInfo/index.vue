@@ -8,50 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <a-select placeholder="请选择用户信息" v-model="val" @change="handlerChange">
-    <a-option :value="user.id" label="用户ID" class="w-full">
-      <div class="flex justify-between w-full">
-        <span>用户ID</span>
-        <span>{{ user.id }}</span>
-      </div>
-    </a-option>
-    <a-option :value="user.dept_id.toString()" label="用户部门ID" class="w-full">
-      <div class="flex justify-between w-full">
-        <span>用户部门ID</span>
-        <span>{{ user.dept_id }}</span>
-      </div>
-    </a-option>
-    <a-option :value="user.username" label="用户账户名" class="w-full">
-      <div class="flex justify-between w-full">
-        <span>用户账户名</span>
-        <span>{{ user.username }}</span>
-      </div>
-    </a-option>
-    <a-option :value="user.nickname" label="用户昵称" class="w-full">
-      <div class="flex justify-between w-full">
-        <span>用户昵称</span>
-        <span>{{ user.nickname }}</span>
-      </div>
-    </a-option>
-    <a-option :value="user.email" label="用户邮箱" class="w-full">
-      <div class="flex justify-between w-full">
-        <span>用户邮箱</span>
-        <span>{{ user.email }}</span>
-      </div>
-    </a-option>
-    <a-option :value="user.phone" label="用户手机" class="w-full">
-      <div class="flex justify-between w-full">
-        <span>用户手机</span>
-        <span>{{ user.phone }}</span>
-      </div>
-    </a-option>
-    <a-option :value="user.created_at" label="用户创建时间" class="w-full">
-      <div class="flex justify-between w-full">
-        <span>用户创建时间</span>
-        <span>{{ user.created_at }}</span>
-      </div>
-    </a-option>
-  </a-select>
+  <a-input v-model="val" :label="props.title" disabled class="w-full" />
 </template>
 
 <script setup>
@@ -62,22 +19,18 @@ const user = useUserStore().user
 const val = ref()
 
 const emit = defineEmits(['update:modelValue'])
-const props = defineProps({ modelValue: [ String, Number ] })
+const props = defineProps({
+  modelValue: [ String, Number ],
+  title: { type: String, default: '用户信息'},
+  field: { type: String, default: 'id'},
+})
 
-val.value = props.modelValue
-
-const handlerChange = (value) => {
-  val.value = value
-}
-
-watch(
-  () => props.modelValue,
-  vl => val.value = vl
-)
+val.value = user[props.field] ? user[props.field].toString() : user.id.toString()
 
 watch(
   () => val.value,
-  vl => emit('update:modelValue', vl)
+  vl => emit('update:modelValue', vl),
+  { immediate: true }
 )
 
 </script>

@@ -13,7 +13,7 @@
       维护 {{ currentRow.name }} 的{{ currentType == 'request' ? '请求参数' : '响应参数' }}
     </template>
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef">
       <!-- 状态列 -->
       <template #status="{ record }">
         <a-switch :checked-value="1" unchecked-value="2" @change="changeStatus($event, record.id)"
@@ -52,7 +52,6 @@ const crud = reactive({
   api: apiColumn.getList,
   recycleApi: apiColumn.getRecycleList,
   showIndex: false,
-  searchLabelWidth: '75px',
   pageLayout: 'fixed',
   rowSelection: { showCheckedAll: true },
   operationColumn: true,
@@ -67,7 +66,7 @@ const crud = reactive({
   import: { show: true, url: 'system/apiColumn/import', templateUrl: 'system/apiColumn/downloadTemplate' },
   export: { show: true, url: 'system/apiColumn/export' },
   recovery: { show: true, api: apiColumn.recoverys, auth: ['system:api:recovery'] },
-  viewLayoutSetting: { layout: 'customer', width: '800px' },
+  formOption: { width: '800px' },
   beforeAdd: (form) => form.api_id = currentRow.value.id,
   beforeRequest: (params) => {
     params.api_id = currentRow.value.id
@@ -78,11 +77,11 @@ const crud = reactive({
 const columns = reactive([
   { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50 },
   {
-    title: '字段名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '字段名称必填' }],
+    title: '字段名称', dataIndex: 'name', search: true, commonRules: [{ required: true, message: '字段名称必填' }],
     span: 12, labelWidth: '120px',
   },
   {
-    title: '数据类型', dataIndex: 'data_type', formType: 'select', rules: [{ required: true, message: '数据类型必选' }],
+    title: '数据类型', dataIndex: 'data_type', formType: 'select', commonRules: [{ required: true, message: '数据类型必选' }],
     dict: { name: 'api_data_type', props: { label: 'title', value: 'key' }, translation: true},
     span: 12, search: true
   },

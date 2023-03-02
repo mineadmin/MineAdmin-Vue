@@ -10,7 +10,7 @@
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef">
       <!-- 排序列 -->
       <template #sort="{ record }">
         <a-input-number
@@ -96,7 +96,6 @@
     api: role.getPageList,
     recycleApi: role.getRecyclePageList,
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
@@ -115,10 +114,10 @@
   const columns = reactive([
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { 
-      title: '角色名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '角色名称必填' }], width: 220
+      title: '角色名称', dataIndex: 'name', search: true, commonRules: [{ required: true, message: '角色名称必填' }], width: 220
     },
     { 
-      title: '角色标识', dataIndex: 'code', search: true, rules: [{ required: true, message: '角色标识必填' }], width: 180
+      title: '角色标识', dataIndex: 'code', search: true, commonRules: [{ required: true, message: '角色标识必填' }], width: 180
     },
     {
       title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1, width: 180,

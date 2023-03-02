@@ -13,8 +13,9 @@
     <a-spin :loading="loading" tip="数据加载中..." class="w-full h-full">
       <div class="w-full">
         <a-space>
-          <a-button type="primary" @click="selectAll"><icon-select-all /> 全选</a-button>
-          <a-button type="primary" @click="flushAll"><icon-eraser /> 清除</a-button>
+          <a-button type="primary" @click="selectAll">
+            <template #icon><icon-select-all /></template>全选</a-button>
+          <a-button type="primary" @click="flushAll"><template #icon><icon-eraser /></template>清除</a-button>
         </a-space>
 
         <div

@@ -24,7 +24,7 @@
           <span
             class="mt-0.5"
             :style="appStore.language === 'en' ? 'font-size: 10px' : ''"
-          >{{ $t(`menus.${bigMenu.name}`).indexOf('.') > 0 ? bigMenu.meta.title : $t(`menus.${bigMenu.name}`) }}</span>
+          >{{ appStore.i18n ? ( $t(`menus.${bigMenu.name}`).indexOf('.') > 0 ? bigMenu.meta.title : $t(`menus.${bigMenu.name}`) ) : bigMenu.meta.title }}</span>
         </li>
       </template>
     </ul>
@@ -52,8 +52,8 @@
   const router = useRouter()
 
   const MaMenuRef = ref(null)
-  const userStore = useUserStore()
   const appStore = useAppStore()
+  const userStore = useUserStore()
   const showMenu = ref(false)
 
   const title = ref('')

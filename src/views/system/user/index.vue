@@ -21,7 +21,7 @@
 
     <div class="lg:w-10/12 w-full lg:ml-4 mt-5 lg:mt-0">
       <!-- CRUD 组件 -->
-      <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+      <ma-crud :options="crud" :columns="columns" ref="crudRef">
         <!-- 状态列 -->
         <template #status="{ record }">
           <a-switch
@@ -77,6 +77,7 @@
 
 <script setup>
   import { ref, onMounted, reactive, computed } from 'vue'
+  import MaTreeSlider from '@cps/ma-treeSlider/index.vue'
   import dept from '@/api/system/dept'
   import user from '@/api/system/user'
   import commonApi from '@/api/common'
@@ -158,8 +159,8 @@
   const crud = reactive({
     api: user.getPageList,
     recycleApi: user.getRecyclePageList,
+    searchColNumber: 3,
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
@@ -174,7 +175,18 @@
     recovery: { show: true, api: user.recoverys, auth: ['system:user:recovery']},
     import: { show: true, url: 'system/user/import', templateUrl: 'system/user/downloadTemplate', auth: ['system:user:import'] },
     export: { show: true, url: 'system/user/export', auth: ['system:user:export'] },
-    viewLayoutSetting: { layout: 'customer', width: 800 },
+    formOption: {
+      width: 800,
+      layout: [
+        { formType: 'grid', cols: [ { span: 24, formList: [ { dataIndex: 'avatar' }] }]  },
+        { formType: 'grid', cols: [ { span: 12, formList: [ { dataIndex: 'username' }] }, { span: 12, formList: [{ dataIndex: 'dept_ids' }] }]  },
+        { formType: 'grid', cols: [ { span: 12, formList: [ { dataIndex: 'password' }] }, { span: 12, formList: [{ dataIndex: 'nickname' }] }]  },
+        { formType: 'grid', cols: [ { span: 12, formList: [ { dataIndex: 'role_ids' }] }, { span: 12, formList: [{ dataIndex: 'phone' }] }]  },
+        { formType: 'grid', cols: [ { span: 12, formList: [ { dataIndex: 'post_ids' }] }, { span: 12, formList: [{ dataIndex: 'email' }] }]  },
+        { formType: 'grid', cols: [ { span: 24, formList: [ { dataIndex: 'status' }] }] },
+        { formType: 'grid', cols: [ { span: 24, formList: [ { dataIndex: 'remark' }] }] },
+      ]
+    },
     isDbClickEdit: false
   })
 
@@ -182,44 +194,42 @@
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     {
       title: '头像', dataIndex: 'avatar', width: 75, formType: 'upload',
-      type: 'image', rounded: true, span: 24, labelWidth: '86px'
+      type: 'image', rounded: true, labelWidth: '86px'
     },
     { 
       title: '账户', dataIndex: 'username', width: 130, search: true, editDisabled: true,
-      rules: [{ required: true, message: '账户必填' }], span: 12
+      commonRules: [{ required: true, message: '账户必填' }]
     },
     {
       title: '所属部门', dataIndex: 'dept_ids', hide: true, formType: 'tree-select',
-      span: 12, multiple: true, treeCheckable: true, treeCheckStrictly: true,
-      dict: { url: 'system/dept/tree' }, rules: [{ required: true, message: '所属部门必选' }],
+      multiple: true, treeCheckable: true, treeCheckStrictly: true,
+      dict: { url: 'system/dept/tree' }, commonRules: [{ required: true, message: '所属部门必选' }],
       editDefaultValue: async (record) => {
         const response = await user.read(record.id)
-        const ids = response.data.deptList.map(item => item.id )
-        return ids
+        return response.data.deptList.map(item => item.id )
       }
     },
     { 
       title: '密码', dataIndex: 'password', hide: true, autocomplete: 'off',
       addDefaultValue: '123456', editDefaultValue: '', editDisabled: true, type: 'password', 
-      span: 12, addRules: [{ required: true, message: '密码必填' }],
+      addRules: [{ required: true, message: '密码必填' }],
     },
-    { title: '昵称', dataIndex: 'nickname', width: 120, span: 12 },
+    { title: '昵称', dataIndex: 'nickname', width: 120 },
     { 
-      title: '角色', dataIndex: 'role_ids', width: 120, span: 12, formType: 'select', multiple: true,
+      title: '角色', dataIndex: 'role_ids', width: 120, formType: 'select', multiple: true,
       dict: { url: 'system/role/list', props: { label: 'name', value: 'id' } }, hide: true, 
-      rules: [{ required: true, message: '角色必选' }],
+      commonRules: [{ required: true, message: '角色必选' }],
       editDefaultValue: async (record) => {
         const response = await user.read(record.id)
-        const ids = response.data.roleList.map(item => item.id )
-        return ids
+        return response.data.roleList.map(item => item.id )
       }
     },
     {
-      title: '手机', dataIndex: 'phone', width: 150, search: true, span: 12,
-      addRules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
+      title: '手机', dataIndex: 'phone', width: 150, search: true,
+      commonRules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
     },
     { 
-      title: '岗位', dataIndex: 'post_ids', width: 120, span: 12, formType: 'select', multiple: true,
+      title: '岗位', dataIndex: 'post_ids', width: 120, formType: 'select', multiple: true,
       dict: { url: 'system/post/list', props: { label: 'name', value: 'id' } }, hide: true,
       editDefaultValue: async (record) => {
         const response = await user.read(record.id)
@@ -228,8 +238,8 @@
       }
     },
     {
-      title: '邮箱', dataIndex: 'email', width: 200, search: true, span: 12,
-      addRules: [{ type: 'email', message: '请输入正确的邮箱' }]
+      title: '邮箱', dataIndex: 'email', width: 200, search: true,
+      commonRules: [{ type: 'email', message: '请输入正确的邮箱' }]
     },
     {
       title: '状态', dataIndex: 'status', width: 100, search: true, formType: 'radio',

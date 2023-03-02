@@ -10,7 +10,7 @@
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef">
       <!-- 状态列 -->
       <template #status="{ record }">
         <a-switch
@@ -69,11 +69,10 @@
   const crud = reactive({
     api: crontab.getPageList,
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 240,
+    operationWidth: 280,
     add: { show: true, api: crontab.save, auth: ['setting:crontab:save'] },
     edit: { show: true, api: crontab.update, auth: ['setting:crontab:update'] },
     delete: {
@@ -85,19 +84,19 @@
   const columns = reactive([
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     {
-      title: '任务名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '任务名称必填' }],
+      title: '任务名称', dataIndex: 'name', search: true, commonRules: [{ required: true, message: '任务名称必填' }],
       width: 200,
     },
     {
-      title: '任务类型', dataIndex: 'type', search: true, rules: [{ required: true, message: '任务类型必选' }],
-      dict: { data: types, translation: true }, formType: 'select', width: 150
+      title: '任务类型', dataIndex: 'type', search: true, commonRules: [{ required: true, message: '任务类型必选' }],
+      dict: { data: types, translation: true }, formType: 'select', width: 150,
     },
     {
-      title: '定时规则', dataIndex: 'rule', rules: [{ required: true, message: '定时规则必填' }],
+      title: '定时规则', dataIndex: 'rule', commonRules: [{ required: true, message: '定时规则必填' }],
       formExtra: '例如：30 */5 * * * *，代表每隔5分钟的第30秒执行任务', width: 150
     },
     {
-      title: '调用目标', dataIndex: 'target', formType: 'textarea', rules: [{ required: true, message: '调用目标必填' }],
+      title: '调用目标', dataIndex: 'target', formType: 'textarea', commonRules: [{ required: true, message: '调用目标必填' }],
       width: 260,
     },
     {

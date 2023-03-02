@@ -11,7 +11,7 @@
   <a-modal v-model:visible="visible" fullscreen :footer="false">
     <template #title>维护 {{ currentRow.name }} 字典数据</template>
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef">
       <!-- 排序列 -->
       <template #sort="{ record }">
         <a-input-number
@@ -65,7 +65,6 @@ const crud = reactive({
   api: dict.getPageList,
   recycleApi: dict.getRecyclePageList,
   showIndex: false,
-  searchLabelWidth: '75px',
   pageLayout: 'fixed',
   rowSelection: { showCheckedAll: true },
   operationColumn: true,
@@ -89,11 +88,11 @@ const columns = reactive([
   { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
   {
     title: '字典标签', dataIndex: 'label', search: true, width: 220,
-    rules: [{ required: true, message: '字典标签必填' }],
+    commonRules: [{ required: true, message: '字典标签必填' }],
   },
   {
     title: '字典键值', dataIndex: 'value', search: true, width: 220,
-    rules: [{ required: true, message: '字典键值必填' }],
+    commonRules: [{ required: true, message: '字典键值必填' }],
   },
   {
     title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1, width: 180,

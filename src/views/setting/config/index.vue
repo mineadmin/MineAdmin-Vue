@@ -41,8 +41,8 @@
         >
           <ma-form
             v-model="formArray[item.id]"
-            v-model:columns="optionsArray[item.id]"
-            @submit="submit"
+            :columns="optionsArray[item.id]"
+            @onSubmit="submit"
             class="mt-3"
             ref="maFormRef"
           />
@@ -80,13 +80,14 @@
   import AddConfig from './components/addConfig.vue'
   import ManageConfig from './components/manageConfig.vue'
 
+  const isCreateNode = ref(false)
   const active = ref('0-1')
   const name = ref('')
   const deleteGroupData = ref({ name: '' })
   const maFormRef = ref()
   const manageConfigRef = ref()
   const addGroupRef = ref()
-  const formArray = ref({})
+  const formArray = ref([])
   const optionsArray = ref([])
   const configGroupData = ref([])
   const deleteVisible = ref(false)
@@ -108,13 +109,15 @@
   }
 
   const getConfigGroupList = async () => {
+    isCreateNode.value = false
     const response = await config.getConfigGroupList()
     configGroupData.value = response.data
     configGroupData.value.map(async item => {
       formArray.value[item.id] = {}
       optionsArray.value[item.id] = []
-      getConfigData(item.id)
+      await getConfigData(item.id)
     })
+    isCreateNode.value = true
   }
 
   const getConfigData = async (id) => {
@@ -135,7 +138,7 @@
         switch( typeof item.value ) {
           case 'string':
             option.checkedValue = 'true'
-            option.uncheckedValue = ''
+            option.uncheckedValue = 'false'
             break
           case 'number':
             option.checkedValue = 1
@@ -188,16 +191,14 @@
     }
   }
 
-  const submit = async (data, done) => {
+  const submit = async (data) => {
     if (! auth(['setting:config:update'])) {
       Message.info('没有权限修改配置')
     }
-    done(true)
     const response = await config.updateByKeys(data)
     if (response.success) {
       Message.success(response.message)
     }
-    done(false)
   }
 
   getConfigGroupList()

@@ -16,25 +16,21 @@ const { t } = useI18n()
 const codeText = ref('')
 const verfiyCanvas = ref(null)
 const props = defineProps({
-  options: {
-    type: Object,
-    default: {
-      pool: 'abcdefghjkmnpqrstuvwxyz23456789',
-      width: 120,
-      height: 36,
-      size: 4
-    }
-  }
+  height: { type: Number, default: 36 },
+  width: { type: Number, default: 120 },
+  pool: { type: String, default: 'abcdefghjkmnpqrstuvwxyz23456789' },
+  size: { type: Number, default: 4 },
+  showError: { type: Boolean, default: true },
 })
 
 const checkResult = (verifyCode) => {
   if (! verifyCode || verifyCode.length === 0) {
-    Message.error(t('sys.verifyCode.notice'))
+    props.showError && Message.error(t('sys.verifyCode.notice'))
     return false
   }
 
   if (verifyCode.toLowerCase() !== codeText.value.toLowerCase()) {
-    Message.error(t('sys.verifyCode.error'))
+    props.showError && Message.error(t('sys.verifyCode.error'))
     generateCode()
     return false
   } else {
@@ -57,21 +53,21 @@ const generateCode = () => {
   codeText.value = ''
   const ctx = verfiyCanvas.value.getContext('2d')
   ctx.fillStyle = randomColor(230, 255)
-  ctx.fillRect(0, 0, props.options.width, props.options.height)
+  ctx.fillRect(0, 0, props.width, props.height)
 
-  for (let i = 0; i < props.options.size; i++) {
-    let currentText = '' + props.options.pool[randomNum(0, props.options.pool.length)]
+  for (let i = 0; i < props.size; i++) {
+    let currentText = '' + props.pool[randomNum(0, props.pool.length)]
     codeText.value += currentText
     ctx.font = '36px Simhei'
     ctx.textAlign="center"
     ctx.fillStyle = randomColor(80, 150)
-    ctx.fillText(currentText, (i + 1) * randomNum(20, 25), props.options.height / 2 + 13)
+    ctx.fillText(currentText, (i + 1) * randomNum(20, 25), props.height / 2 + 13)
   }
 
   for (let i = 0; i < 5; i++) {
     ctx.beginPath()
-    ctx.moveTo(randomNum(0, props.options.width), randomNum(0, props.options.height))
-    ctx.lineTo(randomNum(0, props.options.width), randomNum(0, props.options.height))
+    ctx.moveTo(randomNum(0, props.width), randomNum(0, props.height))
+    ctx.lineTo(randomNum(0, props.width), randomNum(0, props.height))
     ctx.strokeStyle = randomColor(180, 230)
     ctx.closePath()
     ctx.stroke()
@@ -79,7 +75,7 @@ const generateCode = () => {
 
   for (let i = 0; i < 40; i++) {
     ctx.beginPath()
-    ctx.arc(randomNum(0, props.options.width), randomNum(0, props.options.height), 1, 0, 2 * Math.PI)
+    ctx.arc(randomNum(0, props.width), randomNum(0, props.height), 1, 0, 2 * Math.PI)
     ctx.closePath()
     ctx.fillStyle = randomColor(150, 200)
     ctx.fill()
@@ -107,8 +103,8 @@ defineExpose({ checkResult, refresh })
     <canvas
       ref="verfiyCanvas"
       class="canvas"
-      :width="props.options.width"
-      :height="props.options.height" @click="refresh"
+      :width="props.width"
+      :height="props.height" @click="refresh"
     />
   </a-tooltip>
 </template>

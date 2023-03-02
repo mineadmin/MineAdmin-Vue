@@ -11,7 +11,7 @@
   <a-drawer :footer="false" v-model:visible="visible" width="800px">
     <template #title>执行日志</template>
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef">
       <template #status="{ record }">
         <a-tag :color="`${record.status == 1 ? 'green' : 'red'}`">
           {{ record.status == 1 ? '成功' : '失败' }}
@@ -53,7 +53,6 @@
     autoRequest: false,
     api: crontab.getLogPageList,
     showIndex: false,
-    searchLabelWidth: '75px',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
     operationWidth: 100,

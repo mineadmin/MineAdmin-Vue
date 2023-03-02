@@ -10,7 +10,7 @@
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef">
       <!-- 排序列 -->
       <template #sort="{ record }">
         <a-input-number
@@ -72,7 +72,6 @@
     api: dept.getList,
     recycleApi: dept.getRecycleList,
     showIndex: false,
-    searchLabelWidth: '75px',
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
@@ -99,12 +98,12 @@
     },
     { 
       title: '部门名称', dataIndex: 'name', search: true, width: 150,
-      rules: [{ required: true, message: '部门名称必填' }],
+      commonRules: [{ required: true, message: '部门名称必填' }],
     },
     { title: '负责人', dataIndex: 'leader', search: true, width: 120 },
     {
       title: '手机', dataIndex: 'phone', search: true, width: 150,
-      addRules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
+      commonRules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
     },
     {
       title: '排序', dataIndex: 'sort', formType: 'input-number', addDefaultValue: 1, width: 180,

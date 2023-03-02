@@ -10,7 +10,7 @@
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
-    <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+    <ma-crud :options="crud" :columns="columns" ref="crudRef">
       <!-- 状态列 -->
       <template #status="{ record }">
         <a-switch
@@ -42,7 +42,7 @@
     api: apiGroup.getList,
     recycleApi: apiGroup.getRecycleList,
     showIndex: false,
-    searchLabelWidth: '75px',
+    searchColNumber: 3,
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
@@ -61,7 +61,7 @@
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     { 
       title: '组名称', dataIndex: 'name', search: true, width: 220,
-      rules: [{ required: true, message: '组名称必填' }],
+      commonRules: [{ required: true, message: '组名称必填' }],
     },
     {
       title: '状态', dataIndex: 'status', search: true, formType: 'radio',

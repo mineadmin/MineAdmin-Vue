@@ -8,6 +8,20 @@ const routes = [
     redirect: 'dashboard',
     children: homePageRoutes
   }, {
+    name: 'formLayout',
+    path: '/formLayout',
+    component: () => import('@/layout/index.vue'),
+    redirect: 'openForm',
+    children: [{
+        name: 'openForm',
+        path: '/openForm',
+        meta: {
+          title: '公共表单',
+          type: 'M',
+        },
+        component: () => import('@/layout/form.vue'),
+    }]
+  }, {
     name: 'login',
     path: '/login',
     component: () => import('@/views/login.vue'),

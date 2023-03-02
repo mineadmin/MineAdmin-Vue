@@ -10,7 +10,9 @@
 <template>
   <div class="ma-content-block">
     <a-space class="flex">
-      <a-button type="primary" @click="visible = true"><icon-select-all /> {{ props.text }}</a-button>
+      <a-button type="primary" @click="visible = true">
+        <template #icon><icon-select-all /></template>{{ props.text }}
+      </a-button>
       <a-tag size="large" color="blue" v-if="props.isEcho">已选择 {{ isArray(selecteds) ? selecteds.length : 0 }} 位</a-tag>
       <a-input-tag v-model="userList" v-if="props.isEcho" :style="{ width:'320px' }" :placeholder="'请点击前面按钮' + props.text" :max-tag-count="3" disabled/>
     </a-space>
@@ -20,7 +22,7 @@
 
       <ma-crud
         ref="crudRef"
-        :crud="crud"
+        :options="crud"
         :columns="columns"
         v-model:selected-keys="selecteds"
         @selection-change="selectHandler"

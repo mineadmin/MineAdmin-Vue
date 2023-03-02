@@ -11,7 +11,7 @@
   <a-modal v-model:visible="visible" :footer="false" draggable width="600px">
     <template #title>添加配置组</template>
 
-    <ma-form v-model="form" v-model:columns="columns" @submit="submit"></ma-form>
+    <ma-form v-model="form" v-model:columns="columns" @onSubmit="submit" ref="maformRef"></ma-form>
   </a-modal>
 </template>
 
@@ -20,6 +20,7 @@ import { reactive, ref } from 'vue'
 import config from '@/api/setting/config'
 
 const form = ref({})
+const maformRef = ref()
 const visible = ref(false)
 const emit = defineEmits(['success'])
 
@@ -27,17 +28,14 @@ const open = () => {
   visible.value = true
 }
 
-const submit = async (data, done) => {
+const submit = async (data) => {
   if (data) {
-    done(true)
     const response = await config.saveConfigGroup(data)
     if (response.success) {
       emit('success', true)
-      done(false)
       visible.value = false
     } else {
       emit('success', false)
-      done()
     }
   }
 }
