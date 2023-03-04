@@ -29,6 +29,7 @@ const data = reactive([
   { code: 2300, label: 'APP_BAN', remark: 'APP被停用' },
   { code: 10000, label: 'API_AUTH_EXCEPTION', remark: '接口鉴权异常' },
   { code: 10010, label: 'API_AUTH_FAIL', remark: '接口鉴权失败' },
+  { code: 10020, label: 'API_UNBIND_APP', remark: '接口未被该应用绑定' },
   { code: 10011, label: 'API_APP_ID_MISSING', remark: '缺少APP ID' },
   { code: 10102, label: 'API_APP_SECRET_MISSING', remark: '缺少APP SECRET' },
   { code: 10103, label: 'API_ACCESS_TOKEN_MISSING', remark: '缺少 ACCESS TOKEN' },
