@@ -52,7 +52,11 @@ if (! ['id', 'url', 'hash'].includes(props.returnType)) {
   console.error('MaUpload组件props的returnType只能为：id, url, hash 其中一个')
 }
 
-file.value = props.modelValue
+watch(() => props.modelValue, (val) => {
+  file.value = val
+}, {
+  deep: true,
+})
 
 const storageMode = {
   '1': 'LOCAL',
