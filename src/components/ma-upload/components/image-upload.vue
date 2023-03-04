@@ -88,7 +88,7 @@
   </div>
 </template>
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, inject, watch } from 'vue'
 import commonApi from '@/api/common'
 import tool from '@/utils/tool'
 import { isArray, isString, isEmpty } from 'lodash'
@@ -109,26 +109,34 @@ const showImgList = ref([])
 const signImage = ref()
 const currentItem = ref({})
 
-if (config.multiple) {
-  if (isArray(props.modelValue)) {
-    imageList.value = props.modelValue
-    props.modelValue.map(async item => {
-      
-      getFileUrl(config.returnType, item, storageMode).then(url => {
-        showImgList.value.push({
-          percent: 100,
-          status: 'complete',
-          url
+const init = () => {
+  if (config.multiple) {
+    if (isArray(props.modelValue)) {
+      imageList.value = props.modelValue
+      props.modelValue.map(async item => {
+        
+        getFileUrl(config.returnType, item, storageMode).then(url => {
+          showImgList.value.push({
+            percent: 100,
+            status: 'complete',
+            url
+          })
         })
       })
-    })
+    }
+  } else if (props.modelValue) {
+    signImage.value = props.modelValue
+    getFileUrl(config.returnType, props.modelValue, storageMode).then(url => currentItem.value.url = url)
+    currentItem.value.percent = 100
+    currentItem.value.status  = 'complete'
   }
-} else if (props.modelValue) {
-  signImage.value = props.modelValue
-  getFileUrl(config.returnType, props.modelValue, storageMode).then(url => currentItem.value.url = url)
-  currentItem.value.percent = 100
-  currentItem.value.status  = 'complete'
 }
+
+watch(() => props.modelValue, (val) => {
+  init()
+}, {
+  deep: true, immediate: true
+})
 
 const uploadImageHandler = async (options) => {
   if (! options.fileItem) return
