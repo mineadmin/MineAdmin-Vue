@@ -102,7 +102,7 @@
   let isRecovery = computed(() => crudRef.value ? crudRef.value.isRecovery : false )
 
   const switchDept = (id) => {
-    crud.requestParams = id[0] === 'all' ? { s: undefined } : { dept_id: id[0] }
+    crudRef.value.requestParams = id[0] === 'all' ? { dept_id: undefined } : { dept_id: id[0] }
     crudRef.value.requestData()
   }
 

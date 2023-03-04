@@ -107,6 +107,7 @@
 
   const crud = reactive({
     pk: 'name',
+    formExcludePk: false,
     api: module.getPageList,
     showIndex: false,
     searchColNumber: 3,
