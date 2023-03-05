@@ -1,6 +1,7 @@
 import { isArray, isFunction, set } from 'lodash'
 import { request } from '@/utils/request'
 import commonApi from '@/api/common'
+import tool from '@/utils/tool'
 
 export const allowUseDictComponent  = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
 export const allowCoverComponent    = ['radio', 'checkbox', 'select', 'transfer', 'cascader']
@@ -48,9 +49,18 @@ export const loadDict = async (dictList, item) => {
         dictList[item.dataIndex] = handlerDictProps(item, response.data)
       }
     } else if (item.dict.url) {
-      const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
-      if (response.data) {
-        dictList[item.dataIndex] = handlerDictProps(item, response.data)
+      const dictData = tool.local.get('dictData')
+      if (item.dict.cache && dictData[item.dataIndex]) {
+        dictList[item.dataIndex] = dictData[item.dataIndex]
+      } else {
+        const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
+        if (response.data) {
+          dictList[item.dataIndex] = handlerDictProps(item, response.data)
+          if (item.dict.cache) {
+            dictData[item.dataIndex] = dictList[item.dataIndex]
+            tool.local.set('dictData', dictData)
+          }
+        }
       }
     } else if (item.dict.data) {
       if (isArray(item.dict.data)) {
