@@ -55,7 +55,7 @@ if (! ['id', 'url', 'hash'].includes(props.returnType)) {
 watch(() => props.modelValue, (val) => {
   file.value = val
 }, {
-  deep: true,
+  deep: true, immediate: true
 })
 
 const storageMode = {

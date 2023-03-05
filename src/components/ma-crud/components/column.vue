@@ -1,7 +1,24 @@
 <template>
   <template v-for="row in columns" :key="row[options.pk]">
     <template v-if="!row.hide">
-      <a-table-column :title="row.title" v-if="row.children && row.children.length > 0">
+      <a-table-column
+        :title="row.title"
+        :width="row.width"
+        :ellipsis="row.ellipsis ?? true"
+        :filterable="row.filterable"
+        :cell-class="row.cellClass"
+        :header-cell-class="row.headerCellClass"
+        :body-cell-class="row.bodyCellClass"
+        :summary-cell-class="row.summaryCellClass"
+        :cell-style="row.cellStyle"
+        :header-cell-style="row.headerCellStyle"
+        :body-cell-style="row.bodyCellStyle"
+        :summary-cell-style="row.summaryCellStyle"
+        :tooltip="row.tooltip ?? true"
+        :align="row.align || 'left'"
+        :fixed="row.fixed"
+        v-if="row.children && row.children.length > 0"
+      >
         <column @refresh="() => refresh()" :isRecovery="props.isRecovery" :crudFormRef="props.crudFormRef" >
           <template
             v-for="(childRow, childIndex) in row.children"
