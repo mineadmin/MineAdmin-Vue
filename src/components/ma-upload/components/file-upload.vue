@@ -110,17 +110,16 @@ const currentItem = ref({})
 const init = () => {
   if (config.multiple) {
     if (isArray(props.modelValue)) {
-      fileList.value = props.modelValue
+      const tmp = []
       props.modelValue.map(async item => {
-        
-        getFileUrl(config.returnType, item, storageMode).then(url => {
-          showFileList.value.push({
-            percent: 100,
-            status: 'complete',
-            url
-          })
+        const res = await getFileUrl(config.returnType, item, storageMode)
+        tmp.push({
+          percent: 100,
+          status: 'complete',
+          url: res
         })
       })
+      fileList.value = tmp
     }
   } else if (props.modelValue) {
     signFile.value = props.modelValue

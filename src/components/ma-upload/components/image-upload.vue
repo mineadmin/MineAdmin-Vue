@@ -112,17 +112,16 @@ const currentItem = ref({})
 const init = () => {
   if (config.multiple) {
     if (isArray(props.modelValue)) {
-      imageList.value = props.modelValue
+      const tmp = []
       props.modelValue.map(async item => {
-        
-        getFileUrl(config.returnType, item, storageMode).then(url => {
-          showImgList.value.push({
-            percent: 100,
-            status: 'complete',
-            url
-          })
+        const res = await getFileUrl(config.returnType, item, storageMode)
+        tmp.push({
+          percent: 100,
+          status: 'complete',
+          url: res
         })
       })
+      imageList.value = tmp
     }
   } else if (props.modelValue) {
     signImage.value = props.modelValue
