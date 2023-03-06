@@ -17,6 +17,15 @@
     :field-names="props.component.dict.props || { key: 'value', title: 'label' }"
     :tree-checkable="props.component.multiple"
     :multiple="props.component.multiple"
+    :block-node="props.component.blockNode"
+    :default-expand-all="props.component.defaultExpanAll"
+    :default-selected-keys="props.component.defaultSelectedKeys"
+    :selected-keys="props.component.selectedKeys"
+    :default-checked-keys="props.component.defaultCheckedKeys"
+    :checked-keys="props.component.checkedKeys"
+    :default-expanded-keys="props.component.defaultExpandedKeys"
+    :expanded-keys="props.component.expandedKeys"
+    :show-line="props.component.showLine"
     :data="dicts[props.component.dataIndex]"
   />
 </template>
