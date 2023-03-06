@@ -512,12 +512,20 @@ const getIndex = (rowIndex) => {
 
 const addAction = () => {
   isFunction(options.value.beforeOpenAdd) && options.value.beforeOpenAdd()
-  crudFormRef.value.add()
+  if (options.value.add.action && isFunction(options.value.add.action)) {
+    options.value.add.action()
+  } else {
+    crudFormRef.value.add()
+  }
 }
 
 const editAction = (record) => {
   isFunction(options.value.beforeOpenEdit) && options.value.beforeOpenEdit(record)
-  crudFormRef.value.edit(record)
+  if (options.value.edit.action && isFunction(options.value.edit.action)) {
+    options.value.edit.action(record)
+  } else {
+    crudFormRef.value.edit(record)
+  }
 }
 
 const dbClickOpenEdit = (record) => {

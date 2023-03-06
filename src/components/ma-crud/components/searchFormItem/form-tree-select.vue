@@ -10,7 +10,7 @@
 <template>
   <a-tree-select
     v-model="value"
-    :treeProps="{ virtualListProps: props.component.virtualListProps }"
+    :treeProps="props.component.treeProps"
     :placeholder="props.component.searchPlaceholder || `请选择${props.component.title}`"
     allow-clear
     allow-search

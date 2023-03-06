@@ -219,7 +219,11 @@ const getIndex = rowIndex => {
 
 const editAction = record => {
   isFunction(options.beforeOpenEdit) && options.beforeOpenEdit(record)
-  props.crudFormRef.edit(record)
+  if (options.edit.action && isFunction(options.edit.action)) {
+    options.edit.action(record)
+  } else {
+    props.crudFormRef.edit(record)
+  }
 }
 
 const recoveryAction = async record => {
