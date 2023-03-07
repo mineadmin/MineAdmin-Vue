@@ -34,19 +34,10 @@ const props = defineProps({
   customField: { type: String, default: undefined }
 })
 
-const formModel = inject('formModel')
-const dictList = inject('dictList')
-const index = props.customField ?? props.component.dataIndex
-const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1] + props.component.dataIndex : props.component.dataIndex
-const value = ref(get(formModel.value, index))
-
-watch( () => get(formModel.value, index), vl => value.value = vl )
-watch( () => value.value, v => set(formModel.value, index, v) )
-
 const app = getCurrentInstance().appContext.app
 
-if (props.component.formType === 'component' && props.componentName && !app._context.components[props.component.dataIndex]) {
-  app.component(props.component.dataIndex, props.component.componentName)
+if (props.component.formType === 'component' && props.component.component && !app._context.components[props.component.dataIndex]) {
+  app.component(props.component.dataIndex, props.component.component)
 }
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
