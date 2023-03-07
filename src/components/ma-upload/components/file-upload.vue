@@ -33,23 +33,13 @@
     class="file-list mt-2"
     v-if="! config.multiple && currentItem?.url && config.showList"
   >
-    <a-progress
-      v-if="currentItem.status === 'uploading' && currentItem.percent < 100"
-      :percent="currentItem.percent"
-      animation
-      type="circle"
-      size="mini"
-      class="progress"
-    />
     <a-button
       class="delete"
       @click="removeSignFile()"
-      v-if="currentItem.percent === 100"
     >
       <template #icon><icon-delete /></template>
     </a-button>
     <div
-      v-if="currentItem.percent === 100 && currentItem?.status === 'complete'"
       class="file-item"
     >
       {{ currentItem.url }}
@@ -62,23 +52,13 @@
     class="file-list mt-2"
     v-for="(file, idx) in showFileList" :key="idx"
   >
-    <a-progress
-      v-if="file.status === 'uploading' && file.percent < 100"
-      :percent="file.percent"
-      animation
-      type="circle"
-      size="mini"
-      class="progress"
-    />
     <a-button
       class="delete"
       @click="removeFile(idx)"
-      v-if="file.percent === 100"
     >
       <template #icon><icon-delete /></template>
     </a-button>
     <div
-      v-if="file.percent === 100 && file?.status === 'complete'"
       class="file-item"
     >
       {{ file.url }}
@@ -102,24 +82,19 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 const config = inject('config')
 const storageMode = inject('storageMode')
-const fileList = ref([])
 const showFileList = ref([])
 const signFile = ref()
 const currentItem = ref({})
 
-const init = () => {
+const init = async () => {
   if (config.multiple) {
     if (isArray(props.modelValue)) {
       const tmp = []
-      props.modelValue.map(async item => {
+      await props.modelValue.map(async item => {
         const res = await getFileUrl(config.returnType, item, storageMode)
-        tmp.push({
-          percent: 100,
-          status: 'complete',
-          url: res
-        })
+        tmp.push({ url: res })
       })
-      fileList.value = tmp
+      showFileList.value = tmp
     }
   } else if (props.modelValue) {
     signFile.value = props.modelValue
@@ -149,25 +124,11 @@ const uploadFileHandler = async (options) => {
       signFile.value = result[config.returnType]
       emit('update:modelValue', signFile.value)
       currentItem.value.url = result.url
-      currentItem.value.percent = 99
-      setTimeout(() => {
-        currentItem.value.status = 'complete'
-        currentItem.value.percent = 100
-      }, 1000)
     } else {
-      const index = fileList.value?.length ?? 0
-      result.status = 'uploading'
-      result.percent = 0
-      fileList.value.push(result[config.returnType])
       showFileList.value.push(result)
-      setTimeout(() => { showFileList.value[index].percent = 99 }, 500)
-      setTimeout(() => {
-        showFileList.value[index].status = 'complete'
-        showFileList.value[index].percent = 100
-      }, 1200)
       let files = []
-      fileList.value.map(item => {
-        files.push(item[config.returnType])
+      files = showFileList.value.map(item => {
+        return item[config.returnType]
       })
       emit('update:modelValue', files)
     }
@@ -181,9 +142,12 @@ const removeSignFile = () => {
 }
 
 const removeFile = (idx) => {
-  fileList.value.splice(idx, 1)
   showFileList.value.splice(idx, 1)
-  emit('update:modelValue', fileList.value)
+  let files = []
+  files = showFileList.value.map(item => {
+    return item[config.returnType]
+  })
+  emit('update:modelValue', files)
 }
 
 watch(() => props.modelValue, (val) => {

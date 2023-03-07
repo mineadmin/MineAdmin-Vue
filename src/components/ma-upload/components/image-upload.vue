@@ -5,23 +5,13 @@
       :class="'image-list ' + (config.rounded ? 'rounded-full' : '')"
       v-if="! config.multiple && currentItem?.url && config.showList"
     >
-      <a-progress
-        v-if="currentItem.status === 'uploading' && currentItem.percent < 100"
-        :percent="currentItem.percent"
-        animation
-        type="circle"
-        size="small"
-        class="progress"
-      />
       <a-button
         class="delete"
         @click="removeSignImage()"
-        v-if="currentItem.percent === 100"
       >
         <template #icon><icon-delete /></template>
       </a-button>
       <a-image
-        v-if="currentItem.percent === 100 && currentItem?.status === 'complete'"
         width="130"
         height="130"
         :class="config.rounded ? 'rounded-full' : ''"
@@ -31,29 +21,19 @@
     <!-- 多图显示 -->
     <a-space
       v-else-if="config.multiple && config.showList"
-      :class="isArray(showImgList) && showImgList.length > 0 ? 'mr-2' : ''"
+      :class="showImgList.length > 0 ? 'mr-2' : ''"
     >
       <div
         :class="'image-list ' + (config.rounded ? 'rounded-full' : '')"
         v-for="(image, idx) in showImgList" :key="idx"
       >
-        <a-progress
-          v-if="image.status === 'uploading' && image.percent < 100"
-          :percent="image.percent"
-          animation
-          type="circle"
-          size="small"
-          class="progress"
-        />
         <a-button
           class="delete"
           @click="removeImage(idx)"
-          v-if="image.percent === 100"
         >
           <template #icon><icon-delete /></template>
         </a-button>
         <a-image
-          v-if="image.percent == 100 && image.status === 'complete'"
           width="130"
           height="130"
           :class="config.rounded ? 'rounded-full' : ''"
@@ -104,24 +84,19 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 const config = inject('config')
 const storageMode = inject('storageMode')
-const imageList = ref([])
 const showImgList = ref([])
 const signImage = ref()
 const currentItem = ref({})
 
-const init = () => {
+const init = async () => {
   if (config.multiple) {
     if (isArray(props.modelValue)) {
       const tmp = []
-      props.modelValue.map(async item => {
+      await props.modelValue.map(async item => {
         const res = await getFileUrl(config.returnType, item, storageMode)
-        tmp.push({
-          percent: 100,
-          status: 'complete',
-          url: res
-        })
+        tmp.push({ url: res })
       })
-      imageList.value = tmp
+      showImgList.value = tmp
     }
   } else if (props.modelValue) {
     signImage.value = props.modelValue
@@ -156,25 +131,11 @@ const uploadImageHandler = async (options) => {
     if (! config.multiple) {
       signImage.value = result[config.returnType]
       emit('update:modelValue', signImage.value)
-      currentItem.value.percent = 99
-      setTimeout(() => {
-        currentItem.value.status = 'complete'
-        currentItem.value.percent = 100
-      }, 1000)
     } else {
-      const index = imageList.value?.length ?? 0
-      result.status = 'uploading'
-      result.percent = 0
-      imageList.value.push(result)
       showImgList.value.push(result)
-      setTimeout(() => { showImgList.value[index].percent = 99 }, 500)
-      setTimeout(() => {
-        showImgList.value[index].status = 'complete'
-        showImgList.value[index].percent = 100
-      }, 1200)
       let files = []
-      imageList.value.map(item => {
-        files.push(item[config.returnType])
+      files = showImgList.value.map(item => {
+        return item[config.returnType]
       })
       emit('update:modelValue', files)
     }
@@ -188,9 +149,12 @@ const removeSignImage = () => {
 }
 
 const removeImage = (idx) => {
-  imageList.value.splice(idx, 1)
   showImgList.value.splice(idx, 1)
-  emit('update:modelValue', imageList.value)
+  let files = []
+  files = showImgList.value.map(item => {
+    return item[config.returnType]
+  })
+  emit('update:modelValue', files)
 }
 </script>
 
