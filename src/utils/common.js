@@ -196,3 +196,64 @@ export const formatJson = (jsonObj, callback) => {
   // 返回的数据需要去除两边的空格
   return formatted.trim();
 }
+
+// 加载远程js
+export const loadScript = (src, callback) => {  
+  const s = document.createElement('script')
+  s.type = 'text/javascript'
+  s.src = src
+  s.onload = s.onreadystatechange = function () {  
+    if ( !this.readyState || this.readyState === 'loaded' || this.readyState === 'complete' ) {  
+      callback && callback()
+      s.onload = s.onreadystatechange = null 
+    }
+  }
+  document.body.appendChild(s)
+}
+
+// 加载远程css
+export const loadCss = (href, callback) => {  
+  const s = document.createElement('link')
+  s.type = 'text/css'
+  s.rel = 'stylesheet'
+  s.media = 'all'
+  s.href = href
+  s.onload = s.onreadystatechange = function () {  
+    if ( !this.readyState || this.readyState === 'loaded' || this.readyState === 'complete' ) {  
+      callback && callback()
+      s.onload = s.onreadystatechange = null
+    }  
+  }
+  document.body.appendChild(s)
+}
+
+// 插入css
+export const insertGlobalCssToHead = (cssCode) => {
+  const head = document.getElementsByTagName('head')[0]
+  const oldStyle = document.getElementById('mineadmin-global-css')
+  oldStyle && head.removeChild(oldStyle)
+
+  const newStyle = document.createElement('style')
+  newStyle.rel = 'stylesheet'
+  newStyle.id = 'mineadmin-global-css'
+  try {
+    newStyle.appendChild(document.createTextNode(cssCode))
+  } catch(ex) {
+    newStyle.styleSheet.cssText = cssCode
+  }
+
+  head.appendChild(newStyle)
+}
+
+// 插入js函数
+export const insertGlobalFunctionsToHtml = function (functionsCode) {
+  const bodyEle = document.getElementsByTagName('body')[0]
+  const oldScriptEle = document.getElementById('mineadmin-global-functions')
+  oldScriptEle && bodyEle.removeChild(oldScriptEle)
+
+  const newScriptEle = document.createElement('script')
+  newScriptEle.id = 'mineadmin-global-functions'
+  newScriptEle.type = 'text/javascript'
+  newScriptEle.innerHTML = functionsCode
+  bodyEle.appendChild(newScriptEle)
+}
