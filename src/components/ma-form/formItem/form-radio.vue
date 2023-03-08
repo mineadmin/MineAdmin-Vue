@@ -22,7 +22,7 @@
         :disabled="props.component.disabled"
         @change="handleCascaderChangeEvent($event)"
       >
-        <template v-for="(item, index) in dictList[dictIndex]">
+        <template v-for="(item, index) in (dictList[dictIndex] ?? [])">
           <a-radio :value="item.value" :disabled="item.disabled">{{ item.label }}</a-radio>
         </template>
       </a-radio-group>
