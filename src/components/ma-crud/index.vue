@@ -161,6 +161,7 @@
             <template #columns>
               <ma-column
                 v-if="reloadColumn"
+                :columns="props.columns"
                 :isRecovery="isRecovery"
                 :crudFormRef="crudFormRef"
                 @refresh="() => refresh()"
