@@ -179,7 +179,7 @@ const init = async () => {
 }
 
 provide('options', options.value)
-provide('columns', flatteningColumns.value)
+provide('columns', flatteningColumns)
 provide('dictList', dictList)
 provide('formModel', form)
 provide('formLoading', formLoading)
