@@ -138,7 +138,7 @@ const init = () => {
     if (currentAction.value === 'add') {
       if (item.addDefaultValue && isFunction(item.addDefaultValue)) {
         form.value[item.dataIndex] = await item.addDefaultValue(form.value)
-      } else if (item.addDefaultValue) {
+      } else if (typeof item.addDefaultValue != 'undefined') {
         form.value[item.dataIndex] = item.addDefaultValue
       }
     }
