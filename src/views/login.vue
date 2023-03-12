@@ -16,7 +16,6 @@
 
   const router = useRouter()
   const route  = useRoute()
-
   const Verify = ref(null)
 
   const loading = ref(false)
@@ -46,7 +45,7 @@
   <div class="login-container">
     <div class="login-width mx-auto flex justify-between h-full items-center">
       <div class="w-6/12 mx-auto left-panel rounded-l pl-5 pr-5 hidden md:block bg-blue-50">
-        <div class="logo"><img src="/logo.svg" width="45"><span>MineAdmin</span></div>
+        <div class="logo"><img src="/logo.svg" width="45"><span>{{ $title }}</span></div>
         <div class="slogan flex justify-end"><span>---- {{ $t('sys.login.slogan') }}</span></div>
       </div>
 

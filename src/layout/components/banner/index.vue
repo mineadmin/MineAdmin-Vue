@@ -12,7 +12,7 @@
     <a-layout-header class="flex justify-between h-50 layout-banner-header operation-area">
       <div class="flex justify-between md:justify-center logo">
         <a-avatar class="mt-1 ml-2 md:ml-0" :size="40"><img src="/logo.svg" class="bg-white" /></a-avatar>
-        <span class="ml-2 text-xl mt-2.5 hidden md:block">MineAdmin</span>
+        <span class="ml-2 text-xl mt-2.5 hidden md:block">{{ $title }}</span>
       </div>
       <div class="flex justify-between w-full layout-banner">
         <children-banner v-model="userStore.routers" />

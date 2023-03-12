@@ -41,6 +41,7 @@ for (const path in modules) {
 
 app.config.globalProperties.$tool = tool
 app.config.globalProperties.$common = common
+app.config.globalProperties.$title = import.meta.env.VITE_APP_TITLE
 
 app.mount('#app')
 
