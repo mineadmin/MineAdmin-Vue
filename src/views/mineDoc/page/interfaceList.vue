@@ -41,8 +41,9 @@
                   </a-tooltip>
                   <a-tooltip content="允许请求的方式">
                     <a-tag color="green" size="large" bordered v-if="item.request_mode === 'A'">ALL</a-tag>
+                    <a-tag color="cyan" size="large" bordered v-if="item.request_mode === 'G'">GET</a-tag>
                     <a-tag color="pinkpurple" size="large" bordered v-if="item.request_mode === 'P'">POST</a-tag>
-                    <a-tag color="red" size="large" bordered v-if="item.request_mode === 'P'">PUT</a-tag>
+                    <a-tag color="red" size="large" bordered v-if="item.request_mode === 'U'">PUT</a-tag>
                     <a-tag color="orangered" size="large" bordered v-if="item.request_mode === 'D'">DELETE</a-tag>
                   </a-tooltip>
                   <a-button type="primary" @click="() => sliderRef.open(item)">测试接口 / 查看详情</a-button>
