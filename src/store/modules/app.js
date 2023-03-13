@@ -42,6 +42,7 @@ const useAppStore = defineStore('app', {
       this.mode = dark
       document.body.setAttribute('arco-theme', this.mode)
       defaultSetting.mode = this.mode
+      this.changeColor(this.color)
       tool.local.set('setting', defaultSetting)
     },
 
