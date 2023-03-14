@@ -191,7 +191,15 @@ onMounted(() => {
 })
 
 const done = (status) => formLoading.value = status
-const validateForm = async () => await maFormRef.value.validate()
+const validateForm = async () => {
+  const valid = await maFormRef.value.validate()
+  if ( valid ) {
+    let message = ''
+    for (let name in valid) message += valid[name].message + "、"
+    Message.error(message.substring(0, message.length - 1))
+  }
+  return valid
+}
 const resetForm = async() => await maFormRef.value.resetFields()
 const clearValidate = async() => await maFormRef.value.clearValidate()
 
