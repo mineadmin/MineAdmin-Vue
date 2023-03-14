@@ -22,7 +22,7 @@
         :disabled="props.component.disabled"
         @change="maEvent.handleChangeEvent(props.component, $event)"
       >
-        <template v-for="(item, index) in dictList[dictIndex]">
+        <template v-for="(item, index) in (dictList[dictIndex] ?? [])">
           <a-checkbox :value="item.value" :disabled="item.disabled" :indeterminate="item.indeterminate">{{ item.label }}</a-checkbox>
         </template>
       </a-checkbox-group>

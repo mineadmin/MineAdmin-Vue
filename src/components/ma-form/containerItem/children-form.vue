@@ -128,8 +128,8 @@
 </template>
 
 <script setup>
-import {ref, inject, provide, onMounted, watch, nextTick, shallowRef} from 'vue'
-import {cloneDeep, get, isUndefined, set} from 'lodash'
+import {ref, inject, provide, onMounted, watch, nextTick, shallowRef, isRef} from 'vue'
+import {cloneDeep, get, isArray, isUndefined, set} from 'lodash'
 import { getComponentName, containerItems } from '../js/utils.js'
 import { maEvent } from '../js/formItemMixin.js'
 import { loadDict, handlerCascader } from '../js/networkRequest.js'
@@ -147,12 +147,22 @@ if (! formModel.value[props.component.dataIndex]) {
   formModel.value[props.component.dataIndex] = []
 }
 
+formList.map(async item => {
+  const tmp = cloneDeep(item)
+  tmp['dataIndex'] = [props.component.dataIndex, tmp.dataIndex].join('.')
+  await loadDict(dictList.value, tmp)
+})
+
 watch(() => formModel.value[props.component.dataIndex], (value) => {
-  value.forEach((data, index) => {
-    let tmpFormList = cloneDeep(formList)
-    maEvent.handleCommonEvent(props.component, 'onAdd', {formList: tmpFormList, data, index})
-    viewFormList.value[index] = tmpFormList
-  })
+  if (isArray(value)) {
+    value.forEach((data, index) => {
+      if (isArray(data)) {
+        value[index] = Object.fromEntries(data)
+      }
+      viewFormList.value[index] = cloneDeep(formList)
+      maEvent.handleCommonEvent(props.component, 'onAdd', {formList: viewFormList.value[index], data, index})
+    })
+  }
 },{
   immediate: true,
 })
@@ -166,17 +176,12 @@ if (props.component.type == 'table') {
     if (index > 0) defaultOpenKeys.push(index)
   })
 }
-formList.map(async item => {
-  const tmp = JSON.parse(JSON.stringify(item))
-  tmp['dataIndex'] = [props.component.dataIndex, tmp.dataIndex].join('.')
-  await loadDict(dictList, tmp)
-})
+
 
 const addItem = async (data = {}) => {
   let index = formModel.value[props.component.dataIndex].length
-  let tmpFormList = cloneDeep(formList)
-  maEvent.handleCommonEvent(props.component, 'onAdd', {formList: tmpFormList, data, index: index})
-  viewFormList.value[index] = tmpFormList
+  viewFormList.value[index] = cloneDeep(formList)
+  maEvent.handleCommonEvent(props.component, 'onAdd', {formList: viewFormList.value[index], data, index: index})
   formModel.value[props.component.dataIndex].push(data)
 }
 

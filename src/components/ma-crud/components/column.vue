@@ -1,5 +1,5 @@
 <template>
-  <template v-for="row in columns" :key="row[options.pk]">
+  <template v-for="row in props.columns" :key="row[options.pk]">
     <template v-if="!row.hide">
       <a-table-column
         :title="row.title"
@@ -19,7 +19,12 @@
         :fixed="row.fixed"
         v-if="row.children && row.children.length > 0"
       >
-        <column @refresh="() => refresh()" :isRecovery="props.isRecovery" :crudFormRef="props.crudFormRef" >
+        <column
+          @refresh="() => refresh()"
+          :isRecovery="props.isRecovery"
+          :crudFormRef="props.crudFormRef"
+          :columns="row.children"
+        >
           <template
             v-for="(childRow, childIndex) in row.children"
             :key="childIndex"
@@ -151,12 +156,12 @@ import commonApi from '@/api/common'
 
 const emit = defineEmits(['refresh', 'showImage'])
 const props = defineProps({
+  columns: Array,
   isRecovery: Boolean,
   crudFormRef: Object
 })
 
 const options = inject('options')
-const columns = inject('columns')
 const requestParams = inject('requestParams')
 const dictTrans = inject('dictTrans')
 const dictColors = inject('dictColors')
@@ -219,7 +224,11 @@ const getIndex = rowIndex => {
 
 const editAction = record => {
   isFunction(options.beforeOpenEdit) && options.beforeOpenEdit(record)
-  props.crudFormRef.edit(record)
+  if (options.edit.action && isFunction(options.edit.action)) {
+    options.edit.action(record)
+  } else {
+    props.crudFormRef.edit(record)
+  }
 }
 
 const recoveryAction = async record => {

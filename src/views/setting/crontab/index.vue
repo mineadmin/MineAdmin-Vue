@@ -93,7 +93,7 @@
     },
     {
       title: '定时规则', dataIndex: 'rule', commonRules: [{ required: true, message: '定时规则必填' }],
-      formExtra: '例如：30 */5 * * * *，代表每隔5分钟的第30秒执行任务', width: 150
+      extra: '例如：30 */5 * * * *，代表每隔5分钟的第30秒执行任务', width: 150
     },
     {
       title: '调用目标', dataIndex: 'target', formType: 'textarea', commonRules: [{ required: true, message: '调用目标必填' }],

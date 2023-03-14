@@ -111,6 +111,7 @@
     }
     if (name === 'clearCache') {
       const res = await commonApi.clearAllCache()
+      tool.local.remove('dictData')
       res.success && Message.success(res.message)
     }
     if (name === 'logout') {
