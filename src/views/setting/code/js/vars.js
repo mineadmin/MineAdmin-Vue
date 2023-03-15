@@ -42,6 +42,8 @@ export const queryType = [
   { label: '<', value: 'lt' },
   { label: '<=', value: 'lte' },
   { label: 'LIKE', value: 'like' },
+  { label: 'IN', value: 'in' },
+  { label: 'NOT IN', value: 'notin' },
   { label: 'BETWEEN', value: 'between' },
 ]
 
