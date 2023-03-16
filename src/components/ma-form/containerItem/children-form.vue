@@ -186,6 +186,7 @@ const deleteItem = async (index) => {
   let res = maEvent.handleCommonEvent(props.component, 'onDelete', {index})
   if (isUndefined(res) || res === true) {
     viewFormList.value.splice(index, 1)
+    await nextTick()
     formModel.value[props.component.dataIndex].splice(index, 1)
   }
 }
