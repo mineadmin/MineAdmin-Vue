@@ -95,7 +95,7 @@
     if (response.message && ! response.success) {
       Message.error(response.message)
     } else {
-      tool.download(response)
+      tool.download(response, 'MineAdmin.zip')
       Message.success('代码生成成功，开始下载')
     }
   }

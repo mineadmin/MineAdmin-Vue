@@ -161,6 +161,7 @@
             <template #columns>
               <ma-column
                 v-if="reloadColumn"
+                :columns="props.columns"
                 :isRecovery="isRecovery"
                 :crudFormRef="crudFormRef"
                 @refresh="() => refresh()"
@@ -344,7 +345,7 @@ watch(
   vl => options.value.api = vl
 )
 
-watch( () => openPagination.value, vl => settingFixedPage() )
+watch( () => openPagination.value, vl => options.value.pageLayout === 'fixed' && settingFixedPage() )
 
 const getSlot = (cls = []) => {
   let sls = []
@@ -669,15 +670,16 @@ onMounted(() => {
     crudSearchRef.value.setSearchHidden()
   }
   if (options.value.pageLayout == 'fixed') {
+    window.addEventListener('resize', resizeHandler, false);
     headerHeight.value = crudHeaderRef.value.offsetHeight
     settingFixedPage()
   }
-
-  window.addEventListener('resize', resizeHandler, false);
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', resizeHandler, false);
+  if (options.value.pageLayout == 'fixed') {
+    window.removeEventListener('resize', resizeHandler, false);
+  }
 })
 
 const getCurrentAction = () => crudFormRef.value.currentAction

@@ -12,7 +12,7 @@
     "@vitejs/plugin-vue": "^4.0.0",
     "@vitejs/plugin-vue-jsx": "^3.0.0",
     "@arco-design/color": "^0.4.0",
-    "@arco-design/web-vue": "^2.43.2",
+    "@arco-design/web-vue": "^2.44.1",
     "@arco-themes/vue-mine-admin-v2": "^0.0.2",
     "@tinymce/tinymce-vue": "^5.0.0",
     "autoprefixer": "^10.4.0",

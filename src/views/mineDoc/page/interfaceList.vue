@@ -28,27 +28,34 @@
       </a-space>
 
       <a-collapse :default-active-key="['1']" expand-icon-position="right">
-        <a-collapse-item :header="item.name" v-for="(item, index) in appInfo.apis" :key="(index + 1).toString()">
-          <a-space size="large">
-            <a-tooltip content="点击复制">
-              <a-tag color="arcoblue" bordered class="cursor-pointer" size="large"
-                @click="$common.copy(`/api/v1/${item.access_name}`)">
-                /api/v1/{{ item.access_name }}
-              </a-tag>
-            </a-tooltip>
-            <a-tooltip content="允许请求的方式">
-              <a-tag color="green" size="large" bordered v-if="item.request_mode === 'A'">ALL</a-tag>
-              <a-tag color="pinkpurple" size="large" bordered v-if="item.request_mode === 'P'">POST</a-tag>
-              <a-tag color="red" size="large" bordered v-if="item.request_mode === 'P'">PUT</a-tag>
-              <a-tag color="orangered" size="large" bordered v-if="item.request_mode === 'D'">DELETE</a-tag>
-            </a-tooltip>
-            <a-button type="primary" @click="() => sliderRef.open(item)">测试接口 / 查看详情</a-button>
-          </a-space>
-          <div class="mt-5"></div>
-          <div>
-            <a-divider orientation="left">最后更新时间</a-divider>
-            <p>{{ item.updated_at }}</p>
-          </div>
+        <a-collapse-item :header="group.name" v-for="(group, index) in appInfo.apiGroup" :key="(index + 1).toString()">
+          <a-collapse expand-icon-position="right">
+            <template v-for="(item, index) in appInfo.apis">
+              <a-collapse-item :header="item.name" v-if="item.group_id == group.id">
+                <a-space size="large">
+                  <a-tooltip content="点击复制">
+                    <a-tag color="arcoblue" bordered class="cursor-pointer" size="large"
+                      @click="$common.copy(`/api/v1/${item.access_name}`)">
+                      /api/v1/{{ item.access_name }}
+                    </a-tag>
+                  </a-tooltip>
+                  <a-tooltip content="允许请求的方式">
+                    <a-tag color="green" size="large" bordered v-if="item.request_mode === 'A'">ALL</a-tag>
+                    <a-tag color="cyan" size="large" bordered v-if="item.request_mode === 'G'">GET</a-tag>
+                    <a-tag color="pinkpurple" size="large" bordered v-if="item.request_mode === 'P'">POST</a-tag>
+                    <a-tag color="red" size="large" bordered v-if="item.request_mode === 'U'">PUT</a-tag>
+                    <a-tag color="orangered" size="large" bordered v-if="item.request_mode === 'D'">DELETE</a-tag>
+                  </a-tooltip>
+                  <a-button type="primary" @click="() => sliderRef.open(item)">测试接口 / 查看详情</a-button>
+                </a-space>
+                <div class="mt-5"></div>
+                <div>
+                  <a-divider orientation="left">最后更新时间</a-divider>
+                  <p>{{ item.updated_at }}</p>
+                </div>
+              </a-collapse-item>
+            </template>
+          </a-collapse>
         </a-collapse-item>
       </a-collapse>
     </div>

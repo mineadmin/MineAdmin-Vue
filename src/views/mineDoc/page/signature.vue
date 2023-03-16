@@ -14,7 +14,7 @@
       <div class="ma-content-block shadow p-5 mt-5 leading-10">
         <div class="text-xl">身份信息</div>
         <div>
-          <a-tag color="blue">MineAdmin API</a-tag>
+          <a-tag color="blue">{{ $title }} API</a-tag>
           的简易模式在请求时需要携带
           <a-tag color="magenta">app_id</a-tag> 和 <a-tag color="magenta">identity</a-tag> 认证参数
         </div>
@@ -35,7 +35,7 @@
       <div class="ma-content-block shadow p-5 mt-5 leading-10">
         <div class="text-xl">签名简介</div>
         <div>
-          <a-tag color="blue">MineAdmin API</a-tag>
+          <a-tag color="blue">{{ $title }} API</a-tag>
           的签名主要是用于获取身份令牌
           <a-tag color="red">AccessToken</a-tag> 时所需必要认证参数
         </div>

@@ -22,7 +22,7 @@ function createService () {
   // HTTP response 拦截器
   service.interceptors.response.use(
     response => {
-      if (response.headers['content-disposition'] && response.status === 200) {
+      if ((response.headers['content-disposition'] || ! /^application\/json\;/.test(response.headers['content-type'])) && response.status === 200) {
         return response
       } else if (response.data.size) {
         response.data.code = 500

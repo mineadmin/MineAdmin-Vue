@@ -156,6 +156,9 @@ formList.map(async item => {
 watch(() => formModel.value[props.component.dataIndex], (value) => {
   if (isArray(value)) {
     value.forEach((data, index) => {
+      if (isArray(data)) {
+        value[index] = Object.fromEntries(data)
+      }
       viewFormList.value[index] = cloneDeep(formList)
       maEvent.handleCommonEvent(props.component, 'onAdd', {formList: viewFormList.value[index], data, index})
     })
