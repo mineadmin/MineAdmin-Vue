@@ -12,10 +12,10 @@ export const maEvent = {
     }
   },
 
-  handleCommonEvent: (component, evName, args = undefined) => {
+  handleCommonEvent: (component, evName) => {
     if (component[evName]) {
       if ( isFunction(component[evName]) ) {
-        return component[evName](args)
+        return component[evName]()
       }
       if ( isString(component[evName]) ) {
         let customFn = new Function('value', component[evName])
