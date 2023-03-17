@@ -52,8 +52,7 @@ const crudForm = ref(null)
 const actionTitle = ref('')
 const dataLoading = ref(true)
 const emit = defineEmits(['success', 'error'])
-const excludeColumns = ['__index', '__operation']
-if (options.formExcludePk) excludeColumns.push(options.pk)
+
 provide('form', toRaw(form))
 
 const submit = async () => {
