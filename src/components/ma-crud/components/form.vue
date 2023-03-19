@@ -301,5 +301,10 @@ const getRules = (item) => {
     return toRules(item.editRules ?? item.commonRules ?? [])
   }
 }
-defineExpose({ add, edit, currentAction, form })
+
+const getFormColumns = async (type = 'add') => {
+  await init()
+  return formColumns.value
+}
+defineExpose({ add, edit, currentAction, form, getFormColumns })
 </script>
