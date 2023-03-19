@@ -32,7 +32,7 @@ import { request } from '@/utils/request'
 import { Message } from '@arco-design/web-vue'
 import commonApi from '@/api/common'
 import { containerItems } from '@cps/ma-form/js/utils'
-import {isArray, isFunction, isEmpty, get, cloneDeep} from 'lodash'
+import {isArray, isFunction, isEmpty, get, cloneDeep, isUndefined} from 'lodash'
 import { useRouter } from 'vue-router'
 import { useFormStore } from '@/store/index'
 
@@ -42,6 +42,7 @@ const app = getCurrentInstance().appContext.app
 const maFormRef = ref()
 const componentName = ref('a-modal')
 const columns = inject('columns')
+const layoutColumns = ref(new Map());
 const options = inject('options')
 const formColumns = ref([])
 const currentAction = ref('')
@@ -78,6 +79,7 @@ const submit = async () => {
 }
 const open = () => {
   formColumns.value = []
+  layoutColumns.value = new Map()
   init()
   if (options.formOption.viewType === 'tag') {
     if (! options.formOption.tagId ) {
@@ -123,45 +125,11 @@ const init = () => {
   dataLoading.value = true
   const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
   // const layout = options?.formOption?.layout ?? []
-  const excludeColumns = ['__index', '__operation']
-  if (options.formExcludePk) excludeColumns.push(options.pk)
   columns.map(async item => {
-    if (! formItemShow(item) || excludeColumns.includes(item.dataIndex)) return
-    formColumns.value.push(item)
-
-    // 针对带点的数据处理
-    if (item.dataIndex.indexOf('.') > -1) {
-      form.value[item.dataIndex] = get(form.value, item.dataIndex)
-    }
-    
-    // add 默认值处理
-    if (currentAction.value === 'add') {
-      if (item.addDefaultValue && isFunction(item.addDefaultValue)) {
-        form.value[item.dataIndex] = await item.addDefaultValue(form.value)
-      } else if (typeof item.addDefaultValue != 'undefined') {
-        form.value[item.dataIndex] = item.addDefaultValue
-      }
-    }
-    // edit 默认值处理
-    if (currentAction.value === 'edit') {
-      if (item.editDefaultValue && isFunction(item.editDefaultValue)) {
-        form.value[item.dataIndex] = await item.editDefaultValue(form.value)
-      } else if (typeof item.editDefaultValue != 'undefined') {
-        form.value[item.dataIndex] = item.editDefaultValue
-      }
-    }
-    
-    // 其他处理
-    item.display = formItemShow(item)
-    item.disabled = formItemDisabled(item)
-    item.readonly = formItemReadonly(item)
-    item.rules = getRules(item)
+    await columnItemHandle(item)
   })
-
   // 设置表单布局
   settingFormLayout(layout)
-
-
   if (isArray(layout) && layout.length > 0) {
     formColumns.value = layout
     columns.map(item => {
@@ -169,31 +137,70 @@ const init = () => {
       ! item.__formLayoutSetting && formColumns.value.push(item)
     })
   }
+
   dataLoading.value = false
 }
 
+const columnItemHandle = async (item) => {
+  const excludeColumns = ['__index', '__operation']
+  if (options.formExcludePk) excludeColumns.push(options.pk)
+  if (! formItemShow(item) || excludeColumns.includes(item.dataIndex)) {
+    layoutColumns.value.set(item.dataIndex, {dataIndex: item.dataIndex, layoutFormRemove: true})
+    return
+  }
+  layoutColumns.value.set(item.dataIndex, item)
+  formColumns.value.push(item)
+
+  // 针对带点的数据处理
+  if (item.dataIndex.indexOf('.') > -1) {
+    form.value[item.dataIndex] = get(form.value, item.dataIndex)
+  }
+
+  // add 默认值处理
+  if (currentAction.value === 'add') {
+    if (item.addDefaultValue && isFunction(item.addDefaultValue)) {
+      form.value[item.dataIndex] = await item.addDefaultValue(form.value)
+    } else if (item.addDefaultValue) {
+      form.value[item.dataIndex] = item.addDefaultValue
+    }
+  }
+  // edit 默认值处理
+  if (currentAction.value === 'edit') {
+    if (item.editDefaultValue && isFunction(item.editDefaultValue)) {
+      form.value[item.dataIndex] = await item.editDefaultValue(form.value)
+    } else if (typeof item.editDefaultValue != 'undefined') {
+      form.value[item.dataIndex] = item.editDefaultValue
+    }
+  }
+
+  // 其他处理
+  item.display = formItemShow(item)
+  item.disabled = formItemDisabled(item)
+  item.readonly = formItemReadonly(item)
+  item.rules = getRules(item)
+}
 const settingFormLayout = (layout) => {
   if (!isArray(layout)) {
     return ;
   }
-  layout.map((item, index) => {
+  layout.map(async (item, index) => {
     if ( containerItems.includes(item.formType) ) {
       switch ( item.formType ) {
-        case 'tabs': 
+        case 'tabs':
           if ( item.tabs ) {
             item.tabs.map(tab => {
-              tab.formList && settingFormLayout(tab.formList)
+              tab.formList && (tab.formList = settingFormLayout(tab.formList))
             })
           }
           break
         case 'card':
-          item.formList && settingFormLayout(item.formList)
+          item.formList && (item.formList = settingFormLayout(item.formList))
           break
         case 'grid-tailwind':
         case 'grid':
           if ( item.cols ) {
             item.cols.map(col => {
-              col.formList && settingFormLayout(col.formList)
+              col.formList && (col.formList = settingFormLayout(col.formList))
             })
           }
           break
@@ -202,7 +209,7 @@ const settingFormLayout = (layout) => {
             item.rows.map(row => {
               if ( row.cols ) {
                 row.cols.map(col => {
-                  col.formList && settingFormLayout(col.formList)
+                  col.formList && (col.formList = settingFormLayout(col.formList))
                 })
               }
             })
@@ -210,14 +217,33 @@ const settingFormLayout = (layout) => {
           break
       }
     } else {
-      columns.map((column, idx) => {
-        if (column.dataIndex == item.dataIndex) {
-          column['__formLayoutSetting'] = true
-          item = column
-          layout[index] = item
+      let column = layoutColumns.value.get(item.dataIndex)
+      // 公共column存在以dataIndex作为判断获取配置项
+      if (column) {
+        // 判断是否layout配置移除
+        if (column.layoutFormRemove) {
+          layout[index] = undefined
+          return ;
         }
-      })
+        column['__formLayoutSetting'] = true
+        item = column
+        layout[index] = item
+      }else{
+        // 当公共column不存在，则执行column配置项处理
+        await columnItemHandle(item)
+        let column = layoutColumns.value.get(item.dataIndex)
+        if (column.layoutFormRemove) {
+          layout[index] = undefined
+          return ;
+        }
+        item['__formLayoutSetting'] = true
+        layout[index] = item
+      }
     }
+  })
+  // 移除
+  return layout.filter(item => {
+    return !isUndefined(item)
   })
 }
 
@@ -275,5 +301,10 @@ const getRules = (item) => {
     return toRules(item.editRules ?? item.commonRules ?? [])
   }
 }
-defineExpose({ add, edit, currentAction, form })
+
+const getFormColumns = async (type = 'add') => {
+  await init()
+  return formColumns.value
+}
+defineExpose({ add, edit, currentAction, form, getFormColumns })
 </script>

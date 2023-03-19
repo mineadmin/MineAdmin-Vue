@@ -345,7 +345,7 @@ watch(
   vl => options.value.api = vl
 )
 
-watch( () => openPagination.value, vl => settingFixedPage() )
+watch( () => openPagination.value, vl => options.value.pageLayout === 'fixed' && settingFixedPage() )
 
 const getSlot = (cls = []) => {
   let sls = []
@@ -670,23 +670,28 @@ onMounted(() => {
     crudSearchRef.value.setSearchHidden()
   }
   if (options.value.pageLayout == 'fixed') {
+    window.addEventListener('resize', resizeHandler, false);
     headerHeight.value = crudHeaderRef.value.offsetHeight
     settingFixedPage()
   }
-
-  window.addEventListener('resize', resizeHandler, false);
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', resizeHandler, false);
+  if (options.value.pageLayout == 'fixed') {
+    window.removeEventListener('resize', resizeHandler, false);
+  }
 })
 
 const getCurrentAction = () => crudFormRef.value.currentAction
 const getFormData = () => crudFormRef.value.form
 
+const getFormColumns = async (type = 'add') => {
+  return await crudFormRef.value.getFormColumns(type)
+}
+
 defineExpose({
   refresh, requestData, addAction, editAction, getTableData, setSelecteds,
-  requestParams, isRecovery, tableRef, getCurrentAction, getFormData,
+  requestParams, isRecovery, tableRef, getCurrentAction, getFormData, getFormColumns,
   crudFormRef, crudSearchRef, crudImportRef, crudSettingRef
 })
 

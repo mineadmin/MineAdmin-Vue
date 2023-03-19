@@ -160,7 +160,7 @@ watch(() => formModel.value[props.component.dataIndex], (value) => {
         value[index] = Object.fromEntries(data)
       }
       viewFormList.value[index] = cloneDeep(formList)
-      maEvent.handleCommonEvent(props.component, 'onAdd', {formList: viewFormList.value[index], data, index})
+      maEvent.customeEvent(props.component, {formList: viewFormList.value[index], data, index}, 'onAdd')
     })
   }
 },{
@@ -181,14 +181,15 @@ if (props.component.type == 'table') {
 const addItem = async (data = {}) => {
   let index = formModel.value[props.component.dataIndex].length
   viewFormList.value[index] = cloneDeep(formList)
-  maEvent.handleCommonEvent(props.component, 'onAdd', {formList: viewFormList.value[index], data, index: index})
+  maEvent.customeEvent(props.component, {formList: viewFormList.value[index], data, index: index}, 'onAdd')
   formModel.value[props.component.dataIndex].push(data)
 }
 
 const deleteItem = async (index) => {
-  let res = maEvent.handleCommonEvent(props.component, 'onDelete', {index})
+  let res = maEvent.customeEvent(props.component, {index}, 'onDelete')
   if (isUndefined(res) || res === true) {
     viewFormList.value.splice(index, 1)
+    await nextTick()
     formModel.value[props.component.dataIndex].splice(index, 1)
   }
 }
