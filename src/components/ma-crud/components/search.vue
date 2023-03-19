@@ -103,7 +103,6 @@ const getComponentName = (formType, component) => {
   if (['select', 'radio', 'checkbox', 'transfer'].includes(formType)) {
     return componentList.value['MaFormSelect']
   } else if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(formType)) {
-    component.formType = 'range'
     return componentList.value['MaFormPicker']
   } else if (formType === 'cascader') {
     return componentList.value['MaFormCascader']
