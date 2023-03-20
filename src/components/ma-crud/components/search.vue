@@ -30,7 +30,7 @@
           </a-form-item>
         </template>
       </div>
-      <div class="text-center mt-5 w-full">
+      <div class="text-center mt-5 w-full" v-if="searchColumns.length > 0">
         <a-space size="medium">
           <slot name="searchBeforeButtons" />
           <slot name="searchButtons">
