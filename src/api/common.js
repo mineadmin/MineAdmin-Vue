@@ -170,6 +170,17 @@ export default {
   },
 
   /**
+   * 获取资源列表
+   */
+  getResourceList(params = {}) {
+    return request({
+      url: 'system/common/getResourceList',
+      method: 'get',
+      params
+    })
+  },
+
+  /**
    * 通用导入Excel 
    */
   importExcel (url, data) {
