@@ -174,6 +174,7 @@ const init = async () => {
   })
 
   nextTick(() => {
+    interactiveControl(vl, flatteningColumns.value)
     formLoading.value = false
   })
 }
