@@ -69,6 +69,7 @@ const submitForm = async () => {
     isFunction(options.afterEdit) && await options.afterEdit(response, formData)
   }
   if ( response.success ) {
+    closeTag({ path: route.fullPath })
     Message.success(response.message || `${opName.value}成功！`)
   } else {
     Message.error(response.message)
