@@ -133,7 +133,7 @@ const init = () => {
   if (isArray(layout) && layout.length > 0) {
     formColumns.value = layout
     columns.map(item => {
-      if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
+      if (['__index', '__operation'].includes(item.dataIndex)) return
       ! item.__formLayoutSetting && formColumns.value.push(item)
     })
   }
@@ -144,7 +144,7 @@ const init = () => {
 const columnItemHandle = async (item) => {
   const excludeColumns = ['__index', '__operation']
   if (options.formExcludePk) excludeColumns.push(options.pk)
-  if (! formItemShow(item) || excludeColumns.includes(item.dataIndex)) {
+  if (excludeColumns.includes(item.dataIndex)) {
     layoutColumns.value.set(item.dataIndex, {dataIndex: item.dataIndex, layoutFormRemove: true})
     return
   }
@@ -248,31 +248,43 @@ const settingFormLayout = (layout) => {
 }
 
 const formItemShow = (item) => {
-  if (currentAction.value === 'add' && item?.addDisplay !== false) {
-    return true
+  if (!isUndefined(item.display)) {
+    return item.display
+  } else {
+    if (currentAction.value === 'add' && item?.addDisplay !== false) {
+      return true
+    }
+    if (currentAction.value === 'edit' && item?.editDisplay !== false) {
+      return true
+    }
+    return false
   }
-  if (currentAction.value === 'edit' && item?.editDisplay !== false) {
-    return true
-  }
-  return false
 }
 const formItemDisabled = (item) => {
-  if (currentAction.value === 'add' && item?.addDisabled === true) {
-    return true
+  if (!isUndefined(item.disabled)) {
+    return item.disabled
+  } else {
+    if (currentAction.value === 'add' && item?.addDisabled === true) {
+      return true
+    }
+    if (currentAction.value === 'edit' && item?.editDisabled === true) {
+      return true
+    }
+    return false
   }
-  if (currentAction.value === 'edit' && item?.editDisabled === true) {
-    return true
-  }
-  return false
 }
 const formItemReadonly = (item) => {
-  if (currentAction.value === 'add' && item?.addReadonly === true) {
-    return true
+  if (!isUndefined(item.readonly)) {
+    return item.readonly
+  } else {
+    if (currentAction.value === 'add' && item?.addReadonly === true) {
+      return true
+    }
+    if (currentAction.value === 'edit' && item?.editReadonly === true) {
+      return true
+    }
+    return false
   }
-  if (currentAction.value === 'edit' && item?.editReadonly === true) {
-    return true
-  }
-  return false
 }
 
 const toRules = (rules) => {
@@ -301,5 +313,10 @@ const getRules = (item) => {
     return toRules(item.editRules ?? item.commonRules ?? [])
   }
 }
-defineExpose({ add, edit, currentAction, form })
+
+const getFormColumns = async (type = 'add') => {
+  await init()
+  return formColumns.value
+}
+defineExpose({ add, edit, currentAction, form, getFormColumns })
 </script>

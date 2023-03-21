@@ -94,7 +94,6 @@
   import uploadConfig from '@/config/upload'
   import MaTreeSlider from '@cps/ma-treeSlider/index.vue'
   import commonApi from '@/api/common'
-  import attachmentApi from '@/api/system/attachment'
   import tool from '@/utils/tool'
   import { useI18n } from 'vue-i18n'
   import { Message } from '@arco-design/web-vue'
@@ -142,7 +141,7 @@
   const getAttachmentList = async (params = {}) => {
     const requestParams = Object.assign(params, { pageSize: pageSize.value })
     resourceLoading.value = true
-    const response = await attachmentApi.getPageList(requestParams)
+    const response = await commonApi.getResourceList(requestParams)
     pageInfo.value = response?.data?.pageInfo
     attachmentList.value = response?.data?.items
     resourceLoading.value = false

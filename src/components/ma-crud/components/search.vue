@@ -30,7 +30,7 @@
           </a-form-item>
         </template>
       </div>
-      <div class="text-center mt-5 w-full">
+      <div class="text-center mt-5 w-full" v-if="searchColumns.length > 0">
         <a-space size="medium">
           <slot name="searchBeforeButtons" />
           <slot name="searchButtons">
@@ -103,7 +103,6 @@ const getComponentName = (formType, component) => {
   if (['select', 'radio', 'checkbox', 'transfer'].includes(formType)) {
     return componentList.value['MaFormSelect']
   } else if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(formType)) {
-    component.formType = 'range'
     return componentList.value['MaFormPicker']
   } else if (formType === 'cascader') {
     return componentList.value['MaFormCascader']

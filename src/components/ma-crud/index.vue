@@ -685,9 +685,13 @@ onUnmounted(() => {
 const getCurrentAction = () => crudFormRef.value.currentAction
 const getFormData = () => crudFormRef.value.form
 
+const getFormColumns = async (type = 'add') => {
+  return await crudFormRef.value.getFormColumns(type)
+}
+
 defineExpose({
   refresh, requestData, addAction, editAction, getTableData, setSelecteds,
-  requestParams, isRecovery, tableRef, getCurrentAction, getFormData,
+  requestParams, isRecovery, tableRef, getCurrentAction, getFormData, getFormColumns,
   crudFormRef, crudSearchRef, crudImportRef, crudSettingRef
 })
 
