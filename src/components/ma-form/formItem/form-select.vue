@@ -85,9 +85,10 @@ const value = ref(get(formModel.value, index, ''))
 watch( () => get(formModel.value, index), vl => value.value = vl )
 watch( () => value.value, v => set(formModel.value, index, v) )
 
-// 存在并且column设置dict.data|dict.name 则转换为string类型
-if (value.value && props.component.dict && (props.component.dict.name || props.component.dict.data) && !props.component.multiple) {
-    value.value = value.value + ''
+if (value.value == '') {
+  value.value = undefined
+} else if (value.value && props.component.dict && (props.component.dict.name || props.component.dict.data) && !props.component.multiple) {
+  value.value = value.value + ''
 }
 
 const handleCascaderChangeEvent = async (value) => {
