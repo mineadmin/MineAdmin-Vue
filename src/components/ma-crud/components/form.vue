@@ -129,8 +129,10 @@ const init = () => {
   settingFormLayout(layout)
   if (isArray(layout) && layout.length > 0) {
     formColumns.value = layout
+    const excludeColumns = ['__index', '__operation']
     columns.map(item => {
-      if (['__index', '__operation'].includes(item.dataIndex)) return
+      if (options.formExcludePk) excludeColumns.push(options.pk)
+      if (excludeColumns.includes(item.dataIndex)) return
       ! item.__formLayoutSetting && formColumns.value.push(item)
     })
   }
