@@ -94,7 +94,7 @@ const open = () => {
     }
     formStore.formList[options.formOption.tagId +'_'+ currentAction.value] = config
     form.value = {}
-    router.push('/openForm?tagId=' + options.formOption.tagId + '_' + currentAction.value + '&op=' + currentAction.value)
+    router.push('/openForm/' + options.formOption.tagId +'?tagId=' + options.formOption.tagId + '_' + currentAction.value + '&op=' + currentAction.value)
   } else {
     componentName.value = options.formOption.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
     dataVisible.value = true
