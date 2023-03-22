@@ -27,12 +27,10 @@
 </template>
 
 <script setup>
-import { ref, nextTick, watch, toRaw, getCurrentInstance, inject, provide } from 'vue'
-import { request } from '@/utils/request'
+import { ref, toRaw, getCurrentInstance, inject, provide } from 'vue'
 import { Message } from '@arco-design/web-vue'
-import commonApi from '@/api/common'
 import { containerItems } from '@cps/ma-form/js/utils'
-import {isArray, isFunction, isEmpty, get, cloneDeep, isUndefined} from 'lodash'
+import {isArray, isFunction, get, cloneDeep, isUndefined} from 'lodash'
 import { useRouter } from 'vue-router'
 import { useFormStore } from '@/store/index'
 
@@ -48,7 +46,6 @@ const formColumns = ref([])
 const currentAction = ref('')
 const dataVisible = ref(false)
 const form = ref({})
-const crudForm = ref(null)
 const actionTitle = ref('')
 const dataLoading = ref(true)
 const emit = defineEmits(['success', 'error'])
@@ -132,8 +129,10 @@ const init = () => {
   settingFormLayout(layout)
   if (isArray(layout) && layout.length > 0) {
     formColumns.value = layout
+    const excludeColumns = ['__index', '__operation']
     columns.map(item => {
-      if (['__index', '__operation'].includes(item.dataIndex)) return
+      if (options.formExcludePk) excludeColumns.push(options.pk)
+      if (excludeColumns.includes(item.dataIndex)) return
       ! item.__formLayoutSetting && formColumns.value.push(item)
     })
   }

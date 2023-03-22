@@ -86,13 +86,12 @@
 </template>
 
 <script setup>
-import { ref, watch, inject } from 'vue'
+import { ref, inject } from 'vue'
 
 const options = inject('options')
 let columns = inject('columns')
 
 const visible = ref(false)
-const tableWidth = ref('100%')
 const bordered = ref('column')
 
 const open = () => {
