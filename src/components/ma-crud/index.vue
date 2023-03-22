@@ -220,7 +220,7 @@
 
 <script setup>
 import config from '@/config/crud'
-import { ref, watch, provide, nextTick, onMounted, onUnmounted, onUpdated } from 'vue'
+import { ref, watch, provide, nextTick, onMounted, onUnmounted } from 'vue'
 import defaultOptions from './js/defaultOptions'
 import { loadDict } from '@cps/ma-form/js/networkRequest.js'
 
@@ -685,9 +685,13 @@ onUnmounted(() => {
 const getCurrentAction = () => crudFormRef.value.currentAction
 const getFormData = () => crudFormRef.value.form
 
+const getFormColumns = async (type = 'add') => {
+  return await crudFormRef.value.getFormColumns(type)
+}
+
 defineExpose({
   refresh, requestData, addAction, editAction, getTableData, setSelecteds,
-  requestParams, isRecovery, tableRef, getCurrentAction, getFormData,
+  requestParams, isRecovery, tableRef, getCurrentAction, getFormData, getFormColumns,
   crudFormRef, crudSearchRef, crudImportRef, crudSettingRef
 })
 
