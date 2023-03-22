@@ -65,13 +65,13 @@
 
 <script setup>
 import {
-  ref, reactive, watch, provide,
+  ref, watch, provide,
   onMounted, nextTick, getCurrentInstance
 } from 'vue'
-import { isString, isFunction, isNil, get } from 'lodash'
+import { isNil, get } from 'lodash'
 import defaultOptions from './js/defaultOptions.js'
 import {
-  getComponentName, toHump, containerItems,
+  getComponentName, toHump,
   interactiveControl, handleFlatteningColumns
 } from './js/utils.js'
 import { loadDict, handlerCascader } from './js/networkRequest.js'
@@ -104,8 +104,6 @@ const maFormRef = ref()
 const flatteningColumns = ref([])
 const dictList = ref({})
 const cascaderList = ref([])
-const childrenCascaderList = ref([])
-const childrenFormColums = ref({})
 const form = ref({})
 
 const props = defineProps({

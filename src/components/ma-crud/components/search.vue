@@ -25,7 +25,7 @@
             :label-col-style="{ width: component.searchLabelWidth ?? options.searchLabelWidth }"
           >
             <slot :name="`${component.dataIndex}`" v-bind="{ searchForm, component }">
-              <component :is="getComponentName(component.formType, component)" :component="component" />
+              <component :is="getComponentName(component.formType)" :component="component" />
             </slot>
           </a-form-item>
         </template>
@@ -51,14 +51,13 @@
 </template>
 
 <script setup>
-import { ref, watch, inject, provide, markRaw } from 'vue'
+import { ref, inject, provide, markRaw } from 'vue'
 import MaFormInput from './searchFormItem/form-input.vue'
 import MaFormPicker from './searchFormItem/form-picker.vue'
 import MaFormSelect from './searchFormItem/form-select.vue'
 import MaFormCascader from './searchFormItem/form-cascader.vue'
 import MaFormTreeSelect from './searchFormItem/form-tree-select.vue'
-import { upperCaseFirst } from '@/components/ma-form/js/utils'
-import {cloneDeep} from "lodash";
+import { cloneDeep } from "lodash"
 
 const options = inject('options')
 const columns = inject('columns')
@@ -99,7 +98,7 @@ const componentList = ref({
   'MaFormInput': markRaw(MaFormInput),
 }) 
 
-const getComponentName = (formType, component) => {
+const getComponentName = (formType) => {
   if (['select', 'radio', 'checkbox', 'transfer'].includes(formType)) {
     return componentList.value['MaFormSelect']
   } else if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(formType)) {
