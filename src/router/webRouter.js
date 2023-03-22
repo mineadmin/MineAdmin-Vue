@@ -14,7 +14,7 @@ const routes = [
     redirect: 'openForm',
     children: [{
         name: 'openForm',
-        path: '/openForm',
+        path: '/openForm/:id',
         meta: {
           title: '公共表单',
           type: 'M',

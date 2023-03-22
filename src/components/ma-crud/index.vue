@@ -220,7 +220,7 @@
 
 <script setup>
 import config from '@/config/crud'
-import { ref, watch, provide, nextTick, onMounted, onUnmounted, onUpdated } from 'vue'
+import { ref, watch, provide, nextTick, onMounted, onUnmounted } from 'vue'
 import defaultOptions from './js/defaultOptions'
 import { loadDict } from '@cps/ma-form/js/networkRequest.js'
 

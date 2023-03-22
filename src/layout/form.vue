@@ -17,7 +17,6 @@ import { useRoute } from 'vue-router'
 import { isEmpty, isFunction } from 'lodash'
 import { Message } from '@arco-design/web-vue'
 import { closeTag  } from '@/utils/common'
-import router from '@/router'
 
 const route = useRoute()
 const formStore = useFormStore()
@@ -70,6 +69,7 @@ const submitForm = async () => {
   }
   if ( response.success ) {
     Message.success(response.message || `${opName.value}成功！`)
+    closeTag({ path: route.fullPath })
   } else {
     Message.error(response.message)
   }

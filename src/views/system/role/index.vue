@@ -99,7 +99,7 @@
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 320,
+    operationWidth: 300,
     add: { show: true, api: role.save, auth: ['system:role:save'] },
     edit: { show: true, api: role.update, auth: ['system:role:update'] },
     delete: {
@@ -133,7 +133,7 @@
     },
     {
       title: '创建时间', dataIndex: 'created_at', addDisplay: false, editDisplay: false,
-      search: true, formType: 'range'
+      width: 200, search: true, formType: 'range'
     },
   ])
 </script>

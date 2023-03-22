@@ -186,7 +186,7 @@ const addItem = async (data = {}) => {
 }
 
 const deleteItem = async (index) => {
-  let res = maEvent.customeEvent(props.component, {index}, 'onDelete')
+  let res = await maEvent.customeEvent(props.component, {index}, 'onDelete')
   if (isUndefined(res) || res === true) {
     viewFormList.value.splice(index, 1)
     await nextTick()
