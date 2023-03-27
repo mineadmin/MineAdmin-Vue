@@ -105,7 +105,7 @@ const open = () => {
       formStore.formList[options.formOption.tagId].addData = cloneDeep(form.value)
     } else {
       formStore.formList[options.formOption.tagId].editData[form.value[options.pk]] = cloneDeep(form.value)
-      queryParams.key = form.value[options.pk]
+      queryParams.key = form.value[options.formOption?.titleDataIndex ?? ''] ?? form.value[options.pk]
     }
     form.value = {}
     router.push(`/openForm/${options.formOption.tagId}` + tool.httpBuild(queryParams, true))
