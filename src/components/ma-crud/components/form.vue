@@ -73,6 +73,8 @@ const submit = async () => {
     Message.success(response.message || `${actionTitle.value}成功！`)
     emit('success', response)
     return true
+  } else {
+    return false
   }
 }
 const open = () => {
