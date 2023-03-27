@@ -206,6 +206,10 @@ export default {
   showIndex: false,
   // 索引列名称
   indexLabel: '序号',
+  // 索引列宽度
+  indexColumnWidth: 70,
+  // 索引列固定方向，false 为不固定
+  indexColumnFixed: 'left',
   // 设置请求数据label
   requestParamsLabel: undefined,
   // 表格滚动默认宽高
@@ -216,6 +220,12 @@ export default {
   operationColumn: false,
   // 操作列宽度
   operationWidth: 160,
+  // 操作列宽度 (新api)
+  operationColumnWidth: 160,
   // 操作列名称
   operationColumnText: '操作',
+  // 操作列文字对齐方式
+  operationColumnAlign: 'right',
+  // 操作列固定方向，false 为不固定
+  operationColumnFixed: 'right',
 }
