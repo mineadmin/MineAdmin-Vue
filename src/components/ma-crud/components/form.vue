@@ -167,7 +167,7 @@ const columnItemHandle = async (item) => {
   formColumns.value.push(item)
 
   // 针对带点的数据处理
-  if (item.dataIndex.indexOf('.') > -1) {
+  if (item.dataIndex && item.dataIndex.indexOf('.') > -1) {
     form.value[item.dataIndex] = get(form.value, item.dataIndex)
   }
 
