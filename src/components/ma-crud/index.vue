@@ -381,10 +381,17 @@ searchSlots.value = getSearchSlot(props.columns)
 const requestData = async () => {
   init()
   if (options.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {
-    columns.value.unshift({ title: options.value.indexLabel, dataIndex: '__index', width: 70, fixed: 'left' })
+    columns.value.unshift({
+      title: options.value.indexLabel, dataIndex: '__index',
+      width: options.value.indexColumnWidth, fixed: options.value.indexColumnFixed
+    })
   }
   if (options.value.operationColumn && columns.value.length > 0 && columns.value[columns.value.length - 1].dataIndex !== '__operation') {
-    columns.value.push({ title: options.value.operationColumnText, dataIndex: '__operation', width: options.value.operationWidth, align: 'right', fixed: 'right' })
+    columns.value.push({
+      title: options.value.operationColumnText, dataIndex: '__operation',
+      width: options.value.operationColumnWidth ?? options.value.operationWidth,
+      align: options.value.operationColumnAlign, fixed: options.value.operationColumnFixed
+    })
   }
   initRequestParams()
   await refresh()
