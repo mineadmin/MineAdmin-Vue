@@ -30,8 +30,9 @@
 import { ref, toRaw, getCurrentInstance, inject, provide } from 'vue'
 import { Message } from '@arco-design/web-vue'
 import { containerItems } from '@cps/ma-form/js/utils'
-import {isArray, isFunction, get, cloneDeep, isUndefined} from 'lodash'
+import { isArray, isFunction, get, cloneDeep, isUndefined } from 'lodash'
 import { useRouter } from 'vue-router'
+import tool from '@/utils/tool'
 import { useFormStore } from '@/store/index'
 
 const formStore = useFormStore()
@@ -89,12 +90,25 @@ const open = () => {
     }
     const config = {
       options,
-      data: cloneDeep(form.value),
       formColumns: formColumns.value
     }
-    formStore.formList[options.formOption.tagId +'_'+ currentAction.value] = config
+    formStore.formList[options.formOption.tagId] = {
+      config,
+      addData: {},
+      editData: {},
+    }
+    const queryParams = {
+      tagId: options.formOption.tagId,
+      op: currentAction.value,
+    }
+    if (currentAction.value === 'add') {
+      formStore.formList[options.formOption.tagId].addData = cloneDeep(form.value)
+    } else {
+      formStore.formList[options.formOption.tagId].editData[form.value[options.pk]] = cloneDeep(form.value)
+      queryParams.key = form.value[options.pk]
+    }
     form.value = {}
-    router.push('/openForm/' + options.formOption.tagId +'?tagId=' + options.formOption.tagId + '_' + currentAction.value + '&op=' + currentAction.value)
+    router.push(`/openForm/${options.formOption.tagId}` + tool.httpBuild(queryParams, true))
   } else {
     componentName.value = options.formOption.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
     dataVisible.value = true
