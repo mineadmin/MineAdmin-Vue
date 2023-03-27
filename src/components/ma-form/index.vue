@@ -205,13 +205,13 @@ const clearValidate = async() => await maFormRef.value.clearValidate()
 const formSubmit = async () =>  (await validateForm() && !formLoading.value ) || emit('onSubmit', form.value, done)
 
 const getFormRef = () => maFormRef.value
-const getDictlist = () => dictList.value
+const getDictList = () => dictList.value
 const getColumns = () => flatteningColumns.value
 const getCascaderList = () => cascaderList.value
 const getFormData = () => form.value
 
 defineExpose({
-  init, getFormRef, getColumns, getDictlist, getCascaderList, getFormData,
+  init, getFormRef, getColumns, getDictList, getCascaderList, getFormData,
   validateForm, resetForm, clearValidate
 })
 </script>
