@@ -53,7 +53,13 @@ export default {
   pageLayout: 'normal',
   // 默认统一设置列宽度
   columnWidth: 100,
-
+  // 表格tabs头设置配置参数
+  tabs: {
+    data: undefined,
+    default_key: undefined,
+    search_key: undefined,
+    change: undefined,
+  },
   // 搜索标签对齐方式
   searchLabelAlign: 'right',
   // 全局搜索标签宽度
