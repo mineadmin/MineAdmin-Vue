@@ -24,6 +24,7 @@ const tagStore = useTagStore()
 const maFormRef = ref()
 const tagId = ref(route.query?.tagId ?? '')
 const op = ref(route.query?.op ?? '')
+const key = ref(route.query?.key ?? '')
 
 if (isEmpty(tagId.value)) {
   Message.error('缺少tagId参数')
@@ -35,17 +36,22 @@ if (isEmpty(op.value)) {
   closeTag({ path: route.fullPath })
 }
 
+if (op.value === 'edit' && isEmpty(key.value)) {
+  Message.error('缺少key参数')
+  closeTag({ path: route.fullPath })
+}
+
 if (! formStore.formList[tagId.value]) {
   Message.error('缺少Form配置')
   closeTag({ path: route.fullPath })
 }
 
-const formConfig = formStore.formList[tagId.value]
-const form = ref(formConfig?.data)
+const formConfig = formStore.formList[tagId.value]?.config
+const form = ref(op.value == 'add' ? formStore.formList[tagId.value]['addData'] : formStore.formList[tagId.value]['editData'][key.value])
 const options = formConfig?.options
-const opName = ref(op.value == 'add' ? '新增' : '编辑')
-const pageTitle = ref(opName.value + (formConfig?.options?.formOption?.tagName ?? '未命名'))
-tagStore.updateTagTitle(route.fullPath, pageTitle.value)
+const opName = ref(op.value == 'add' ? '新增' : '编辑' )
+const pageTitle = ref(opName.value + (formConfig?.options?.formOption?.tagName ?? '未命名') )
+tagStore.updateTagTitle(route.fullPath, ` ${pageTitle.value} ${op.value == 'edit' ? ' | key=' + key.value : '' } `)
 
 const pageBack = () => {
   window.history.back(-1)
