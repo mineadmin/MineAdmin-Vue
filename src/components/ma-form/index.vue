@@ -206,12 +206,63 @@ const formSubmit = async () =>  (await validateForm() && !formLoading.value ) ||
 
 const getFormRef = () => maFormRef.value
 const getDictList = () => dictList.value
+const getDictService = () => {
+  const DictService = function (dictList) {
+    /**
+     * dict项服务类
+     * @param dataIndex
+     * @param dictData
+     * @constructor
+     */
+    const DictItemService = function (dataIndex, dictData) {
+      this.dict = dictData
+      this.dataIndex = dataIndex
+
+      /**
+       * 返回原DictData对象
+       * @returns {*}
+       */
+      this.getRawDictData = () => {
+        return this.dict
+      }
+      /**
+       * 追加
+       * @param label
+       * @param value
+       * @param extend
+       */
+      this.append = (label, value, extend = {}) => {
+        this.getRawDictData().push(Object.assign({
+          label: label,
+          value: value,
+        }, extend))
+      }
+      /**
+       * 重新加载dict
+       * @param dictConfig
+       * @returns {Promise<void>}
+       */
+      this.loadDict = (dictConfig) => {
+        return loadDict(dictList, {formType: "select", dict: dictConfig, dataIndex: this.dataIndex})
+      }
+    }
+
+    this.dictMap = new Map()
+    for (const [dataIndex, dictData] of Object.entries(dictList)) {
+      this.dictMap.set(dataIndex, new DictItemService(dataIndex, dictData))
+    }
+    this.get = (key) => {
+      return this.dictMap.get(key)
+    }
+  }
+  return new DictService(getDictlist())
+}
 const getColumns = () => flatteningColumns.value
 const getCascaderList = () => cascaderList.value
 const getFormData = () => form.value
 
 defineExpose({
-  init, getFormRef, getColumns, getDictList, getCascaderList, getFormData,
+  init, getFormRef, getColumns, getDictlist,getDictService, getCascaderList, getFormData,
   validateForm, resetForm, clearValidate
 })
 </script>
