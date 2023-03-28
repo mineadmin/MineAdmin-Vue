@@ -256,14 +256,14 @@ const getDictService = () => {
       return this.dictMap.get(key)
     }
   }
-  return new DictService(getDictlist())
+  return new DictService(getDictList())
 }
 const getColumns = () => flatteningColumns.value
 const getCascaderList = () => cascaderList.value
 const getFormData = () => form.value
 
 defineExpose({
-  init, getFormRef, getColumns, getDictlist,getDictService, getCascaderList, getFormData,
+  init, getFormRef, getColumns, getDictList, getDictService, getCascaderList, getFormData,
   validateForm, resetForm, clearValidate
 })
 </script>
