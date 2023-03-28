@@ -11,11 +11,13 @@
   <a-layout-content class="flex flex-col lg:h-full relative w-full">
     <div class="_crud-header flex flex-col mb-2" ref="crudHeaderRef">
       <a-tabs
-          :active-key="options.tabs.default_key"
-          :default-active-key="options.tabs.default_key"
-          trigger="click"
+          v-model:active-key="options.tabs.defaultKey"
+          :trigger="options.tabs.trigger"
+          :type="options.tabs.type"
           @change="tabChange"
+          @tab-click="maEvent.customeEvent(options.tabs, $event, 'onClick')"
       >
+        <template #extra><slot name="tabExtra"></slot></template>
         <a-tab-pane :key="item.value" :title="item.label" v-for="item in options.tabs.data"></a-tab-pane>
       </a-tabs>
       <ma-search
@@ -242,7 +244,8 @@ import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
-import {isArray, isFunction, isObject, isUndefined} from 'lodash'
+import { isArray, isFunction, isObject, isUndefined } from 'lodash'
+import { maEvent } from '@cps/ma-form/js/formItemMixin.js'
 import globalColumn from '@/config/column.js'
 
 const props = defineProps({
@@ -387,12 +390,6 @@ slots.value = getSlot(props.columns)
 searchSlots.value = getSearchSlot(props.columns)
 
 const requestData = async (requestParams = {}) => {
-  options.value.requestParams = Object.assign(options.value.requestParams, requestParams)
-  if (isObject(options.value.tabs) && isArray(options.value.tabs.data)) {
-    await tabChange(
-        isUndefined(options.value.tabs.default_key) ? options.value.tabs.data[0].value:options.value.tabs.default_key
-    );
-  }
   init()
   if (options.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {
     columns.value.unshift({
@@ -418,30 +415,6 @@ const initRequestParams = () => {
     requestParams.value[options.value.requestParamsLabel] = options.value.requestParams
   } else {
     requestParams.value = Object.assign(requestParams.value, options.value.requestParams)
-  }
-}
-
-/**
- * tab选择
- * @param item
- */
-const tabChange = async (item) => {
-  options.value.tabs.default_key = item
-  if (isFunction(options.value.tabs.search_key)) {
-    options.value.tabs.search_key(item, requestParams)
-  }else if (options.value.tabs.search_key){
-    requestParams.value[options.value.tabs.search_key] = item
-    options[options.value.tabs.search_key] = item
-  }
-  const columnMap = new Map();
-  columns.value.forEach(item => {
-    columnMap.set(item.dataIndex, item)
-  })
-  // 设置change方法
-  if (isFunction(options.value.tabs.change)) {
-    await options.value.tabs.change({item, columnMap, refresh})
-  }else{
-    await refresh()
   }
 }
 
@@ -708,6 +681,10 @@ if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest
 const resizeHandler = () => {
   headerHeight.value = crudHeaderRef.value.offsetHeight
   settingFixedPage()
+}
+
+const tabChange = (value) => {
+  console.log(value)
 }
 
 onMounted(() => {
