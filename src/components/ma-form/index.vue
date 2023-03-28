@@ -187,6 +187,7 @@ maEvent.handleCommonEvent(options.value, 'onCreated')
 onMounted(() => {
   maEvent.handleCommonEvent(options.value, 'onMounted')
   options.value.init && init()
+  maEvent.handleCommonEvent(options.value, 'onInit')
 })
 
 const done = (status) => formLoading.value = status
