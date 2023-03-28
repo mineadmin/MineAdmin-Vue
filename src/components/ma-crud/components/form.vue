@@ -94,6 +94,7 @@ const open = () => {
       options,
       formColumns: formColumns.value
     }
+    formStore.crudList[options.id] = false
     formStore.formList[options.formOption.tagId] = {
       config,
       addData: {},

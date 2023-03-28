@@ -1,4 +1,6 @@
 export default {
+  // 当前crud组件的 id，全局唯一，不指定则随机生成一个
+  id: undefined,
   // 主键名称
   pk: 'id',
   // 表单是否排除PK

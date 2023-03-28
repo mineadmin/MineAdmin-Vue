@@ -250,7 +250,9 @@ import tool from '@/utils/tool'
 import { isArray, isFunction, isObject, isUndefined } from 'lodash'
 import { maEvent } from '@cps/ma-form/js/formItemMixin.js'
 import globalColumn from '@/config/column.js'
+import { useFormStore } from '@/store/index'
 
+const formStore = useFormStore()
 const props = defineProps({
   // 表格数据
   data: { type: [ Function, Array ], default: () => null },
@@ -288,6 +290,7 @@ const crudImportRef = ref()
 const options = ref(
   Object.assign(JSON.parse(JSON.stringify(defaultOptions)), props.options, props.crud)
 )
+
 const columns = ref(props.columns)
 const headerHeight = ref(0)
 const selecteds = ref([])
@@ -297,6 +300,11 @@ const currentApi = ref()
 
 // 初始化
 const init = async () => {
+
+  // 设置 组件id
+  if (isUndefined(options.value.id)) {
+    options.value.id = 'MaCrud_' + Math.floor(Math.random() * 100000 + Math.random() * 20000 + Math.random() * 5000)
+  }
 
   // 收集数据
   props.columns.map(item => {
@@ -359,6 +367,14 @@ watch(
 )
 
 watch( () => openPagination.value, vl => options.value.pageLayout === 'fixed' && settingFixedPage() )
+
+watch(
+    () => formStore.crudList[options.value.id],
+    async vl => {
+      vl === true && await requestData()
+      formStore.crudList[options.value.id] = false
+    }
+)
 
 const getSlot = (cls = []) => {
   let sls = []

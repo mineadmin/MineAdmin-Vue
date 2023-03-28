@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 
 let defaultConfig = {
   formList: [],
+  crudList: {},
 }
 
 const useFormStore = defineStore('form', {
