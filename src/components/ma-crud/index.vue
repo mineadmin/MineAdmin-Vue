@@ -408,9 +408,11 @@ const requestData = async (requestParams = {}) => {
   }
 
   initRequestParams()
-  // if (! options.value.tabs?.dataIndex && ! options.value.tabs.data) {
+  if (! options.value.tabs?.dataIndex && ! options.value.tabs.data) {
     await refresh()
-  // }
+  } else {
+    ! isUndefined(options.value.tabs?.defaultKey) && await tabChange(options.value.tabs.defaultKey)
+  }
 }
 
 const initRequestParams = () => {
@@ -465,7 +467,7 @@ const refresh = async () => {
   }
 }
 
-const searchSubmitHandler = (formData) => {
+const searchSubmitHandler = async (formData) => {
   if (options.value.requestParamsLabel && requestParams.value[options.value.requestParamsLabel]) {
     requestParams.value[options.value.requestParamsLabel] = Object.assign(requestParams.value[options.value.requestParamsLabel], formData)
   } else if (options.value.requestParamsLabel) {
@@ -476,18 +478,18 @@ const searchSubmitHandler = (formData) => {
   if (options.value.beforeSearch && isFunction(options.value.beforeSearch)) {
     options.value.beforeSearch(requestParams.value)
   }
-  pageChangeHandler(1)
+  await pageChangeHandler(1)
 }
 
-const pageSizeChangeHandler = (pageSize) => {
+const pageSizeChangeHandler = async (pageSize) => {
   requestParams.value[config.request.page] = 1
   requestParams.value[config.request.pageSize] = pageSize
-  refresh()
+  await refresh()
 }
 
-const pageChangeHandler = (currentPage) => {
+const pageChangeHandler = async (currentPage) => {
   requestParams.value[config.request.page] = currentPage
-  refresh()
+  await refresh()
 }
 
 const toggleSearch = async () => {
@@ -601,17 +603,17 @@ const deletesMultipleAction = async () => {
       options.value.afterDelete(response)
     }
     Message.success(response.message || `删除成功！`)
-    refresh()
+    await refresh()
   } else {
     Message.error('至少选择一条数据')
   }
 }
 
-const recoverysMultipleAction = async() => {
+const recoverysMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
     const response = await options.value.recovery.api({ ids: selecteds.value })
     Message.success(response.message || `恢复成功！`)
-    refresh()
+    await refresh()
   } else {
     Message.error('至少选择一条数据')
   }
@@ -706,16 +708,14 @@ onMounted(async() => {
   const tabs = options.value.tabs
   if ( isFunction(tabs.data) || isArray(tabs.data) ) {
     tabs.data = isFunction(tabs.data) ? await tabs.data() : tabs.data
+    await tabChange(tabs.defaultKey)
   } else if (! isUndefined(tabs.dataIndex) ) {
     const col = props.columns.find( item => item.dataIndex === tabs.dataIndex )
     if ( col.search === true && isObject(col.dict) ) {
       tabs.data = dicts.value[tabs.dataIndex]
     }
+    await tabChange(tabs.defaultKey)
   }
-
-  console.log(tabs)
-
-  // await refresh(tabs.defaultKey)
 
   if (options.value.pageLayout === 'fixed') {
     window.addEventListener('resize', resizeHandler, false);

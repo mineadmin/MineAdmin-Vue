@@ -97,7 +97,7 @@ export default {
   tabs: {
     // 选项卡类型，参考 arco 官方 tabs 的api
     type: 'line',
-    // 选项卡类型，参考 arco 官方 tabs 的api
+    // 选项卡触发方式： click | hover
     trigger: 'click',
     // 指定一个字段作为选项卡，该字段的 search 必须为 true， 并且使用了字典
     dataIndex: undefined,
