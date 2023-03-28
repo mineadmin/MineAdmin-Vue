@@ -82,6 +82,7 @@
       viewType: 'tag',
       tagId: 'apiform',
       tagName: '接口',
+      titleDataIndex: 'name',
       layout: [
         {
           formType: 'tabs',

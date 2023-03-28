@@ -51,7 +51,7 @@ const form = ref(op.value == 'add' ? formStore.formList[tagId.value]['addData'] 
 const options = formConfig?.options
 const opName = ref(op.value == 'add' ? '新增' : '编辑' )
 const pageTitle = ref(opName.value + (formConfig?.options?.formOption?.tagName ?? '未命名') )
-tagStore.updateTagTitle(route.fullPath, ` ${pageTitle.value} ${op.value == 'edit' ? ' | key=' + key.value : '' } `)
+tagStore.updateTagTitle(route.fullPath, ` ${pageTitle.value} ${op.value == 'edit' ? ' | ' + key.value : '' } `)
 
 const pageBack = () => {
   window.history.back(-1)

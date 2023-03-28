@@ -73,6 +73,8 @@ const submit = async () => {
     Message.success(response.message || `${actionTitle.value}成功！`)
     emit('success', response)
     return true
+  } else {
+    return false
   }
 }
 const open = () => {
@@ -165,7 +167,7 @@ const columnItemHandle = async (item) => {
   formColumns.value.push(item)
 
   // 针对带点的数据处理
-  if (item.dataIndex.indexOf('.') > -1) {
+  if (item.dataIndex && item.dataIndex.indexOf('.') > -1) {
     form.value[item.dataIndex] = get(form.value, item.dataIndex)
   }
 

@@ -53,13 +53,6 @@ export default {
   pageLayout: 'normal',
   // 默认统一设置列宽度
   columnWidth: 100,
-  // 表格tabs头设置配置参数
-  tabs: {
-    data: undefined,
-    default_key: undefined,
-    search_key: undefined,
-    change: undefined,
-  },
   // 搜索标签对齐方式
   searchLabelAlign: 'right',
   // 全局搜索标签宽度
@@ -97,6 +90,21 @@ export default {
   // 删除后方法
   afterDelete: (response) => {},
 
+  // 列表 选项卡 参数配置项
+  tabs: {
+    // 指定一个字段作为选项卡，该字段的 search 必须为 true， 并且使用了字典
+    dataIndex: undefined,
+    // 自定义选项卡项 [{ title: 'tab 1', value: 1, disabled: false }]，也可函数返回一个数组
+    data: undefined,
+    // 默认选中的 tab，不指定则为第一个
+    defaultKey: undefined,
+    // 切换选项卡时，请求后台数据的参数名
+    searchKey: undefined,
+    // 选项卡切换事件
+    onChange: (value) => {},
+    // 选项卡单击事件
+    onClick: (value) => {},
+  },
   
   // 表单配置项
   formOption: {
