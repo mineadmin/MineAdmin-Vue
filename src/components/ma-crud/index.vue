@@ -11,11 +11,14 @@
   <a-layout-content class="flex flex-col lg:h-full relative w-full">
     <div class="_crud-header flex flex-col mb-2" ref="crudHeaderRef">
       <a-tabs
+          v-if="isArray(options.tabs.data) && options.tabs.data.length > 0"
           v-model:active-key="options.tabs.defaultKey"
           :trigger="options.tabs.trigger"
           :type="options.tabs.type"
+          :hide-content="true"
           @change="tabChange"
           @tab-click="maEvent.customeEvent(options.tabs, $event, 'onClick')"
+          class="ma-tabs mb-5"
       >
         <template #extra><slot name="tabExtra"></slot></template>
         <a-tab-pane :key="item.value" :title="item.label" v-for="item in options.tabs.data"></a-tab-pane>
@@ -281,21 +284,20 @@ const crudSearchRef = ref()
 const crudSettingRef = ref()
 const crudFormRef = ref()
 const crudImportRef = ref()
+
 const options = ref(
   Object.assign(JSON.parse(JSON.stringify(defaultOptions)), props.options, props.crud)
 )
 const columns = ref(props.columns)
-
 const headerHeight = ref(0)
-
 const selecteds = ref([])
-
 const tableData = ref([])
 const tableRef = ref()
 const currentApi = ref()
 
 // 初始化
-const init = async() => {
+const init = async () => {
+
   // 收集数据
   props.columns.map(item => {
     if (item.cascaderItem && item.cascaderItem.length > 0) {
@@ -303,7 +305,7 @@ const init = async() => {
     }
   })
 
-  props.columns.map(async item => {
+  await props.columns.map(async item => {
     // 字典
     if (! cascaders.value.includes(item.dataIndex) && item.dict) {
       await loadDict(dicts.value, item)
@@ -390,7 +392,7 @@ slots.value = getSlot(props.columns)
 searchSlots.value = getSearchSlot(props.columns)
 
 const requestData = async (requestParams = {}) => {
-  init()
+  await init()
   if (options.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {
     columns.value.unshift({
       title: options.value.indexLabel, dataIndex: '__index',
@@ -404,8 +406,11 @@ const requestData = async (requestParams = {}) => {
       align: options.value.operationColumnAlign, fixed: options.value.operationColumnFixed
     })
   }
+
   initRequestParams()
-  await refresh()
+  // if (! options.value.tabs?.dataIndex && ! options.value.tabs.data) {
+    await refresh()
+  // }
 }
 
 const initRequestParams = () => {
@@ -494,14 +499,14 @@ const toggleSearch = async () => {
 
     await nextTick(() => {
       headerHeight.value = crudHeaderRef.value.offsetHeight
-      options.value.pageLayout == 'fixed' && settingFixedPage()
+      options.value.pageLayout === 'fixed' && settingFixedPage()
     })
   }
 }
 
 const settingFixedPage = () => {
   const workAreaHeight = document.querySelector('.work-area').offsetHeight
-  const tableHeight = workAreaHeight - headerHeight.value - (openPagination.value ? 152 : 108)
+  const tableHeight = workAreaHeight - headerHeight.value - (openPagination.value ? 152 : 108) - (options.value.tabs?.data?.length > 0 ? 60 : 0)
   crudContentRef.value.style.height = tableHeight + 'px'
 }
 
@@ -510,7 +515,7 @@ const tableSetting = () => {
 }
 
 const requestSuccess = async response => {
-  if (response && response.code && response.code == 200) {
+  if (response && response.code && response.code === 200) {
     options.value.dataCompleteRefresh && await refresh()
     if (reloadColumn.value) {
       reloadColumn.value = false
@@ -522,7 +527,7 @@ const requestSuccess = async response => {
 }
 
 const getIndex = (rowIndex) => {
-  if (requestParams.value[config.request.page] == 1) {
+  if (requestParams.value[config.request.page] === 1) {
     return rowIndex + 1
   } else {
     return requestParams.value[config.request.page] * requestParams.value[config.request.pageSize] + rowIndex
@@ -629,8 +634,8 @@ const handlerExpand = () => {
   expandState.value ? tableRef.value.expandAll(true) : tableRef.value.expandAll(false)
 }
 
-const handlerSort = (name, type) => {
-  const col = columns.value.find(item => name == item.dataIndex)
+const handlerSort = async (name, type) => {
+  const col = columns.value.find(item => name === item.dataIndex)
   if (col.sortable && col.sortable.sorter) {
     if (type) {
       requestParams.value.orderBy = name
@@ -639,7 +644,7 @@ const handlerSort = (name, type) => {
       requestParams.value.orderBy = undefined
       requestParams.value.orderType = undefined
     }
-    requestData()
+    await refresh()
   }
 }
 
@@ -656,10 +661,10 @@ const __summary = ({ data }) => {
       summaryData[item.dataIndex] = 0
       data.map(record => {
         if (record[item.dataIndex]) {
-          if (item.action && item.action == 'sum') {
+          if (item.action && item.action === 'sum') {
             summaryData[item.dataIndex] += parseFloat(record[item.dataIndex])
           }
-          if (item.action && item.action == 'avg') {
+          if (item.action && item.action === 'avg') {
             summaryData[item.dataIndex] += parseFloat(record[item.dataIndex]) / length
           }
         }
@@ -674,24 +679,45 @@ const __summary = ({ data }) => {
   }
 }
 
-if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {
-  nextTick( () => requestData() )
-}
-
 const resizeHandler = () => {
   headerHeight.value = crudHeaderRef.value.offsetHeight
   settingFixedPage()
 }
 
-const tabChange = (value) => {
-  console.log(value)
+const tabChange = async (value) => {
+  const searchKey = options.value.tabs?.searchKey ?? options.value.tabs?.dataIndex ?? 'tabValue'
+  const params = {}
+  params[searchKey] = value
+  requestParams.value = Object.assign(requestParams.value, params)
+  maEvent.customeEvent(options.value.tabs, value, 'onChange')
+  await refresh()
 }
 
-onMounted(() => {
+onMounted(async() => {
+  if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {
+    await requestData()
+  }
+
   if (! options.value.expandSearch && crudSearchRef.value) {
     crudSearchRef.value.setSearchHidden()
   }
-  if (options.value.pageLayout == 'fixed') {
+
+  // 处理tabs
+  const tabs = options.value.tabs
+  if ( isFunction(tabs.data) || isArray(tabs.data) ) {
+    tabs.data = isFunction(tabs.data) ? await tabs.data() : tabs.data
+  } else if (! isUndefined(tabs.dataIndex) ) {
+    const col = props.columns.find( item => item.dataIndex === tabs.dataIndex )
+    if ( col.search === true && isObject(col.dict) ) {
+      tabs.data = dicts.value[tabs.dataIndex]
+    }
+  }
+
+  console.log(tabs)
+
+  // await refresh(tabs.defaultKey)
+
+  if (options.value.pageLayout === 'fixed') {
     window.addEventListener('resize', resizeHandler, false);
     headerHeight.value = crudHeaderRef.value.offsetHeight
     settingFixedPage()
@@ -699,7 +725,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (options.value.pageLayout == 'fixed') {
+  if (options.value.pageLayout === 'fixed') {
     window.removeEventListener('resize', resizeHandler, false);
   }
 })

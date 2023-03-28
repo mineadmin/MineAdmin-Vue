@@ -108,6 +108,10 @@
       realApi: role.realDeletes, realAuth: ['system:role:realDeletes']
     },
     recovery: { show: true, api: role.recoverys, auth: ['system:role:recovery']},
+    tabs: {
+      dataIndex: 'status',
+      defaultKey: 2,
+    },
     isDbClickEdit: false,
   })
 

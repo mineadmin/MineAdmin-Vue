@@ -90,6 +90,9 @@ export default {
   // 删除后方法
   afterDelete: (response) => {},
 
+  // 组件初始化事件
+  onInit: () => {},
+
   // 列表 选项卡 参数配置项
   tabs: {
     // 选项卡类型，参考 arco 官方 tabs 的api
@@ -98,7 +101,7 @@ export default {
     trigger: 'click',
     // 指定一个字段作为选项卡，该字段的 search 必须为 true， 并且使用了字典
     dataIndex: undefined,
-    // 自定义选项卡项 [{ title: 'tab 1', value: 1, disabled: false }]，也可函数返回一个数组
+    // 自定义选项卡项 [{ label: 'tab 1', value: 1, disabled: false }]，也可函数返回一个数组
     data: undefined,
     // 默认选中的 tab，不指定则为第一个
     defaultKey: undefined,
