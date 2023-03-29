@@ -7,11 +7,13 @@
 </p>
 
 ## 简介
-`MineAdmin Vue` 是一个开源免费专门适配于 `MineAdmin` 后台权限管理系统的前端中后台模板，使用了 `vue3`, `vite3`, `pinia`, `arco design`, `javascript` 等主流开发技术，未使用`Typescript`，我们选择了简单。
+`MineAdmin Vue` 是一个开源免费专门适配于 `MineAdmin` 后台权限管理系统的前端中后台模板，使用了 `vue3`, `vite4`, `pinia`, `arco design`, `javascript` 等主流开发技术，未使用`Typescript`，我们选择了简单。
+
+在使用 MineAdmin Vue 前请认真阅读[《免责声明》](https://doc.mineadmin.com/guide/start/declaration.html)并同意该声明。
 
 ## 特性
 
-- 最新技术栈：vue3, vite3, pinia
+- 最新技术栈：vue3, vite4, pinia
 - UI库：arco design
 - 国际化：完善的多语言解决方案
 - 权限：由于适配 `MineAdmin` 系统，内置完善的权限、动/静态路由解决方案
