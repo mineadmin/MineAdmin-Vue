@@ -77,10 +77,10 @@
     },
     recovery: { show: true, api: api.recoverys, auth: ['system:api:recovery']},
     formOption: {
+      id: 'apiManage',
       width: '850px',
-      // viewType: 'drawer',
       viewType: 'tag',
-      tagId: 'apiform',
+      tagId: 'apiForm',
       tagName: '接口',
       titleDataIndex: 'name',
       layout: [
