@@ -524,7 +524,7 @@ const toggleSearch = async () => {
 
 const settingFixedPage = () => {
   const workAreaHeight = document.querySelector('.work-area').offsetHeight
-  const tableHeight = workAreaHeight - headerHeight.value - (openPagination.value ? 152 : 108) - (options.value.tabs?.data?.length > 0 ? 60 : 0)
+  const tableHeight = workAreaHeight - headerHeight.value - (openPagination.value ? 152 : 108)
   crudContentRef.value.style.height = tableHeight + 'px'
 }
 
@@ -724,13 +724,11 @@ onMounted(async() => {
   const tabs = options.value.tabs
   if ( isFunction(tabs.data) || isArray(tabs.data) ) {
     tabs.data = isFunction(tabs.data) ? await tabs.data() : tabs.data
-    await tabChange(tabs.defaultKey)
   } else if (! isUndefined(tabs.dataIndex) ) {
     const col = props.columns.find( item => item.dataIndex === tabs.dataIndex )
     if ( col.search === true && isObject(col.dict) ) {
       tabs.data = dicts.value[tabs.dataIndex]
     }
-    await tabChange(tabs.defaultKey)
   }
 
   if (options.value.pageLayout === 'fixed') {
