@@ -105,7 +105,7 @@ export default {
     dataIndex: undefined,
     // 自定义选项卡项 [{ label: 'tab 1', value: 1, disabled: false }]，也可函数返回一个数组
     data: undefined,
-    // 默认选中的 tab，不指定则为第一个
+    // 默认选中的 tab
     defaultKey: undefined,
     // 切换选项卡时，请求后台数据的参数名
     searchKey: undefined,
