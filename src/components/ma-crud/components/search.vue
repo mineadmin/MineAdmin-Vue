@@ -78,7 +78,7 @@ provide('columns', columns)
 const emit = defineEmits(['search'])
 
 if (columns.length > 0) {
-  searchColumns.value = cloneDeep(columns.filter( item => item.search === true ))
+  searchColumns.value = cloneDeep(columns.filter( item => item.search === true && ( options.tabs?.dataIndex != item.dataIndex ) ))
 }
 
 const handlerSearch = () => {

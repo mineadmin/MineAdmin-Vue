@@ -30,8 +30,9 @@
 import { ref, toRaw, getCurrentInstance, inject, provide } from 'vue'
 import { Message } from '@arco-design/web-vue'
 import { containerItems } from '@cps/ma-form/js/utils'
-import {isArray, isFunction, get, cloneDeep, isUndefined} from 'lodash'
+import { isArray, isFunction, get, cloneDeep, isUndefined } from 'lodash'
 import { useRouter } from 'vue-router'
+import tool from '@/utils/tool'
 import { useFormStore } from '@/store/index'
 
 const formStore = useFormStore()
@@ -72,6 +73,8 @@ const submit = async () => {
     Message.success(response.message || `${actionTitle.value}成功！`)
     emit('success', response)
     return true
+  } else {
+    return false
   }
 }
 const open = () => {
@@ -89,12 +92,26 @@ const open = () => {
     }
     const config = {
       options,
-      data: cloneDeep(form.value),
       formColumns: formColumns.value
     }
-    formStore.formList[options.formOption.tagId +'_'+ currentAction.value] = config
+    formStore.crudList[options.id] = false
+    formStore.formList[options.formOption.tagId] = {
+      config,
+      addData: {},
+      editData: {},
+    }
+    const queryParams = {
+      tagId: options.formOption.tagId,
+      op: currentAction.value,
+    }
+    if (currentAction.value === 'add') {
+      formStore.formList[options.formOption.tagId].addData = cloneDeep(form.value)
+    } else {
+      queryParams.key = form.value[options.formOption?.titleDataIndex ?? ''] ?? form.value[options.pk]
+      formStore.formList[options.formOption.tagId].editData[queryParams.key] = cloneDeep(form.value)
+    }
     form.value = {}
-    router.push('/openForm/' + options.formOption.tagId +'?tagId=' + options.formOption.tagId + '_' + currentAction.value + '&op=' + currentAction.value)
+    router.push(`/openForm/${options.formOption.tagId}` + tool.httpBuild(queryParams, true))
   } else {
     componentName.value = options.formOption.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
     dataVisible.value = true
@@ -151,7 +168,7 @@ const columnItemHandle = async (item) => {
   formColumns.value.push(item)
 
   // 针对带点的数据处理
-  if (item.dataIndex.indexOf('.') > -1) {
+  if (item.dataIndex && item.dataIndex.indexOf('.') > -1) {
     form.value[item.dataIndex] = get(form.value, item.dataIndex)
   }
 

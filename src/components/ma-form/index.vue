@@ -187,6 +187,7 @@ maEvent.handleCommonEvent(options.value, 'onCreated')
 onMounted(() => {
   maEvent.handleCommonEvent(options.value, 'onMounted')
   options.value.init && init()
+  maEvent.handleCommonEvent(options.value, 'onInit')
 })
 
 const done = (status) => formLoading.value = status
@@ -205,13 +206,64 @@ const clearValidate = async() => await maFormRef.value.clearValidate()
 const formSubmit = async () =>  (await validateForm() && !formLoading.value ) || emit('onSubmit', form.value, done)
 
 const getFormRef = () => maFormRef.value
-const getDictlist = () => dictList.value
+const getDictList = () => dictList.value
+const getDictService = () => {
+  const DictService = function (dictList) {
+    /**
+     * dict项服务类
+     * @param dataIndex
+     * @param dictData
+     * @constructor
+     */
+    const DictItemService = function (dataIndex, dictData) {
+      this.dict = dictData
+      this.dataIndex = dataIndex
+
+      /**
+       * 返回原DictData对象
+       * @returns {*}
+       */
+      this.getRawDictData = () => {
+        return this.dict
+      }
+      /**
+       * 追加
+       * @param label
+       * @param value
+       * @param extend
+       */
+      this.append = (label, value, extend = {}) => {
+        this.getRawDictData().push(Object.assign({
+          label: label,
+          value: value,
+        }, extend))
+      }
+      /**
+       * 重新加载dict
+       * @param dictConfig
+       * @returns {Promise<void>}
+       */
+      this.loadDict = (dictConfig) => {
+        return loadDict(dictList, {formType: "select", dict: dictConfig, dataIndex: this.dataIndex})
+      }
+    }
+
+    this.dictMap = new Map()
+    for (const [dataIndex, dictData] of Object.entries(dictList)) {
+      this.dictMap.set(dataIndex, new DictItemService(dataIndex, dictData))
+    }
+    this.get = (key) => {
+      return this.dictMap.get(key)
+    }
+  }
+  return new DictService(getDictList())
+}
 const getColumns = () => flatteningColumns.value
 const getCascaderList = () => cascaderList.value
 const getFormData = () => form.value
 
 defineExpose({
-  init, getFormRef, getColumns, getDictlist, getCascaderList, getFormData,
+  init, getFormRef, getColumns, getDictList, getDictService, getCascaderList, getFormData,
   validateForm, resetForm, clearValidate
 })
 </script>

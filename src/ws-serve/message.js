@@ -11,7 +11,7 @@ class Message {
 
   constructor() {
     this.ws = new Wsocket(
-      import.meta.env.VITE_APP_WS_URL + '?token=' + tool.local.get('token'), {
+      import.meta.env.VITE_APP_WS_URL + '?token=' + tool.local.get(import.meta.env.VITE_APP_TOKEN_PREFIX), {
         onOpen:  _ => { console.log('已成功连接到消息服务器...') },
         onError: _ => {
           this.ws = undefined
