@@ -123,6 +123,8 @@ export default {
     tagId: '',
     // 只有 viewType 为 tag 时生效，tag标题名称
     tagName: '',
+    // tag页设置标签标题的字段名称
+    titleDataIndex: undefined,
     // 显示宽度
     width: 600,
     // 是否全屏，只有modal有效
