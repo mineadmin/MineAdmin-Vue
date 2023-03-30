@@ -427,7 +427,7 @@ const requestData = async (requestParams = {}) => {
   if (! options.value.tabs?.dataIndex && ! options.value.tabs.data) {
     await refresh()
   } else {
-    ! isUndefined(options.value.tabs?.defaultKey) && await tabChange(options.value.tabs.defaultKey)
+    await tabChange(options.value.tabs?.defaultKey ?? undefined)
   }
 }
 
