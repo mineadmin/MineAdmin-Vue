@@ -154,7 +154,6 @@ const columns = reactive([
     title: "问答标签",
     dataIndex: "tags",
     formType: "input-tag",
-    search: true,
     hide: true,
     extra: '按下 Enter 键，代表一个标签'
   },
