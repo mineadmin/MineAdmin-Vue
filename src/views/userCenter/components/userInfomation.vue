@@ -50,6 +50,5 @@
       userStore.user = data.values
       return
     }
-    Message.error(response.message)
   }
 </script>
