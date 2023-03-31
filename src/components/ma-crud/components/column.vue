@@ -236,7 +236,7 @@ const editAction = record => {
 
 const recoveryAction = async record => {
   const response = await options.recovery.api({ ids: [record[options.pk]] })
-  Message.success(response.message || `恢复成功！`)
+  response.success && Message.success(response.message || `恢复成功！`)
   emit('refresh')
 }
 
@@ -250,7 +250,7 @@ const deleteAction = async record => {
   if (options.afterDelete && isFunction(options.afterDelete)) {
     options.afterDelete(response, record)
   }
-  Message.success(response.message || `删除成功！`)
+  response.success && Message.success(response.message || `删除成功！`)
   emit('refresh')
 }
 
