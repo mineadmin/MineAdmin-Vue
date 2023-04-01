@@ -193,6 +193,7 @@ const columnItemHandle = async (item) => {
   item.display = formItemShow(item)
   item.disabled = formItemDisabled(item)
   item.readonly = formItemReadonly(item)
+  item.labelWidth = formItemLabelWidth(item)
   item.rules = getRules(item)
 }
 const settingFormLayout = (layout) => {
@@ -301,6 +302,9 @@ const formItemReadonly = (item) => {
     }
     return false
   }
+}
+const formItemLabelWidth = (item) => {
+  return item.labelWidth ?? options.labelWidth ?? undefined
 }
 
 const toRules = (rules) => {
