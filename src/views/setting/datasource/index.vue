@@ -38,7 +38,7 @@ const options = reactive({
   operationColumn: true,
   operationWidth: 180,
   searchLabelWidth: '100px',
-  labelWidth: '130px',
+  labelWidth: '120px',
   searchColNumber: 2,
   formOption: {
     viewType: 'modal',
@@ -88,7 +88,7 @@ const columns = reactive([
   },
   {
     title: "数据源名称",
-    dataIndex: "name",
+    dataIndex: "source_name",
     formType: "input",
     search: true,
     commonRules: {
@@ -97,48 +97,19 @@ const columns = reactive([
     }
   },
   {
-    title: "数据库驱动",
-    dataIndex: "db_driver",
-    formType: "select",
+    title: "DSN连接串",
+    dataIndex: "dsn",
+    formType: "textarea",
     commonRules: {
       required: true,
-      message: "请选择数据库驱动"
+      message: "请输入DSN连接串"
     },
-    dict: {
-      data: [ { label: 'Mysql', value: 'mysql' } ]
-    },
-  },
-  {
-    title: "数据库地址",
-    dataIndex: "db_host",
-    formType: "input",
-    commonRules: {
-      required: true,
-      message: "请选择数据库驱动"
-    },
-  },
-  {
-    title: "数据库端口",
-    dataIndex: "db_port",
-    formType: "input",
-    commonRules: {
-      required: true,
-      message: "请输入数据库驱动"
-    },
-    addDefaultValue: '3306'
-  },
-  {
-    title: "数据库名称",
-    dataIndex: "db_name",
-    formType: "input",
-    commonRules: {
-      required: true,
-      message: "请输入数据库名称"
-    },
+    addDefaultValue: 'mysql:host=数据库地址;dbname=数据库名称;port=3306;charset=utf8mb4',
+    extra: '例如，mysql:host=myhost;dbname=mydb;port=3306'
   },
   {
     title: "数据库用户",
-    dataIndex: "db_user",
+    dataIndex: "username",
     formType: "input",
     commonRules: {
       required: true,
@@ -148,35 +119,9 @@ const columns = reactive([
   },
   {
     title: "数据库密码",
-    dataIndex: "db_pass",
+    dataIndex: "password",
     formType: "input-password",
     hide: true,
-  },
-  {
-    title: "数据库字符集",
-    dataIndex: "db_charset",
-    formType: "select",
-    dict: {
-      data: [ { label: 'utf8mb4', value: 'utf8mb4'} ]
-    },
-    commonRules: {
-      required: true,
-      message: "请选择数据库字符集"
-    },
-    addDefaultValue: 'utf8mb4'
-  },
-  {
-    title: "数据库字符序",
-    dataIndex: "db_collation",
-    formType: "select",
-    dict: {
-      data: collationData,
-    },
-    commonRules: {
-      required: true,
-      message: "请选择数据库字符序"
-    },
-    addDefaultValue: 'utf8mb4_unicode_ci'
   },
   {
     title: "创建者",
@@ -200,7 +145,6 @@ const columns = reactive([
     formType: "date",
     addDisplay: false,
     editDisplay: false,
-    hide: true,
     showTime: true
   },
   {

@@ -115,4 +115,16 @@ export default {
     })
   },
 
+  /**
+   * 获取某数据源的表
+   * @returns
+   */
+  getDataSourceTablePageList (params = {}) {
+    return request({
+      url: 'setting/datasource/getDataSourceTablePageList',
+      method: 'get',
+      params
+    })
+  },
+
 }

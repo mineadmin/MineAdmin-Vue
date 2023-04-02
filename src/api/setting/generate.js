@@ -102,7 +102,7 @@ export default {
     })
   },
 
-  // 获取表中字段信息
+  // 获取数据源列表
   getDataSourceList(params = {}) {
     return request({
       url: 'setting/code/getDataSourceList',
