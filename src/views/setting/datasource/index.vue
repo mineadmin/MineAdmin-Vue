@@ -2,6 +2,9 @@
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
     <ma-crud :options="options" :columns="columns" ref="crudRef">
+      <template #operationBeforeExtend="{ record }">
+        <a-link @click="testLinkDataSource(record)"><icon-link /> 测试连接</a-link>
+      </template>
     </ma-crud>
   </div>
 </template>
@@ -9,10 +12,22 @@
 import { ref, reactive } from 'vue'
 import datasource from '@/api/setting/datasource'
 import { Message } from '@arco-design/web-vue'
-import tool from '@/utils/tool'
-import * as common from '@/utils/common'
 
 const crudRef = ref()
+
+const testLinkDataSource = async (record) => {
+  Message.info('测试连接中，请稍等...')
+  const response = await datasource.testLink({ id: record.id })
+  if (response.success) {
+    Message.success('数据源连接成功');
+  }
+}
+
+const collationData = reactive([
+  { label: 'utf8mb4_bin', value: 'utf8mb4_bin' },
+  { label: 'utf8mb4_general_ci', value: 'utf8mb4_general_ci' },
+  { label: 'utf8mb4_unicode_ci', value: 'utf8mb4_unicode_ci' },
+])
 
 const options = reactive({
   id: 'setting_datasource',
@@ -21,7 +36,7 @@ const options = reactive({
   },
   pk: 'id',
   operationColumn: true,
-  operationWidth: 130,
+  operationWidth: 180,
   searchLabelWidth: '100px',
   labelWidth: '130px',
   searchColNumber: 2,
@@ -82,40 +97,86 @@ const columns = reactive([
     }
   },
   {
+    title: "数据库驱动",
+    dataIndex: "db_driver",
+    formType: "select",
+    commonRules: {
+      required: true,
+      message: "请选择数据库驱动"
+    },
+    dict: {
+      data: [ { label: 'Mysql', value: 'mysql' } ]
+    },
+  },
+  {
     title: "数据库地址",
     dataIndex: "db_host",
     formType: "input",
+    commonRules: {
+      required: true,
+      message: "请选择数据库驱动"
+    },
   },
   {
     title: "数据库端口",
     dataIndex: "db_port",
     formType: "input",
+    commonRules: {
+      required: true,
+      message: "请输入数据库驱动"
+    },
+    addDefaultValue: '3306'
   },
   {
     title: "数据库名称",
     dataIndex: "db_name",
     formType: "input",
+    commonRules: {
+      required: true,
+      message: "请输入数据库名称"
+    },
   },
   {
     title: "数据库用户",
     dataIndex: "db_user",
     formType: "input",
+    commonRules: {
+      required: true,
+      message: "请输入数据库用户"
+    },
+    addDefaultValue: 'root',
   },
   {
     title: "数据库密码",
     dataIndex: "db_pass",
-    formType: "input",
+    formType: "input-password",
     hide: true,
   },
   {
     title: "数据库字符集",
     dataIndex: "db_charset",
-    formType: "input",
+    formType: "select",
+    dict: {
+      data: [ { label: 'utf8mb4', value: 'utf8mb4'} ]
+    },
+    commonRules: {
+      required: true,
+      message: "请选择数据库字符集"
+    },
+    addDefaultValue: 'utf8mb4'
   },
   {
     title: "数据库字符序",
     dataIndex: "db_collation",
-    formType: "input",
+    formType: "select",
+    dict: {
+      data: collationData,
+    },
+    commonRules: {
+      required: true,
+      message: "请选择数据库字符序"
+    },
+    addDefaultValue: 'utf8mb4_unicode_ci'
   },
   {
     title: "创建者",
@@ -154,9 +215,7 @@ const columns = reactive([
   {
     title: "备注",
     dataIndex: "remark",
-    formType: "input",
-    addDisplay: false,
-    editDisplay: false,
+    formType: "textarea",
     hide: true
   }
 ])

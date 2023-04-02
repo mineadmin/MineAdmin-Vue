@@ -103,5 +103,16 @@ export default {
     })
   },
 
+  /**
+   * 测试数据库连接
+   * @returns
+   */
+  testLink (data = {}) {
+    return request({
+      url: 'setting/datasource/testLink',
+      method: 'post',
+      data
+    })
+  },
 
 }

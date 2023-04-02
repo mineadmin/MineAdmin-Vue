@@ -102,6 +102,15 @@ export default {
     })
   },
 
+  // 获取表中字段信息
+  getDataSourceList(params = {}) {
+    return request({
+      url: 'setting/code/getDataSourceList',
+      method: 'get',
+      params
+    })
+  },
+
   // 获取所有模型
   getModels() {
     return request({

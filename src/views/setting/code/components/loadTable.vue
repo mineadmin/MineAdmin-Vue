@@ -11,7 +11,14 @@
   <a-modal width="1000px" v-model:visible="visible" :on-before-ok="loadTable" :align-center="false" top="50px">
     <template #title>装载数据表</template>
     <!-- CRUD 组件 -->
-    <ma-crud :options="crud" :columns="columns" ref="crudRef" @selection-change="handlerSelection"></ma-crud>
+    <ma-crud :options="crud" :columns="columns" ref="crudRef" @selection-change="handlerSelection">
+      <template #tableButtons>
+        <a-input-group>
+          <a-select placeholder="切换数据源" :options="dataSourceList"></a-select>
+          <a-button type="primary">确定切换</a-button>
+        </a-input-group>
+      </template>
+    </ma-crud>
   </a-modal>
 </template>
 
@@ -25,6 +32,12 @@
   const selecteds = ref([])
   const visible = ref(false)
   const emit = defineEmits(['success'])
+
+  const dataSourceList = ref([])
+
+  generate.getDataSourceList().then(res => {
+    dataSourceList.value = res.data.items
+  })
 
   const loadTable = async (done) => {
     if (selecteds.value.length < 1) {
