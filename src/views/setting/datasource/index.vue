@@ -81,10 +81,6 @@ const columns = reactive([
     addDisplay: false,
     editDisplay: false,
     hide: true,
-    commonRules: {
-      required: true,
-      message: "请输入主键"
-    }
   },
   {
     title: "数据源名称",
@@ -94,7 +90,8 @@ const columns = reactive([
     commonRules: {
       required: true,
       message: "请输入数据源名称"
-    }
+    },
+    width: 120,
   },
   {
     title: "DSN连接串",
@@ -104,6 +101,7 @@ const columns = reactive([
       required: true,
       message: "请输入DSN连接串"
     },
+    width: 350,
     addDefaultValue: 'mysql:host=数据库地址;dbname=数据库名称;port=3306;charset=utf8mb4',
     extra: '例如，mysql:host=myhost;dbname=mydb;port=3306'
   },
@@ -115,6 +113,7 @@ const columns = reactive([
       required: true,
       message: "请输入数据库用户"
     },
+    width: 120,
     addDefaultValue: 'root',
   },
   {
@@ -145,7 +144,8 @@ const columns = reactive([
     formType: "date",
     addDisplay: false,
     editDisplay: false,
-    showTime: true
+    showTime: true,
+    width: 180,
   },
   {
     title: "更新时间",
