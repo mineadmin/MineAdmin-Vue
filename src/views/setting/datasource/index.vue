@@ -1,9 +1,14 @@
 <template>
-  <div class="ma-content-block lg:flex justify-between p-4">
+  <div class="ma-content-block p-4">
     <!-- CRUD 组件 -->
     <ma-crud :options="options" :columns="columns" ref="crudRef">
       <template #operationBeforeExtend="{ record }">
         <a-link @click="testLinkDataSource(record)"><icon-link /> 测试连接</a-link>
+      </template>
+      <template #tools>
+        <a-tooltip content="目前仅支持 Mysql 数据库">
+          <a-button shape="circle"><icon-question-circle /></a-button>
+        </a-tooltip>
       </template>
     </ma-crud>
   </div>
