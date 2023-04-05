@@ -43,6 +43,7 @@ const props = defineProps({
   returnType: { type: String, default: 'url' },
   fileType: { type: String, default: 'button' },
   showList: { type: Boolean, default: true },
+  requestData: { type: Object, default: {} },
 })
 
 if (! ['id', 'url', 'hash'].includes(props.returnType)) {

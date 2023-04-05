@@ -88,8 +88,8 @@
 import { ref, inject, watch } from 'vue'
 import commonApi from '@/api/common'
 import tool from '@/utils/tool'
-import { isArray, isString, isEmpty } from 'lodash'
-import { getFileUrl, uploadRequest } from '../js/utils'
+import { isArray } from 'lodash'
+import { getFileUrl } from '../js/utils'
 import { Message } from '@arco-design/web-vue'
 import file2md5 from 'file2md5'
 
@@ -159,6 +159,9 @@ const chunkUpload = async (options) => {
       dataForm.append('size', file.size)
       dataForm.append('index', currentChunk + 1)
       dataForm.append('ext', /[^.]+$/g.exec(file.name)[0])
+      for (let name in config.requestData) {
+        dataForm.append(name, config.requestData[name])
+      }
       const res = await commonApi.chunkUpload(dataForm)
 
       if (res.data && res.data.hash) {
