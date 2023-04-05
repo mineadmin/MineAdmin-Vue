@@ -32,6 +32,7 @@
         :returnType="props.component.returnType"
         :fileType="props.component.fileType"
         :showList="props.component.showList"
+        :requestData="props.component.requestData"
       >
       </ma-upload>
     </slot>

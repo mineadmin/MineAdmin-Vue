@@ -67,9 +67,8 @@
 </template>
 <script setup>
 import { ref, inject, watch } from 'vue'
-import commonApi from '@/api/common'
 import tool from '@/utils/tool'
-import { isArray, isString, isEmpty } from 'lodash'
+import { isArray } from 'lodash'
 import { getFileUrl, uploadRequest } from '../js/utils'
 import { Message } from '@arco-design/web-vue'
 
@@ -116,7 +115,7 @@ const uploadFileHandler = async (options) => {
     return
   }
   
-  const result = await uploadRequest(file, 'file', 'uploadFile')
+  const result = await uploadRequest(file, 'file', 'uploadFile', config.requestData)
 
   if (result) {
     result.url = tool.attachUrl(result.url, storageMode[result.storage_mode])
