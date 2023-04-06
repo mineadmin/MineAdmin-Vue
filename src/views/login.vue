@@ -10,9 +10,15 @@
 <script setup>
   import { reactive, ref, onMounted } from 'vue'
   import verifyCode from '@cps/ma-verifyCode/index.vue'
-  import { Message } from '@arco-design/web-vue'
   import { useUserStore } from '@/store'
   import { useRouter, useRoute } from 'vue-router'
+  import { request } from '@/utils/request'
+
+  request({
+    url: 'system/getBingBackgroundImage', timeout: 10000, method: 'get'
+  }).then( res => {
+    document.getElementById('login-container').style.backgroundImage = `url(${res.data.url})`
+  })
 
   const router = useRouter()
   const route  = useRoute()
@@ -42,7 +48,7 @@
   }
 </script>
 <template>
-  <div class="login-container">
+  <div class="login-container" id="login-container">
     <div class="login-width mx-auto flex justify-between h-full items-center">
       <div class="w-6/12 mx-auto left-panel rounded-l pl-5 pr-5 hidden md:block bg-blue-50">
         <div class="logo"><img src="/logo.svg" width="45"><span>{{ $title }}</span></div>
@@ -129,7 +135,6 @@
   width: 100%;
   height: 100%;
   position: absolute;
-  background-image: url(@/assets/BingWallpaper.jpg);
   background-size: cover;
 
   .login-width {
