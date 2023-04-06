@@ -86,7 +86,7 @@ import { ref, reactive, watch } from 'vue'
 import { useAppStore, useUserStore } from '@/store'
 import { Message } from '@arco-design/web-vue'
 import user from '@/api/system/user'
-import Skin from './skin.vue'
+import Skin from './components/components/skin.vue'
 import skins from '@/config/skins'
 import { useI18n } from 'vue-i18n'
 import { ColorPicker } from 'vue-color-kit'
@@ -155,7 +155,7 @@ const save = async (done) => {
     i18n: appStore.i18n,
     language: appStore.language,
     animation: appStore.animation,
-    color: appStore.color
+    color: appStore.color,
   }
 
   user.updateInfo({ id: userStore.user.id, backend_setting: data }).then(res => {
