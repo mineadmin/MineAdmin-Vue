@@ -93,11 +93,11 @@
       }
     })
     names.map(item => {
+      if (newComment.value[item.sourceName]) {
+        item.comment = newComment.value[item.sourceName]
+      }
       if (newName.value[item.name]) {
         item.name = newName.value[item.name]
-      }
-      if (newComment.value[item.name]) {
-        item.comment = newComment.value[item.name]
       }
     })
     const response = await generate.loadTable({ source: sourceName.value, names })
@@ -111,7 +111,7 @@
   const open = () => {
     visible.value = true
     nextTick(() => {
-      crudRef.value.requestData()
+      switchSource()
     })
   }
 
