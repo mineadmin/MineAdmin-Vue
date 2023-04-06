@@ -64,7 +64,7 @@
 <script setup>
 import { ref, inject, onMounted, nextTick, watch } from 'vue'
 import MaFormItem from './form-item.vue'
-import {get, isNull, isUndefined, set} from 'lodash'
+import { get, isUndefined, set } from 'lodash'
 import { maEvent } from '../js/formItemMixin.js'
 import { handlerCascader } from '../js/networkRequest.js'
 
@@ -85,9 +85,9 @@ const value = ref(get(formModel.value, index, ''))
 watch( () => get(formModel.value, index), vl => value.value = vl )
 watch( () => value.value, v => set(formModel.value, index, v) )
 
-if (value.value == '') {
+if (value.value === '') {
   value.value = undefined
-} else if (value.value && props.component.dict && (props.component.dict.name || props.component.dict.data) && !props.component.multiple) {
+} else if (! isUndefined(value.value) && props.component.dict && (props.component.dict.name || props.component.dict.data) && !props.component.multiple) {
   value.value = value.value + ''
 }
 
