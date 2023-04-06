@@ -16,29 +16,32 @@
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
       <a-input-tag
         v-model="value"
+        :input-value="props.component.inputValue"
         :size="props.component.size"
         :allow-clear="props.component.allowClear ?? true"
         :disabled="props.component.disabled"
         :readonly="props.component.readonly"
-        :read-only="props.component.readonly"
         :error="props.component.error"
         :placeholder="props.component.placeholder ?? `请输入${props.component.title}`"
-        :max-length="props.component.maxLength"
-        :show-word-limit="props.component.showWordLimit"
-        :word-length="props.component.wordLength"
-        :word-slice="props.component.wordSlice"
-        :invisible-button="props.component.invisibleButton"
-        :search-button="props.component.searchButton"
-        :loading="props.component.invisibleButton"
-        :button-text="props.component.buttonText"
-        @input="maEvent.handleInputEvent(props.component, $event)"
+        :max-tag-count="props.component.maxTagCount"
+        :retain-input-value="props.component.retainInputValue"
+        :format-tag="props.component.formatTag"
+        :unique-value="props.component.uniqueValue"
+        :field-names="props.component.fieldNames"
+        @input-value-change="maEvent.customeEvent(props.component, $event, 'onInputValueChange')"
         @change="maEvent.handleChangeEvent(props.component, $event)"
-        @press-enter="maEvent.handleCommonEvent(props.component, 'onPressEnter')"
+        @remove="maEvent.customeEvent(props.component, $event, 'onRemove')"
+        @press-enter="maEvent.customeEvent(props.component, $event, 'onPressEnter')"
         @clear="maEvent.handleCommonEvent(props.component, 'onClear')"
         @focus="maEvent.handleCommonEvent(props.component, 'onFocus')"
         @blur="maEvent.handleCommonEvent(props.component, 'onBlur')"
-        @search="maEvent.handleInputSearchEvent(props.component, $event)"
       >
+        <template #suffix v-if="props.component.openSuffix">
+          <slot :name="`inputSuffix-${props.component.dataIndex}`" />
+        </template>
+        <template #prefix v-if="props.component.openPrefix">
+          <slot :name="`inputPrefix-${props.component.dataIndex}`" />
+        </template>
       </a-input-tag>
     </slot>
   </ma-form-item>
@@ -46,7 +49,7 @@
 
 <script setup>
 import { ref, inject, onMounted, watch } from 'vue'
-import { get, set } from 'lodash'
+import { get, set, toNumber } from 'lodash'
 import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
 const props = defineProps({
@@ -56,9 +59,9 @@ const props = defineProps({
 
 const formModel = inject('formModel')
 const index = props.customField ?? props.component.dataIndex
-const value = ref(get(formModel.value, index))
+const value = ref(toNumber(get(formModel.value, index)))
 
-watch( () => get(formModel.value, index), vl => value.value = vl )
+watch( () => get(formModel.value, index), vl => value.value = toNumber(vl) )
 watch( () => value.value, v => set(formModel.value, index, v) )
 
 maEvent.handleCommonEvent(props.component, 'onCreated')

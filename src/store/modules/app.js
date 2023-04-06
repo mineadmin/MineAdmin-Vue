@@ -9,6 +9,7 @@ let defaultSetting = {
   language: 'zh_CN',
   animation: 'ma-slide-down',
   color: '#165dff',
+  settingOpen: false,
 }
 
 import { defineStore } from 'pinia'

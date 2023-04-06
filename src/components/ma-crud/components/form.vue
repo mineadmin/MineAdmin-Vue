@@ -176,7 +176,7 @@ const columnItemHandle = async (item) => {
   if (currentAction.value === 'add') {
     if (item.addDefaultValue && isFunction(item.addDefaultValue)) {
       form.value[item.dataIndex] = await item.addDefaultValue(form.value)
-    } else if (item.addDefaultValue) {
+    } else if (typeof item.addDefaultValue != 'undefined') {
       form.value[item.dataIndex] = item.addDefaultValue
     }
   }
@@ -193,6 +193,7 @@ const columnItemHandle = async (item) => {
   item.display = formItemShow(item)
   item.disabled = formItemDisabled(item)
   item.readonly = formItemReadonly(item)
+  item.labelWidth = formItemLabelWidth(item)
   item.rules = getRules(item)
 }
 const settingFormLayout = (layout) => {
@@ -301,6 +302,9 @@ const formItemReadonly = (item) => {
     }
     return false
   }
+}
+const formItemLabelWidth = (item) => {
+  return item.labelWidth ?? options.labelWidth ?? undefined
 }
 
 const toRules = (rules) => {
