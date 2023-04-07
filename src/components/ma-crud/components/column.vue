@@ -137,7 +137,7 @@
               {{ get(record, row.dataIndex) }}
             </template>
             <template v-else-if="row.formType === 'upload'">
-              <a-link @click="imageSee(row, record)"><icon-image /> 查看图片</a-link>
+              <a-link @click="imageSee(row, record, row.dataIndex)"><icon-image /> 查看图片</a-link>
             </template>
             <template v-else>{{ record[row.dataIndex] }}</template>
           </slot>
@@ -169,11 +169,11 @@ const requestParams = inject('requestParams')
 const dictTrans = inject('dictTrans')
 const dictColors = inject('dictColors')
 
-const imageSee = async (row, record) => {
+const imageSee = async (row, record, dataIndex) => {
   if (row.returnType) {
 
     if (row.returnType == 'url') {
-      emit('showImage', record.url)
+      emit('showImage', record[dataIndex])
       return
     }
 
