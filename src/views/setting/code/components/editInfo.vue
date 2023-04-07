@@ -164,11 +164,12 @@
                     field="component_type"
                     label-col-flex="auto"
                     :label-col-style="{ width: '100px' }"
-                    extra="设置新增和修改组件显示方式"
+                    extra="设置新增和修改组件显示方式，Tag页表示新打开的一个标签来显示新增和编辑"
                   >
                     <a-radio-group v-model:model-value="form.component_type" type="button">
                       <a-radio :value="1">模态框</a-radio>
                       <a-radio :value="2">抽屉</a-radio>
+                      <a-radio :value="3">Tag页</a-radio>
                     </a-radio-group>
                   </a-form-item>
                 </a-col>
@@ -189,7 +190,7 @@
                 </a-col>
               </a-row>
               <div v-if="form.type === 'tree'">
-                <a-divider orientation="left">其他信息</a-divider>
+                <a-divider orientation="left">树表配置</a-divider>
                 <a-row :gutter="24">
                   <a-col :xs="24" :md="8" :xl="8">
                     <a-form-item
@@ -272,6 +273,63 @@
                           :label="item.column_name + ' - ' + item.column_comment"
                           :value="item.column_name"
                           :key="index"
+                        >
+                          <div class="flex justify-between w-full">
+                            <span>{{ item.column_name }}</span>
+                            <span>{{ item.column_comment }}</span>
+                          </div>
+                        </a-option>
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                </a-row>
+              </div>
+              <div v-if="form.component_type === 3">
+                <a-divider orientation="left">Tag页配置</a-divider>
+                <a-row :gutter="24">
+                  <a-col :xs="24" :md="8" :xl="8">
+                    <a-form-item
+                        label="标签页ID"
+                        field="tag_id"
+                        label-col-flex="auto"
+                        :label-col-style="{ width: '100px' }"
+                        extra="指定标签页的ID，要保证全局唯一性"
+                    >
+                      <a-input v-model="formOptions.tag_id" placeholder="请输入标签页ID" ></a-input>
+                    </a-form-item>
+                  </a-col>
+                  <a-col :xs="24" :md="8" :xl="8">
+                    <a-form-item
+                        label="标签页名称"
+                        field="tag_name"
+                        label-col-flex="auto"
+                        :label-col-style="{ width: '100px' }"
+                        extra="指定标签的显示内容，注意：在打开标签后，会在标签前面加上新增或编辑"
+                    >
+                      <a-input v-model="formOptions.tag_name" placeholder="请输入标签页名称" ></a-input>
+                    </a-form-item>
+                  </a-col>
+                  <a-col :xs="24" :md="8" :xl="8">
+                    <a-form-item
+                        label="标签显示字段"
+                        field="tag_view_name"
+                        label-col-flex="auto"
+                        :label-col-style="{ width: '120px' }"
+                        extra="在标签后面显示某个字段的值，一般指定 title 或者 name 等字段"
+                    >
+                      <a-select
+                          style="width: 100%"
+                          v-model="formOptions.tag_view_name"
+                          allow-clear
+                          allow-search
+                          placeholder="请选择标签显示字段"
+                      >
+                        <a-option
+                            class="w-full"
+                            v-for="(item, index) in form.columns"
+                            :label="item.column_name + ' - ' + item.column_comment"
+                            :value="item.column_name"
+                            :key="index"
                         >
                           <div class="flex justify-between w-full">
                             <span>{{ item.column_name }}</span>

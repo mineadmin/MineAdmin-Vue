@@ -22,15 +22,8 @@
       >
         <template v-for="(col, colIndex) in (row.cols ?? [])" :key="colIndex">
           <ma-table-cell :component="col">
-            <template v-for="(component, componentIndex) in (col.formList ?? [])" :key="componentIndex">
-              <component
-                :is="getComponentName(component?.formType ?? 'input')"
-                :component="component"
-              >
-                <template v-for="slot in Object.keys($slots)" #[slot]="component">
-                  <slot :name="slot" v-bind="component" />
-                </template>
-              </component>
+            <template v-for="slot in Object.keys($slots)" #[slot]="component">
+              <slot :name="slot" v-bind="component" />
             </template>
           </ma-table-cell>
         </template>
@@ -42,7 +35,6 @@
 <script setup>
 import { onMounted } from 'vue'
 import MaTableCell from './table-cell.vue'
-import { getComponentName } from '../js/utils.js'
 import { maEvent } from '../js/formItemMixin.js'
 const props = defineProps({ component: Object })
 

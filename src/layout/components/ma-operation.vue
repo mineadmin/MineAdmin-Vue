@@ -2,13 +2,13 @@
   <div class="mr-2 flex justify-end lg:justify-between w-full lg:w-auto">
     <a-space class="mr-0 lg:mr-5" size="medium">
 
-      <!-- <a-tooltip :content="$t('sys.search')">
-        <a-button :shape="'circle'" class="hidden lg:inline">
-          <template #icon>
-            <icon-search />
-          </template>
-        </a-button>
-      </a-tooltip> -->
+<!--      <a-tooltip :content="$t('sys.search')">-->
+<!--        <a-button :shape="'circle'" class="hidden lg:inline">-->
+<!--          <template #icon>-->
+<!--            <icon-search />-->
+<!--          </template>-->
+<!--        </a-button>-->
+<!--      </a-tooltip>-->
 
       <!-- <a-tooltip content="锁屏">
         <a-button :shape="'circle'" class="hidden lg:inline">
@@ -48,7 +48,7 @@
       </a-trigger>
 
       <a-tooltip :content="$t('sys.pageSetting')">
-        <a-button :shape="'circle'" @click="setting.open()" class="hidden lg:inline">
+        <a-button :shape="'circle'" @click="() => appStore.settingOpen = true" class="hidden lg:inline">
           <template #icon>
             <icon-settings />
           </template>
@@ -77,8 +77,6 @@
       <div>{{ $t('sys.logoutMessage') }}</div>
     </a-modal>
 
-    <Setting ref="setting" />
-
   </div>
 </template>
 
@@ -87,7 +85,6 @@
   import { ref } from 'vue'
   import { useAppStore, useUserStore, useMessageStore } from '@/store'
   import tool from '@/utils/tool'
-  import Setting from './components/setting.vue'
   import MessageNotification from './components/message-notification.vue'
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'

@@ -20,12 +20,15 @@ export const getFileUrl = async (returnType, value, storageMode) => {
   }
 }
 
-export const uploadRequest = async (file, type, method) => {
+export const uploadRequest = async (file, type, method, requestData = {}) => {
   const hash = await file2md5(file)
   const dataForm = new FormData()
   dataForm.append(type, file)
   dataForm.append('isChunk', false)
   dataForm.append('hash', hash)
+  for (let name in requestData) {
+    dataForm.append(name, requestData[name])
+  }
   const response = await commonApi[method](dataForm)
   return response.data
 }

@@ -1,4 +1,6 @@
 export default {
+  // 当前crud组件的 id，全局唯一，不指定则随机生成一个
+  id: undefined,
   // 主键名称
   pk: 'id',
   // 表单是否排除PK
@@ -53,7 +55,6 @@ export default {
   pageLayout: 'normal',
   // 默认统一设置列宽度
   columnWidth: 100,
-
   // 搜索标签对齐方式
   searchLabelAlign: 'right',
   // 全局搜索标签宽度
@@ -91,6 +92,28 @@ export default {
   // 删除后方法
   afterDelete: (response) => {},
 
+  // 组件初始化事件
+  onInit: () => {},
+
+  // 列表 选项卡 参数配置项
+  tabs: {
+    // 选项卡类型，参考 arco 官方 tabs 的api
+    type: 'line',
+    // 选项卡触发方式： click | hover
+    trigger: 'click',
+    // 指定一个字段作为选项卡，该字段的 search 必须为 true， 并且使用了字典
+    dataIndex: undefined,
+    // 自定义选项卡项 [{ label: 'tab 1', value: 1, disabled: false }]，也可函数返回一个数组
+    data: undefined,
+    // 默认选中的 tab
+    defaultKey: undefined,
+    // 切换选项卡时，请求后台数据的参数名
+    searchKey: undefined,
+    // 选项卡切换事件
+    onChange: (value) => {},
+    // 选项卡单击事件
+    onClick: (value) => {},
+  },
   
   // 表单配置项
   formOption: {
@@ -100,6 +123,8 @@ export default {
     tagId: '',
     // 只有 viewType 为 tag 时生效，tag标题名称
     tagName: '',
+    // tag页设置标签标题的字段名称
+    titleDataIndex: undefined,
     // 显示宽度
     width: 600,
     // 是否全屏，只有modal有效
@@ -206,6 +231,10 @@ export default {
   showIndex: false,
   // 索引列名称
   indexLabel: '序号',
+  // 索引列宽度
+  indexColumnWidth: 70,
+  // 索引列固定方向，false 为不固定
+  indexColumnFixed: 'left',
   // 设置请求数据label
   requestParamsLabel: undefined,
   // 表格滚动默认宽高
@@ -216,6 +245,12 @@ export default {
   operationColumn: false,
   // 操作列宽度
   operationWidth: 160,
+  // 操作列宽度 (新api)
+  operationColumnWidth: 160,
   // 操作列名称
   operationColumnText: '操作',
+  // 操作列文字对齐方式
+  operationColumnAlign: 'right',
+  // 操作列固定方向，false 为不固定
+  operationColumnFixed: 'right',
 }

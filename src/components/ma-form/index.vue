@@ -65,13 +65,13 @@
 
 <script setup>
 import {
-  ref, reactive, watch, provide,
+  ref, watch, provide,
   onMounted, nextTick, getCurrentInstance
 } from 'vue'
-import { isString, isFunction, isNil, get } from 'lodash'
+import { isNil, get } from 'lodash'
 import defaultOptions from './js/defaultOptions.js'
 import {
-  getComponentName, toHump, containerItems,
+  getComponentName, toHump,
   interactiveControl, handleFlatteningColumns
 } from './js/utils.js'
 import { loadDict, handlerCascader } from './js/networkRequest.js'
@@ -104,8 +104,6 @@ const maFormRef = ref()
 const flatteningColumns = ref([])
 const dictList = ref({})
 const cascaderList = ref([])
-const childrenCascaderList = ref([])
-const childrenFormColums = ref({})
 const form = ref({})
 
 const props = defineProps({
@@ -174,6 +172,7 @@ const init = async () => {
   })
 
   nextTick(() => {
+    interactiveControl(form.value, flatteningColumns.value)
     formLoading.value = false
   })
 }
@@ -188,6 +187,7 @@ maEvent.handleCommonEvent(options.value, 'onCreated')
 onMounted(() => {
   maEvent.handleCommonEvent(options.value, 'onMounted')
   options.value.init && init()
+  maEvent.handleCommonEvent(options.value, 'onInit')
 })
 
 const done = (status) => formLoading.value = status
@@ -206,13 +206,64 @@ const clearValidate = async() => await maFormRef.value.clearValidate()
 const formSubmit = async () =>  (await validateForm() && !formLoading.value ) || emit('onSubmit', form.value, done)
 
 const getFormRef = () => maFormRef.value
-const getDictlist = () => dictList.value
+const getDictList = () => dictList.value
+const getDictService = () => {
+  const DictService = function (dictList) {
+    /**
+     * dict项服务类
+     * @param dataIndex
+     * @param dictData
+     * @constructor
+     */
+    const DictItemService = function (dataIndex, dictData) {
+      this.dict = dictData
+      this.dataIndex = dataIndex
+
+      /**
+       * 返回原DictData对象
+       * @returns {*}
+       */
+      this.getRawDictData = () => {
+        return this.dict
+      }
+      /**
+       * 追加
+       * @param label
+       * @param value
+       * @param extend
+       */
+      this.append = (label, value, extend = {}) => {
+        this.getRawDictData().push(Object.assign({
+          label: label,
+          value: value,
+        }, extend))
+      }
+      /**
+       * 重新加载dict
+       * @param dictConfig
+       * @returns {Promise<void>}
+       */
+      this.loadDict = (dictConfig) => {
+        return loadDict(dictList, {formType: "select", dict: dictConfig, dataIndex: this.dataIndex})
+      }
+    }
+
+    this.dictMap = new Map()
+    for (const [dataIndex, dictData] of Object.entries(dictList)) {
+      this.dictMap.set(dataIndex, new DictItemService(dataIndex, dictData))
+    }
+    this.get = (key) => {
+      return this.dictMap.get(key)
+    }
+  }
+  return new DictService(getDictList())
+}
 const getColumns = () => flatteningColumns.value
 const getCascaderList = () => cascaderList.value
 const getFormData = () => form.value
 
 defineExpose({
-  init, getFormRef, getColumns, getDictlist, getCascaderList, getFormData,
+  init, getFormRef, getColumns, getDictList, getDictService, getCascaderList, getFormData,
   validateForm, resetForm, clearValidate
 })
 </script>

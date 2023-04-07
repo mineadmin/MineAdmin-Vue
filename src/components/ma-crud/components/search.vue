@@ -25,12 +25,12 @@
             :label-col-style="{ width: component.searchLabelWidth ?? options.searchLabelWidth }"
           >
             <slot :name="`${component.dataIndex}`" v-bind="{ searchForm, component }">
-              <component :is="getComponentName(component.formType, component)" :component="component" />
+              <component :is="getComponentName(component.formType)" :component="component" />
             </slot>
           </a-form-item>
         </template>
       </div>
-      <div class="text-center mt-5 w-full">
+      <div class="text-center mt-5 w-full" v-if="searchColumns.length > 0">
         <a-space size="medium">
           <slot name="searchBeforeButtons" />
           <slot name="searchButtons">
@@ -51,14 +51,13 @@
 </template>
 
 <script setup>
-import { ref, watch, inject, provide, markRaw } from 'vue'
+import { ref, inject, provide, markRaw } from 'vue'
 import MaFormInput from './searchFormItem/form-input.vue'
 import MaFormPicker from './searchFormItem/form-picker.vue'
 import MaFormSelect from './searchFormItem/form-select.vue'
 import MaFormCascader from './searchFormItem/form-cascader.vue'
 import MaFormTreeSelect from './searchFormItem/form-tree-select.vue'
-import { upperCaseFirst } from '@/components/ma-form/js/utils'
-import {cloneDeep} from "lodash";
+import { cloneDeep } from "lodash"
 
 const options = inject('options')
 const columns = inject('columns')
@@ -79,7 +78,7 @@ provide('columns', columns)
 const emit = defineEmits(['search'])
 
 if (columns.length > 0) {
-  searchColumns.value = cloneDeep(columns.filter( item => item.search === true ))
+  searchColumns.value = cloneDeep(columns.filter( item => item.search === true && ( options.tabs?.dataIndex != item.dataIndex ) ))
 }
 
 const handlerSearch = () => {
@@ -99,7 +98,7 @@ const componentList = ref({
   'MaFormInput': markRaw(MaFormInput),
 }) 
 
-const getComponentName = (formType, component) => {
+const getComponentName = (formType) => {
   if (['select', 'radio', 'checkbox', 'transfer'].includes(formType)) {
     return componentList.value['MaFormSelect']
   } else if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(formType)) {

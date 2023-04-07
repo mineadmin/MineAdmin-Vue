@@ -1,4 +1,4 @@
-import { isEmpty, isFunction, get } from 'lodash'
+import { isEmpty, isFunction, get, set } from 'lodash'
 
 export const containerItems = ['tabs', 'table', 'card', 'grid', 'grid-tailwind', 'children-form']
 export const inputType      = ['input', 'input-password', 'input-search']
@@ -9,14 +9,14 @@ export const interactiveControl = (form, columns) => {
   for (let name in form) {
     columns.map( item => {
       if (item.dataIndex === name && item.control && isFunction(item.control)) {
-        obj.push(item.control(get(form, name)))
+        obj.push(item.control(get(form, name), form))
       }
     })
   }
   obj.map(changItem => {
     columns.map( (item, idx) => {
       for (let name in changItem) {
-        if (name == item.dataIndex) {
+        if (name === item.dataIndex) {
           columns[idx] = Object.assign(item, changItem[name] || {})
         }
       }

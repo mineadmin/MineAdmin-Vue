@@ -32,7 +32,7 @@
 
     <a-alert type="warning" class="mt-2">排序：本页是指当前页排序；服务器是指后台排序，若自定义服务器排序可用 <a-tag>@sorterChange</a-tag> 事件来实现</a-alert>
     <a-table
-      :data="columns"
+      :data="allowShowColumns"
       :pagination="false"
       :bordered="{ wrapper: true, cell: false }"
       :draggable="{ type: 'handle', width: 40 }"
@@ -86,13 +86,16 @@
 </template>
 
 <script setup>
-import { ref, watch, inject } from 'vue'
+import { ref, inject } from 'vue'
 
 const options = inject('options')
 let columns = inject('columns')
 
+const allowShowColumns = columns.filter(item => {
+  return ! (item?.settingHide ?? false)
+})
+
 const visible = ref(false)
-const tableWidth = ref('100%')
 const bordered = ref('column')
 
 const open = () => {

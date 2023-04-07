@@ -15,15 +15,13 @@
   </div>
 </template>
 <script setup>
-import { ref, watch, nextTick, provide } from 'vue'
+import { ref, watch, provide } from 'vue'
 import { Message } from '@arco-design/web-vue'
 
 import uploadConfig from '@/config/upload'
-import { isArray, isObject, isString } from '@vue/shared'
 import MaImageUpload from './components/image-upload.vue'
 import MaFileUpload from './components/file-upload.vue'
 import MaChunkUpload from './components/chunk-upload.vue'
-
 
 const emit = defineEmits(['update:modelValue'])
 const file = ref()
@@ -45,6 +43,7 @@ const props = defineProps({
   returnType: { type: String, default: 'url' },
   fileType: { type: String, default: 'button' },
   showList: { type: Boolean, default: true },
+  requestData: { type: Object, default: {} },
 })
 
 if (! ['id', 'url', 'hash'].includes(props.returnType)) {
@@ -57,13 +56,6 @@ watch(() => props.modelValue, (val) => {
 }, {
   deep: true, immediate: true
 })
-
-const storageMode = {
-  '1': 'LOCAL',
-  '2': 'OSS',
-  '3': 'COS',
-  '4': 'QINIU'
-}
 
 provide('storageMode', uploadConfig.storageMode)
 provide('config', props)

@@ -10,6 +10,19 @@
 <template>
   <a-layout-content class="flex flex-col lg:h-full relative w-full">
     <div class="_crud-header flex flex-col mb-2" ref="crudHeaderRef">
+      <a-tabs
+          v-if="isArray(options.tabs.data) && options.tabs.data.length > 0"
+          v-model:active-key="options.tabs.defaultKey"
+          :trigger="options.tabs.trigger"
+          :type="options.tabs.type"
+          :hide-content="true"
+          @change="tabChange"
+          @tab-click="maEvent.customeEvent(options.tabs, $event, 'onClick')"
+          class="ma-tabs mb-5"
+      >
+        <template #extra><slot name="tabExtra"></slot></template>
+        <a-tab-pane :key="item.value" :title="item.label" v-for="item in options.tabs.data"></a-tab-pane>
+      </a-tabs>
       <ma-search
         @search="searchSubmitHandler"
         class="__search-panel"
@@ -220,7 +233,7 @@
 
 <script setup>
 import config from '@/config/crud'
-import { ref, watch, provide, nextTick, onMounted, onUnmounted, onUpdated } from 'vue'
+import { ref, watch, provide, nextTick, onMounted, onUnmounted } from 'vue'
 import defaultOptions from './js/defaultOptions'
 import { loadDict } from '@cps/ma-form/js/networkRequest.js'
 
@@ -234,9 +247,12 @@ import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
-import { isArray, isFunction } from 'lodash'
+import { isArray, isFunction, isObject, isUndefined } from 'lodash'
+import { maEvent } from '@cps/ma-form/js/formItemMixin.js'
 import globalColumn from '@/config/column.js'
+import { useFormStore } from '@/store/index'
 
+const formStore = useFormStore()
 const props = defineProps({
   // 表格数据
   data: { type: [ Function, Array ], default: () => null },
@@ -270,21 +286,26 @@ const crudSearchRef = ref()
 const crudSettingRef = ref()
 const crudFormRef = ref()
 const crudImportRef = ref()
+
 const options = ref(
   Object.assign(JSON.parse(JSON.stringify(defaultOptions)), props.options, props.crud)
 )
+
 const columns = ref(props.columns)
-
 const headerHeight = ref(0)
-
 const selecteds = ref([])
-
 const tableData = ref([])
 const tableRef = ref()
 const currentApi = ref()
 
 // 初始化
-const init = async() => {
+const init = async () => {
+
+  // 设置 组件id
+  if (isUndefined(options.value.id)) {
+    options.value.id = 'MaCrud_' + Math.floor(Math.random() * 100000 + Math.random() * 20000 + Math.random() * 5000)
+  }
+
   // 收集数据
   props.columns.map(item => {
     if (item.cascaderItem && item.cascaderItem.length > 0) {
@@ -292,7 +313,7 @@ const init = async() => {
     }
   })
 
-  props.columns.map(async item => {
+  await props.columns.map(async item => {
     // 字典
     if (! cascaders.value.includes(item.dataIndex) && item.dict) {
       await loadDict(dicts.value, item)
@@ -347,6 +368,14 @@ watch(
 
 watch( () => openPagination.value, vl => options.value.pageLayout === 'fixed' && settingFixedPage() )
 
+watch(
+    () => formStore.crudList[options.value.id],
+    async vl => {
+      vl === true && await requestData()
+      formStore.crudList[options.value.id] = false
+    }
+)
+
 const getSlot = (cls = []) => {
   let sls = []
   cls.map(item => {
@@ -378,16 +407,28 @@ const getSearchSlot = () => {
 slots.value = getSlot(props.columns)
 searchSlots.value = getSearchSlot(props.columns)
 
-const requestData = async () => {
-  init()
+const requestData = async (requestParams = {}) => {
+  await init()
   if (options.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {
-    columns.value.unshift({ title: options.value.indexLabel, dataIndex: '__index', width: 70, fixed: 'left' })
+    columns.value.unshift({
+      title: options.value.indexLabel, dataIndex: '__index',
+      width: options.value.indexColumnWidth, fixed: options.value.indexColumnFixed
+    })
   }
   if (options.value.operationColumn && columns.value.length > 0 && columns.value[columns.value.length - 1].dataIndex !== '__operation') {
-    columns.value.push({ title: options.value.operationColumnText, dataIndex: '__operation', width: options.value.operationWidth, align: 'right', fixed: 'right' })
+    columns.value.push({
+      title: options.value.operationColumnText, dataIndex: '__operation',
+      width: options.value.operationColumnWidth ?? options.value.operationWidth,
+      align: options.value.operationColumnAlign, fixed: options.value.operationColumnFixed
+    })
   }
+
   initRequestParams()
-  await refresh()
+  if (! options.value.tabs?.dataIndex && ! options.value.tabs.data) {
+    await refresh()
+  } else {
+    await tabChange(options.value.tabs?.defaultKey ?? undefined)
+  }
 }
 
 const initRequestParams = () => {
@@ -442,7 +483,7 @@ const refresh = async () => {
   }
 }
 
-const searchSubmitHandler = (formData) => {
+const searchSubmitHandler = async (formData) => {
   if (options.value.requestParamsLabel && requestParams.value[options.value.requestParamsLabel]) {
     requestParams.value[options.value.requestParamsLabel] = Object.assign(requestParams.value[options.value.requestParamsLabel], formData)
   } else if (options.value.requestParamsLabel) {
@@ -453,18 +494,18 @@ const searchSubmitHandler = (formData) => {
   if (options.value.beforeSearch && isFunction(options.value.beforeSearch)) {
     options.value.beforeSearch(requestParams.value)
   }
-  pageChangeHandler(1)
+  await pageChangeHandler(1)
 }
 
-const pageSizeChangeHandler = (pageSize) => {
+const pageSizeChangeHandler = async (pageSize) => {
   requestParams.value[config.request.page] = 1
   requestParams.value[config.request.pageSize] = pageSize
-  refresh()
+  await refresh()
 }
 
-const pageChangeHandler = (currentPage) => {
+const pageChangeHandler = async (currentPage) => {
   requestParams.value[config.request.page] = currentPage
-  refresh()
+  await refresh()
 }
 
 const toggleSearch = async () => {
@@ -476,7 +517,7 @@ const toggleSearch = async () => {
 
     await nextTick(() => {
       headerHeight.value = crudHeaderRef.value.offsetHeight
-      options.value.pageLayout == 'fixed' && settingFixedPage()
+      options.value.pageLayout === 'fixed' && settingFixedPage()
     })
   }
 }
@@ -492,7 +533,7 @@ const tableSetting = () => {
 }
 
 const requestSuccess = async response => {
-  if (response && response.code && response.code == 200) {
+  if (response && response.code && response.code === 200) {
     options.value.dataCompleteRefresh && await refresh()
     if (reloadColumn.value) {
       reloadColumn.value = false
@@ -504,7 +545,7 @@ const requestSuccess = async response => {
 }
 
 const getIndex = (rowIndex) => {
-  if (requestParams.value[config.request.page] == 1) {
+  if (requestParams.value[config.request.page] === 1) {
     return rowIndex + 1
   } else {
     return requestParams.value[config.request.page] * requestParams.value[config.request.pageSize] + rowIndex
@@ -577,18 +618,18 @@ const deletesMultipleAction = async () => {
     if (options.value.afterDelete && isFunction(options.value.afterDelete)) {
       options.value.afterDelete(response)
     }
-    Message.success(response.message || `删除成功！`)
-    refresh()
+    response.success && Message.success(response.message || `删除成功！`)
+    await refresh()
   } else {
     Message.error('至少选择一条数据')
   }
 }
 
-const recoverysMultipleAction = async() => {
+const recoverysMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
     const response = await options.value.recovery.api({ ids: selecteds.value })
-    Message.success(response.message || `恢复成功！`)
-    refresh()
+    response.success && Message.success(response.message || `恢复成功！`)
+    await refresh()
   } else {
     Message.error('至少选择一条数据')
   }
@@ -611,8 +652,8 @@ const handlerExpand = () => {
   expandState.value ? tableRef.value.expandAll(true) : tableRef.value.expandAll(false)
 }
 
-const handlerSort = (name, type) => {
-  const col = columns.value.find(item => name == item.dataIndex)
+const handlerSort = async (name, type) => {
+  const col = columns.value.find(item => name === item.dataIndex)
   if (col.sortable && col.sortable.sorter) {
     if (type) {
       requestParams.value.orderBy = name
@@ -621,7 +662,7 @@ const handlerSort = (name, type) => {
       requestParams.value.orderBy = undefined
       requestParams.value.orderType = undefined
     }
-    requestData()
+    await refresh()
   }
 }
 
@@ -638,10 +679,10 @@ const __summary = ({ data }) => {
       summaryData[item.dataIndex] = 0
       data.map(record => {
         if (record[item.dataIndex]) {
-          if (item.action && item.action == 'sum') {
+          if (item.action && item.action === 'sum') {
             summaryData[item.dataIndex] += parseFloat(record[item.dataIndex])
           }
-          if (item.action && item.action == 'avg') {
+          if (item.action && item.action === 'avg') {
             summaryData[item.dataIndex] += parseFloat(record[item.dataIndex]) / length
           }
         }
@@ -656,20 +697,41 @@ const __summary = ({ data }) => {
   }
 }
 
-if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {
-  nextTick( () => requestData() )
-}
-
 const resizeHandler = () => {
   headerHeight.value = crudHeaderRef.value.offsetHeight
   settingFixedPage()
 }
 
-onMounted(() => {
+const tabChange = async (value) => {
+  const searchKey = options.value.tabs?.searchKey ?? options.value.tabs?.dataIndex ?? 'tabValue'
+  const params = {}
+  params[searchKey] = value
+  requestParams.value = Object.assign(requestParams.value, params)
+  maEvent.customeEvent(options.value.tabs, value, 'onChange')
+  await refresh()
+}
+
+onMounted(async() => {
+  if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {
+    await requestData()
+  }
+
   if (! options.value.expandSearch && crudSearchRef.value) {
     crudSearchRef.value.setSearchHidden()
   }
-  if (options.value.pageLayout == 'fixed') {
+
+  // 处理tabs
+  const tabs = options.value.tabs
+  if ( isFunction(tabs.data) || isArray(tabs.data) ) {
+    tabs.data = isFunction(tabs.data) ? await tabs.data() : tabs.data
+  } else if (! isUndefined(tabs.dataIndex) ) {
+    const col = props.columns.find( item => item.dataIndex === tabs.dataIndex )
+    if ( col.search === true && isObject(col.dict) ) {
+      tabs.data = dicts.value[tabs.dataIndex]
+    }
+  }
+
+  if (options.value.pageLayout === 'fixed') {
     window.addEventListener('resize', resizeHandler, false);
     headerHeight.value = crudHeaderRef.value.offsetHeight
     settingFixedPage()
@@ -677,7 +739,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (options.value.pageLayout == 'fixed') {
+  if (options.value.pageLayout === 'fixed') {
     window.removeEventListener('resize', resizeHandler, false);
   }
 })

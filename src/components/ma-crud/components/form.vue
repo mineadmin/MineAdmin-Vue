@@ -27,13 +27,12 @@
 </template>
 
 <script setup>
-import { ref, nextTick, watch, toRaw, getCurrentInstance, inject, provide } from 'vue'
-import { request } from '@/utils/request'
+import { ref, toRaw, getCurrentInstance, inject, provide } from 'vue'
 import { Message } from '@arco-design/web-vue'
-import commonApi from '@/api/common'
 import { containerItems } from '@cps/ma-form/js/utils'
-import {isArray, isFunction, isEmpty, get, cloneDeep, isUndefined} from 'lodash'
+import { isArray, isFunction, get, cloneDeep, isUndefined } from 'lodash'
 import { useRouter } from 'vue-router'
+import tool from '@/utils/tool'
 import { useFormStore } from '@/store/index'
 
 const formStore = useFormStore()
@@ -48,7 +47,6 @@ const formColumns = ref([])
 const currentAction = ref('')
 const dataVisible = ref(false)
 const form = ref({})
-const crudForm = ref(null)
 const actionTitle = ref('')
 const dataLoading = ref(true)
 const emit = defineEmits(['success', 'error'])
@@ -75,6 +73,8 @@ const submit = async () => {
     Message.success(response.message || `${actionTitle.value}成功！`)
     emit('success', response)
     return true
+  } else {
+    return false
   }
 }
 const open = () => {
@@ -92,12 +92,26 @@ const open = () => {
     }
     const config = {
       options,
-      data: cloneDeep(form.value),
       formColumns: formColumns.value
     }
-    formStore.formList[options.formOption.tagId +'_'+ currentAction.value] = config
+    formStore.crudList[options.id] = false
+    formStore.formList[options.formOption.tagId] = {
+      config,
+      addData: {},
+      editData: {},
+    }
+    const queryParams = {
+      tagId: options.formOption.tagId,
+      op: currentAction.value,
+    }
+    if (currentAction.value === 'add') {
+      formStore.formList[options.formOption.tagId].addData = cloneDeep(form.value)
+    } else {
+      queryParams.key = form.value[options.formOption?.titleDataIndex ?? ''] ?? form.value[options.pk]
+      formStore.formList[options.formOption.tagId].editData[queryParams.key] = cloneDeep(form.value)
+    }
     form.value = {}
-    router.push('/openForm?tagId=' + options.formOption.tagId + '_' + currentAction.value + '&op=' + currentAction.value)
+    router.push(`/openForm/${options.formOption.tagId}` + tool.httpBuild(queryParams, true))
   } else {
     componentName.value = options.formOption.viewType === 'drawer' ? 'a-drawer' : 'a-modal'
     dataVisible.value = true
@@ -132,8 +146,10 @@ const init = () => {
   settingFormLayout(layout)
   if (isArray(layout) && layout.length > 0) {
     formColumns.value = layout
+    const excludeColumns = ['__index', '__operation']
     columns.map(item => {
-      if (! formItemShow(item) || ['__index', '__operation'].includes(item.dataIndex)) return
+      if (options.formExcludePk) excludeColumns.push(options.pk)
+      if (excludeColumns.includes(item.dataIndex)) return
       ! item.__formLayoutSetting && formColumns.value.push(item)
     })
   }
@@ -144,7 +160,7 @@ const init = () => {
 const columnItemHandle = async (item) => {
   const excludeColumns = ['__index', '__operation']
   if (options.formExcludePk) excludeColumns.push(options.pk)
-  if (! formItemShow(item) || excludeColumns.includes(item.dataIndex)) {
+  if (excludeColumns.includes(item.dataIndex)) {
     layoutColumns.value.set(item.dataIndex, {dataIndex: item.dataIndex, layoutFormRemove: true})
     return
   }
@@ -152,7 +168,7 @@ const columnItemHandle = async (item) => {
   formColumns.value.push(item)
 
   // 针对带点的数据处理
-  if (item.dataIndex.indexOf('.') > -1) {
+  if (item.dataIndex && item.dataIndex.indexOf('.') > -1) {
     form.value[item.dataIndex] = get(form.value, item.dataIndex)
   }
 
@@ -160,7 +176,7 @@ const columnItemHandle = async (item) => {
   if (currentAction.value === 'add') {
     if (item.addDefaultValue && isFunction(item.addDefaultValue)) {
       form.value[item.dataIndex] = await item.addDefaultValue(form.value)
-    } else if (item.addDefaultValue) {
+    } else if (typeof item.addDefaultValue != 'undefined') {
       form.value[item.dataIndex] = item.addDefaultValue
     }
   }
@@ -177,6 +193,7 @@ const columnItemHandle = async (item) => {
   item.display = formItemShow(item)
   item.disabled = formItemDisabled(item)
   item.readonly = formItemReadonly(item)
+  item.labelWidth = formItemLabelWidth(item)
   item.rules = getRules(item)
 }
 const settingFormLayout = (layout) => {
@@ -248,31 +265,46 @@ const settingFormLayout = (layout) => {
 }
 
 const formItemShow = (item) => {
-  if (currentAction.value === 'add' && item?.addDisplay !== false) {
-    return true
+  if (!isUndefined(item.display)) {
+    return item.display
+  } else {
+    if (currentAction.value === 'add' && item?.addDisplay !== false) {
+      return true
+    }
+    if (currentAction.value === 'edit' && item?.editDisplay !== false) {
+      return true
+    }
+    return false
   }
-  if (currentAction.value === 'edit' && item?.editDisplay !== false) {
-    return true
-  }
-  return false
 }
 const formItemDisabled = (item) => {
-  if (currentAction.value === 'add' && item?.addDisabled === true) {
-    return true
+  if (!isUndefined(item.disabled)) {
+    return item.disabled
+  } else {
+    if (currentAction.value === 'add' && item?.addDisabled === true) {
+      return true
+    }
+    if (currentAction.value === 'edit' && item?.editDisabled === true) {
+      return true
+    }
+    return false
   }
-  if (currentAction.value === 'edit' && item?.editDisabled === true) {
-    return true
-  }
-  return false
 }
 const formItemReadonly = (item) => {
-  if (currentAction.value === 'add' && item?.addReadonly === true) {
-    return true
+  if (!isUndefined(item.readonly)) {
+    return item.readonly
+  } else {
+    if (currentAction.value === 'add' && item?.addReadonly === true) {
+      return true
+    }
+    if (currentAction.value === 'edit' && item?.editReadonly === true) {
+      return true
+    }
+    return false
   }
-  if (currentAction.value === 'edit' && item?.editReadonly === true) {
-    return true
-  }
-  return false
+}
+const formItemLabelWidth = (item) => {
+  return item.labelWidth ?? options.labelWidth ?? undefined
 }
 
 const toRules = (rules) => {
