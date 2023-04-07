@@ -9,13 +9,13 @@
 -->
 <template>
   <a-layout-content class="layout flex justify-between">
-    <div id="layout-columns-left-panel" class="layout-columns-left-panel hidden lg:flex justify-between">
+    <div id="layout-columns-left-panel" class="ma-ui-menu layout-columns-left-panel hidden lg:flex justify-between">
       <ma-columns-menu />
     </div>
 
     <div class="layout-columns-right-panel flex flex-col" :style="`width: calc(100% - ${containerWidth}px)`" >
 
-      <ma-columns-header />
+      <ma-columns-header class="ma-ui-header" />
       <ma-worker-area />
 
     </div>

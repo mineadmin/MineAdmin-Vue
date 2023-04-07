@@ -71,6 +71,7 @@ export default {
   },
   tags: {
     refresh: '刷新',
+    fullscreen: '全屏',
     closeTag: '关闭当前标签',
     closeOtherTag: '关闭其他标签',
   },

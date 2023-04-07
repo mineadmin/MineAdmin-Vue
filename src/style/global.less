@@ -208,3 +208,34 @@ html, body {
     background-color: rgb(var(--primary-6));
   }
 }
+
+.ma-ui.max-size {
+  .max-size-exit {display: block;}
+  .ma-ui-slider, .ma-ui-header, .ma-ui-menu, .ma-ui-tags {display: none;}
+}
+
+.ma-ui {
+  .max-size-exit {
+    position: fixed;
+    z-index: 9999;
+    top: -45px;
+    left: 50%;
+    margin-left: -30px;
+    cursor: pointer;
+    display: none;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    fill: var(--color-white);
+    color: var(--color-white);
+    font-size: 45px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.2);
+    transition: all 0.3s;
+  }
+  & :hover {
+    top: 0px;
+  }
+}
+
+
