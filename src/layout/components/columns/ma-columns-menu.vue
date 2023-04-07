@@ -9,7 +9,7 @@
 -->
 
 <template>
-  <div class="sider flex flex-col items-center bg-gray-800 dark:border-blackgray-5">
+  <div class="sider customer-scrollbar flex flex-col items-center bg-gray-800 dark:border-blackgray-5">
     <a-avatar class="mt-2" :size="40"><img src="/logo.svg" class="bg-white" /></a-avatar>
     <ul class="mt-1 parent-menu-container">
       <template

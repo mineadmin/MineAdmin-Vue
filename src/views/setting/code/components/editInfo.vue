@@ -190,7 +190,7 @@
                 </a-col>
               </a-row>
               <div v-if="form.type === 'tree'">
-                <a-divider orientation="left">其他信息</a-divider>
+                <a-divider orientation="left">树表配置</a-divider>
                 <a-row :gutter="24">
                   <a-col :xs="24" :md="8" :xl="8">
                     <a-form-item
