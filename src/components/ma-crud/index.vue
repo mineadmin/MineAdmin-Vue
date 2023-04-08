@@ -137,6 +137,7 @@
           </a-tooltip>
           <a-tooltip content="刷新表格"><a-button shape="circle" @click="refresh"><icon-refresh /></a-button></a-tooltip>
           <a-tooltip content="显隐搜索"><a-button shape="circle" @click="toggleSearch"><icon-search /></a-button></a-tooltip>
+          <a-tooltip content="打印表格"><a-button shape="circle" @click="printTable"><icon-printer /></a-button></a-tooltip>
           <a-tooltip content="设置"><a-button shape="circle" @click="tableSetting"><icon-settings /></a-button></a-tooltip>
         </a-space>
       </div>
@@ -247,6 +248,7 @@ import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
+import Print from '@/utils/print'
 import { isArray, isFunction, isObject, isUndefined } from 'lodash'
 import { maEvent } from '@cps/ma-form/js/formItemMixin.js'
 import globalColumn from '@/config/column.js'
@@ -366,7 +368,7 @@ watch(
   vl => options.value.api = vl
 )
 
-watch( () => openPagination.value, vl => options.value.pageLayout === 'fixed' && settingFixedPage() )
+watch( () => openPagination.value, () => options.value.pageLayout === 'fixed' && settingFixedPage() )
 
 watch(
     () => formStore.crudList[options.value.id],
@@ -407,7 +409,7 @@ const getSearchSlot = () => {
 slots.value = getSlot(props.columns)
 searchSlots.value = getSearchSlot(props.columns)
 
-const requestData = async (requestParams = {}) => {
+const requestData = async () => {
   await init()
   if (options.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {
     columns.value.unshift({
@@ -537,18 +539,10 @@ const requestSuccess = async response => {
     options.value.dataCompleteRefresh && await refresh()
     if (reloadColumn.value) {
       reloadColumn.value = false
-      nextTick(() => {
+      await nextTick(() => {
         reloadColumn.value = true
       })
     }
-  }
-}
-
-const getIndex = (rowIndex) => {
-  if (requestParams.value[config.request.page] === 1) {
-    return rowIndex + 1
-  } else {
-    return requestParams.value[config.request.page] * requestParams.value[config.request.pageSize] + rowIndex
   }
 }
 
@@ -602,7 +596,7 @@ const exportAction = () => {
   download(options.value.export.url).then(res => {
     tool.download(res)
     Message.success('请求成功，文件开始下载')
-  }).catch(e => {
+  }).catch(() => {
     Message.error('请求服务器错误，下载失败')
   })
 }
@@ -707,8 +701,12 @@ const tabChange = async (value) => {
   const params = {}
   params[searchKey] = value
   requestParams.value = Object.assign(requestParams.value, params)
-  maEvent.customeEvent(options.value.tabs, value, 'onChange')
+  await maEvent.customeEvent(options.value.tabs, value, 'onChange')
   await refresh()
+}
+
+const printTable = () => {
+  new Print(crudContentRef.value)
 }
 
 onMounted(async() => {

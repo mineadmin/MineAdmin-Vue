@@ -172,7 +172,7 @@ const dictColors = inject('dictColors')
 const imageSee = async (row, record, dataIndex) => {
   if (row.returnType) {
 
-    if (row.returnType == 'url') {
+    if (row.returnType === 'url') {
       emit('showImage', record[dataIndex])
       return
     }
@@ -182,7 +182,7 @@ const imageSee = async (row, record, dataIndex) => {
       return
     }
     Message.info('获取图片中，请稍等...')
-    const res = row.returnType == 'id' ? await commonApi.getFileInfoById({ id: record.id }) : await commonApi.getFileInfoByHash({ hash: record.hash })
+    const res = row.returnType === 'id' ? await commonApi.getFileInfoById({ id: record.id }) : await commonApi.getFileInfoByHash({ hash: record.hash })
     const result  = res?.success ?? false
     if (! result) {
       Message.info('图片信息无法获取')
@@ -218,7 +218,7 @@ const getDataIndex = (row, record) => {
 
 const getIndex = rowIndex => {
   const index = rowIndex + 1
-  if (requestParams[config.request.page] == 1) {
+  if (requestParams[config.request.page] === 1) {
     return index
   } else {
     return (requestParams[config.request.page] - 1) * requestParams[config.request.pageSize] + index
