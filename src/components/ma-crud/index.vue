@@ -165,46 +165,50 @@
             @selection-change="setSelecteds"
             @sorter-change="handlerSort"
           >
-            <template #tr="{ record }">
-              <tr class="ma-crud-table-tr" @dblclick="dbClickOpenEdit(record)" />
-            </template>
+              <template #tr="{ record }">
+                <tr
+                  class="ma-crud-table-tr"
+                  @contextmenu.prevent="openContextMenu($event, record)"
+                  @dblclick="dbClickOpenEdit(record)"
+                />
+              </template>
 
-            <template #expand-row="record" v-if="options.showExpandRow">
-              <slot name="expand-row" v-bind="record"></slot>
-            </template>
-            <template #columns>
-              <ma-column
-                v-if="reloadColumn"
-                :columns="props.columns"
-                :isRecovery="isRecovery"
-                :crudFormRef="crudFormRef"
-                @refresh="() => refresh()"
-                @showImage="showImage"
-              >
-                <template #operationBeforeExtend="{ record, column, rowIndex }">
-                  <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
-                </template>
-
-                <template #operationCell="{ record, column, rowIndex }">
-                  <slot name="operationCell" v-bind="{ record, column, rowIndex }"></slot>
-                </template>
-
-                <template #operationAfterExtend="{ record, column, rowIndex }">
-                  <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
-                </template>
-
-                <template
-                  v-for="(slot, slotIndex) in slots"
-                  :key="slotIndex"
-                  #[slot]="{ record, column, rowIndex }"
+              <template #expand-row="record" v-if="options.showExpandRow">
+                <slot name="expand-row" v-bind="record"></slot>
+              </template>
+              <template #columns>
+                <ma-column
+                  v-if="reloadColumn"
+                  :columns="props.columns"
+                  :isRecovery="isRecovery"
+                  :crudFormRef="crudFormRef"
+                  @refresh="() => refresh()"
+                  @showImage="showImage"
                 >
-                  <slot :name="`${slot}`" v-bind="{ record, column, rowIndex }" />
-                </template>
-              </ma-column>
-            </template>
-            <template #summary-cell="{ column, record, rowIndex }" v-if="options.customerSummary || options.showSummary">
-              <slot name="summaryCell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
-            </template>
+                  <template #operationBeforeExtend="{ record, column, rowIndex }">
+                    <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
+                  </template>
+
+                  <template #operationCell="{ record, column, rowIndex }">
+                    <slot name="operationCell" v-bind="{ record, column, rowIndex }"></slot>
+                  </template>
+
+                  <template #operationAfterExtend="{ record, column, rowIndex }">
+                    <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
+                  </template>
+
+                  <template
+                    v-for="(slot, slotIndex) in slots"
+                    :key="slotIndex"
+                    #[slot]="{ record, column, rowIndex }"
+                  >
+                    <slot :name="`${slot}`" v-bind="{ record, column, rowIndex }" />
+                  </template>
+                </ma-column>
+              </template>
+              <template #summary-cell="{ column, record, rowIndex }" v-if="options.customerSummary || options.showSummary">
+                <slot name="summaryCell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
+              </template>
           </a-table>
         </slot>
       </div>
@@ -227,7 +231,9 @@
     <ma-form ref="crudFormRef" @success="requestSuccess" />
 
     <ma-import ref="crudImportRef" />
-    
+
+    <ma-context-menu ref="crudContextMenuRef" @execCommand="execContextMenuCommand" />
+
     <a-image-preview :src="imgUrl" v-model:visible="imgVisible" />
   </a-layout-content>
 </template>
@@ -243,6 +249,7 @@ import MaForm from './components/form.vue'
 import MaSetting from './components/setting.vue'
 import MaImport from './components/import.vue'
 import MaColumn from './components/column.vue'
+import MaContextMenu from './components/contextMenu.vue'
 import checkAuth from '@/directives/auth/auth'
 import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
@@ -288,6 +295,7 @@ const crudSearchRef = ref()
 const crudSettingRef = ref()
 const crudFormRef = ref()
 const crudImportRef = ref()
+const crudContextMenuRef = ref()
 
 const options = ref(
   Object.assign(JSON.parse(JSON.stringify(defaultOptions)), props.options, props.crud)
@@ -707,6 +715,23 @@ const tabChange = async (value) => {
 
 const printTable = () => {
   new Print(crudContentRef.value)
+}
+
+const openContextMenu = (ev, record) => {
+  ( options.value?.contextMenu?.enabled === true ) && crudContextMenuRef.value.openContextMenu(ev, record)
+}
+
+const execContextMenuCommand = async (args) => {
+  const item = args.contextItem
+  const record = args.record
+  switch(item.operation) {
+    case 'refresh': await refresh(); break;
+    case 'plus': addAction(); break;
+    case 'edit': editAction(record); break;
+    default:
+      await maEvent.customeEvent(item, args, 'onExecCommand')
+      break;
+  }
 }
 
 onMounted(async() => {

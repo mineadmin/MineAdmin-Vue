@@ -257,6 +257,8 @@ const deleteAction = async record => {
 const refresh = () => {
   emit('refresh')
 }
+
+defineExpose({ deleteAction, recoveryAction })
 </script>
 
 <style scoped>
