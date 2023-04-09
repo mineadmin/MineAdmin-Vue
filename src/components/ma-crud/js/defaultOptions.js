@@ -257,7 +257,7 @@ export default {
   // 右键菜单配置
   contextMenu: {
     // 是否开启右键菜单
-    enabled: true,
+    enabled: false,
     // 右键菜单配置
     items: [
       { operation: 'refresh' },
