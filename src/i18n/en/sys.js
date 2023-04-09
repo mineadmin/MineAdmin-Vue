@@ -71,7 +71,8 @@ export default {
   },
   tags: {
     refresh: 'Refresh',
-    closeTag: 'Close curretn tag',
+    fullscreen: 'Full screen',
+    closeTag: 'Close current tag',
     closeOtherTag: 'Close other tag',
   },
   noticeTitle: 'System Prompted',

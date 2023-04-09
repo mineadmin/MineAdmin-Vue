@@ -137,6 +137,7 @@
           </a-tooltip>
           <a-tooltip content="刷新表格"><a-button shape="circle" @click="refresh"><icon-refresh /></a-button></a-tooltip>
           <a-tooltip content="显隐搜索"><a-button shape="circle" @click="toggleSearch"><icon-search /></a-button></a-tooltip>
+          <a-tooltip content="打印表格"><a-button shape="circle" @click="printTable"><icon-printer /></a-button></a-tooltip>
           <a-tooltip content="设置"><a-button shape="circle" @click="tableSetting"><icon-settings /></a-button></a-tooltip>
         </a-space>
       </div>
@@ -164,46 +165,50 @@
             @selection-change="setSelecteds"
             @sorter-change="handlerSort"
           >
-            <template #tr="{ record }">
-              <tr class="ma-crud-table-tr" @dblclick="dbClickOpenEdit(record)" />
-            </template>
+              <template #tr="{ record }">
+                <tr
+                  class="ma-crud-table-tr"
+                  @contextmenu.prevent="openContextMenu($event, record)"
+                  @dblclick="dbClickOpenEdit(record)"
+                />
+              </template>
 
-            <template #expand-row="record" v-if="options.showExpandRow">
-              <slot name="expand-row" v-bind="record"></slot>
-            </template>
-            <template #columns>
-              <ma-column
-                v-if="reloadColumn"
-                :columns="props.columns"
-                :isRecovery="isRecovery"
-                :crudFormRef="crudFormRef"
-                @refresh="() => refresh()"
-                @showImage="showImage"
-              >
-                <template #operationBeforeExtend="{ record, column, rowIndex }">
-                  <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
-                </template>
-
-                <template #operationCell="{ record, column, rowIndex }">
-                  <slot name="operationCell" v-bind="{ record, column, rowIndex }"></slot>
-                </template>
-
-                <template #operationAfterExtend="{ record, column, rowIndex }">
-                  <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
-                </template>
-
-                <template
-                  v-for="(slot, slotIndex) in slots"
-                  :key="slotIndex"
-                  #[slot]="{ record, column, rowIndex }"
+              <template #expand-row="record" v-if="options.showExpandRow">
+                <slot name="expand-row" v-bind="record"></slot>
+              </template>
+              <template #columns>
+                <ma-column
+                  v-if="reloadColumn"
+                  :columns="props.columns"
+                  :isRecovery="isRecovery"
+                  :crudFormRef="crudFormRef"
+                  @refresh="() => refresh()"
+                  @showImage="showImage"
                 >
-                  <slot :name="`${slot}`" v-bind="{ record, column, rowIndex }" />
-                </template>
-              </ma-column>
-            </template>
-            <template #summary-cell="{ column, record, rowIndex }" v-if="options.customerSummary || options.showSummary">
-              <slot name="summaryCell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
-            </template>
+                  <template #operationBeforeExtend="{ record, column, rowIndex }">
+                    <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
+                  </template>
+
+                  <template #operationCell="{ record, column, rowIndex }">
+                    <slot name="operationCell" v-bind="{ record, column, rowIndex }"></slot>
+                  </template>
+
+                  <template #operationAfterExtend="{ record, column, rowIndex }">
+                    <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
+                  </template>
+
+                  <template
+                    v-for="(slot, slotIndex) in slots"
+                    :key="slotIndex"
+                    #[slot]="{ record, column, rowIndex }"
+                  >
+                    <slot :name="`${slot}`" v-bind="{ record, column, rowIndex }" />
+                  </template>
+                </ma-column>
+              </template>
+              <template #summary-cell="{ column, record, rowIndex }" v-if="options.customerSummary || options.showSummary">
+                <slot name="summaryCell" v-bind="{ record, column, rowIndex }">{{ record[column.dataIndex] }}</slot>
+              </template>
           </a-table>
         </slot>
       </div>
@@ -226,7 +231,9 @@
     <ma-form ref="crudFormRef" @success="requestSuccess" />
 
     <ma-import ref="crudImportRef" />
-    
+
+    <ma-context-menu ref="crudContextMenuRef" @execCommand="execContextMenuCommand" />
+
     <a-image-preview :src="imgUrl" v-model:visible="imgVisible" />
   </a-layout-content>
 </template>
@@ -242,11 +249,13 @@ import MaForm from './components/form.vue'
 import MaSetting from './components/setting.vue'
 import MaImport from './components/import.vue'
 import MaColumn from './components/column.vue'
+import MaContextMenu from './components/contextMenu.vue'
 import checkAuth from '@/directives/auth/auth'
 import checkRole from '@/directives/role/role'
 import { Message } from '@arco-design/web-vue'
 import { request } from '@/utils/request'
 import tool from '@/utils/tool'
+import Print from '@/utils/print'
 import { isArray, isFunction, isObject, isUndefined } from 'lodash'
 import { maEvent } from '@cps/ma-form/js/formItemMixin.js'
 import globalColumn from '@/config/column.js'
@@ -286,6 +295,7 @@ const crudSearchRef = ref()
 const crudSettingRef = ref()
 const crudFormRef = ref()
 const crudImportRef = ref()
+const crudContextMenuRef = ref()
 
 const options = ref(
   Object.assign(JSON.parse(JSON.stringify(defaultOptions)), props.options, props.crud)
@@ -366,7 +376,7 @@ watch(
   vl => options.value.api = vl
 )
 
-watch( () => openPagination.value, vl => options.value.pageLayout === 'fixed' && settingFixedPage() )
+watch( () => openPagination.value, () => options.value.pageLayout === 'fixed' && settingFixedPage() )
 
 watch(
     () => formStore.crudList[options.value.id],
@@ -407,7 +417,7 @@ const getSearchSlot = () => {
 slots.value = getSlot(props.columns)
 searchSlots.value = getSearchSlot(props.columns)
 
-const requestData = async (requestParams = {}) => {
+const requestData = async () => {
   await init()
   if (options.value.showIndex && columns.value.length > 0 && columns.value[0].dataIndex !== '__index') {
     columns.value.unshift({
@@ -537,18 +547,10 @@ const requestSuccess = async response => {
     options.value.dataCompleteRefresh && await refresh()
     if (reloadColumn.value) {
       reloadColumn.value = false
-      nextTick(() => {
+      await nextTick(() => {
         reloadColumn.value = true
       })
     }
-  }
-}
-
-const getIndex = (rowIndex) => {
-  if (requestParams.value[config.request.page] === 1) {
-    return rowIndex + 1
-  } else {
-    return requestParams.value[config.request.page] * requestParams.value[config.request.pageSize] + rowIndex
   }
 }
 
@@ -602,7 +604,7 @@ const exportAction = () => {
   download(options.value.export.url).then(res => {
     tool.download(res)
     Message.success('请求成功，文件开始下载')
-  }).catch(e => {
+  }).catch(() => {
     Message.error('请求服务器错误，下载失败')
   })
 }
@@ -707,8 +709,29 @@ const tabChange = async (value) => {
   const params = {}
   params[searchKey] = value
   requestParams.value = Object.assign(requestParams.value, params)
-  maEvent.customeEvent(options.value.tabs, value, 'onChange')
+  await maEvent.customeEvent(options.value.tabs, value, 'onChange')
   await refresh()
+}
+
+const printTable = () => {
+  new Print(crudContentRef.value)
+}
+
+const openContextMenu = (ev, record) => {
+  ( options.value?.contextMenu?.enabled === true ) && crudContextMenuRef.value.openContextMenu(ev, record)
+}
+
+const execContextMenuCommand = async (args) => {
+  const item = args.contextItem
+  const record = args.record
+  switch(item.operation) {
+    case 'refresh': await refresh(); break;
+    case 'plus': addAction(); break;
+    case 'edit': editAction(record); break;
+    default:
+      await maEvent.customeEvent(item, args, 'onExecCommand')
+      break;
+  }
 }
 
 onMounted(async() => {

@@ -17,6 +17,8 @@
     <setting ref="settingRef"/>
 
     <ma-button-menu />
+
+    <div class="max-size-exit" @click="tagExitMaxSize"><icon-close /></div>
   </a-layout-content>
 </template>
 <script setup>
@@ -40,6 +42,10 @@
       appStore.settingOpen = false
     }
   })
+
+  const tagExitMaxSize = () => {
+    document.getElementById('app').classList.remove('max-size')
+  }
 
 </script>
 <style scoped lang="less">

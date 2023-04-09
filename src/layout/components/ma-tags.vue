@@ -46,6 +46,10 @@
         <icon-refresh />
         {{ $t('sys.tags.refresh') }}
       </li>
+      <li @click="contextMenuMaxSizeTag">
+        <icon-fullscreen />
+        {{ $t('sys.tags.fullscreen') }}
+      </li>
       <a-divider />
       <li @click="contextMenuCloseTag" :class="contextMenuItem.affix ? 'disabled' : ''">
         <icon-close-circle />
@@ -158,6 +162,15 @@ const openContextMenu = (e, tag) => {
 const closeContextMenu = () => {
   contextMenuItem.value = null
   contextMenuVisible.value = false
+}
+
+const contextMenuMaxSizeTag = () => {
+  const tag = contextMenuItem.value
+  contextMenuVisible.value = false
+  if (route.fullPath != tag.fullPath) {
+    router.push({ path: tag.path, query: tool.getRequestParams(tag.path) })
+  }
+  document.getElementById('app').classList.add('max-size')
 }
 
 const contextMenuRefreshTag = () => {
