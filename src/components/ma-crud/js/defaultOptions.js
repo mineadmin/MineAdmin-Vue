@@ -257,13 +257,15 @@ export default {
   // 右键菜单配置
   contextMenu: {
     // 是否开启右键菜单
-    enabled: false,
+    enabled: true,
     // 右键菜单配置
     items: [
+      { operation: 'print' },
       { operation: 'refresh' },
       { operation: 'divider' },
-      { operation: 'plus' },
+      { operation: 'add' },
       { operation: 'edit' },
+      { operation: 'delete' }
     ]
   }
 }

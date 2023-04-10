@@ -178,6 +178,7 @@
               </template>
               <template #columns>
                 <ma-column
+                  ref="crudColumnRef"
                   v-if="reloadColumn"
                   :columns="props.columns"
                   :isRecovery="isRecovery"
@@ -295,6 +296,7 @@ const crudSearchRef = ref()
 const crudSettingRef = ref()
 const crudFormRef = ref()
 const crudImportRef = ref()
+const crudColumnRef = ref()
 const crudContextMenuRef = ref()
 
 const options = ref(
@@ -365,6 +367,7 @@ provide('dictColors', dictColors.value)
 provide('requestParams', requestParams.value)
 provide('dictTrans', dictTrans)
 provide('dictColors', dictColors)
+provide('isRecovery', isRecovery)
 
 watch(
   () => props.options.api,
@@ -555,7 +558,9 @@ const requestSuccess = async response => {
 }
 
 const addAction = () => {
-  isFunction(options.value.beforeOpenAdd) && options.value.beforeOpenAdd()
+  if (isFunction(options.value.beforeOpenAdd) && ! options.value.beforeOpenAdd()) {
+    return false
+  }
   if (options.value.add.action && isFunction(options.value.add.action)) {
     options.value.add.action()
   } else {
@@ -564,7 +569,9 @@ const addAction = () => {
 }
 
 const editAction = (record) => {
-  isFunction(options.value.beforeOpenEdit) && options.value.beforeOpenEdit(record)
+  if (isFunction(options.value.beforeOpenEdit) && ! options.value.beforeOpenEdit(record)) {
+    return false
+  }
   if (options.value.edit.action && isFunction(options.value.edit.action)) {
     options.value.edit.action(record)
   } else {
@@ -613,8 +620,8 @@ const deletesMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
     const api = isRecovery.value ? options.value.delete.realApi : options.value.delete.api
     let data = {}
-    if (options.value.beforeDelete && isFunction(options.value.beforeDelete)) {
-      data = options.value.beforeDelete()
+    if (isFunction(options.value.beforeDelete) && !( data = options.value.beforeDelete(selecteds.value)) ) {
+      return false
     }
     const response = await api(Object.assign( { ids: selecteds.value }, data ))
     if (options.value.afterDelete && isFunction(options.value.afterDelete)) {
@@ -725,11 +732,13 @@ const execContextMenuCommand = async (args) => {
   const item = args.contextItem
   const record = args.record
   switch(item.operation) {
+    case 'print': await printTable(); break;
     case 'refresh': await refresh(); break;
-    case 'plus': addAction(); break;
+    case 'add': addAction(); break;
     case 'edit': editAction(record); break;
+    case 'delete': crudColumnRef.value.deleteAction(record); break;
     default:
-      await maEvent.customeEvent(item, args, 'onExecCommand')
+      await maEvent.customeEvent(item, args, 'onCommand')
       break;
   }
 }
