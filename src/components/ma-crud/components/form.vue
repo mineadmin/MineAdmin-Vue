@@ -131,6 +131,7 @@ const add = () => {
 const edit = (data) => {
   actionTitle.value = '编辑'
   currentAction.value = 'edit'
+  form.value = {}
   for (let i in data) form.value[i] = data[i]
   open(data)
 }
