@@ -109,6 +109,20 @@
     },
     recovery: { show: true, api: role.recoverys, auth: ['system:role:recovery']},
     isDbClickEdit: false,
+    beforeOpenEdit: (record) => {
+      if (record.id === 1) {
+        Message.error('超级管理员角色不可编辑')
+        return false
+      }
+      return true
+    },
+    beforeDelete: (ids) => {
+      if (ids.includes(1)) {
+        Message.error('超级管理员角色不可删除')
+        return false
+      }
+      return true
+    }
   })
 
   const columns = reactive([

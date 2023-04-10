@@ -260,10 +260,12 @@ export default {
     enabled: true,
     // 右键菜单配置
     items: [
+      { operation: 'print' },
       { operation: 'refresh' },
       { operation: 'divider' },
-      { operation: 'plus' },
+      { operation: 'add' },
       { operation: 'edit' },
+      { operation: 'delete' }
     ]
   }
 }
