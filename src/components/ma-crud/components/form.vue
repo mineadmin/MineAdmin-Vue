@@ -196,7 +196,6 @@ const columnItemHandle = async (item) => {
   item.readonly = formItemReadonly(item)
   item.labelWidth = formItemLabelWidth(item)
   item.rules = getRules(item)
-  console.log(item)
 }
 const settingFormLayout = (layout) => {
   if (!isArray(layout)) {
