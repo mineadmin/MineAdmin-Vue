@@ -683,9 +683,13 @@ const __summary = ({ data }) => {
   if (options.value.showSummary && isArray(options.value.summary)) {
     const summary = options.value.summary
     let summaryData = {}
+    let summaryPrefixText = {}
+    let summarySuffixText = {}
     let length = data.length || 0
     summary.map( item => {
       summaryData[item.dataIndex] = 0
+      summaryPrefixText[item.dataIndex] = item?.prefixText ?? ''
+      summarySuffixText[item.dataIndex] = item?.suffixText ?? ''
       data.map(record => {
         if (record[item.dataIndex]) {
           if (item.action && item.action === 'sum') {
@@ -699,7 +703,7 @@ const __summary = ({ data }) => {
     })
 
     for (let i in summaryData) {
-      summaryData[i] = tool.groupSeparator(summaryData[i].toFixed(2))
+      summaryData[i] = summaryPrefixText[i] + tool.groupSeparator(summaryData[i].toFixed(2)) + summarySuffixText[i]
     }
 
     return [ summaryData ]
