@@ -211,7 +211,7 @@
       type: 'image', rounded: true, labelWidth: '86px'
     },
     { 
-      title: '账户', dataIndex: 'username', width: 130, search: true, editDisabled: true,
+      title: '账户', dataIndex: 'username', width: 130, search: true, addDisabled: false, editDisabled: true,
       commonRules: [{ required: true, message: '账户必填' }]
     },
     {
