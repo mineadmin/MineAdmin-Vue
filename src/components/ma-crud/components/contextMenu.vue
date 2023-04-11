@@ -1,8 +1,8 @@
 <template>
   <ul
     class="ma-crud-contextmenu shadow-lg"
-    v-if="crudContextMenuVisible"
-    :style="{ left: left + 'px', top: top + 'px' }"
+    v-show="crudContextMenuVisible"
+    :style="{ left: left + 'px', top: top + 'px', height: 'auto' }"
   >
     <template v-for="item in (options?.contextMenu?.items ?? [])">
       <li v-if="item.operation === 'divider'"><a-divider margin="8px" /></li>
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { ref, inject, watch } from 'vue'
+import { ref, inject, watch, nextTick } from 'vue'
 import checkAuth from '@/directives/auth/auth'
 import { isArray } from "lodash"
 
@@ -98,11 +98,18 @@ watch(
     }
 )
 
-const openContextMenu = (ev, record) => {
-  left.value = ev.clientX
-  top.value = ev.clientY
-  currentRow.value = record
+const openContextMenu = async (ev, record) => {
   crudContextMenuVisible.value = true
+  currentRow.value = record
+  await nextTick(() => {
+    const domHeight = document.querySelector('.ma-crud-contextmenu').offsetHeight
+    if (document.body.offsetHeight - ev.pageY < domHeight) {
+      top.value = ev.clientY - domHeight
+    } else {
+      top.value = ev.clientY
+    }
+    left.value = ev.clientX
+  })
 }
 
 const closeCrudcontextMenu = () => {
