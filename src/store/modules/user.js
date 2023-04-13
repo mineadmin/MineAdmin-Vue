@@ -66,13 +66,9 @@ const useUserStore = defineStore('user', {
         }).catch(_ => {
           this.clearToken()
           router.push({ name: 'login' })
+          reject(error)
         })
-      }).catch(error => {
-        this.clearToken()
-        router.push({ name: 'login' })
-        reject(error)
       })
-      
     },
 
     login(form) {
