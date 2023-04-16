@@ -168,6 +168,7 @@
               <template #tr="{ record }">
                 <tr
                   class="ma-crud-table-tr"
+                  :class="isFunction(options.rowCustomClass) ? options.rowCustomClass(record, rowIndex) ?? [] : options.rowCustomClass"
                   @contextmenu.prevent="openContextMenu($event, record)"
                   @dblclick="dbClickOpenEdit(record)"
                 />
