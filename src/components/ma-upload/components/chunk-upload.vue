@@ -106,28 +106,6 @@ const showFileList = ref([])
 const signFile = ref()
 const currentItem = ref({})
 
-const init = async () => {
-  if (config.multiple) {
-    if (isArray(props.modelValue)) {
-      const tmp = []
-      await props.modelValue.map(async item => {
-        const res = await getFileUrl(config.returnType, item, storageMode)
-        tmp.push({
-          percent: 100,
-          status: 'complete',
-          url: res
-        })
-      })
-      showFileList.value = tmp
-    }
-  } else if (props.modelValue) {
-    signFile.value = props.modelValue
-    getFileUrl(config.returnType, props.modelValue, storageMode).then(url => currentItem.value.url = url)
-    currentItem.value.percent = 100
-    currentItem.value.status  = 'complete'
-  }
-}
-
 const chunkUpload = async (options) => {
   let idx
   if (config.multiple) {
@@ -218,6 +196,33 @@ const removeFile = (idx) => {
   })
   emit('update:modelValue', files)
 }
+
+const init = async () => {
+  if (config.multiple) {
+    if (isArray(props.modelValue) && props.modelValue.length > 0) {
+      const tmp = []
+      await props.modelValue.map(async item => {
+        const res = await getFileUrl(config.returnType, item, storageMode)
+        tmp.push({
+          percent: 100,
+          status: 'complete',
+          url: res
+        })
+      })
+      showFileList.value = tmp
+    } else {
+      showFileList.value = []
+    }
+  } else if (props.modelValue) {
+    signFile.value = props.modelValue
+    getFileUrl(config.returnType, props.modelValue, storageMode).then(url => currentItem.value.url = url)
+    currentItem.value.percent = 100
+    currentItem.value.status  = 'complete'
+  } else {
+    removeSignFile()
+  }
+}
+
 watch(() => props.modelValue, (val) => {
   init()
 }, {

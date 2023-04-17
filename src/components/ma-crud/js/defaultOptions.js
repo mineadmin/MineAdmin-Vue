@@ -67,6 +67,7 @@ export default {
   searchResetButtonText: '重置',
   // 搜索栏加载提示文案
   searchLoadingText: '加载数据中...',
+
   // 搜索提交前置方法
   beforeSearch: (requestParams) => {},
 
@@ -227,6 +228,8 @@ export default {
     // 是否显示
     show: false,
   },
+  // 行自定义 class 名称
+  rowCustomClass: (record, rowIndex) => [],
   // 是否显示索引列
   showIndex: false,
   // 索引列名称
