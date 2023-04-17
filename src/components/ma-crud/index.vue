@@ -168,6 +168,7 @@
               <template #tr="{ record }">
                 <tr
                   class="ma-crud-table-tr"
+                  :class="isFunction(options.rowCustomClass) ? options.rowCustomClass(record, rowIndex) ?? [] : options.rowCustomClass"
                   @contextmenu.prevent="openContextMenu($event, record)"
                   @dblclick="dbClickOpenEdit(record)"
                 />
@@ -178,6 +179,7 @@
               </template>
               <template #columns>
                 <ma-column
+                  ref="crudColumnRef"
                   v-if="reloadColumn"
                   :columns="props.columns"
                   :isRecovery="isRecovery"
@@ -295,6 +297,7 @@ const crudSearchRef = ref()
 const crudSettingRef = ref()
 const crudFormRef = ref()
 const crudImportRef = ref()
+const crudColumnRef = ref()
 const crudContextMenuRef = ref()
 
 const options = ref(
@@ -365,6 +368,7 @@ provide('dictColors', dictColors.value)
 provide('requestParams', requestParams.value)
 provide('dictTrans', dictTrans)
 provide('dictColors', dictColors)
+provide('isRecovery', isRecovery)
 
 watch(
   () => props.options.api,
@@ -555,7 +559,9 @@ const requestSuccess = async response => {
 }
 
 const addAction = () => {
-  isFunction(options.value.beforeOpenAdd) && options.value.beforeOpenAdd()
+  if (isFunction(options.value.beforeOpenAdd) && ! options.value.beforeOpenAdd()) {
+    return false
+  }
   if (options.value.add.action && isFunction(options.value.add.action)) {
     options.value.add.action()
   } else {
@@ -564,7 +570,9 @@ const addAction = () => {
 }
 
 const editAction = (record) => {
-  isFunction(options.value.beforeOpenEdit) && options.value.beforeOpenEdit(record)
+  if (isFunction(options.value.beforeOpenEdit) && ! options.value.beforeOpenEdit(record)) {
+    return false
+  }
   if (options.value.edit.action && isFunction(options.value.edit.action)) {
     options.value.edit.action(record)
   } else {
@@ -613,8 +621,8 @@ const deletesMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
     const api = isRecovery.value ? options.value.delete.realApi : options.value.delete.api
     let data = {}
-    if (options.value.beforeDelete && isFunction(options.value.beforeDelete)) {
-      data = options.value.beforeDelete()
+    if (isFunction(options.value.beforeDelete) && !( data = options.value.beforeDelete(selecteds.value)) ) {
+      return false
     }
     const response = await api(Object.assign( { ids: selecteds.value }, data ))
     if (options.value.afterDelete && isFunction(options.value.afterDelete)) {
@@ -676,9 +684,13 @@ const __summary = ({ data }) => {
   if (options.value.showSummary && isArray(options.value.summary)) {
     const summary = options.value.summary
     let summaryData = {}
+    let summaryPrefixText = {}
+    let summarySuffixText = {}
     let length = data.length || 0
     summary.map( item => {
       summaryData[item.dataIndex] = 0
+      summaryPrefixText[item.dataIndex] = item?.prefixText ?? ''
+      summarySuffixText[item.dataIndex] = item?.suffixText ?? ''
       data.map(record => {
         if (record[item.dataIndex]) {
           if (item.action && item.action === 'sum') {
@@ -692,7 +704,7 @@ const __summary = ({ data }) => {
     })
 
     for (let i in summaryData) {
-      summaryData[i] = tool.groupSeparator(summaryData[i].toFixed(2))
+      summaryData[i] = summaryPrefixText[i] + tool.groupSeparator(summaryData[i].toFixed(2)) + summarySuffixText[i]
     }
 
     return [ summaryData ]
@@ -725,11 +737,13 @@ const execContextMenuCommand = async (args) => {
   const item = args.contextItem
   const record = args.record
   switch(item.operation) {
+    case 'print': await printTable(); break;
     case 'refresh': await refresh(); break;
-    case 'plus': addAction(); break;
+    case 'add': addAction(); break;
     case 'edit': editAction(record); break;
+    case 'delete': crudColumnRef.value.deleteAction(record); break;
     default:
-      await maEvent.customeEvent(item, args, 'onExecCommand')
+      await maEvent.customeEvent(item, args, 'onCommand')
       break;
   }
 }

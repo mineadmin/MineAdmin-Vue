@@ -47,11 +47,11 @@ if (! formStore.formList[tagId.value]) {
 }
 
 const formConfig = formStore.formList[tagId.value]?.config
-const form = ref(op.value == 'add' ? formStore.formList[tagId.value]['addData'] : formStore.formList[tagId.value]['editData'][key.value])
+const form = ref(op.value === 'add' ? formStore.formList[tagId.value]?.addData : formStore.formList[tagId.value]['editData'][key.value])
 const options = formConfig?.options
-const opName = ref(op.value == 'add' ? '新增' : '编辑' )
+const opName = ref(op.value === 'add' ? '新增' : '编辑' )
 const pageTitle = ref(opName.value + (formConfig?.options?.formOption?.tagName ?? '未命名') )
-tagStore.updateTagTitle(route.fullPath, ` ${pageTitle.value} ${op.value == 'edit' ? ' | ' + key.value : '' } `)
+tagStore.updateTagTitle(route.fullPath, ` ${pageTitle.value} ${op.value === 'edit' ? ' | ' + key.value : '' } `)
 
 const pageBack = () => {
   window.history.back(-1)
@@ -74,6 +74,10 @@ const submitForm = async () => {
     isFunction(options.afterEdit) && await options.afterEdit(response, formData)
   }
   if ( response.success ) {
+    if (op.value === 'add') {
+      formStore.formList[tagId.value].addData = {}
+      form.value = {}
+    }
     Message.success(response.message || `${opName.value}成功！`)
     closeTag({ path: route.fullPath })
     formStore.crudList[options.id] = true

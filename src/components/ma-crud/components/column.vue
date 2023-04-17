@@ -242,8 +242,8 @@ const recoveryAction = async record => {
 
 const deleteAction = async record => {
   let data = {}
-  if (options.beforeDelete && isFunction(options.beforeDelete)) {
-    data = options.beforeDelete(record)
+  if (isFunction(options.beforeDelete) && !( data = options.beforeDelete([ record[options.pk] ])) ) {
+    return false
   }
   const api = props.isRecovery ? options.delete.realApi : options.delete.api
   const response = await api(Object.assign({ ids: [record[options.pk]] }, data))

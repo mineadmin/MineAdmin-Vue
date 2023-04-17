@@ -8,7 +8,7 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <script setup>
-  import { reactive, ref, onMounted } from 'vue'
+  import { reactive, ref } from 'vue'
   import verifyCode from '@cps/ma-verifyCode/index.vue'
   import { useUserStore } from '@/store'
   import { useRouter, useRoute } from 'vue-router'
@@ -17,7 +17,7 @@
   request({
     url: 'system/getBingBackgroundImage', timeout: 10000, method: 'get'
   }).then( res => {
-    document.getElementById('login-container').style.backgroundImage = `url(${res.data.url})`
+    document.getElementById('background').style.backgroundImage = `url(${res.data.url})`
   })
 
   const router = useRouter()
@@ -48,14 +48,16 @@
   }
 </script>
 <template>
-  <div class="login-container" id="login-container">
-    <div class="login-width mx-auto flex justify-between h-full items-center">
-      <div class="w-6/12 mx-auto left-panel rounded-l pl-5 pr-5 hidden md:block bg-blue-50">
+  <div id="background" class="fixed"></div>
+  <div class="bg-backdrop-layout"></div>
+  <div class="login-container">
+    <div class="login-width md:w-10/12 w-11/12 mx-auto flex justify-between h-full items-center">
+      <div class="w-6/12 mx-auto left-panel rounded-l pl-5 pr-5 hidden md:block">
         <div class="logo"><img src="/logo.svg" width="45"><span>{{ $title }}</span></div>
         <div class="slogan flex justify-end"><span>---- {{ $t('sys.login.slogan') }}</span></div>
       </div>
 
-      <div class="md:w-6/12 w-11/12 md:rounded-r mx-auto pl-5 pr-5 pb-10 bg-white">
+      <div class="md:w-6/12 w-11/12 md:rounded-r mx-auto pl-5 pr-5 pb-10">
         <h2 class="mt-10 text-3xl pb-0 mb-10">{{ $t('sys.login.title') }}</h2>
         <a-form :model="form" @submit="handleSubmit">
           <a-form-item
@@ -131,14 +133,34 @@
 </template>
 
 <style scoped lang="less">
+#background {
+  top: 0; left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+.bg-backdrop-layout {
+  top: 0; left: 0;
+  position: fixed;
+  width: 100%; height: 100%;
+  z-index: 2;
+  backdrop-filter: blur(25px);
+}
 .login-container {
   width: 100%;
   height: 100%;
   position: absolute;
   background-size: cover;
-
+  z-index: 3;
   .login-width {
     max-width: 950px;
+    background: #fff;
+    padding: 10px;
+    height: 500px;
+    position: relative;
+    top: 50%;
+    margin-top: -255px;
+    border-radius: 10px;
   }
 
   .left-panel {

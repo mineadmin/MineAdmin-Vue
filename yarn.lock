@@ -17,10 +17,10 @@
   dependencies:
     color "^3.1.3"
 
-"@arco-design/web-vue@^2.45.0":
-  version "2.45.0"
-  resolved "https://registry.npmmirror.com/@arco-design/web-vue/-/web-vue-2.45.0.tgz#47aa47fd55140ca7da0730c87cd7fff1c828e991"
-  integrity sha512-+AkoOWTRz1ZeU2NTWXTEGmrJfV3/9uWhXpJ5hcPU41ynQ0GHilAlzCEt9B6hFd79QhGEHl2gRq6GJFki0Bo0Hg==
+"@arco-design/web-vue@^2.45.1":
+  version "2.45.1"
+  resolved "https://registry.npmmirror.com/@arco-design/web-vue/-/web-vue-2.45.1.tgz#7661b37e65b0d13e5005f9728ff6eeebee8f652f"
+  integrity sha512-+p4wnj0X6UD8ehPaNhX96g3Sm8l9cgZgwsDseVJp1/JHIuG+JuhaIcvg0/3RTCrFl9GpU0j6Cve6J8v2LqpT+A==
   dependencies:
     "@arco-design/color" "^0.4.0"
     b-tween "^0.3.3"

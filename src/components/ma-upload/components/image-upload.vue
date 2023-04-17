@@ -87,30 +87,6 @@ const showImgList = ref([])
 const signImage = ref()
 const currentItem = ref({})
 
-const init = async () => {
-  if (config.multiple) {
-    if (isArray(props.modelValue)) {
-      const tmp = []
-      await props.modelValue.map(async item => {
-        const res = await getFileUrl(config.returnType, item, storageMode)
-        tmp.push({ url: res })
-      })
-      showImgList.value = tmp
-    }
-  } else if (props.modelValue) {
-    signImage.value = props.modelValue
-    getFileUrl(config.returnType, props.modelValue, storageMode).then(url => currentItem.value.url = url)
-    currentItem.value.percent = 100
-    currentItem.value.status  = 'complete'
-  }
-}
-
-watch(() => props.modelValue, (val) => {
-  init()
-}, {
-  deep: true, immediate: true
-})
-
 const uploadImageHandler = async (options) => {
   if (! options.fileItem) return
   if (! config.multiple) {
@@ -155,6 +131,34 @@ const removeImage = (idx) => {
   })
   emit('update:modelValue', files)
 }
+
+const init = async () => {
+  if (config.multiple) {
+    if (isArray(props.modelValue) && props.modelValue.length > 0) {
+      const tmp = []
+      await props.modelValue.map(async item => {
+        const res = await getFileUrl(config.returnType, item, storageMode)
+        tmp.push({ url: res })
+      })
+      showImgList.value = tmp
+    } else {
+      showImgList.value = []
+    }
+  } else if (props.modelValue) {
+    signImage.value = props.modelValue
+    getFileUrl(config.returnType, props.modelValue, storageMode).then(url => currentItem.value.url = url)
+    currentItem.value.percent = 100
+    currentItem.value.status  = 'complete'
+  } else {
+    removeSignImage()
+  }
+}
+
+watch(() => props.modelValue, (val) => {
+  init()
+}, {
+  deep: true, immediate: true
+})
 </script>
 
 <style lang="less" scoped>

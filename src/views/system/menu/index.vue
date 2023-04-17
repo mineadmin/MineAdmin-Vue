@@ -102,7 +102,10 @@
     recovery: { show: true, api: menu.recoverys, auth: ['system:menu:recovery']},
     formOption: { viewType: 'drawer', width: 600 },
     isExpand: true,
-    beforeOpenAdd: () => columns[1].addDefaultValue = 0
+    beforeOpenAdd: () => {
+      columns[1].addDefaultValue = 0
+      return true
+    }
   })
 
   const columns = reactive([

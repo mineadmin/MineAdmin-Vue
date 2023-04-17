@@ -131,6 +131,7 @@ const add = () => {
 const edit = (data) => {
   actionTitle.value = '编辑'
   currentAction.value = 'edit'
+  form.value = {}
   for (let i in data) form.value[i] = data[i]
   open(data)
 }
@@ -278,30 +279,28 @@ const formItemShow = (item) => {
   }
 }
 const formItemDisabled = (item) => {
-  if (!isUndefined(item.disabled)) {
-    return item.disabled
-  } else {
-    if (currentAction.value === 'add' && item?.addDisabled === true) {
-      return true
-    }
-    if (currentAction.value === 'edit' && item?.editDisabled === true) {
-      return true
-    }
-    return false
+  if (currentAction.value === 'add' && ! isUndefined(item.addDisabled)) {
+    return item.addDisabled
   }
+  if (currentAction.value === 'edit' && ! isUndefined(item.editDisabled)) {
+    return item.editDisabled
+  }
+  if (! isUndefined(item.disabled)) {
+    return item.disabled
+  }
+  return false
 }
 const formItemReadonly = (item) => {
-  if (!isUndefined(item.readonly)) {
-    return item.readonly
-  } else {
-    if (currentAction.value === 'add' && item?.addReadonly === true) {
-      return true
-    }
-    if (currentAction.value === 'edit' && item?.editReadonly === true) {
-      return true
-    }
-    return false
+  if (currentAction.value === 'add' && ! isUndefined(item.addReadonly)) {
+    return item.addReadonly
   }
+  if (currentAction.value === 'edit' && ! isUndefined(item.editReadonly)) {
+    return item.editReadonly
+  }
+  if (! isUndefined(item.readonly)) {
+    return item.readonly
+  }
+  return false
 }
 const formItemLabelWidth = (item) => {
   return item.labelWidth ?? options.labelWidth ?? undefined

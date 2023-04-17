@@ -187,7 +187,21 @@
         { formType: 'grid', cols: [ { span: 24, formList: [ { dataIndex: 'remark' }] }] },
       ]
     },
-    isDbClickEdit: false
+    isDbClickEdit: false,
+    beforeOpenEdit: (record) => {
+      if (record.id === 1) {
+        Message.error('创始人不可编辑')
+        return false
+      }
+      return true
+    },
+    beforeDelete: (ids) => {
+      if (ids.includes(1)) {
+        Message.error('创始人不可删除')
+        return false
+      }
+      return true
+    }
   })
 
   const columns = reactive([
@@ -197,7 +211,7 @@
       type: 'image', rounded: true, labelWidth: '86px'
     },
     { 
-      title: '账户', dataIndex: 'username', width: 130, search: true, editDisabled: true,
+      title: '账户', dataIndex: 'username', width: 130, search: true, addDisabled: false, editDisabled: true,
       commonRules: [{ required: true, message: '账户必填' }]
     },
     {

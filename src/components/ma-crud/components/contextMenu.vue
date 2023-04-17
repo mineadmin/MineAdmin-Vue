@@ -1,15 +1,41 @@
 <template>
   <ul
     class="ma-crud-contextmenu shadow-lg"
-    v-if="crudContextMenuVisible"
-    :style="{ left: left + 'px', top: top + 'px' }"
+    v-show="crudContextMenuVisible"
+    :style="{ left: left + 'px', top: top + 'px', height: 'auto' }"
   >
     <template v-for="item in (options?.contextMenu?.items ?? [])">
       <li v-if="item.operation === 'divider'"><a-divider margin="8px" /></li>
-      <li v-else @click="execCommand(item)">
-        <div class="context-menu-item">
-          <component v-if="defaultOperation.includes(item.operation)" :is="getIcon(item)" />
-          <component v-else-if="item.icon" :is="getIcon(item)" />
+      <li v-if="item.operation === 'print'">
+        <div class="context-menu-item" @click="execCommand(item)">
+          <icon-printer /> <span class="ml-2">{{ item.text ?? '打印表格' }}</span>
+        </div>
+      </li>
+      <li v-if="item.operation === 'refresh'">
+        <div class="context-menu-item" @click="execCommand(item)">
+          <icon-refresh /> <span class="ml-2">{{ item.text ?? '刷新表格' }}</span>
+        </div>
+      </li>
+      <li v-if="item.operation === 'add' && showVerify('add')">
+        <div class="context-menu-item" @click="execCommand(item)">
+          <icon-plus /> <span class="ml-2">{{ item.text ?? '新增数据' }}</span>
+        </div>
+      </li>
+      <li v-if="item.operation === 'edit' && showVerify('edit')">
+        <div class="context-menu-item" @click="execCommand(item)">
+          <icon-edit /> <span class="ml-2">{{ item.text ?? '编辑数据' }}</span>
+        </div>
+      </li>
+      <li v-if="item.operation === 'delete' && showVerify('delete')">
+        <a-popconfirm content="确实要删除此数据吗?" @ok="execCommand(item)">
+          <div class="context-menu-item">
+            <icon-delete /> <span class="ml-2">{{ item.text ?? '删除数据' }}</span>
+          </div>
+        </a-popconfirm>
+      </li>
+      <li v-if="! defaultOperation.includes(item.operation)">
+        <div class="context-menu-item" @click="execCommand(item)">
+          <component v-if="item.icon" :is="getIcon(item)" />
           <span class="ml-2">{{ getText(item) }}</span>
         </div>
       </li>
@@ -18,7 +44,10 @@
 </template>
 
 <script setup>
-import { ref, inject, watch } from 'vue'
+import { ref, inject, watch, nextTick } from 'vue'
+import checkAuth from '@/directives/auth/auth'
+import { isArray } from "lodash"
+
 const left = ref(0)
 const top = ref(0)
 const crudContextMenuVisible = ref(false)
@@ -26,10 +55,31 @@ const currentRow = ref()
 const emit = defineEmits([ 'execCommand' ])
 
 const options = inject('options')
+const isRecovery = inject('isRecovery')
 
 const defaultOperation = [
-  'refresh', 'edit', 'delete', 'plus', 'nextPage', 'prevPage'
+  'refresh', 'print', 'edit', 'divider', 'delete', 'add', 'nextPage', 'prevPage'
 ]
+
+const showVerify = (type) => {
+  if (! options[type].show) {
+    return false
+  }
+
+  if (isRecovery.value === true) {
+    return false
+  }
+
+  const authList = options[type].auth
+  if (isArray(authList)) {
+    for (let index in authList) {
+      if (! checkAuth(authList[index])) {
+        return false
+      }
+    }
+  }
+  return true
+}
 
 watch(
     () => crudContextMenuVisible.value,
@@ -48,11 +98,18 @@ watch(
     }
 )
 
-const openContextMenu = (ev, record) => {
-  left.value = ev.clientX
-  top.value = ev.clientY
-  currentRow.value = record
+const openContextMenu = async (ev, record) => {
   crudContextMenuVisible.value = true
+  currentRow.value = record
+  await nextTick(() => {
+    const domHeight = document.querySelector('.ma-crud-contextmenu').offsetHeight
+    if (document.body.offsetHeight - ev.pageY < domHeight) {
+      top.value = ev.clientY - domHeight
+    } else {
+      top.value = ev.clientY
+    }
+    left.value = ev.clientX
+  })
 }
 
 const closeCrudcontextMenu = () => {
@@ -61,23 +118,13 @@ const closeCrudcontextMenu = () => {
 }
 
 const getIcon = (item) => {
-  if (defaultOperation.includes(item.operation)) {
-    item.icon = item.operation
-    return `icon-${item.operation}`
-  } else {
+  if (! defaultOperation.includes(item.operation)) {
     return item.icon
   }
 }
 
 const getText = (item) => {
-  if (defaultOperation.includes(item.operation)) {
-    switch (item.operation) {
-      case 'plus': return item.text ?? '新增数据'
-      case 'refresh': return item.text ?? '刷新表格'
-      case 'edit': return item.text ?? '编辑此行数据'
-      // case 'delete': return item.text ?? '删除此行数据'
-    }
-  } else {
+  if (! defaultOperation.includes(item.operation)) {
     return item.text
   }
 }
