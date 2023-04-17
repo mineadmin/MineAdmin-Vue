@@ -840,7 +840,7 @@ const getColumnService = (strictMode = true) => {
 
     this.append = (item, appendStartDataIndex = null) => {
       if (strictMode === true && item.dataIndex && this.exist(item.dataIndex)) {
-        console.warn(`严格模式：dataIndex已存在${item.dataIndex},或者参数中未有dataIndex属性`)
+        console.warn(`严格模式：columnService.append(item) 参数中未有item.dataIndex属性或者item.dataIndex已存在column.${item.dataIndex}`)
         return false
       }
       columns.push(item)
