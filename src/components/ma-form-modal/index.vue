@@ -9,9 +9,17 @@
       {{ prop.title }}
     </template>
     <slot name="body"></slot>
+    <a-space
+      v-if="prop.infoColumns.length"
+    >
+      <ma-info
+          :columns="prop.infoColumns"
+          :data="prop.infoData"
+      />
+    </a-space>
     <ma-form
       ref="maFormRef"
-      :columns="prop.column"
+      :columns="formColumns"
       v-model="form"
       :options="{ ...options, showButtons: false }"
     />
@@ -27,26 +35,37 @@
 import { reactive, ref, watch } from "vue"
 import MaForm from "@/components/ma-form/index.vue"
 import {Message} from "@arco-design/web-vue"
+import MaInfo from "@/components/ma-info/index.vue"
+
 const emit = defineEmits(["visible", "validateError", "open", "cancel", "close"])
 const form = ref({})
+const formColumns = ref([])
 const prop = defineProps({
   title: { type: String, default: "" }, // 弹出框标题
-  column: { type: Array, default: [] }, // ma-form字段
+  column: { type: Array, default: []}, // ma-form字段
+  columns: {type: Array, default: []}, // ma-form字段 别名
+  infoColumns: {type: Array, default: []},
+  infoData: {type: Object, default:{}},
   default_visible: { type: Boolean, default: false }, // 默认隐藏
   options: { type: Object, default: {} }, // ma-form 属性
   submit: { type: Function, default: () => {} },
 })
 
+formColumns.value = [...prop.column, ...prop.columns]
+
 const maFormRef = ref()
 
 const modal = reactive({
   visible: prop.default_visible,
-  open(data) {
+  open(formData, infoData = {}) {
     modal.visible = true
-    for (let [key, value] of Object.entries(data)) {
+    for (let [key, value] of Object.entries(formData)) {
       form.value[key] = value
     }
-    emit("open", data)
+    for (let [key, value] of Object.entries(infoData)) {
+      prop.infoData[key] = value
+    }
+    emit("open", formData, infoData)
   },
   close() {
     modal.visible = false
