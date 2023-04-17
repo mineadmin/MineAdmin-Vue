@@ -838,10 +838,13 @@ const getColumnService = (strictMode = true) => {
       return !this.isEmpty(dataIndex)
     }
 
-    this.append = (item, appendStartDataIndex = null) => {
+    this.append = async (item, appendStartDataIndex = null) => {
       if (strictMode === true && item.dataIndex && this.exist(item.dataIndex)) {
         console.warn(`严格模式：columnService.append(item) 参数中未有item.dataIndex属性或者item.dataIndex已存在column.${item.dataIndex}`)
         return false
+      }
+      if (cascaders.value.includes(item.dataIndex) && item.dict) {
+         await loadDict(dicts.value, item)
       }
       columns.push(item)
       this.columnMap.set(item.dataIndex, new columnItemService(item))
