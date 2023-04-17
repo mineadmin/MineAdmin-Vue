@@ -1,134 +1,137 @@
 <template>
-  <a-modal
-      :width="prop.width"
-      v-model:visible="modal.visible"
-      :on-before-ok="modal.submit"
-      :unmount-on-close="true"
-      @cancel="modal.cancel"
-  >
-    <template #title>
-      {{ prop.title }}
-    </template>
-    <slot name="body"></slot>
-    <a-card
-        class="mt-2"
-        :hoverable="true"
-        v-for="info in layout"
+  <a-space direction="vertical" size="large" fill>
+    <a-descriptions
+        :data="descriptions"
+        :column="props.column"
+        :title="props.title"
+        :layout="props.layout"
+        :bordered="props.bordered"
+        table-layout="fixed"
+        :size="props.size"
+        :label-style="props.labelStyle"
+        :value-style="props.valueStyle"
     >
-      <ma-info
-          v-if="isArray(info?.child)"
-          :title="info.title"
-          :columns="info.child"
-          :data="infoData"
-          ref="maInfoRefs"
-      ></ma-info>
-      <a-descriptions
-       :title="info.title"
-       v-else
-      >
-        <component
-            :data="infoData"
-            :is="info?.component"
-        />
-      </a-descriptions>
-
-    </a-card>
-    <ma-form
-        v-model="form"
-        ref="maFormRef"
-        v-if="prop.formColumns.length > 0"
-        :columns="prop.formColumns"
-        :options="{showButtons: false, ...prop.formOptions}"
-    />
-  </a-modal>
+      <a-descriptions-item v-for="item in descriptions" :label="item.label">
+        <template v-if="item.formType === 'upload'">
+          <a-image-preview-group infinite v-if="isArray(item.value)">
+            <a-space>
+              <a-image v-for="src in item.value" :src="tool.viewImage(src)" width="50" />
+            </a-space>
+          </a-image-preview-group>
+          <a-image v-else :src="tool.viewImage(item.value)" width="50"></a-image>
+        </template>
+        <template v-else-if="item.infoSlot">
+          <slot :name="item.dataIndex" :row="item" :data="data"></slot>
+        </template>
+        <template v-else-if="(item.formType === 'radio' || item.formType === 'select')">
+          <a-tag color="blue">{{
+              item.dict.data.filter((row) => row.value == item.value)[0]?.label
+            }}</a-tag>
+        </template>
+        <div v-else>
+          {{ item.value }} {{ item?.textAppend }}
+        </div>
+      </a-descriptions-item>
+    </a-descriptions>
+  </a-space>
 </template>
 
 <script setup>
-import MaInfo from "../ma-info-v1/index.vue";
-import {getCurrentInstance, reactive, ref, watch} from "vue";
-import {isString} from "@vue/shared";
-import {isArray, isFunction, isObject} from "lodash";
-import {isComponent} from "@arco-design/web-vue/es/_utils/vue-utils";
-const emit = defineEmits(["visible", "validateError", "open", "cancel", "close"]);
-const app = getCurrentInstance().appContext.app
-const maFormRef = ref()
-const prop = defineProps({
-  width: {type: Number, default: 1200}, // modal框大小
-  title: { type: String, default: "" }, // 弹出框标题
-  column: { type: Array, default: [] }, // ma-form字段
-  default_visible: { type: Boolean, default: false}, // 默认隐藏
-  options: { type: Object, default: {} }, // ma-form 属性
-  submit: { type: Function, default: () => {} },
-  layout: { type: Object, default:[]},
-  formOptions: {type: Object, default: {}}, // ma-form-options
-  formColumns: { type: Array, default: []}
+/**
+ * 描述列表 Descriptions https://arco.design/vue/component/descriptions
+ * @author NekGod
+ */
+import {getCurrentInstance, inject, provide, ref, watch} from "vue";
+import tool from "@/utils/tool";
+import {get, isArray, isBoolean, isEmpty, isFunction} from "lodash";
+import {handlerProps} from "@cps/ma-crud/js/common";
+import globalColumn from '@/config/column.js'
+import commonApi from "@/api/common";
+
+const app = getCurrentInstance().appContext.app;
+const columns = ref([]);
+const data = ref({});
+const descriptions = ref([]);
+const dictData = ref([])
+const props = defineProps({
+  columns: { type: Array, default: [] },
+  data: {},
+  column: {default: 3},
+  title: {
+    default: "",
+  },
+  bordered: {
+    default: true,
+  },
+  layout: {
+    default: "vertical",
+  },
+  labelStyle: {
+    default: {},
+  },
+  valueStyle: {
+    default: {},
+  },
+  size: {
+    default: "large",
+  },
 });
-const maInfoRefs = ref([])
-const layout = ref([])
-const infoData = ref({})
-const form = ref({})
 
-watch(() => prop.layout, val => {
-  layout.value = val
-},{
-  immediate: true,
-})
-
-let columnMap = {}
-const init = async () => {
-  let column = prop.column
-  column.forEach(item => {
-    columnMap[item.dataIndex] = item
-  })
-  layout.value.forEach((item) => {
-    if (item.component) {
-      app.component(item.component, item.child)
+watch(
+    () => props.columns,
+    (vl) => {
+      columns.value = vl;
+    },
+    { deep: true, immediate: true }
+);
+const reset = (vl) => {
+  data.value = vl;
+  descriptions.value = [];
+  if (!columns.value) {
+    return ;
+  }
+  columns.value.forEach(async (item) => {
+    let value = null
+    if (isEmpty(item) || item.dataIndex === "__operation" || item.infoShow === false) {
       return;
     }
-    item.child.forEach((child, index) => {
-      if (isString(child)) {
-        item.child[index] = columnMap[child]
+    if (isBoolean(item.common) && item.common && globalColumn[item.dataIndex]) {
+      item = globalColumn[item.dataIndex]
+    }
+    if (item.dict) {
+      if (item.dict.data) {
+        if (isArray(item.dict.data)) {
+          item.dict.data = handlerProps(['select', 'radio'], item, item.dict.data)
+        } else if (isFunction(item.dict.data)) {
+          const response = await item.dict.data()
+          item.dict.data = handlerProps(['select','radio'], item, response)
+        }
+      }else if (item.dict.name){
+        const response = await commonApi.getDict(item.dict.name)
+        if (response.data) {
+          item.dict.data = handlerProps(['select','radio'], item, response.data)
+        }
       }
-    })
-  })
+    }
+    if (isFunction(item.customRender)) {
+      value = item.customRender({record: data.value})
+    }
+    descriptions.value.push({
+      ...item,
+      label: item.title,
+      value: value ?? get(data.value, item.dataIndex),
+    });
+  });
 }
+watch(
+    () => props.data,
+    (vl) => {
+      reset(vl)
+    },
+    { deep: true, immediate: true }
+);
 
-const modal = reactive({
-  visible: prop.default_visible,
-  open(data, formData = {}) {
-    modal.visible = true;
-    for (let [key, value] of Object.entries(data)) {
-      infoData.value[key] = value;
-    }
-    for (let [key, value] of Object.entries(formData)) {
-      form.value[key] = value;
-    }
-    emit("open", infoData);
-  },
-  close() {
-    modal.visible = false;
-  },
-  async submit() {
-    let validate = await maFormRef.value.validateForm()
-    if (validate) {
-      emit("validateError", validate)
-      return false
-    }
-    return prop.submit(form._rawValue)
-  },
-  cancel() {
-    emit("cancel");
-  },
-});
-
-init()
-defineExpose({
-  open: modal.open,
-  close: modal.close,
-  data: infoData,
-});
+defineExpose({reset,})
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
