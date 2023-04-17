@@ -1,106 +1,134 @@
 <template>
-  <a-space direction="vertical" size="large" fill>
-    <a-descriptions
-      :data="descriptions"
-      :column="props.column"
-      :title="props.title"
-      :layout="props.layout"
-      :bordered="props.bordered"
-      table-layout="fixed"
-      :size="props.size"
-      :label-style="props.labelStyle"
-      :value-style="props.valueStyle"
+  <a-modal
+      :width="prop.width"
+      v-model:visible="modal.visible"
+      :on-before-ok="modal.submit"
+      :unmount-on-close="true"
+      @cancel="modal.cancel"
+  >
+    <template #title>
+      {{ prop.title }}
+    </template>
+    <slot name="body"></slot>
+    <a-card
+        class="mt-2"
+        :hoverable="true"
+        v-for="info in layout"
     >
-      <a-descriptions-item v-for="item in descriptions" :label="item.label">
-        <template v-if="item.formType === 'upload'">
-          <a-image-preview-group infinite v-if="isArray(item.value)">
-            <a-space>
-              <a-image v-for="src in item.value" :src="tool.viewImage(src)" width="50" />
-            </a-space>
-          </a-image-preview-group>
-          <a-image v-else :src="tool.viewImage(item.value)" width="50"></a-image>
-        </template>
-        <template v-else-if="item.infoSlot">
-          <slot :name="item.dataIndex" :row="item" :data="data"></slot>
-        </template>
-        <template v-else-if="item.formType === 'radio'">
-          <a-tag color="blue">{{
-            item.dict.data.filter((row) => row.value == item.value)[0]?.label
-          }}</a-tag>
-        </template>
-        <div v-else>
-          {{ item.value }}
-        </div>
-      </a-descriptions-item>
-    </a-descriptions>
-  </a-space>
+      <ma-info
+          v-if="isArray(info?.child)"
+          :title="info.title"
+          :columns="info.child"
+          :data="infoData"
+          ref="maInfoRefs"
+      ></ma-info>
+      <a-descriptions
+       :title="info.title"
+       v-else
+      >
+        <component
+            :data="infoData"
+            :is="info?.component"
+        />
+      </a-descriptions>
+
+    </a-card>
+    <ma-form
+        v-model="form"
+        ref="maFormRef"
+        v-if="prop.formColumns.length > 0"
+        :columns="prop.formColumns"
+        :options="{showButtons: false, ...prop.formOptions}"
+    />
+  </a-modal>
 </template>
 
 <script setup>
-/**
- * 描述列表 Descriptions https://arco.design/vue/component/descriptions
- * @author NekGod
- */
-import { getCurrentInstance, ref, watch } from "vue";
-import tool from "@/utils/tool";
-import { get, isArray } from "lodash";
+import MaInfo from "../ma-info-v1/index.vue";
+import {getCurrentInstance, reactive, ref, watch} from "vue";
+import {isString} from "@vue/shared";
+import {isArray, isFunction, isObject} from "lodash";
+import {isComponent} from "@arco-design/web-vue/es/_utils/vue-utils";
+const emit = defineEmits(["visible", "validateError", "open", "cancel", "close"]);
+const app = getCurrentInstance().appContext.app
+const maFormRef = ref()
+const prop = defineProps({
+  width: {type: Number, default: 1200}, // modal框大小
+  title: { type: String, default: "" }, // 弹出框标题
+  column: { type: Array, default: [] }, // ma-form字段
+  default_visible: { type: Boolean, default: false}, // 默认隐藏
+  options: { type: Object, default: {} }, // ma-form 属性
+  submit: { type: Function, default: () => {} },
+  layout: { type: Object, default:[]},
+  formOptions: {type: Object, default: {}}, // ma-form-options
+  formColumns: { type: Array, default: []}
+});
+const maInfoRefs = ref([])
+const layout = ref([])
+const infoData = ref({})
+const form = ref({})
 
-const app = getCurrentInstance().appContext.app;
-const columns = ref([]);
-const data = ref({});
-const descriptions = ref([]);
-const props = defineProps({
-  columns: { type: Array },
-  data: {},
-  column: {
-    default: 3,
+watch(() => prop.layout, val => {
+  layout.value = val
+},{
+  immediate: true,
+})
+
+let columnMap = {}
+const init = async () => {
+  let column = prop.column
+  column.forEach(item => {
+    columnMap[item.dataIndex] = item
+  })
+  layout.value.forEach((item) => {
+    if (item.component) {
+      app.component(item.component, item.child)
+      return;
+    }
+    item.child.forEach((child, index) => {
+      if (isString(child)) {
+        item.child[index] = columnMap[child]
+      }
+    })
+  })
+}
+
+const modal = reactive({
+  visible: prop.default_visible,
+  open(data, formData = {}) {
+    modal.visible = true;
+    for (let [key, value] of Object.entries(data)) {
+      infoData.value[key] = value;
+    }
+    for (let [key, value] of Object.entries(formData)) {
+      form.value[key] = value;
+    }
+    emit("open", infoData);
   },
-  title: {
-    default: "",
+  close() {
+    modal.visible = false;
   },
-  bordered: {
-    default: true,
+  async submit() {
+    let validate = await maFormRef.value.validateForm()
+    if (validate) {
+      emit("validateError", validate)
+      return false
+    }
+    return prop.submit(form._rawValue)
   },
-  layout: {
-    default: "horizontal",
-  },
-  labelStyle: {
-    default: {},
-  },
-  valueStyle: {
-    default: {},
-  },
-  size: {
-    default: "mini",
+  cancel() {
+    emit("cancel");
   },
 });
 
-watch(
-  () => props.columns,
-  (vl) => {
-    columns.value = vl;
-  },
-  { deep: true, immediate: true }
-);
-
-watch(
-  () => props.data,
-  (vl) => {
-    data.value = props.data;
-    descriptions.value = [];
-    columns.value.forEach((item) => {
-      if (item.dataIndex === "__operation" || item.infoShow === false) {
-        return;
-      }
-      descriptions.value.push({
-        ...item,
-        label: item.title,
-        value: get(data.value, item.dataIndex),
-      });
-    });
-  },
-  { deep: true, immediate: true }
-);
+init()
+defineExpose({
+  open: modal.open,
+  close: modal.close,
+  data: infoData,
+});
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>
