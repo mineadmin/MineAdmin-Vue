@@ -881,7 +881,8 @@ const getColumnService = (strictMode = true) => {
 
 defineExpose({
   refresh, requestData, addAction, editAction, getTableData, setSelecteds,
-  requestParams, isRecovery, tableRef, getCurrentAction, getFormData, getFormColumns, getColumnService
+  getCurrentAction, getFormData, getFormColumns, getColumnService,
+  requestParams, isRecovery, tableRef,
   crudFormRef, crudSearchRef, crudImportRef, crudSettingRef
 })
 
