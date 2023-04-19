@@ -74,10 +74,7 @@ const submitForm = async () => {
     isFunction(options.afterEdit) && await options.afterEdit(response, formData)
   }
   if ( response.success ) {
-    if (op.value === 'add') {
-      formStore.formList[tagId.value].addData = {}
-      form.value = {}
-    }
+    await maFormRef.value.resetForm()
     Message.success(response.message || `${opName.value}成功！`)
     closeTag({ path: route.fullPath })
     formStore.crudList[options.id] = true
