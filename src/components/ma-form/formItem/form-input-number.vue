@@ -61,8 +61,11 @@ const formModel = inject('formModel')
 const index = props.customField ?? props.component.dataIndex
 const value = ref(toNumber(get(formModel.value, index)))
 
-watch( () => get(formModel.value, index), vl => value.value = toNumber(vl) )
-watch( () => value.value, v => set(formModel.value, index, v) )
+watch( () => get(formModel.value, index), vl => value.value = toNumber(vl))
+watch( () => value.value, v => {
+  set(formModel.value, index, v)
+  delete formModel.value[index]
+} )
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
 onMounted(() => {
