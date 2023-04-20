@@ -266,7 +266,7 @@ const settingFormLayout = (layout) => {
 }
 
 const formItemShow = (item) => {
-  if (currentAction.value === 'add' && item.addDisplay === false) {
+  if (currentAction.value === 'add') {
     return item.addDisplay !== false
   }
   if (currentAction.value === 'edit') {
