@@ -57,7 +57,7 @@ import MaFormPicker from './searchFormItem/form-picker.vue'
 import MaFormSelect from './searchFormItem/form-select.vue'
 import MaFormCascader from './searchFormItem/form-cascader.vue'
 import MaFormTreeSelect from './searchFormItem/form-tree-select.vue'
-import { cloneDeep } from "lodash"
+import { cloneDeep, isFunction } from "lodash"
 
 const options = inject('options')
 const columns = inject('columns')
@@ -85,8 +85,11 @@ const handlerSearch = () => {
   emit('search', searchForm.value)
 }
 
-const resetSearch = () => {
+const resetSearch = async () => {
   searchRef.value.resetFields()
+  if (options.resetSearch && isFunction(options.resetSearch)) {
+    await options.resetSearch(searchForm.value)
+  }
   emit('search', searchForm.value)
 }
 

@@ -510,6 +510,9 @@ const searchSubmitHandler = async (formData) => {
     options.value.beforeSearch(requestParams.value)
   }
   await pageChangeHandler(1)
+  if (options.value.afterSearch && isFunction(options.value.afterSearch)) {
+    options.value.afterSearch(requestParams.value)
+  }
 }
 
 const pageSizeChangeHandler = async (pageSize) => {
