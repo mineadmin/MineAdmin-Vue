@@ -49,7 +49,7 @@
 
 <script setup>
 import { ref, inject, onMounted, watch } from 'vue'
-import { get, set, toNumber } from 'lodash'
+import { get, set, toNumber, isNaN } from 'lodash'
 import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
 const props = defineProps({
@@ -63,6 +63,7 @@ const value = ref(toNumber(get(formModel.value, index)))
 
 watch( () => get(formModel.value, index), vl => value.value = toNumber(vl))
 watch( () => value.value, v => {
+  if (isNaN(v)) v = undefined
   set(formModel.value, index, v)
   index.indexOf('.') > -1 && delete formModel.value[index]
 } )
