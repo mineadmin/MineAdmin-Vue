@@ -42,7 +42,7 @@ const value = ref(get(formModel.value, index))
 watch( () => get(formModel.value, index), vl => value.value = vl )
 watch( () => value.value, v => {
   set(formModel.value, index, v)
-  delete formModel.value[index]
+  index.indexOf('.') > -1 && delete formModel.value[index]
 } )
 
 if (props.component.multiple && ! value.value) {
