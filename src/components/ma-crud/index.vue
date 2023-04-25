@@ -245,6 +245,7 @@ import config from '@/config/crud'
 import { ref, watch, provide, nextTick, onMounted, onUnmounted } from 'vue'
 import defaultOptions from './js/defaultOptions'
 import { loadDict } from '@cps/ma-form/js/networkRequest.js'
+import ColumnService from './js/columnService'
 
 import MaSearch from './components/search.vue'
 import MaForm from './components/form.vue'
@@ -794,95 +795,13 @@ const getFormData = () => crudFormRef.value.form
 const getFormColumns = async (type = 'add') => {
   return await crudFormRef.value.getFormColumns(type)
 }
+
 /**
  * 获取column属性服务类
- * @returns {columnService}
+ * @returns ColumnService
  */
 const getColumnService = (strictMode = true) => {
-  /**
-   * column属性列表服务类
-   * @param columns
-   */
-  const columnService = function (columns, strictMode) {
-    /**
-     * column属性服务项
-     * @param item
-     */
-    const columnItemService = function (item) {
-      this.setAttr = (key, value) => {
-        item[key] = value
-      }
-
-      this.getAttr = (key) => {
-        return item[key]
-      }
-
-      this.get = () => {
-        return item
-      }
-
-      this.set = (config = {}) => {
-        for (let [key, value] of Object.entries(config)) {
-          item[key] = value
-        }
-      }
-    }
-
-    this.columnMap = new Map()
-    columns.forEach(item => {
-      this.columnMap.set(item.dataIndex, new columnItemService(item))
-    })
-
-    this.get = (dataIndex) => {
-      return this.columnMap.get(dataIndex)
-    }
-
-    this.isEmpty = (dataIndex) => {
-      return !this.columnMap.has(dataIndex)
-    }
-
-    this.exist = (dataIndex) => {
-      return !this.isEmpty(dataIndex)
-    }
-
-    this.append = async (item, appendStartDataIndex = null) => {
-      if (strictMode === true && item.dataIndex && this.exist(item.dataIndex)) {
-        console.warn(`严格模式：columnService.append(item) 参数中未有item.dataIndex属性或者item.dataIndex已存在column.${item.dataIndex}`)
-        return false
-      }
-      if (cascaders.value.includes(item.dataIndex) && item.dict) {
-         await loadDict(dicts.value, item)
-      }
-      columns.push(item)
-      this.columnMap.set(item.dataIndex, new columnItemService(item))
-      // 获取排序
-      if (appendStartDataIndex !== null) {
-        let appendIndex = columns.map(item => {
-          return item.dataIndex
-        })?.indexOf(appendStartDataIndex) ?? -1
-        if (appendIndex === -1) {
-          return this.append(item, null)
-        }
-        let sortIndex = 0
-        let appendPosIndex = 0
-        columns.forEach(sortItem => {
-          if (sortItem.dataIndex === appendStartDataIndex) {
-            appendPosIndex = sortIndex
-          }else if (sortItem.dataIndex  === item.dataIndex) {
-            sortIndex = appendPosIndex + 1
-          }else{
-          }
-          sortItem.sortIndex = sortIndex
-          sortIndex += 2
-        })
-        columns.sort((a, b) => a.sortIndex - b.sortIndex)
-      }
-      return true
-    }
-
-  }
-
-  return new columnService(columns.value, strictMode)
+  return new ColumnService({ columns: columns.value, cascaders: cascaders.value, dicts: dicts.value }, strictMode )
 }
 
 defineExpose({
