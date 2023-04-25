@@ -332,6 +332,7 @@ const init = async () => {
       await loadDict(dicts.value, item)
     }
   })
+  await tabsHandler();
 }
 
 
@@ -749,6 +750,19 @@ const execContextMenuCommand = async (args) => {
   }
 }
 
+const tabsHandler = async () => {
+    // 处理tabs
+    const tabs = options.value.tabs
+    if ( isFunction(tabs.data) || isArray(tabs.data) ) {
+        tabs.data = isFunction(tabs.data) ? await tabs.data() : tabs.data
+    } else if (! isUndefined(tabs.dataIndex) ) {
+        const col = props.columns.find( item => item.dataIndex === tabs.dataIndex )
+        if ( col.search === true && isObject(col.dict) ) {
+            tabs.data = dicts.value[tabs.dataIndex]
+        }
+    }
+}
+
 onMounted(async() => {
   if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {
     await requestData()
@@ -756,17 +770,6 @@ onMounted(async() => {
 
   if (! options.value.expandSearch && crudSearchRef.value) {
     crudSearchRef.value.setSearchHidden()
-  }
-
-  // 处理tabs
-  const tabs = options.value.tabs
-  if ( isFunction(tabs.data) || isArray(tabs.data) ) {
-    tabs.data = isFunction(tabs.data) ? await tabs.data() : tabs.data
-  } else if (! isUndefined(tabs.dataIndex) ) {
-    const col = props.columns.find( item => item.dataIndex === tabs.dataIndex )
-    if ( col.search === true && isObject(col.dict) ) {
-      tabs.data = dicts.value[tabs.dataIndex]
-    }
   }
 
   if (options.value.pageLayout === 'fixed') {
