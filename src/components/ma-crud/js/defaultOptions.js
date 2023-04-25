@@ -70,6 +70,11 @@ export default {
 
   // 搜索提交前置方法
   beforeSearch: (requestParams) => {},
+  // 搜索提交后置方法
+  afterSearch: (requestParams) => {},
+
+  // 重置搜索钩子
+  resetSearch:(searchData) => {},
 
 
   // 请求前置处理

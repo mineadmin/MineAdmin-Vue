@@ -511,6 +511,9 @@ const searchSubmitHandler = async (formData) => {
     options.value.beforeSearch(requestParams.value)
   }
   await pageChangeHandler(1)
+  if (options.value.afterSearch && isFunction(options.value.afterSearch)) {
+    options.value.afterSearch(requestParams.value)
+  }
 }
 
 const pageSizeChangeHandler = async (pageSize) => {
@@ -884,7 +887,8 @@ const getColumnService = (strictMode = true) => {
 
 defineExpose({
   refresh, requestData, addAction, editAction, getTableData, setSelecteds,
-  requestParams, isRecovery, tableRef, getCurrentAction, getFormData, getFormColumns, getColumnService
+  getCurrentAction, getFormData, getFormColumns, getColumnService,
+  requestParams, isRecovery, tableRef,
   crudFormRef, crudSearchRef, crudImportRef, crudSettingRef
 })
 

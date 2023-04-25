@@ -1,7 +1,7 @@
 <template>
   <div class="ml-2 mt-3.5 hidden lg:block">
     <a-breadcrumb>
-      <a-breadcrumb-item class="cursor-pointer" @click="router.push('dashboard')">
+      <a-breadcrumb-item class="cursor-pointer" @click="router.push('/dashboard')">
         {{ $t('menus.dashboard') }}
       </a-breadcrumb-item>
       <template v-for="(r, index) in route.matched" :key="index">

@@ -30,7 +30,7 @@
               v-model="checkAll[index]"
               @change="handleCheckAllChange(index, group.apis)"
             >全选</a-checkbox>
-          </a-space> 
+          </a-space>
           <a-checkbox-group
             class="mt-3"
             v-model="apiGroupCheckList[index]"
@@ -68,6 +68,8 @@
   const open = async (id) => {
     appId.value = id
     visible.value = true
+      //解决多次打开抽屉数据全选问题
+      apiGroupCheckList.value=[]
     await requestApiList()
     await setBindData()
     loading.value = false

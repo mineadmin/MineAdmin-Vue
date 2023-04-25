@@ -10,13 +10,21 @@
 <!--        </a-button>-->
 <!--      </a-tooltip>-->
 
-      <!-- <a-tooltip content="锁屏">
+<!--      <a-tooltip content="锁屏">-->
+<!--        <a-button :shape="'circle'" class="hidden lg:inline">-->
+<!--          <template #icon>-->
+<!--            <icon-lock />-->
+<!--          </template>-->
+<!--        </a-button>-->
+<!--      </a-tooltip>-->
+
+      <a-tooltip content="重启后端服务，仅开发环境显示">
         <a-button :shape="'circle'" class="hidden lg:inline">
           <template #icon>
-            <icon-lock />
+            <icon-sync />
           </template>
         </a-button>
-      </a-tooltip> -->
+      </a-tooltip>
 
       <a-tooltip :content="isFullScreen ? $t('sys.closeFullScreen') : $t('sys.fullScreen')">
         <a-button :shape="'circle'" class="hidden lg:inline" @click="screen">
@@ -101,6 +109,7 @@
   const router = useRouter()
   const isFullScreen = ref(false)
   const showLogoutModal = ref(false)
+  const isDev = ref(import.meta.env.DEV)
 
   const handleSelect = async (name) => {
     if (name === 'userCenter') {

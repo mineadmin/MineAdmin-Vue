@@ -53,20 +53,18 @@ const useUserStore = defineStore('user', {
       return new Promise((resolve, reject) => {
         loginApi.getInfo().then(response => {
           if (! response || ! response.data) {
+            this.clearToken()
             router.push({ name: 'login' })
-            return
+            reject(false)
+          } else {
+            this.setInfo(response.data)
+            homePage.children = webRouter[0].children
+            this.setMenu(this.routers)
+            this.routers = removeButtonMenu(this.routers)
+            this.routers.unshift(homePage)
+            this.setApp()
+            resolve(response.data)
           }
-          this.setInfo(response.data)
-          homePage.children = webRouter[0].children
-          this.setMenu(this.routers)
-          this.routers = removeButtonMenu(this.routers)
-          this.routers.unshift(homePage)
-          this.setApp()
-          resolve(response.data)
-        }).catch(_ => {
-          this.clearToken()
-          router.push({ name: 'login' })
-          reject(error)
         })
       })
     },
