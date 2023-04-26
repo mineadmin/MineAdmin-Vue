@@ -23,7 +23,8 @@ const props = defineProps({
 })
 const searchForm = inject('searchForm')
 
-const value = ref(get(searchForm.value, props.component.dataIndex, ''))
+const value = ref(get(searchForm.value, props.component.dataIndex, props.component.searchDefaultValue ?? ''))
+set(searchForm.value, props.component.dataIndex, value.value)
 
 watch( () => get(searchForm.value, props.component.dataIndex), vl => value.value = vl )
 watch( () => value.value, v => set(searchForm.value, props.component.dataIndex, v) )
