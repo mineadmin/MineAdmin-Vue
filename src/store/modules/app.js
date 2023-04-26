@@ -10,6 +10,7 @@ let defaultSetting = {
   animation: 'ma-slide-down',
   color: '#165dff',
   settingOpen: false,
+  searchOpen: false,
 }
 
 import { defineStore } from 'pinia'

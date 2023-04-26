@@ -78,9 +78,9 @@ export default {
 
 
   // 请求前置处理
-  beforeRequest: () => {},
+  beforeRequest: (requestParams) => {},
   // 请求后置处理
-  afterRequest: () => {},
+  afterRequest: (tableData) => {},
   // 新增打开前方法
   beforeOpenAdd: () => {},
   // 新增提交前方法
@@ -94,7 +94,7 @@ export default {
   // 编辑提交后方法
   afterEdit: (response, formData) => {},
   // 删除前方法
-  beforeDelete: () => {},
+  beforeDelete: (ids) => {},
   // 删除后方法
   afterDelete: (response) => {},
 
