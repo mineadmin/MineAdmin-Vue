@@ -68,7 +68,7 @@
 
       <a-avatar class="bg-blue-500 text-3xl avatar" style="top: -1px;">
         <img
-          :src="(userStore.user && userStore.user.avatar) ? userStore.user.avatar : '/avatar.jpg'"
+          :src="(userStore.user && userStore.user.avatar) ? userStore.user.avatar : $url + 'avatar.jpg'"
         />
       </a-avatar>
 

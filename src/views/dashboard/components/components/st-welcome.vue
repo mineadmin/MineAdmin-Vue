@@ -16,7 +16,7 @@
             :src="
             (userStore.user && userStore.user.avatar)
             ? userStore.user.avatar
-            : '/avatar.jpg'"
+            : $url + 'avatar.jpg'"
           />
         </a-avatar>
         <div class="pl-3 mt-2">

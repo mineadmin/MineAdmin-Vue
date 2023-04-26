@@ -14,7 +14,7 @@
   >
     <div class="auth-panel">
       <div class="flex text-2xl justify-center mt-5 title">
-        <img src="/logo.svg" width="56" class="mr-2" />
+        <img :src="`${$url}logo.svg`" width="56" class="mr-2" />
         <div class="mt-0.5">Api Document</div>
       </div>
       <a-form :model="form" layout="vertical" class="mt-3 p-5" @submit="submit" ref="formRef">

@@ -57,7 +57,7 @@
                       :src="
                         /image/g.test(record.mime_type) ?
                         tool.attachUrl(record.url, getStoreMode(record.storage_mode))
-                        : '/not-image.png'
+                        : $url + 'not-image.png'
                       "
                     >
                       <template #extra>

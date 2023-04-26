@@ -95,7 +95,7 @@
     })
   })
 
-  userInfo.avatar = (userStore.user && userStore.user.avatar) ? userStore.user.avatar : '/avatar.jpg'
+  userInfo.avatar = (userStore.user && userStore.user.avatar) ? userStore.user.avatar : `${import.meta.env.VITE_APP_BASE}avatar.jpg`
 
   watch(
     () => userInfo.avatar,

@@ -14,7 +14,7 @@
   >
     <a-layout-header class="nav flex justify-between p-2">
       <div class="flex text-2xl">
-        <img src="/logo.svg" width="54" class="mr-2" /> <span class="mt-1">API Document</span>
+        <img :src="`${$url}logo.svg`" width="54" class="mr-2" /> <span class="mt-1">API Document</span>
       </div>
       <a-space>
         <div

@@ -34,7 +34,7 @@
         <!-- 头像列 -->
         <template #avatar="{ record }">
           <a-avatar>
-            <img :src="record.avatar || '/avatar.jpg'" style="object-fit: cover" />
+            <img :src="record.avatar || $url + 'avatar.jpg'" style="object-fit: cover" />
           </a-avatar>
         </template>
         <!-- 操作列 -->

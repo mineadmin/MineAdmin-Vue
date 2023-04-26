@@ -13,7 +13,7 @@
     :style="`width: ${appStore.menuCollapse ? '48px' : appStore.menuWidth + 'px'};`"
   >
     <div class="flex justify-center logo">
-      <a-avatar class="mt-1" :size="40"><img src="/logo.svg" class="bg-white" /></a-avatar>
+      <a-avatar class="mt-1" :size="40"><img :src="`${$url}logo.svg`" class="bg-white" /></a-avatar>
       <span class="ml-2 text-xl mt-2.5" v-if="! appStore.menuCollapse">{{ $title }}</span>
     </div>
     <ma-menu
