@@ -93,7 +93,7 @@ const uploadFileHandler = async (options) => {
   const file = options.fileItem.file
   if (file.size > config.size) {
     Message.warning(file.name + ' ' + t('upload.sizeLimit'))
-    currentItem.value = undefined
+    currentItem.value = {}
     return
   }
   
@@ -117,7 +117,7 @@ const uploadFileHandler = async (options) => {
 }
 
 const removeSignFile = () => {
-  currentItem.value = undefined
+  currentItem.value = {}
   signFile.value = undefined
   emit('update:modelValue', null)
 }
