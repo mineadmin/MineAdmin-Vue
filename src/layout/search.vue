@@ -81,16 +81,17 @@ onMounted(() => {
     const keyCode = e.keyCode ?? e.which ?? e.charCode
     const active = document.querySelector('.active-search-li')
 
-    const getActiveIndex = () => {
+    const getActiveItemInfo = () => {
         const li = document.querySelectorAll('.results li')
-        let idx = 0
+        let activeItem = { idx: 0, path: '/' }
         li.forEach((item, index) => {
             if (item.className.split(' ').includes('active-search-li')){
-                idx = index
+                activeItem.path = item.querySelector('.path').innerHTML
+                activeItem.idx = index
                 return
             }
         })
-        return idx
+        return activeItem
     }
 
     const add = (index) => {
@@ -107,11 +108,11 @@ onMounted(() => {
         return
       } else {
         const li = document.querySelectorAll('.results li')
-        let index = getActiveIndex(), nextIndex = index + 1
+        let item = getActiveItemInfo(), nextIndex = item.idx + 1
         if (nextIndex >= li.length) {
             nextIndex = 0
         }
-        remove(index)
+        remove(item.idx)
         add(nextIndex)
       }
     }
@@ -123,25 +124,25 @@ onMounted(() => {
         return
       } else {
           const li = document.querySelectorAll('.results li')
-          let index = getActiveIndex(), prevIndex = index - 1
+          let item = getActiveItemInfo(), prevIndex = item.idx - 1
           if (prevIndex < 0) {
               prevIndex = li.length - 1
           }
-          remove(index)
+          remove(item.idx)
           add(prevIndex)
       }
     }
 
     if (keyCode === 13) {
-        const index = getActiveIndex()
-        remove(index)
-        gotoPage(resultList.value[index])
+        const item = getActiveItemInfo()
+        remove(item.idx)
+        gotoPage(item)
     }
 
     nextTick(() => {
       const dom = document.querySelector('.results')
       if (dom && dom.scrollTop !== false) {
-          dom.scrollTop = (getActiveIndex() + 1) * 80 - (document.querySelectorAll('.results li').length * 10)
+          dom.scrollTop = (getActiveItemInfo()['idx'] + 1) * 80 - (document.querySelectorAll('.results li').length * 10)
       }
     })
   })
