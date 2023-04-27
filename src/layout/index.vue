@@ -17,7 +17,7 @@
     <setting ref="settingRef"/>
 
     <transition name="ma-slide-down" mode="out-in">
-      <system-search ref="systemSearchRef" v-if="appStore.searchOpen" />
+      <system-search ref="systemSearchRef" v-show="appStore.searchOpen" />
     </transition>
 
     <ma-button-menu />

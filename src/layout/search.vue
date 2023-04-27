@@ -1,7 +1,7 @@
 <template>
   <div class="sys-search-container">
     <div class="ssc-bg">
-      <div class="w-6/12 mx-auto">
+      <div class="w-6/12 mx-auto center-box">
         <div class="mt-10"><img :src="`${$url}logo.svg`" width="100" class="mx-auto"/></div>
         <div class="mt-10">
           <a-input
@@ -24,7 +24,11 @@
 
         <ul class="mt-10 results shadow-lg customer-scrollbar">
           <template v-for="res in resultList">
-            <li class="flex items-center" v-if="res.meta.type === 'M'">
+            <li
+              class="flex items-center"
+              v-if="res && res.path.indexOf(':') === -1 && res.components && res?.meta?.type === 'M'"
+              @click="gotoPage(res)"
+            >
               <div class="icon-box flex justify-center items-center">
                 <component v-if="res.meta.icon" :is="res.meta.icon" :class="res.meta.icon.indexOf('ma') > 0 ? 'icon' : ''" />
                 <icon-menu v-else />
@@ -42,22 +46,105 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, onUnmounted, nextTick} from 'vue'
 import { useRouter } from 'vue-router'
-import { cloneDeep } from 'lodash'
+import { useAppStore } from "@/store"
 
+const appStore = useAppStore()
 const router = useRouter()
 const searchInputRef = ref()
-const resultList = ref(cloneDeep(router.getRoutes()))
-
-console.log(resultList.value)
+const resultList = ref(router.getRoutes())
 
 const searchPage = (value) => {
-  console.log(value)
+  resultList.value = router.getRoutes().filter(item => {
+    if (item.path && item.path.indexOf(value) > -1) {
+      return true
+    }
+    if (item.name && item.name.indexOf(value) > -1) {
+      return true
+    }
+    if (item.meta && item.meta.title && item.meta.title.indexOf(value) > -1) {
+      return true
+    }
+    return false
+  })
+}
+
+const gotoPage = (res) => {
+  appStore.searchOpen = false
+  router.push(res.path)
 }
 
 onMounted(() => {
   searchInputRef.value.focus()
+  document.addEventListener('keydown', e => {
+    const keyCode = e.keyCode ?? e.which ?? e.charCode
+    const active = document.querySelector('.active-search-li')
+
+    const getActiveIndex = () => {
+        const li = document.querySelectorAll('.results li')
+        let idx = 0
+        li.forEach((item, index) => {
+            if (item.className.split(' ').includes('active-search-li')){
+                idx = index
+                return
+            }
+        })
+        return idx
+    }
+
+    const add = (index) => {
+        document.querySelectorAll('.results li')[index].classList.add('active-search-li')
+    }
+    const remove = (index) => {
+        document.querySelectorAll('.results li')[index].classList.remove('active-search-li')
+    }
+
+    // down
+    if (keyCode === 40) {
+      if (! active) {
+        add(0)
+        return
+      } else {
+        const li = document.querySelectorAll('.results li')
+        let index = getActiveIndex(), nextIndex = index + 1
+        if (nextIndex >= li.length) {
+            nextIndex = 0
+        }
+        remove(index)
+        add(nextIndex)
+      }
+    }
+
+    // up
+    if (keyCode === 38) {
+      if (! active) {
+          add(document.querySelectorAll('.results li').length - 1)
+        return
+      } else {
+          const li = document.querySelectorAll('.results li')
+          let index = getActiveIndex(), prevIndex = index - 1
+          if (prevIndex < 0) {
+              prevIndex = li.length - 1
+          }
+          remove(index)
+          add(prevIndex)
+      }
+    }
+
+    if (keyCode === 13) {
+        const index = getActiveIndex()
+        remove(index)
+        gotoPage(resultList.value[index])
+    }
+
+    nextTick(() => {
+      const dom = document.querySelector('.results')
+      if (dom && dom.scrollTop !== false) {
+          dom.scrollTop = (getActiveIndex() + 1) * 80 - (document.querySelectorAll('.results li').length * 10)
+      }
+    })
+  })
 })
 </script>
 
@@ -73,9 +160,13 @@ onMounted(() => {
     backdrop-filter: blur(12px);
   }
 
+  & .center-box {
+    height: 90%;
+  }
+
   & .results {
     background-color: var(--color-bg-2); border-radius: 6px;
-    max-height: 420px; overflow-y: auto;
+    height: calc(100% - 250px); overflow-y: auto;
 
     & li {
       border-bottom: 1px solid var(--color-border-1);
@@ -87,7 +178,7 @@ onMounted(() => {
         color: var(--color-text-3);
       }
     }
-    li:hover, .active {
+    li:hover, .active-search-li {
       background-color: var(--color-neutral-1);
       .arco-icon, .icon {
         transition: all 0.25s;
