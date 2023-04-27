@@ -183,7 +183,7 @@ const chunkUpload = async (options) => {
 }
 
 const removeSignFile = () => {
-  currentItem.value = undefined
+  currentItem.value = {}
   signFile.value = undefined
   emit('update:modelValue', null)
 }
