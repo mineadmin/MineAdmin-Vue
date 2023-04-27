@@ -82,16 +82,16 @@ onMounted(() => {
     const active = document.querySelector('.active-search-li')
 
     const getActiveItemInfo = () => {
-        const li = document.querySelectorAll('.results li')
-        let activeItem = { idx: 0, path: '/' }
-        li.forEach((item, index) => {
-            if (item.className.split(' ').includes('active-search-li')){
-                activeItem.path = item.querySelector('.path').innerHTML
-                activeItem.idx = index
-                return
-            }
-        })
-        return activeItem
+      const li = document.querySelectorAll('.results li')
+      let activeItem = { idx: 0, path: '/' }
+      li.forEach((item, index) => {
+        if (item.className.split(' ').includes('active-search-li')){
+          activeItem.path = item.querySelector('.path').innerHTML
+          activeItem.idx = index
+          return
+        }
+      })
+      return activeItem
     }
 
     const add = (index) => {
@@ -101,42 +101,44 @@ onMounted(() => {
         document.querySelectorAll('.results li')[index].classList.remove('active-search-li')
     }
 
-    // down
-    if (keyCode === 40) {
-      if (! active) {
-        add(0)
-        return
-      } else {
-        const li = document.querySelectorAll('.results li')
-        let item = getActiveItemInfo(), nextIndex = item.idx + 1
-        if (nextIndex >= li.length) {
+    if (appStore.searchOpen) {
+      // down
+      if (keyCode === 40) {
+        if (!active) {
+          add(0)
+          return
+        } else {
+          const li = document.querySelectorAll('.results li')
+          let item = getActiveItemInfo(), nextIndex = item.idx + 1
+          if (nextIndex >= li.length) {
             nextIndex = 0
+          }
+          remove(item.idx)
+          add(nextIndex)
         }
-        remove(item.idx)
-        add(nextIndex)
       }
-    }
 
-    // up
-    if (keyCode === 38) {
-      if (! active) {
+      // up
+      if (keyCode === 38) {
+        if (!active) {
           add(document.querySelectorAll('.results li').length - 1)
-        return
-      } else {
+          return
+        } else {
           const li = document.querySelectorAll('.results li')
           let item = getActiveItemInfo(), prevIndex = item.idx - 1
           if (prevIndex < 0) {
-              prevIndex = li.length - 1
+            prevIndex = li.length - 1
           }
           remove(item.idx)
           add(prevIndex)
+        }
       }
-    }
 
-    if (keyCode === 13) {
+      if (keyCode === 13) {
         const item = getActiveItemInfo()
         remove(item.idx)
-        gotoPage(item)
+        item.path !== '/' && gotoPage(item)
+      }
     }
 
     nextTick(() => {
