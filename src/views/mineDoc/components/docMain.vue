@@ -72,7 +72,7 @@ const logoutDoc = () => {
 
 <style scoped lang="less">
 .bg {
-  background-image: url(index.indexOf('.') > -1 && delete formModel.value[index]);
+  background-image: url(/auth-bg.svg);
   background-size: cover;
   height: 100%;
   overflow-y: auto;
