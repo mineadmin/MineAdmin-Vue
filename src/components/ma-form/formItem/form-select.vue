@@ -83,7 +83,10 @@ const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1]
 const value = ref(get(formModel.value, index, ''))
 
 watch( () => get(formModel.value, index), vl => value.value = vl )
-watch( () => value.value, v => set(formModel.value, index, v) )
+watch( () => value.value, v => {
+  set(formModel.value, index, v)
+  index.indexOf('.') > -1 && delete formModel.value[index]
+} )
 
 if (value.value === '') {
   value.value = undefined

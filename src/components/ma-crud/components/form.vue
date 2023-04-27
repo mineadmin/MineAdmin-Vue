@@ -266,17 +266,13 @@ const settingFormLayout = (layout) => {
 }
 
 const formItemShow = (item) => {
-  if (!isUndefined(item.display)) {
-    return item.display
-  } else {
-    if (currentAction.value === 'add' && item?.addDisplay !== false) {
-      return true
-    }
-    if (currentAction.value === 'edit' && item?.editDisplay !== false) {
-      return true
-    }
-    return false
+  if (currentAction.value === 'add') {
+    return item.addDisplay !== false
   }
+  if (currentAction.value === 'edit') {
+    return item.editDisplay !== false
+  }
+  return item.display !== false
 }
 const formItemDisabled = (item) => {
   if (currentAction.value === 'add' && ! isUndefined(item.addDisabled)) {

@@ -34,7 +34,7 @@
         <!-- 头像列 -->
         <template #avatar="{ record }">
           <a-avatar>
-            <img :src="record.avatar || '/avatar.jpg'" style="object-fit: cover" />
+            <img :src="record.avatar || $url + 'avatar.jpg'" style="object-fit: cover" />
           </a-avatar>
         </template>
         <!-- 操作列 -->
@@ -225,7 +225,7 @@
     },
     { 
       title: '密码', dataIndex: 'password', hide: true, autocomplete: 'off',
-      addDefaultValue: '123456', editDefaultValue: '', editDisabled: true, type: 'password', 
+      addDefaultValue: '123456', editDefaultValue: '', addDisabled: false, editDisabled: true, type: 'password',
       addRules: [{ required: true, message: '密码必填' }],
     },
     { title: '昵称', dataIndex: 'nickname', width: 120 },

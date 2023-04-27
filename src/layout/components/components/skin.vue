@@ -22,7 +22,7 @@
             <div class="leading-6">{{ $t(`skin.${item.name}`) }}</div>
           </a-col>
           <a-col :span="6" class="flex flex-col text-center">
-            <a-image :src="item.thumb" class="rounded border" />
+            <a-image :src="$url + item.thumb" class="rounded border" />
           </a-col>
           <a-col :span="12" class="flex items-center pl-3 pr-3">
             {{ $t(`skin.${item.name}Desc`) }}

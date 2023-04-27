@@ -25,7 +25,7 @@
               </template>
               <template #avatar>
                 <a-avatar shape="square">
-                  <img alt="avatar" :src="`${item.send_user.avatar ? item.send_user.avatar : '/avatar.jpg'}`" />
+                  <img alt="avatar" :src="`${item.send_user.avatar ? item.send_user.avatar : $url + 'avatar.jpg'}`" />
                 </a-avatar>
               </template>
             </a-list-item-meta>

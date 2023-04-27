@@ -245,6 +245,7 @@ import config from '@/config/crud'
 import { ref, watch, provide, nextTick, onMounted, onUnmounted } from 'vue'
 import defaultOptions from './js/defaultOptions'
 import { loadDict } from '@cps/ma-form/js/networkRequest.js'
+import ColumnService from './js/columnService'
 
 import MaSearch from './components/search.vue'
 import MaForm from './components/form.vue'
@@ -281,7 +282,7 @@ const cascaders = ref([])
 const reloadColumn = ref(true)
 const openPagination = ref(false)
 const imgVisible = ref(false)
-const imgUrl = ref('not-image.png')
+const imgUrl = ref(import.meta.env.VITE_APP_BASE + 'not-image.png')
 const total = ref(0)
 const requestParams = ref({})
 const slots = ref([])
@@ -332,6 +333,7 @@ const init = async () => {
       await loadDict(dicts.value, item)
     }
   })
+  await tabsHandler();
 }
 
 
@@ -441,7 +443,8 @@ const requestData = async () => {
   if (! options.value.tabs?.dataIndex && ! options.value.tabs.data) {
     await refresh()
   } else {
-    await tabChange(options.value.tabs?.defaultKey ?? undefined)
+    options.value.tabs.defaultKey = options.value.tabs?.defaultKey ?? options.value.tabs.data[0].value
+    await tabChange(options.value.tabs?.defaultKey)
   }
 }
 
@@ -509,6 +512,9 @@ const searchSubmitHandler = async (formData) => {
     options.value.beforeSearch(requestParams.value)
   }
   await pageChangeHandler(1)
+  if (options.value.afterSearch && isFunction(options.value.afterSearch)) {
+    options.value.afterSearch(requestParams.value)
+  }
 }
 
 const pageSizeChangeHandler = async (pageSize) => {
@@ -748,6 +754,19 @@ const execContextMenuCommand = async (args) => {
   }
 }
 
+const tabsHandler = async () => {
+    // 处理tabs
+    const tabs = options.value.tabs
+    if ( isFunction(tabs.data) || isArray(tabs.data) ) {
+        tabs.data = isFunction(tabs.data) ? await tabs.data() : tabs.data
+    } else if (! isUndefined(tabs.dataIndex) ) {
+        const col = props.columns.find( item => item.dataIndex === tabs.dataIndex )
+        if ( col.search === true && isObject(col.dict) ) {
+            tabs.data = dicts.value[tabs.dataIndex]
+        }
+    }
+}
+
 onMounted(async() => {
   if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {
     await requestData()
@@ -755,17 +774,6 @@ onMounted(async() => {
 
   if (! options.value.expandSearch && crudSearchRef.value) {
     crudSearchRef.value.setSearchHidden()
-  }
-
-  // 处理tabs
-  const tabs = options.value.tabs
-  if ( isFunction(tabs.data) || isArray(tabs.data) ) {
-    tabs.data = isFunction(tabs.data) ? await tabs.data() : tabs.data
-  } else if (! isUndefined(tabs.dataIndex) ) {
-    const col = props.columns.find( item => item.dataIndex === tabs.dataIndex )
-    if ( col.search === true && isObject(col.dict) ) {
-      tabs.data = dicts.value[tabs.dataIndex]
-    }
   }
 
   if (options.value.pageLayout === 'fixed') {
@@ -788,9 +796,18 @@ const getFormColumns = async (type = 'add') => {
   return await crudFormRef.value.getFormColumns(type)
 }
 
+/**
+ * 获取column属性服务类
+ * @returns ColumnService
+ */
+const getColumnService = (strictMode = true) => {
+  return new ColumnService({ columns: columns.value, cascaders: cascaders.value, dicts: dicts.value }, strictMode )
+}
+
 defineExpose({
   refresh, requestData, addAction, editAction, getTableData, setSelecteds,
-  requestParams, isRecovery, tableRef, getCurrentAction, getFormData, getFormColumns,
+  getCurrentAction, getFormData, getFormColumns, getColumnService,
+  requestParams, isRecovery, tableRef,
   crudFormRef, crudSearchRef, crudImportRef, crudSettingRef
 })
 

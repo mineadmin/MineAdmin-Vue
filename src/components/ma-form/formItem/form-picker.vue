@@ -70,7 +70,10 @@ const index = props.customField ?? props.component.dataIndex
 const value = ref(get(formModel.value, index))
 
 watch( () => get(formModel.value, index), vl => value.value = vl )
-watch( () => value.value, v => set(formModel.value, index, v) )
+watch( () => value.value, v => {
+  set(formModel.value, index, v)
+  index.indexOf('.') > -1 && delete formModel.value[index]
+} )
 
 const getComponentName = () => {
   if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(props.component.formType)) {

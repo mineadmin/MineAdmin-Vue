@@ -35,7 +35,16 @@ const getComponentName = () => {
   }
 }
 
-const value = ref(get(searchForm.value, props.component.dataIndex, props.component.formType == 'range' ? [] : ''))
+let defaultValue
+
+if (props.component.formType === 'range') {
+  defaultValue = props.component.searchDefaultValue ?? []
+} else {
+  defaultValue = props.component.searchDefaultValue ?? ''
+}
+
+const value = ref(get(searchForm.value, props.component.dataIndex, defaultValue))
+set(searchForm.value, props.component.dataIndex, value.value)
 
 watch( () => get(searchForm.value, props.component.dataIndex), vl => value.value = vl )
 watch( () => value.value, v => set(searchForm.value, props.component.dataIndex, v) )

@@ -70,12 +70,17 @@ export default {
 
   // 搜索提交前置方法
   beforeSearch: (requestParams) => {},
+  // 搜索提交后置方法
+  afterSearch: (requestParams) => {},
+
+  // 重置搜索钩子
+  resetSearch:(searchData) => {},
 
 
   // 请求前置处理
-  beforeRequest: () => {},
+  beforeRequest: (requestParams) => {},
   // 请求后置处理
-  afterRequest: () => {},
+  afterRequest: (tableData) => {},
   // 新增打开前方法
   beforeOpenAdd: () => {},
   // 新增提交前方法
@@ -89,7 +94,7 @@ export default {
   // 编辑提交后方法
   afterEdit: (response, formData) => {},
   // 删除前方法
-  beforeDelete: () => {},
+  beforeDelete: (ids) => {},
   // 删除后方法
   afterDelete: (response) => {},
 

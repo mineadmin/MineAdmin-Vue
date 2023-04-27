@@ -31,12 +31,7 @@ router.beforeEach(async (to, from, next) => {
 
     if (! userStore.user && userStore.user == undefined ) {
       const data = await userStore.requestUserInfo()
-      if (! data) {
-        userStore.clearToken()
-        next({ name: 'login', query: { redirect: to.fullPath } })
-      } else {
-        next({ path: to.path, query: to.query })
-      }
+      data && next({ path: to.path, query: to.query })
     } else {
       next()
     }

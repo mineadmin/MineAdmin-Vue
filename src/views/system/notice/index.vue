@@ -11,25 +11,6 @@
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
     <ma-crud :options="crud" :columns="columns" ref="crudRef">
-      <!-- 排序列 -->
-      <template #sort="{ record }">
-        <a-input-number
-          :default-value="record.sort"
-          mode="button"
-          @change="changeSort($event, record.id)"
-          :min="0"
-          :max="1000"
-        />
-      </template>
-      <!-- 状态列 -->
-      <template #status="{ record }">
-        <a-switch
-          :checked-value="1" 
-          unchecked-value="2"
-          @change="changeStatus($event, record.id)"
-          :default-checked="record.status == 1"
-        />
-      </template>
     </ma-crud>
   </div>
 </template>
@@ -37,7 +18,6 @@
 <script setup>
   import { ref, reactive } from 'vue'
   import notice from '@/api/system/notice'
-  import { Message } from '@arco-design/web-vue'
 
   const crudRef = ref()
 

@@ -53,7 +53,7 @@
   <div class="login-container">
     <div class="login-width md:w-10/12 w-11/12 mx-auto flex justify-between h-full items-center">
       <div class="w-6/12 mx-auto left-panel rounded-l pl-5 pr-5 hidden md:block">
-        <div class="logo"><img src="/logo.svg" width="45"><span>{{ $title }}</span></div>
+        <div class="logo"><img :src="`${$url}logo.svg`" width="45"><span>{{ $title }}</span></div>
         <div class="slogan flex justify-end"><span>---- {{ $t('sys.login.slogan') }}</span></div>
       </div>
 
