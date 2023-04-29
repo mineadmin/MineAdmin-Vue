@@ -81,6 +81,3 @@ const submitForm = async () => {
   }
 }
 </script>
-<script>
-export default { name: 'openForm' }
-</script>
