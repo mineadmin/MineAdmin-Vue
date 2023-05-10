@@ -133,6 +133,31 @@ const save = (done) => {
   done(true)
 }
 
+const saveAuthGlobalParams = (appId, identity, accessToken) => {
+    init()
+    let header = {}
+    let query  = {}
+    let body   = {}
+
+    globalParams.header.map(item => {
+        header[item.name] = item.value
+    })
+    globalParams.query.map(item => {
+        query[item.name] = item.value
+    })
+    globalParams.body.map(item => {
+        body[item.name] = item.value
+    })
+    if (appId !=='' && identity !== '') {
+        query['app_id'] = appId
+        query['identity'] = identity
+    }
+    if (accessToken !== '') {
+        query['access_token'] = accessToken
+    }
+    docStore.globalParams = { header, query, body }
+}
+
 const init = () => {
   if (docStore.globalParams) {
     globalParams.query = []
@@ -151,5 +176,5 @@ const init = () => {
   }
 }
 
-defineExpose({ open })
+defineExpose({ open, saveAuthGlobalParams })
 </script>
