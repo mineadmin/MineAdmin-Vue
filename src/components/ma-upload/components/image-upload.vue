@@ -22,6 +22,7 @@
     <a-space
       v-else-if="config.multiple && config.showList"
       :class="showImgList.length > 0 ? 'mr-2' : ''"
+      wrap
     >
       <div
         :class="'image-list ' + (config.rounded ? 'rounded-full' : '')"
