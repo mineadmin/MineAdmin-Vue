@@ -13,7 +13,7 @@ build_dev_docker:
   before_script:
     - docker login -u "$username" -p "$password" registry-docker.org
   script:
-    - docker build . -t $PROJECT_NAME
+    - docker build . -t $PROJECT_NAME --build-arg NODE_ENV=development
     - docker tag $PROJECT_NAME $REGISTRY_URL/$PROJECT_NAME:dev
     - docker push $REGISTRY_URL/$PROJECT_NAME:dev
 # 打包镜像后推送钩子,触发自动部署
