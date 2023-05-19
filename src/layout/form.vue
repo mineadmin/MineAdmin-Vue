@@ -78,6 +78,9 @@ const submitForm = async () => {
     Message.success(response.message || `${opName.value}成功！`)
     closeTag({ path: route.fullPath })
     formStore.crudList[options.id] = true
+  } else if ( response.success === false && (typeof response.code === "undefined" || response.code !== 200) ) {
+    Message.error(response.message || `${actionTitle.value}失败！`)
   }
+
 }
 </script>
