@@ -25,6 +25,8 @@ RUN yarn install && \
     if [ "$NODE_ENV" = "production" ]; then yarn build --mode production; fi && \
     yarn cache clean
 
+RUN yarn generate:version
+
 FROM nginx:alpine
 
 COPY --from=build /opt/www/dist /usr/share/nginx/html
