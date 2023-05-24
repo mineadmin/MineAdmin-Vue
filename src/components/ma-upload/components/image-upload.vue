@@ -99,7 +99,7 @@ const uploadImageHandler = async (options) => {
     currentItem.value = {}
     return
   }
-  
+
   const result = await uploadRequest(file, 'image', 'uploadImage', config.requestData)
 
   if (result) {
@@ -136,18 +136,16 @@ const removeImage = (idx) => {
 const init = async () => {
   if (config.multiple) {
     if (isArray(props.modelValue) && props.modelValue.length > 0) {
-      const tmp = []
-      await props.modelValue.map(async item => {
-        const res = await getFileUrl(config.returnType, item, storageMode)
-        tmp.push({ url: res })
-      })
-      showImgList.value = tmp
+      const result = await props.modelValue.map(async (item) => {
+        return await getFileUrl(config.returnType, item, storageMode);
+      });
+      showImgList.value = await Promise.all(result);
     } else {
       showImgList.value = []
     }
   } else if (props.modelValue) {
     signImage.value = props.modelValue
-    getFileUrl(config.returnType, props.modelValue, storageMode).then(url => currentItem.value.url = url)
+    getFileUrl(config.returnType, props.modelValue, storageMode).then(item => currentItem.value = item)
     currentItem.value.percent = 100
     currentItem.value.status  = 'complete'
   } else {

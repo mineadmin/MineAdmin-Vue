@@ -6,15 +6,17 @@ export const getFileUrl = async (returnType, value, storageMode) => {
   if (returnType == 'url') {
     return value
   } else if (returnType == 'id') {
-    const res = await commonApi.getFileInfoById(value)
-    if (res.data) {
-      return tool.attachUrl(res.data.url, storageMode[res.data.storage_mode])
+    const { data } = await commonApi.getFileInfoById(value)
+    if (data) {
+      data.url = tool.attachUrl(data.url, storageMode[data.storage_mode])
+      return data
     }
     return ''
   } else if (returnType == 'hash') {
-    const res = await commonApi.getFileInfoByHash(value)
-    if (res.data) {
-      return tool.attachUrl(res.data.url, storageMode[res.data.storage_mode])
+    const { data } = await commonApi.getFileInfoByHash(value)
+    if (data) {
+      data.url = tool.attachUrl(data.url, storageMode[data.storage_mode])
+      return data
     }
     return ''
   }
