@@ -96,7 +96,7 @@ const uploadFileHandler = async (options) => {
     currentItem.value = {}
     return
   }
-  
+
   const result = await uploadRequest(file, 'file', 'uploadFile', config.requestData)
 
   if (result) {
@@ -134,18 +134,16 @@ const removeFile = (idx) => {
 const init = async () => {
   if (config.multiple) {
     if (isArray(props.modelValue) && props.modelValue.length > 0) {
-      const tmp = []
-      await props.modelValue.map(async item => {
-        const res = await getFileUrl(config.returnType, item, storageMode)
-        tmp.push({ url: res })
+      const result = await props.modelValue.map(async item => {
+        return await getFileUrl(config.returnType, item, storageMode)
       })
-      showFileList.value = tmp
+      showFileList.value = await Promise.all(result);
     } else {
       showFileList.value = []
     }
   } else if (props.modelValue) {
     signFile.value = props.modelValue
-    getFileUrl(config.returnType, props.modelValue, storageMode).then(url => currentItem.value.url = url)
+    getFileUrl(config.returnType, props.modelValue, storageMode).then(item => currentItem.value = item)
     currentItem.value.percent = 100
     currentItem.value.status  = 'complete'
   } else {

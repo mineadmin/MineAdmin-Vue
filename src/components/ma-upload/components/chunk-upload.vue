@@ -26,7 +26,7 @@
       </slot>
     </template>
   </a-upload>
-    
+
     <!-- 单文件 -->
   <div
     class="file-list mt-2"
@@ -200,22 +200,23 @@ const removeFile = (idx) => {
 const init = async () => {
   if (config.multiple) {
     if (isArray(props.modelValue) && props.modelValue.length > 0) {
-      const tmp = []
-      await props.modelValue.map(async item => {
-        const res = await getFileUrl(config.returnType, item, storageMode)
-        tmp.push({
-          percent: 100,
-          status: 'complete',
-          url: res
-        })
+      const result = await props.modelValue.map(async item => {
+        return await getFileUrl(config.returnType, item, storageMode)
       })
-      showFileList.value = tmp
+      const results = await Promise.all(result);
+      showFileList.value = results.map(item=>{
+        return {
+          ...item,
+          percent:100,
+          status: 'complete'
+        }
+      })
     } else {
       showFileList.value = []
     }
   } else if (props.modelValue) {
     signFile.value = props.modelValue
-    getFileUrl(config.returnType, props.modelValue, storageMode).then(url => currentItem.value.url = url)
+    getFileUrl(config.returnType, props.modelValue, storageMode).then(item => currentItem.value = item)
     currentItem.value.percent = 100
     currentItem.value.status  = 'complete'
   } else {
