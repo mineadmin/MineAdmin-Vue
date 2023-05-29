@@ -87,7 +87,7 @@
     }
     done(true)
   }
-  console.log(props.multiple)
+
   const crud = ref({
     showIndex: false,
     api: commonApi.getUserList,
