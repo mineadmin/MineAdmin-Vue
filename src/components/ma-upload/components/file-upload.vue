@@ -143,7 +143,7 @@ const init = async () => {
     }
   } else if (props.modelValue) {
     signFile.value = props.modelValue
-    getFileUrl(config.returnType, props.modelValue, storageMode).then(item => currentItem.value = item)
+    getFileUrl(config.returnType, props.modelValue, storageMode).then(item => currentItem.value.url = item)
     currentItem.value.percent = 100
     currentItem.value.status  = 'complete'
   } else {

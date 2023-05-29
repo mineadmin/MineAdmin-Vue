@@ -3,16 +3,16 @@ import tool from '@/utils/tool'
 import file2md5 from 'file2md5'
 
 export const getFileUrl = async (returnType, value, storageMode) => {
-  if (returnType == 'url') {
+  if (returnType === 'url') {
     return value
-  } else if (returnType == 'id') {
+  } else if (returnType === 'id') {
     const { data } = await commonApi.getFileInfoById(value)
     if (data) {
       data.url = tool.attachUrl(data.url, storageMode[data.storage_mode])
       return data
     }
     return ''
-  } else if (returnType == 'hash') {
+  } else if (returnType === 'hash') {
     const { data } = await commonApi.getFileInfoByHash(value)
     if (data) {
       data.url = tool.attachUrl(data.url, storageMode[data.storage_mode])
