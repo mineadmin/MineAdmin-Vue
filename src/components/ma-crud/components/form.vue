@@ -21,7 +21,11 @@
   >
     <template #title>{{ actionTitle }}</template>
     <a-spin :loading="dataLoading" tip="加载中..." class="w-full">
-      <ma-form v-model="form" :columns="formColumns" :options="{ showButtons: false }" ref="maFormRef"/>
+      <ma-form v-model="form" :columns="formColumns" :options="{ showButtons: false }" ref="maFormRef">
+        <template v-for="slot in Object.keys($slots)" #[slot]="component">
+          <slot :name="slot" v-bind="component" />
+        </template>
+      </ma-form>
     </a-spin>
   </component>
 </template>
