@@ -56,6 +56,23 @@
         <template v-for="(item, index) in (dictList[dictIndex] ?? [])">
           <a-option :value="item.value" :disabled="item.disabled">{{ item.label }}</a-option>
         </template>
+        <template #header v-if="props.component.multiple">
+          <div style="padding: 6px 12px;" >
+            <a-space>
+              <a-checkbox :value="false" @change="handleSelectAll">全选/清除</a-checkbox>
+              <a-button size="mini" type="outline" @click="handleInverse">反选</a-button>
+            </a-space>
+          </div>
+        </template>
+        <template #footer v-if="props.component?.dict.pageOption ?? false">
+          <div class="flex justify-center">
+            <a-pagination class="p-2" size="mini" :total="200" simple>
+              <template #page-item-step="{ type }">
+                <div>{{ type === 'previous' ? '上一页' : '下一页' }}</div>
+              </template>
+            </a-pagination>
+          </div>
+        </template>
       </a-select>
     </slot>
   </ma-form-item>
@@ -64,7 +81,7 @@
 <script setup>
 import { ref, inject, onMounted, nextTick, watch } from 'vue'
 import MaFormItem from './form-item.vue'
-import { get, isUndefined, set } from 'lodash'
+import { get, isUndefined, set, xor } from 'lodash'
 import { maEvent } from '../js/formItemMixin.js'
 import { handlerCascader } from '../js/networkRequest.js'
 
@@ -92,6 +109,28 @@ if (value.value === '') {
   value.value = undefined
 } else if (! isUndefined(value.value) && props.component.dict && (props.component.dict.name || props.component.dict.data) && !props.component.multiple) {
   value.value = value.value + ''
+}
+
+const handleSelectAll = (status) => {
+  if (isUndefined(value.value)) {
+    value.value = []
+  }
+  if (status) {
+    dictList.value[dictIndex].map(item=>{
+      value.value.push(item.value)
+    })
+  } else {
+    value.value = []
+  }
+}
+
+const handleInverse = () => {
+  if (isUndefined(value.value)) {
+    value.value = []
+  }
+  const ids = []
+  dictList.value[dictIndex].map( item => ids.push(item.value) )
+  value.value = xor(ids, value.value)
 }
 
 const handleCascaderChangeEvent = async (value) => {
