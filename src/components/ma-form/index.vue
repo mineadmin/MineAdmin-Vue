@@ -184,9 +184,9 @@ provide('formModel', form)
 provide('formLoading', formLoading)
 maEvent.handleCommonEvent(options.value, 'onCreated')
 
-onMounted(() => {
+onMounted(async () => {
   maEvent.handleCommonEvent(options.value, 'onMounted')
-  options.value.init && init()
+  options.value.init && await init()
   maEvent.handleCommonEvent(options.value, 'onInit')
 })
 

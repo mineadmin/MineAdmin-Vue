@@ -48,14 +48,53 @@ export const loadDict = async (dictList, item) => {
       if (response.data) {
         dictList[item.dataIndex] = handlerDictProps(item, response.data)
       }
-    } else if (item.dict.url) {
-      const dictData = tool.local.get('dictData')
-      if (item.dict.cache && dictData[item.dataIndex]) {
-        dictList[item.dataIndex] = dictData[item.dataIndex]
+    } else if (item.dict.remote) {
+      let requestData = {
+        openPage: item.dict?.openPage ?? false,
+        remoteOption: item.dict.remoteOption ?? {}
+      }
+      requestData = Object.assign(requestData, item.dict.pageOption)
+
+      if (requestData.openPage) {
+        const { data } = await requestDict(item.dict.remote, 'POST', {}, requestData)
+        dictList[item.dataIndex] = handlerDictProps(item, data.items)
+        dictList[item.dataIndex].pageInfo = data.pageInfo
       } else {
-        const response = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
-        if (response.data) {
-          dictList[item.dataIndex] = handlerDictProps(item, response.data)
+        const dictData = tool.local.get('dictData')
+        if (item.dict.cache && dictData[item.dataIndex]) {
+          dictList[item.dataIndex] = dictData[item.dataIndex]
+        } else {
+          const { data } = await requestDict(item.dict.remote, 'POST', {}, requestData)
+          dictList[item.dataIndex] = handlerDictProps(item, data)
+          if (item.dict.cache) {
+            dictData[item.dataIndex] = dictList[item.dataIndex]
+            tool.local.set('dictData', dictData)
+          }
+        }
+      }
+    } else if (item.dict.url) {
+      let requestData = {
+        openPage: item.dict?.openPage ?? false,
+        remoteOption: item.dict.remoteOption ?? {}
+      }
+      requestData = Object.assign(requestData, item.dict.pageOption)
+
+      if (requestData.openPage) {
+        if (item.dict?.method === 'GET' || item.dict?.method === 'get') {
+          item.dict.params = Object.assign(item.dict.params ?? {}, requestData)
+        } else {
+          item.dict.body = Object.assign(item.dict.body ?? {}, requestData)
+        }
+        const { data } = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
+        dictList[item.dataIndex] = handlerDictProps(item, data.items)
+        dictList[item.dataIndex].pageInfo = data.pageInfo
+      } else {
+        const dictData = tool.local.get('dictData')
+        if (item.dict.cache && dictData[item.dataIndex]) {
+          dictList[item.dataIndex] = dictData[item.dataIndex]
+        } else {
+          const { data } = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
+          dictList[item.dataIndex] = handlerDictProps(item, data)
           if (item.dict.cache) {
             dictData[item.dataIndex] = dictList[item.dataIndex]
             tool.local.set('dictData', dictData)

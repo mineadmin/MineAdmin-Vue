@@ -64,9 +64,16 @@
             </a-space>
           </div>
         </template>
-        <template #footer v-if="props.component?.dict.pageOption ?? false">
+        <template #footer v-if="props.component?.dict?.openPage ?? false">
           <div class="flex justify-center">
-            <a-pagination class="p-2" size="mini" :total="200" simple>
+            <a-pagination
+              class="p-2"
+              size="mini"
+              :total="dataTotal"
+              :page-size="props.component.dict.pageOption.pageSize"
+              simple
+              @change="handlePage"
+            >
               <template #page-item-step="{ type }">
                 <div>{{ type === 'previous' ? '上一页' : '下一页' }}</div>
               </template>
@@ -81,14 +88,19 @@
 <script setup>
 import { ref, inject, onMounted, nextTick, watch } from 'vue'
 import MaFormItem from './form-item.vue'
-import { get, isUndefined, set, xor } from 'lodash'
+import { get, isUndefined, set, xor, isObject } from 'lodash'
 import { maEvent } from '../js/formItemMixin.js'
-import { handlerCascader } from '../js/networkRequest.js'
+import { handlerCascader, loadDict } from '../js/networkRequest.js'
 
 const props = defineProps({
   component: Object,
   customField: { type: String, default: undefined }
 })
+
+props.component.dict.pageOption = {
+  page: 1,
+  pageSize: props.component?.dict?.pageSize ?? 10
+}
 
 const formModel = inject('formModel')
 const dictList  = inject('dictList')
@@ -98,6 +110,7 @@ const columns = inject('columns')
 const index = props.customField ?? props.component.dataIndex
 const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1] + props.component.dataIndex : props.component.dataIndex
 const value = ref(get(formModel.value, index, ''))
+const dataTotal = ref(0)
 
 watch( () => get(formModel.value, index), vl => value.value = vl )
 watch( () => value.value, v => {
@@ -133,6 +146,11 @@ const handleInverse = () => {
   value.value = xor(ids, value.value)
 }
 
+const handlePage = async (page) => {
+  props.component.dict.pageOption.page = page
+  await loadDict(dictList.value, props.component)
+}
+
 const handleCascaderChangeEvent = async (value) => {
   formLoading.value = true
   const component = props.component
@@ -151,6 +169,11 @@ const handleCascaderChangeEvent = async (value) => {
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
 onMounted(() => {
+  setTimeout(() => {
+    if (isObject(dictList.value[index])) {
+      dataTotal.value = dictList.value[index]?.pageInfo?.total
+    }
+  }, 800);
   maEvent.handleCommonEvent(props.component, 'onMounted')
 })
 </script>
