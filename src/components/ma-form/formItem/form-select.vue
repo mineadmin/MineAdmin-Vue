@@ -97,9 +97,11 @@ const props = defineProps({
   customField: { type: String, default: undefined }
 })
 
-props.component.dict.pageOption = {
-  page: 1,
-  pageSize: props.component?.dict?.pageSize ?? 10
+if (isObject(props.component.dict)) {
+  props.component.dict.pageOption = {
+    page: 1,
+    pageSize: props.component?.dict?.pageSize ?? 10
+  }
 }
 
 const formModel = inject('formModel')
