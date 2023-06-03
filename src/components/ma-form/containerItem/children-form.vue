@@ -71,59 +71,77 @@
       </a-collapse-item>
     </a-collapse>
 
-    <a-table v-else class="w-full" :data="formModel[props.component.dataIndex]" :pagination="false" bordered stripe>
-      <template #columns id="children-columns">
-        <!-- 新增、删除列 -->
-        <a-table-column :width="60" fixed="left">
-          <template #title>
-            <a-button type="primary" @click="addItem()" size="small" shape="round">
-              <template #icon>
-                <icon-plus />
+    <div class="arco-table arco-table-size-large arco-table-border arco-table-stripe arco-table-hover">
+      <div class="arco-table-container">
+        <table class="arco-table-element" cellpadding="0" cellspacing="0">
+          <thead>
+            <tr class="arco-table-tr">
+              <th class="arco-table-th" width="60">
+                <span class="arco-table-cell arco-table-cell-align-center">
+                  <a-button type="primary" @click="addItem()" size="small" shape="round">
+                    <template #icon>
+                      <icon-plus />
+                    </template>
+                  </a-button>
+                </span>
+              </th>
+              <th class="arco-table-th" :width="60">
+                <span class="arco-table-cell arco-table-cell-align-center">
+                  <span class="arco-table-th-title">序号</span>
+                </span>
+              </th>
+              <template v-for="component in viewFormList[0]">
+                <th class="arco-table-th" :width="component.width">
+                  <span class="arco-table-cell arco-table-cell-align-center">
+                    <span class="arco-table-th-title">{{ component.title }}</span>
+                  </span>
+                </th>
               </template>
-            </a-button>
-          </template>
-          <template #cell="{ rowIndex }">
-            <a-button type="primary"
-              status="danger"
-              size="small"
-              shape="round"
-              :disabled="formModel[props.component.dataIndex].length  === 1"
-              @click="deleteItem(rowIndex)"
-            >
-              <template #icon><icon-minus /></template>
-            </a-button>
-          </template>
-        </a-table-column>
-
-        <a-table-column :width="60" fixed="left">
-          <template #title>序号</template>
-          <template #cell="{ rowIndex }"> {{ rowIndex + 1}} </template>
-        </a-table-column>
-
-        <template  v-for="(component, itemIndex) in viewFormList[0]" :key="itemIndex">
-          <a-table-column
-              :width="component.width"
-              :title="component.title ?? '未命名'"
-              :align="component.align || 'left'"
-              :fixed="component.fixed"
-          >
-            <template #cell="{ rowIndex }">
-              <component
-                  v-if="! containerItems.includes(component.formType)"
-                  :is="getComponentName(component.formType ?? 'input')"
-                  :component="component"
-                  :customField="getChildrenDataIndex(rowIndex, component.dataIndex)"
-              >
-                <template v-for="slot in Object.keys($slots)" #[slot]="component">
-                  <slot :name="slot" v-bind="component"/>
+            </tr>
+          </thead>
+          <tbody>
+            <template v-for="(item, index) in formModel[props.component.dataIndex]">
+              <tr class="arco-table-tr">
+                <td class="arco-table-td">
+                  <span class="arco-table-cell">
+                    <a-button type="primary"
+                      status="danger"
+                      size="small"
+                      shape="round"
+                      :disabled="formModel[props.component.dataIndex].length  === 1"
+                      @click="deleteItem(index)"
+                    >
+                      <template #icon><icon-minus /></template>
+                    </a-button>
+                  </span>
+                </td>
+                <td class="arco-table-td">
+                  <span class="arco-table-cell">
+                    <span class="arco-table-td-content">{{ index + 1 }}</span>
+                  </span>
+                </td>
+                <template v-for="component in viewFormList[index]">
+                  <td class="arco-table-td">
+                    <span class="arco-table-cell">
+                      <component
+                        v-if="! containerItems.includes(component.formType)"
+                        :is="getComponentName(component.formType ?? 'input')"
+                        :component="component"
+                        :customField="getChildrenDataIndex(index, component.dataIndex)"
+                      >
+                        <template v-for="slot in Object.keys($slots)" #[slot]="component">
+                          <slot :name="slot" v-bind="component"/>
+                        </template>
+                      </component>
+                    </span>
+                  </td>
                 </template>
-              </component>
+              </tr>
             </template>
-          </a-table-column>
-        </template>
-
-      </template>
-    </a-table>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </a-form-item>
 </template>
 
