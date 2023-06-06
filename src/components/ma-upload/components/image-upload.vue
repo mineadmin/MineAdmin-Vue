@@ -137,9 +137,9 @@ const init = async () => {
   if (config.multiple) {
     if (isArray(props.modelValue) && props.modelValue.length > 0) {
       const result = await props.modelValue.map(async (item) => {
-        return await getFileUrl(config.returnType, item, storageMode);
+        return { url: await getFileUrl(config.returnType, item, storageMode) }
       });
-      showImgList.value = await Promise.all(result);
+      showImgList.value = await Promise.all(result)
     } else {
       showImgList.value = []
     }
