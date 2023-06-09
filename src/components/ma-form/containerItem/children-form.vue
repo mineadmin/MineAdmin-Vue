@@ -71,7 +71,7 @@
       </a-collapse-item>
     </a-collapse>
 
-    <div class="arco-table arco-table-size-large arco-table-border arco-table-stripe arco-table-hover">
+    <div v-else class="arco-table arco-table-size-large arco-table-border arco-table-stripe arco-table-hover">
       <div class="arco-table-container">
         <table class="arco-table-element" cellpadding="0" cellspacing="0">
           <thead>
