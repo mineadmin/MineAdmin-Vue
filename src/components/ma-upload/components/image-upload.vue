@@ -137,15 +137,26 @@ const init = async () => {
   if (config.multiple) {
     if (isArray(props.modelValue) && props.modelValue.length > 0) {
       const result = await props.modelValue.map(async (item) => {
-        return { url: await getFileUrl(config.returnType, item, storageMode) }
+        return await getFileUrl(config.returnType, item, storageMode)
       });
-      showImgList.value = await Promise.all(result)
+      const data = await Promise.all(result)
+      if (config.returnType === 'url') {
+        showImgList.value = data.map(url => { return { url } })
+      } else {
+        showImgList.value = data.map(item => { return  { url: item.url } })
+      }
     } else {
       showImgList.value = []
     }
   } else if (props.modelValue) {
-    signImage.value = props.modelValue
-    getFileUrl(config.returnType, props.modelValue, storageMode).then(item => currentItem.value.url = item)
+    if (config.returnType === 'url') {
+      signImage.value = props.modelValue
+      currentItem.value.url = props.modelValue
+    } else {
+      const result = await getFileUrl(config.returnType, props.modelValue, storageMode)
+      signImage.value = result.url
+      currentItem.value.url = result.url
+    }
     currentItem.value.percent = 100
     currentItem.value.status  = 'complete'
   } else {
