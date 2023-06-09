@@ -34,7 +34,7 @@
       <div class="ma-content-block w-full lg:w-6/12 mt-3 p-4 ml-0 lg:ml-3">
         <a-tabs type="rounded">
           <a-tab-pane key="login-log" title="登录日志">
-            <a-timeline class="pl-5 mt-3">
+            <a-timeline class="pl-5 mt-3"  v-if="(loginLogList && loginLogList.length)">
               <a-timeline-item
                 :label="`地理位置；${item.ip_location}，操作系统：${item.os}`"
                 v-for="(item, idx) in loginLogList"
@@ -43,9 +43,10 @@
                 您于 {{ item.login_time }} 登录系统，{{ item.message }}
               </a-timeline-item>
             </a-timeline>
+            <a-empty v-else />
           </a-tab-pane>
           <a-tab-pane key="operation-log" title="操作日志">
-            <a-timeline class="pl-5 mt-3">
+            <a-timeline class="pl-5 mt-3" v-if="(operationLogList && operationLogList.length)">
               <a-timeline-item
                 :label="`地理位置；${item.ip_location}，方式：${item.method}，路由：${item.router}`"
                 v-for="(item, idx) in operationLogList"
@@ -54,6 +55,7 @@
                 您于 {{ item.created_at }} 执行了 {{ item.service_name }}
               </a-timeline-item>
             </a-timeline>
+            <a-empty v-else />
           </a-tab-pane>
         </a-tabs>
       </div>
