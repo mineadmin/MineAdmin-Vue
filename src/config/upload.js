@@ -1,6 +1,6 @@
 export default {
   storage: {
-    LOCAL: 'https://img.mineadmin.com',
+    LOCAL: 'https://demo.mineadmin.com/upload',
     OSS: '',
     COS: '',
     QINIU: ''
