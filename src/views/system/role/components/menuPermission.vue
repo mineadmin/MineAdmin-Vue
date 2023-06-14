@@ -62,13 +62,13 @@
 
   const emit = defineEmits(['success'])
 
-  const open = (row) => {
+  const open = async (row) => {
+    visible.value = true
     form.value = { id: row.id, name: row.name, code: row.code }
     handlerExpand(false)
     handlerSelect(false)
     handlerLinkage(false)
-    setData(row.id)
-    visible.value = true
+    await setData(row.id)
   }
 
   const handlerExpand = (value) => {
@@ -90,6 +90,7 @@
   }
 
   const setData = async (roleId) => {
+    loading.value = true
     const menuResponse = await menu.tree({ scope: true })
     menuList.value = menuResponse.data
     const roleResponse = await role.getMenuByRole(roleId)

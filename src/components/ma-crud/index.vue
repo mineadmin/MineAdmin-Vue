@@ -230,7 +230,11 @@
 
     <ma-setting ref="crudSettingRef" />
 
-    <ma-form ref="crudFormRef" @success="requestSuccess" />
+    <ma-form ref="crudFormRef" @success="requestSuccess">
+      <template v-for="slot in Object.keys($slots)" #[slot]="component">
+        <slot :name="slot" v-bind="component" />
+      </template>
+    </ma-form>
 
     <ma-import ref="crudImportRef" />
 

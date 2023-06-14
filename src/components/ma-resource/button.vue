@@ -62,7 +62,6 @@
     vl => {
       emit('update:modelValue', list.value)
       if ( props.multiple ) {
-        console.log(vl)
         inputValue.value = isArray(list) ? list.value.join(',') : []
       } else {
         inputValue.value = list.value

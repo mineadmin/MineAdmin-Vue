@@ -40,6 +40,7 @@
   const props = defineProps({
     modelValue: { type: Array },
     isEcho: { type: Boolean, default: false },
+    multiple: { type: Boolean, default: true },
     onlyId: { type: Boolean, default: true },
     text: { type: String, default: '选择用户' }
   })
@@ -86,11 +87,11 @@
     }
     done(true)
   }
-  
+
   const crud = ref({
     showIndex: false,
     api: commonApi.getUserList,
-    rowSelection: { type: 'checkbox', showCheckedAll: true }
+    rowSelection: props.multiple ? { type: 'checkbox', showCheckedAll: true } : { type: 'radio' }
   })
 
   const columns = ref([

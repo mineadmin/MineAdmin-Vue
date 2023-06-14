@@ -14,7 +14,7 @@
 import { ref } from 'vue'
 import { useFormStore, useTagStore } from '@/store/index'
 import { useRoute } from 'vue-router'
-import { isEmpty, isFunction } from 'lodash'
+import { isEmpty, isFunction, get } from 'lodash'
 import { Message } from '@arco-design/web-vue'
 import { closeTag  } from '@/utils/common'
 
@@ -53,6 +53,30 @@ const opName = ref(op.value === 'add' ? '新增' : '编辑' )
 const pageTitle = ref(opName.value + (formConfig?.options?.formOption?.tagName ?? '未命名') )
 tagStore.updateTagTitle(route.fullPath, ` ${pageTitle.value} ${op.value === 'edit' ? ' | ' + key.value : '' } `)
 
+formConfig.sourceColumns.map(async item => {
+  // 针对带点的数据处理
+  if (item.dataIndex && item.dataIndex.indexOf('.') > -1) {
+    form.value[item.dataIndex] = get(form.value, item.dataIndex)
+  }
+
+  // add 默认值处理
+  if (op.value === 'add') {
+    if (item.addDefaultValue && isFunction(item.addDefaultValue)) {
+      form.value[item.dataIndex] = await item.addDefaultValue(form.value)
+    } else if (typeof item.addDefaultValue != 'undefined') {
+      form.value[item.dataIndex] = item.addDefaultValue
+    }
+  }
+  // edit 默认值处理
+  if (op.value === 'edit') {
+    if (item.editDefaultValue && isFunction(item.editDefaultValue)) {
+      form.value[item.dataIndex] = await item.editDefaultValue(form.value)
+    } else if (typeof item.editDefaultValue != 'undefined') {
+      form.value[item.dataIndex] = item.editDefaultValue
+    }
+  }
+})
+
 const pageBack = () => {
   window.history.back(-1)
 }
@@ -78,9 +102,9 @@ const submitForm = async () => {
     Message.success(response.message || `${opName.value}成功！`)
     closeTag({ path: route.fullPath })
     formStore.crudList[options.id] = true
+  } else if ( response.success === false && (typeof response.code === "undefined" || response.code !== 200) ) {
+    Message.error(response.message || `${actionTitle.value}失败！`)
   }
+
 }
-</script>
-<script>
-export default { name: 'openForm' }
 </script>

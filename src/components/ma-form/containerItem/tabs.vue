@@ -9,7 +9,7 @@
 -->
 <template>
   <a-tabs
-    v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
+    v-if="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
     :class="[props.component?.customClass]"
     :trigger="props.component?.trigger"
     :position="props.component?.position"

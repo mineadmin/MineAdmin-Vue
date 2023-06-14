@@ -9,7 +9,7 @@
 -->
 <template>
   <a-card
-    v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
+    v-if="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
     :class="[props.component?.customClass]"
     :extra="props.component?.extra"
     :bordered="props.component?.bordered"

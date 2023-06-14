@@ -21,7 +21,11 @@
   >
     <template #title>{{ actionTitle }}</template>
     <a-spin :loading="dataLoading" tip="加载中..." class="w-full">
-      <ma-form v-model="form" :columns="formColumns" :options="{ showButtons: false }" ref="maFormRef"/>
+      <ma-form v-model="form" :columns="formColumns" :options="{ showButtons: false }" ref="maFormRef">
+        <template v-for="slot in Object.keys($slots)" #[slot]="component">
+          <slot :name="slot" v-bind="component" />
+        </template>
+      </ma-form>
     </a-spin>
   </component>
 </template>
@@ -73,7 +77,8 @@ const submit = async () => {
     Message.success(response.message || `${actionTitle.value}成功！`)
     emit('success', response)
     return true
-  } else {
+  } else if ( response.success === false && (typeof response.code === "undefined" || response.code !== 200) ) {
+    Message.error(response.message || `${actionTitle.value}失败！`)
     return false
   }
 }
@@ -92,22 +97,30 @@ const open = () => {
     }
     const config = {
       options,
+      sourceColumns: columns,
       formColumns: formColumns.value
     }
+
     formStore.crudList[options.id] = false
-    formStore.formList[options.formOption.tagId] = {
-      config,
-      addData: {},
-      editData: {},
-    }
+
     const queryParams = {
       tagId: options.formOption.tagId,
       op: currentAction.value,
     }
+
+    queryParams.key = form.value[options.formOption?.titleDataIndex ?? ''] ?? form.value[options.pk]
+
+    if (formStore.formList[options.formOption.tagId] === undefined) {
+      formStore.formList[options.formOption.tagId] = {
+        config,
+        addData: {},
+        editData: {}
+      };
+    }
+
     if (currentAction.value === 'add') {
       formStore.formList[options.formOption.tagId].addData = cloneDeep(form.value)
     } else {
-      queryParams.key = form.value[options.formOption?.titleDataIndex ?? ''] ?? form.value[options.pk]
       formStore.formList[options.formOption.tagId].editData[queryParams.key] = cloneDeep(form.value)
     }
     form.value = {}
@@ -139,7 +152,7 @@ const edit = (data) => {
 const init = () => {
   dataLoading.value = true
   const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
-  // const layout = options?.formOption?.layout ?? []
+
   columns.map(async item => {
     await columnItemHandle(item)
   })
@@ -168,25 +181,27 @@ const columnItemHandle = async (item) => {
   layoutColumns.value.set(item.dataIndex, item)
   formColumns.value.push(item)
 
-  // 针对带点的数据处理
-  if (item.dataIndex && item.dataIndex.indexOf('.') > -1) {
-    form.value[item.dataIndex] = get(form.value, item.dataIndex)
-  }
-
-  // add 默认值处理
-  if (currentAction.value === 'add') {
-    if (item.addDefaultValue && isFunction(item.addDefaultValue)) {
-      form.value[item.dataIndex] = await item.addDefaultValue(form.value)
-    } else if (typeof item.addDefaultValue != 'undefined') {
-      form.value[item.dataIndex] = item.addDefaultValue
+  if (options.formOption.viewType !== 'tag') {
+    // 针对带点的数据处理
+    if (item.dataIndex && item.dataIndex.indexOf('.') > -1) {
+      form.value[item.dataIndex] = get(form.value, item.dataIndex)
     }
-  }
-  // edit 默认值处理
-  if (currentAction.value === 'edit') {
-    if (item.editDefaultValue && isFunction(item.editDefaultValue)) {
-      form.value[item.dataIndex] = await item.editDefaultValue(form.value)
-    } else if (typeof item.editDefaultValue != 'undefined') {
-      form.value[item.dataIndex] = item.editDefaultValue
+
+    // add 默认值处理
+    if (currentAction.value === 'add') {
+      if (item.addDefaultValue && isFunction(item.addDefaultValue)) {
+        form.value[item.dataIndex] = await item.addDefaultValue(form.value)
+      } else if (typeof item.addDefaultValue != 'undefined') {
+        form.value[item.dataIndex] = item.addDefaultValue
+      }
+    }
+    // edit 默认值处理
+    if (currentAction.value === 'edit') {
+      if (item.editDefaultValue && isFunction(item.editDefaultValue)) {
+        form.value[item.dataIndex] = await item.editDefaultValue(form.value)
+      } else if (typeof item.editDefaultValue != 'undefined') {
+        form.value[item.dataIndex] = item.editDefaultValue
+      }
     }
   }
 

@@ -37,7 +37,7 @@
               </template>
             </template>
             <template #required="{ record }">
-              <a-tag color="red" v-if="record.is_required === 1">是</a-tag>
+              <a-tag color="red" v-if="record.is_required === 2">是</a-tag>
               <a-tag color="green" v-else>否</a-tag>
             </template>
           </a-table>

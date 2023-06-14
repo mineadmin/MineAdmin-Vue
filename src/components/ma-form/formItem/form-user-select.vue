@@ -17,6 +17,7 @@
       <ma-user-select
         v-model="value"
         :text="props.component.text"
+        :multiple="props.component.multiple ?? true"
         :onlyId="props.component.onlyId"
         :isEcho="props.component.isEcho ?? true"
       />

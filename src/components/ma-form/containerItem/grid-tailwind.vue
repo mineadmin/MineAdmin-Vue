@@ -9,7 +9,7 @@
 -->
 <template>
   <div
-    v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
+    v-if="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
     :class="[ gridClass, props.component?.customClass ]"
     :style="props.component?.style"
   >
