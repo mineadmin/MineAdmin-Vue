@@ -91,7 +91,7 @@ const getAppInfo = async () => {
 const getIdentity = async () => {
   const identity = tool.md5(docStore.appId + docStore.appSecret)
   globalParamsRef.value.saveAuthGlobalParams(docStore.appId, identity, '')
-  await copy(`app_id=${docStore.appId}&indentity=${identity}`)
+  await copy(`app_id=${docStore.appId}&identity=${identity}`)
 }
 
 const genSign = () => {
