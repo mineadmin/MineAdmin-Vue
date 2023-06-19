@@ -51,7 +51,7 @@
 
     <preview ref="previewRef" />
 
-    <edit-info ref="editRef" />
+    <edit-info ref="editRef" @success="selectSuccess" />
 
   </div>
 </template>
