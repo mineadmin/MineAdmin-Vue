@@ -146,6 +146,9 @@
             break
         }
       }
+      if (/^\[/.test(item.value) && /\]$/.test(item.value)) {
+        item.value = JSON.parse(item.value)
+      }
       form[item.key] = item.value
       return option
     })
