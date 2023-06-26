@@ -147,8 +147,7 @@
         }
       }
       if (item.value && item.value.toString().indexOf(',') > -1 && item.input_type === 'checkbox') {
-        item.value = JSON.parse('[' + item.value + ']')
-        item.value = item.value.map(item => item.toString())
+        item.value = item.value.split(',')
       } else if (/^\[/.test(item.value) && /\]$/.test(item.value)) {
         item.value = JSON.parse(item.value)
       }
