@@ -77,8 +77,21 @@ provide('columns', columns)
 
 const emit = defineEmits(['search'])
 
+const getSearchAllColumns = (cls = []) => {
+  let sls = []
+  cls.map(item => {
+    if (item.children && item.children.length > 0) {
+      let tmp = getSearchAllColumns(item.children)
+      sls.push(...tmp)
+    } else if (item.dataIndex && item.search && item.search === true) {
+      sls.push(item)
+    }
+  })
+  return sls
+}
+ 
 if (columns.length > 0) {
-  searchColumns.value = cloneDeep(columns.filter( item => item.search === true && ( options.tabs?.dataIndex != item.dataIndex ) ))
+  searchColumns.value = cloneDeep(getSearchAllColumns(columns).filter( item => item.search === true && ( options.tabs?.dataIndex != item.dataIndex ) ))
 }
 
 const handlerSearch = () => {
