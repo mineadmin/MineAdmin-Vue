@@ -25,7 +25,7 @@
             :label-col-style="{ width: component.searchLabelWidth ?? options.searchLabelWidth }"
           >
             <slot :name="`${component.dataIndex}`" v-bind="{ searchForm, component }">
-              <component :is="getComponentName(component.formType)" :component="component" />
+              <component :is="getComponentName(component.searchFormType ?? component.formType)" :component="component" />
             </slot>
           </a-form-item>
         </template>
