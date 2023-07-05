@@ -28,13 +28,12 @@ function createService () {
         response.data.code = 500
         response.data.message = '服务器内部错误'
         response.data.success = false
+      } else if (response.data.code && response.data.code !== 200) {
+        Message.error({
+          content: response.data.message,
+          icon: () => h( IconFaceFrownFill )
+        })
       }
-      //  else if (response.data.code && response.data.code !== 200) {
-      //   Message.error({
-      //     content: response.data.message,
-      //     icon: () => h( IconFaceFrownFill )
-      //   })
-      // }
       return response.data;
     },
     error => {
