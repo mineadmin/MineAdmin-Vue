@@ -89,11 +89,15 @@ const submitForm = async () => {
 
   let response
   if (op.value === 'add') {
-    isFunction(options.beforeAdd) && await options.beforeAdd(formData)
+    if (isFunction(options.beforeAdd) && ! options.beforeAdd(formData)) {
+      return false
+    }
     response = await options.add.api(formData)
     isFunction(options.afterAdd) && await options.afterAdd(response, formData)
   } else {
-    isFunction(options.beforeEdit) && await options.beforeEdit(formData)
+    if (isFunction(options.beforeEdit) && ! options.beforeEdit(formData)) {
+      return false
+    }
     response = await options.edit.api(formData[options.pk], formData)
     isFunction(options.afterEdit) && await options.afterEdit(response, formData)
   }

@@ -226,7 +226,9 @@ const getIndex = rowIndex => {
 }
 
 const editAction = record => {
-  isFunction(options.beforeOpenEdit) && options.beforeOpenEdit(record)
+  if (isFunction(options.beforeOpenEdit) && ! options.beforeOpenEdit(record)) {
+    return false
+  }
   if (options.edit.action && isFunction(options.edit.action)) {
     options.edit.action(record)
   } else {
