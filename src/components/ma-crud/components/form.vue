@@ -82,6 +82,7 @@ const submit = async () => {
     emit('success', response)
     return true
   } else if ( response.success === false && (typeof response.code === "undefined" || response.code !== 200) ) {
+    Message.clear()
     Message.error(response.message || `${actionTitle.value}失败！`)
     return false
   }
