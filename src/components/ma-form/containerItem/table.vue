@@ -9,7 +9,7 @@
 -->
 <template>
   <table
-    v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
+    v-if="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
     :class="['table-container', props.component?.customClass]"
     :style="props.component?.style"
   > 

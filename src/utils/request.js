@@ -88,11 +88,14 @@ function createRequest (service) {
     const token = tool.local.get(env.VITE_APP_TOKEN_PREFIX)
     const setting = tool.local.get('setting')
     const configDefault = {
-      headers: {
-        Authorization: "Bearer " + token,
-        'Accept-Language': setting.language || 'zh_CN',
-        'Content-Type': get(config, 'headers.Content-Type', 'application/json;charset=UTF-8')
-      },
+      headers: Object.assign(
+        {
+          Authorization: "Bearer " + token,
+          'Accept-Language': setting.language || 'zh_CN',
+          'Content-Type': get(config, 'headers.Content-Type', 'application/json;charset=UTF-8')
+        },
+        config.header
+      ),
 
       timeout: 10000,
       baseURL: env.VITE_APP_OPEN_PROXY === 'true' ? env.VITE_APP_PROXY_PREFIX : env.VITE_APP_BASE_URL,

@@ -9,7 +9,7 @@
 -->
 <template>
   <a-col
-    v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
+    v-if="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
     :class="[props.component?.customClass]"
     :span="props.component?.span ?? 12"
     :offset="props.component?.offset"

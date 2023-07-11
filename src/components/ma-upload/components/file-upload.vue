@@ -93,10 +93,10 @@ const uploadFileHandler = async (options) => {
   const file = options.fileItem.file
   if (file.size > config.size) {
     Message.warning(file.name + ' ' + t('upload.sizeLimit'))
-    currentItem.value = undefined
+    currentItem.value = {}
     return
   }
-  
+
   const result = await uploadRequest(file, 'file', 'uploadFile', config.requestData)
 
   if (result) {
@@ -117,7 +117,7 @@ const uploadFileHandler = async (options) => {
 }
 
 const removeSignFile = () => {
-  currentItem.value = undefined
+  currentItem.value = {}
   signFile.value = undefined
   emit('update:modelValue', null)
 }
@@ -134,18 +134,27 @@ const removeFile = (idx) => {
 const init = async () => {
   if (config.multiple) {
     if (isArray(props.modelValue) && props.modelValue.length > 0) {
-      const tmp = []
-      await props.modelValue.map(async item => {
-        const res = await getFileUrl(config.returnType, item, storageMode)
-        tmp.push({ url: res })
+      const result = await props.modelValue.map(async item => {
+        return await getFileUrl(config.returnType, item, storageMode)
       })
-      showFileList.value = tmp
+      const data = await Promise.all(result)
+      if (config.returnType === 'url') {
+        showFileList.value = data.map(url => { return { url } })
+      } else {
+        showFileList.value = data.map(item => { return  { url: item.url } })
+      }
     } else {
       showFileList.value = []
     }
   } else if (props.modelValue) {
-    signFile.value = props.modelValue
-    getFileUrl(config.returnType, props.modelValue, storageMode).then(url => currentItem.value.url = url)
+    if (config.returnType === 'url') {
+      signFile.value = props.modelValue
+      currentItem.value.url = props.modelValue
+    } else {
+      const result = await getFileUrl(config.returnType, props.modelValue, storageMode)
+      signFile.value = result.url
+      currentItem.value.url = result.url
+    }
     currentItem.value.percent = 100
     currentItem.value.status  = 'complete'
   } else {

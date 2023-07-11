@@ -73,5 +73,6 @@ export const viewComponent = [
   { label: '上传组件', value: 'upload' },
   { label: '资源选择器', value: 'selectResource' },
   { label: '富文本控件', value: 'editor' },
-  { label: '代码编辑器', value: 'codeEditor' },
+  { label: 'wangEditor富文本', value: 'wangEditor' },
+  { label: '代码编辑器', value: 'codeEditor' }
 ]

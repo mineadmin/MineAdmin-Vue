@@ -14,13 +14,15 @@
     :custom-field="props.customField"
   >
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
-      <ma-user-select
+      <ma-wang-editor
         v-model="value"
-        :text="props.component.text"
-        :multiple="props.component.multiple ?? true"
-        :onlyId="props.component.onlyId"
-        :isEcho="props.component.isEcho ?? true"
-      />
+        style="width: 100%;"
+        :height="props.component.height"
+        :id="props.component.id"
+        :mode="props.component.mode"
+        @change="maEvent.handleChangeEvent(props.component, $event)"
+      >
+      </ma-wang-editor>
     </slot>
   </ma-form-item>
 </template>
@@ -28,7 +30,7 @@
 <script setup>
 import { ref, inject, onMounted, watch } from 'vue'
 import { get, set } from 'lodash'
-import MaUserSelect from '@/components/ma-user/index.vue'
+import MaWangEditor from '@/components/ma-wangEditor/index.vue'
 import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
 const props = defineProps({
@@ -45,10 +47,6 @@ watch( () => value.value, v => {
   set(formModel.value, index, v)
   index.indexOf('.') > -1 && delete formModel.value[index]
 } )
-
-if (props.component.multiple && ! value.value) {
-  value.value = []
-}
 
 maEvent.handleCommonEvent(props.component, 'onCreated')
 onMounted(() => {

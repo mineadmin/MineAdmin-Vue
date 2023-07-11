@@ -9,7 +9,7 @@
 -->
 <template>
   <a-row
-      v-show="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
+      v-if="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
       :class="[props.component?.customClass]"
       :gutter="props.component?.gutter"
       :justify="props.component?.justify"

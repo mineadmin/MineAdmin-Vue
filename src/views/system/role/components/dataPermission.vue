@@ -80,13 +80,13 @@
 
   const emit = defineEmits(['success'])
 
-  const open = (row) => {
+  const open = async (row) => {
+    visible.value = true
     form.value = { id: row.id, name: row.name, code: row.code, data_scope: row.data_scope }
     handlerExpand(false)
     handlerSelect(false)
     handlerLinkage(false)
-    setData(row.id)
-    visible.value = true
+    await setData(row.id)
   }
 
   const handlerExpand = (value) => {
@@ -108,6 +108,7 @@
   }
 
   const setData = async (roleId) => {
+    loading.value = true
     const deptResponse = await dept.tree({ scope: true })
     deptList.value = deptResponse.data
     const roleResponse = await role.getDeptByRole(roleId)

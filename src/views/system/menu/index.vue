@@ -105,6 +105,10 @@
     beforeOpenAdd: () => {
       columns[1].addDefaultValue = 0
       return true
+    },
+    beforeEdit: (params) => {
+      delete params.children
+      return true
     }
   })
 

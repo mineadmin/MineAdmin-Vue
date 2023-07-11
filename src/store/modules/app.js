@@ -11,6 +11,7 @@ let defaultSetting = {
   color: '#165dff',
   settingOpen: false,
   searchOpen: false,
+  registerWangEditorButtonFlag: false
 }
 
 import { defineStore } from 'pinia'
@@ -109,6 +110,10 @@ const useAppStore = defineStore('app', {
       defaultSetting.skin = this.skin
       document.body.setAttribute('mine-skin', this.skin)
       tool.local.set('setting', defaultSetting)
+    },
+
+    setRegisterWangEditorButtonFlag(value) {
+      this.registerWangEditorButtonFlag = value
     }
   },
 })

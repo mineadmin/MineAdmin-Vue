@@ -584,6 +584,8 @@ const form = ref({
 
 const formRef = ref()
 
+const emit = defineEmits(['success'])
+
 // form扩展组
 const formOptions = ref({
   relations: []
@@ -629,6 +631,7 @@ const save = async (done) => {
   form.value.options = formOptions.value
   const response = await generate.update(form.value)
   response.success && Message.success(response.message)
+  emit('success', true)
   done(true)
 }
 
@@ -656,6 +659,12 @@ const init = () => {
     formOptions.value.relations = record.value.options.relations
   } else {
     formOptions.value.relations = []
+  }
+
+  if (record.value.component_type === 3) {
+    formOptions.value.tag_id = record.value?.options?.tag_id ?? undefined
+    formOptions.value.tag_name = record.value?.options?.tag_name ?? undefined
+    formOptions.value.tag_view_name = record.value?.options?.tag_view_name ?? undefined
   }
 
   // 请求表字段

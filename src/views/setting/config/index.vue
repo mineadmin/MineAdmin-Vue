@@ -146,6 +146,11 @@
             break
         }
       }
+      if (item.value && item.value.toString().indexOf(',') > -1 && item.input_type === 'checkbox') {
+        item.value = item.value.split(',')
+      } else if (/^\[/.test(item.value) && /\]$/.test(item.value)) {
+        item.value = JSON.parse(item.value)
+      }
       form[item.key] = item.value
       return option
     })
@@ -192,7 +197,7 @@
   }
 
   const submit = async (data) => {
-    if (! auth(['setting:config:update'])) {
+    if (! auth('setting:config:update')) {
       Message.info('没有权限修改配置')
     }
     const response = await config.updateByKeys(data)

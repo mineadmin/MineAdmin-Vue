@@ -123,7 +123,7 @@
         <a-link class="mt-2">https://arco.design/vue/docs/start</a-link>
       </div>
       <!-- 编辑器相关 -->
-      <div v-if="['codeEditor', 'editor'].includes(row.view_type)">
+      <div v-if="['codeEditor', 'editor','wangEditor'].includes(row.view_type)">
         <a-form-item
           label="编辑器高度"
           field="height"
@@ -300,7 +300,6 @@
             <a-radio :value="false">否</a-radio>
           </a-radio-group>
         </a-form-item>
-        
       </div>
     </a-form>
   </a-modal>

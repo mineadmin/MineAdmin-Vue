@@ -51,10 +51,11 @@ const crud = reactive({
   delete: { show: true, api: config.delete, auth: ['setting:config:delete'] },
   beforeRequest: (params) => params.group_id = groupId.value,
   beforeEdit: (record) => {
-    if (record.config_select_data) {
+    if (record.config_select_data && typeof record.config_select_data === 'string') {
       record.config_select_data = record.config_select_data.replace(/\r|\n|\s/g, '')
       record.config_select_data = record.config_select_data.replace(',]', ']')
     }
+    return true
   },
   formOption: { width: '700px' }
 })

@@ -22,6 +22,7 @@
     <a-space
       v-else-if="config.multiple && config.showList"
       :class="showImgList.length > 0 ? 'mr-2' : ''"
+      wrap
     >
       <div
         :class="'image-list ' + (config.rounded ? 'rounded-full' : '')"
@@ -95,10 +96,10 @@ const uploadImageHandler = async (options) => {
   const file = options.fileItem.file
   if (file.size > config.size) {
     Message.warning(file.name + ' ' + t('upload.sizeLimit'))
-    currentItem.value = undefined
+    currentItem.value = {}
     return
   }
-  
+
   const result = await uploadRequest(file, 'image', 'uploadImage', config.requestData)
 
   if (result) {
@@ -118,7 +119,7 @@ const uploadImageHandler = async (options) => {
 }
 
 const removeSignImage = () => {
-  currentItem.value = undefined
+  currentItem.value = {}
   signImage.value = undefined
   emit('update:modelValue', null)
 }
@@ -135,18 +136,27 @@ const removeImage = (idx) => {
 const init = async () => {
   if (config.multiple) {
     if (isArray(props.modelValue) && props.modelValue.length > 0) {
-      const tmp = []
-      await props.modelValue.map(async item => {
-        const res = await getFileUrl(config.returnType, item, storageMode)
-        tmp.push({ url: res })
-      })
-      showImgList.value = tmp
+      const result = await props.modelValue.map(async (item) => {
+        return await getFileUrl(config.returnType, item, storageMode)
+      });
+      const data = await Promise.all(result)
+      if (config.returnType === 'url') {
+        showImgList.value = data.map(url => { return { url } })
+      } else {
+        showImgList.value = data.map(item => { return  { url: item.url } })
+      }
     } else {
       showImgList.value = []
     }
   } else if (props.modelValue) {
-    signImage.value = props.modelValue
-    getFileUrl(config.returnType, props.modelValue, storageMode).then(url => currentItem.value.url = url)
+    if (config.returnType === 'url') {
+      signImage.value = props.modelValue
+      currentItem.value.url = props.modelValue
+    } else {
+      const result = await getFileUrl(config.returnType, props.modelValue, storageMode)
+      signImage.value = result.url
+      currentItem.value.url = result.url
+    }
     currentItem.value.percent = 100
     currentItem.value.status  = 'complete'
   } else {

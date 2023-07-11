@@ -90,7 +90,8 @@ const getAppInfo = async () => {
 
 const getIdentity = async () => {
   const identity = tool.md5(docStore.appId + docStore.appSecret)
-  await copy(identity)
+  globalParamsRef.value.saveAuthGlobalParams(docStore.appId, identity, '')
+  await copy(`app_id=${docStore.appId}&identity=${identity}`)
 }
 
 const genSign = () => {
@@ -129,7 +130,8 @@ const getAccessToken = () => {
 
   request({ url, method: 'post' }).then(async res => {
     if (res.success) {
-      await copy(res.data.access_token)
+      globalParamsRef.value.saveAuthGlobalParams('', '', res.data.access_token)
+      await copy(`access_token=${res.data.access_token}`)
     } else {
       Message.error(res.message)
     }
@@ -139,7 +141,9 @@ const getAccessToken = () => {
 }
 
 const clearGlobalParams = () => {
-  docStore.globalParams = undefined
+    if (docStore.globalParams) {
+        docStore.globalParams = {header: {}, query: {}, body: {}}
+    }
   Message.success('清除成功')
 }
 
