@@ -46,11 +46,10 @@ export default {
    * 读取接口字段管理
    * @returns
    */
-  read(data = {}) {
+  read(id) {
     return request({
-      url: 'system/apiColumn/read',
+      url: 'system/apiColumn/read/' + id,
       method: 'post',
-      data
     })
   },
 

@@ -58,11 +58,10 @@ export default {
    * 读取应用分组
    * @returns
    */
-  read(data = {}) {
+  read(id) {
     return request({
-      url: 'system/appGroup/read',
+      url: 'system/appGroup/read/' + id,
       method: 'post',
-      data
     })
   },
 

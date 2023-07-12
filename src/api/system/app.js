@@ -46,11 +46,10 @@ export default {
    * 读取应用管理
    * @returns
    */
-  read(params = {}) {
+  read(id) {
     return request({
-      url: 'system/app/read',
+      url: 'system/app/read/' + id,
       method: 'post',
-      data: params
     })
   },
 
