@@ -70,10 +70,11 @@
                     type="primary"
                   ><icon-eye /> {{ options.see.text || '查看' }}</a-link> -->
                   <a-link
-                      v-if="(isFunction(options.edit.show) ? options.edit.show(record):options.edit.show) && !props.isRecovery"
+                      v-if="(isFunction(options.edit.show) ? options.edit.show(record) : options.edit.show) && !props.isRecovery"
                       v-auth="options.edit.auth || []"
                       v-role="options.edit.role || []"
                       type="primary"
+                      :disabled="(isFunction(options.edit.disabled) ? options.edit.disabled(record) : options.edit.disabled)"
                       @click="editAction(record)"
                   >
                     <icon-edit /> {{ options.edit.text || '编辑' }}
@@ -94,12 +95,13 @@
                       content="确定要删除该数据吗?"
                       position="bottom"
                       @ok="deleteAction(record)"
-                      v-if="(isFunction(options.delete.show) ? options.delete.show(record):options.delete.show)"
+                      v-if="(isFunction(options.delete.show) ? options.delete.show(record) : options.delete.show)"
                   >
                     <a-link
                         type="primary"
                         v-auth="options.delete.auth || []"
                         v-role="options.delete.role || []"
+                        :disabled="(isFunction(options.delete.disabled) ? options.delete.disabled(record) : options.delete.disabled)"
                     >
                       <icon-delete />
                       {{
