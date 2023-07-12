@@ -146,10 +146,10 @@
             break
         }
       }
-      if (item.value && item.value.toString().indexOf(',') > -1 && item.input_type === 'checkbox') {
-        item.value = item.value.split(',')
-      } else if (/^\[/.test(item.value) && /\]$/.test(item.value)) {
+      if (/^\[/.test(item.value) && /\]$/.test(item.value)) {
         item.value = JSON.parse(item.value)
+      } else if (item.value && item.value.toString().indexOf(',') > -1 && item.input_type === 'checkbox') {
+        item.value = item.value.split(',')
       }
       form[item.key] = item.value
       return option
