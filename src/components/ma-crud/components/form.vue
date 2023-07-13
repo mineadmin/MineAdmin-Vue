@@ -150,15 +150,15 @@ const edit = async (data) => {
   actionTitle.value = '编辑'
   currentAction.value = 'edit'
   form.value = {}
-  if (options.edit.dataSource && options.edit.dataSource === 'table') {
-    for (let i in data) form.value[i] = data[i]
-    open(data)
-  } else if (options.edit.dataSource === 'api') {
+  if (options.edit.dataSource && options.edit.dataSource === 'api') {
     const response = await options.edit.dataSourceApi(data[options.pk])
     if (response.success) {
       form.value = response.data
       open(response.data)
     }
+  } else {
+    for (let i in data) form.value[i] = data[i]
+    open(data)
   }
 }
 
