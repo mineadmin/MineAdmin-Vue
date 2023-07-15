@@ -72,6 +72,7 @@ const crud = reactive({
   beforeAdd: (form) => {
     form.code = currentRow.value?.code
     form.type_id = currentRow.value?.id
+    return true
   },
   add: { show: true, api: dict.saveDictData, auth: ['system:dict:save'] },
   edit: { show: true, api: dict.updateDictData, auth: ['system:dict:update'] },
