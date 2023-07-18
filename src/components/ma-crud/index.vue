@@ -800,6 +800,10 @@ const getFormColumns = async (type = 'add') => {
   return await crudFormRef.value.getFormColumns(type)
 }
 
+const getCurrentPage = () => requestParams.value[config.request.page]
+const getPageSize = () => requestParams.value[config.request.pageSize]
+const getTotal = () => total.value
+
 /**
  * 获取column属性服务类
  * @returns ColumnService
@@ -810,7 +814,7 @@ const getColumnService = (strictMode = true) => {
 
 defineExpose({
   refresh, requestData, addAction, editAction, getTableData, setSelecteds,
-  getCurrentAction, getFormData, getFormColumns, getColumnService,
+  getCurrentAction, getFormData, getFormColumns, getColumnService, getCurrentPage, getPageSize, getTotal
   requestParams, isRecovery, tableRef,
   crudFormRef, crudSearchRef, crudImportRef, crudSettingRef
 })
