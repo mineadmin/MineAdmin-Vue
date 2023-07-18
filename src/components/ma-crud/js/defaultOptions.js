@@ -161,6 +161,12 @@ export default {
     text: '编辑',
     // 是否显示
     show: false,
+    // 数据来源：table(表格行数据) | api(通过接口获取数据)
+    dataSource: 'table',
+    // 数据源API接口 
+    dataSourceApi: undefined,
+    // 是否禁用，仅表格行内按钮有效
+    disabled: false,
   },
   delete: {
 
@@ -172,6 +178,8 @@ export default {
     role: [],
     // 按钮文案
     text: '删除',
+    // 是否禁用，仅表格行内按钮有效
+    disabled: false,
 
     // 真实删除api
     realApi: undefined,
@@ -181,6 +189,8 @@ export default {
     realRole: [],
     // 真实按钮文案
     realText: '删除',
+    // 真实删除是否禁用，仅表格行内按钮有效
+    realDisabled: false,
 
     // 是否显示
     show: false,

@@ -65,11 +65,15 @@ const submit = async () => {
 
   let response
   if (currentAction.value === 'add') {
-    isFunction(options.beforeAdd) && await options.beforeAdd(formData)
+    if (isFunction(options.beforeAdd) && ! options.beforeAdd(formData)) {
+      return false
+    }
     response = await options.add.api(formData)
     isFunction(options.afterAdd) && await options.afterAdd(response, formData)
   } else {
-    isFunction(options.beforeEdit) && await options.beforeEdit(formData)
+    if (isFunction(options.beforeEdit) && ! options.beforeEdit(formData)) {
+      return false
+    }
     response = await options.edit.api(formData[options.pk], formData)
     isFunction(options.afterEdit) && await options.afterEdit(response, formData)
   }
@@ -78,6 +82,7 @@ const submit = async () => {
     emit('success', response)
     return true
   } else if ( response.success === false && (typeof response.code === "undefined" || response.code !== 200) ) {
+    Message.clear()
     Message.error(response.message || `${actionTitle.value}失败！`)
     return false
   }
@@ -141,12 +146,20 @@ const add = () => {
   form.value = {}
   open()
 }
-const edit = (data) => {
+const edit = async (data) => {
   actionTitle.value = '编辑'
   currentAction.value = 'edit'
   form.value = {}
-  for (let i in data) form.value[i] = data[i]
-  open(data)
+  if (options.edit.dataSource && options.edit.dataSource === 'api') {
+    const response = await options.edit.dataSourceApi(data[options.pk])
+    if (response.success) {
+      form.value = response.data
+      open(response.data)
+    }
+  } else {
+    for (let i in data) form.value[i] = data[i]
+    open(data)
+  }
 }
 
 const init = () => {

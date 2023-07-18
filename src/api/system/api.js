@@ -57,11 +57,10 @@ export default {
    * 读取接口管理
    * @returns
    */
-  read(data = {}) {
+  read(id) {
     return request({
-      url: 'system/api/read',
+      url: 'system/api/read/' + id,
       method: 'post',
-      data
     })
   },
 

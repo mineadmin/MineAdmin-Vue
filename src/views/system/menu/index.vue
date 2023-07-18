@@ -108,6 +108,7 @@
     },
     beforeEdit: (params) => {
       delete params.children
+      return true
     }
   })
 

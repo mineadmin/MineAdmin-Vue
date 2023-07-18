@@ -54,6 +54,7 @@ export default {
       url: 'setting/code/generate',
       method: 'post',
       responseType: 'blob',
+      timeout: 20 * 1000,
       data,
     })
   },

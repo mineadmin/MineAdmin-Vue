@@ -584,6 +584,8 @@ const form = ref({
 
 const formRef = ref()
 
+const emit = defineEmits(['success'])
+
 // form扩展组
 const formOptions = ref({
   relations: []
@@ -629,6 +631,7 @@ const save = async (done) => {
   form.value.options = formOptions.value
   const response = await generate.update(form.value)
   response.success && Message.success(response.message)
+  emit('success', true)
   done(true)
 }
 

@@ -94,18 +94,19 @@
   const list = ref([])
   const resource = ref()
   const resourceVisible = ref(false)
+  const appBaseUrl = import.meta.env.VITE_APP_BASE
 
   const initConfig = reactive({
     menubar: false, // 菜单栏显隐
-    language_url: '/tinymce/i18n/zh_CN.js',
+    language_url: `${appBaseUrl}tinymce/i18n/zh_CN.js`,
     language: 'zh_CN',
-    skin_url: appStore.mode === 'light' ? '/tinymce/skins/ui/tinymce-5' : '/tinymce/skins/ui/tinymce-5-dark',
+    skin_url: appBaseUrl + (appStore.mode === 'light' ? 'tinymce/skins/ui/tinymce-5' : 'tinymce/skins/ui/tinymce-5-dark'),
     height: props.height,
     toolbar_mode: 'wrap',
     plugins: props.plugins,
     toolbar: props.toolbar,
     branding: false,
-    content_css: '/tinymce/skins/content/default/content.css',
+    content_css: `${appBaseUrl}tinymce/skins/content/default/content.css`,
     setup: (editor) => {
       editor.on('init', () => {
         editor.getBody().style.fontSize = '14px';
