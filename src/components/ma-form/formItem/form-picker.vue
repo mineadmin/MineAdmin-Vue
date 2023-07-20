@@ -39,6 +39,7 @@
         :show-time="props.component.showTime"
         :preview-shortcut="props.component.previewShortcut"
         :show-confirm-btn="props.component.showConfirmBtn"
+        :type="props.component.range ? 'time-range' : ''"
         :time-picker-props="props.component.formType == 'range' ? { defaultValue: ['00:00:00', '23:59:59'] } : {}"
         :separator="props.component.separator"
         :mode="props.component.mode"
