@@ -242,7 +242,8 @@
 
     <ma-context-menu ref="crudContextMenuRef" @execCommand="execContextMenuCommand" />
 
-    <a-image-preview :src="imgUrl" v-model:visible="imgVisible" />
+    <a-image-preview-group :srcList="imgUrl" v-model:visible="imgVisible" v-if="typeof imgUrl === 'object' && imgUrl !== null" />
+    <a-image-preview :src="imgUrl" v-model:visible="imgVisible" v-else />
   </a-layout-content>
 </template>
 
