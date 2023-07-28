@@ -141,13 +141,13 @@ const close = () => {
   form.value = {}
 }
 const add = () => {
-  actionTitle.value = '新增'
+  actionTitle.value = options.add.title ?? '新增'
   currentAction.value = 'add'
   form.value = {}
   open()
 }
 const edit = async (data) => {
-  actionTitle.value = '编辑'
+  actionTitle.value = options.edit.title ?? '编辑'
   currentAction.value = 'edit'
   form.value = {}
   if (options.edit.dataSource && options.edit.dataSource === 'api') {
