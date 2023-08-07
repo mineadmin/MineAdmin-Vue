@@ -28,6 +28,7 @@ export default {
     classic: '经典',
     columns: '分栏',
     banner: '通栏',
+    mixed: '混合',
   },
   userCenter: '个人中心',
   clearCache: '清除缓存',

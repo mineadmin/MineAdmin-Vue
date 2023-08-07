@@ -43,6 +43,7 @@
           <a-option value="classic">{{ $t('sys.layout.classic') }}</a-option>
           <a-option value="columns">{{ $t('sys.layout.columns') }}</a-option>
           <a-option value="banner">{{ $t('sys.layout.banner') }}</a-option>
+          <a-option value="mixed">{{ $t('sys.layout.mixed') }}</a-option>
         </a-select>
       </a-form-item>
       <a-form-item :label="$t('sys.i18n')" :help="$t('sys.i18nHelp')">
