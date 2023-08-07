@@ -16,6 +16,7 @@
     <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
       <a-select
         v-model:model-value="value"
+        :options="props.component.data ?? dictList[dictIndex] ?? []"
         :multiple="props.component.multiple"
         :size="props.component.size"
         :allow-clear="props.component.allowClear ?? true"
@@ -53,9 +54,6 @@
         @blur="maEvent.handleCommonEvent(props.component, 'onBlur')"
         @search="maEvent.customeEvent(props.component, $event, 'onSearch')"
       >
-        <template v-for="(item, index) in (dictList[dictIndex] ?? [])">
-          <a-option :value="item.value" :disabled="item.disabled">{{ item.label }}</a-option>
-        </template>
         <template #header v-if="props.component.multiple">
           <div style="padding: 6px 12px;" >
             <a-space>
@@ -160,7 +158,7 @@ const handleCascaderChangeEvent = async (value) => {
   if (component.onChange) {
     maEvent.handleChangeEvent(component, value)
   }
-  
+
   // 处理联动
   if (! index.match(/^(\w+)\.\d+\./)) {
     await handlerCascader(value, component, columns.value, dictList.value, formModel.value)

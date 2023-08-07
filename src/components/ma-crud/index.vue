@@ -21,7 +21,9 @@
           class="ma-tabs mb-5"
       >
         <template #extra><slot name="tabExtra"></slot></template>
-        <a-tab-pane :key="item.value" :title="item.label" v-for="item in options.tabs.data"></a-tab-pane>
+        <a-tab-pane :key="item.value" :title="item.label" v-for="item in options.tabs.data">
+          <template #title><slot :name="'tabTitle-' + item.label">{{ item.label }}</slot></template>
+        </a-tab-pane>
       </a-tabs>
       <ma-search
         @search="searchSubmitHandler"
@@ -240,7 +242,8 @@
 
     <ma-context-menu ref="crudContextMenuRef" @execCommand="execContextMenuCommand" />
 
-    <a-image-preview :src="imgUrl" v-model:visible="imgVisible" />
+    <a-image-preview-group :srcList="imgUrl" v-model:visible="imgVisible" v-if="typeof imgUrl === 'object' && imgUrl !== null" />
+    <a-image-preview :src="imgUrl" v-model:visible="imgVisible" v-else />
   </a-layout-content>
 </template>
 
@@ -337,7 +340,9 @@ const init = async () => {
       await loadDict(dicts.value, item)
     }
   })
-  await tabsHandler();
+  setTimeout(async () => {
+    await tabsHandler()
+  }, 500)
 }
 
 
@@ -814,7 +819,7 @@ const getColumnService = (strictMode = true) => {
 
 defineExpose({
   refresh, requestData, addAction, editAction, getTableData, setSelecteds,
-  getCurrentAction, getFormData, getFormColumns, getColumnService, getCurrentPage, getPageSize, getTotal
+  getCurrentAction, getFormData, getFormColumns, getColumnService, getCurrentPage, getPageSize, getTotal,
   requestParams, isRecovery, tableRef,
   crudFormRef, crudSearchRef, crudImportRef, crudSettingRef
 })

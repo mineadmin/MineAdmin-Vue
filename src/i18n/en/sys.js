@@ -28,6 +28,7 @@ export default {
     classic: 'Classic',
     columns: 'Columns',
     banner: 'Banner',
+    mixed: 'Mixed',
   },
   userCenter: 'User Center',
   clearCache: 'Clear Cache',

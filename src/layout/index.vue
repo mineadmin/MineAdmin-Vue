@@ -13,6 +13,7 @@
     <columns-layout v-if="appStore.layout === 'columns'" />
     <classic-layout v-if="appStore.layout === 'classic'" />
     <banner-layout v-if="appStore.layout === 'banner'" />
+    <mixed-layout v-if="appStore.layout === 'mixed'" />
 
     <setting ref="settingRef"/>
 
@@ -32,6 +33,7 @@
   import ColumnsLayout from './components/columns/index.vue'
   import ClassicLayout from './components/classic/index.vue'
   import BannerLayout from './components/banner/index.vue'
+  import MixedLayout from './components/mixed/index.vue'
   import Setting from './setting.vue'
   import SystemSearch from './search.vue'
   import MaButtonMenu from './components/ma-buttonMenu.vue'
