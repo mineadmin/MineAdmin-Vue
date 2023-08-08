@@ -19,7 +19,7 @@
         <ma-operation />
       </div>
     </a-layout-header>
-    <div class="flex h-full">
+    <div class="flex" :style="`height:calc(100% - ${appStore.tag ? '87px' : '52px'})`">
       <a-layout-sider
         class="layout-classic-sider h-full flex flex-col hidden lg:block"
         :style="`width: ${appStore.menuCollapse ? '48px' : appStore.menuWidth + 'px'};`"
@@ -100,8 +100,8 @@
 .tags-container {
   border-top:0;
 }
-.tags {
-  margin-top: -1px;
+:deep(.tags-container .tags) {
+  border-bottom: 0 !important;
 }
 :deep(.arco-menu-collapse-button) {
   right: 10px;
