@@ -146,6 +146,7 @@
       <div ref="crudContentRef">
         <slot name="content" v-bind="tableData">
           <a-table
+            v-if="tableData.length > 0"
             v-bind="$attrs"
             ref="tableRef"
             :key="options.pk"

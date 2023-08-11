@@ -17,23 +17,6 @@ export const realtionsType = [
   { name: '多对多', value: 'belongsToMany' },
 ]
 
-export const columns = [
-  { title: '排序', dataIndex: 'sort', slotName: 'sort', width: 100, },
-  { title: '字段名称', dataIndex: 'column_name', slotName: 'columnName', width: 150, tooltip: true },
-  { title: '字段描述', dataIndex: 'column_comment', slotName: 'columnComment', width: 180 },
-  { title: '物理类型', dataIndex: 'column_type', slotName: 'columnType', width: 120, },
-  { title: '必填', dataIndex: 'is_required', slotName: 'isRequired', width: 80, },
-  { title: '插入', dataIndex: 'is_insert', slotName: 'isInsert', width: 80, },
-  { title: '编辑', dataIndex: 'is_edit', slotName: 'isEdit', width: 80, },
-  { title: '列表', dataIndex: 'is_list', slotName: 'isList', width: 80, },
-  { title: '查询', dataIndex: 'is_query', slotName: 'isQuery', width: 80, },
-  { title: '排序', dataIndex: 'is_sort', slotName: 'isSort', width: 80, },
-  { title: '查询方式', dataIndex: 'query_type', slotName: 'queryType', width: 180, },
-  { title: '页面控件', dataIndex: 'view_type', slotName: 'viewType', width: 240, },
-  { title: '数据字典', dataIndex: 'dict_type', slotName: 'dictType', width: 180, },
-  { title: '允许角色', dataIndex: 'allow_roles', slotName: 'allowRoles', width: 200, },
-]
-
 export const queryType = [
   { label: '=', value: 'eq' },
   { label: '!=', value: 'neq' },
