@@ -352,56 +352,93 @@
             </a-alert>
             <a-table
               :data="form.columns"
-              :columns="vars.columns"
               :pagination="false"
               class="mt-3"
             >
-              <template #sort="{ rowIndex }"><a-input-number v-model="form.columns[rowIndex].sort" /></template>
-              <template #columnComment="{ rowIndex }"><a-input v-model="form.columns[rowIndex].column_comment" allow-clear /></template>
-              <!-- 复选框 -->
-              <template #isRequired="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_required" /></template>
-              <template #isInsert="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_insert" /></template>
-              <template #isEdit="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_edit" /></template>
-              <template #isList="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_list" /></template>
-              <template #isQuery="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_query" /></template>
-              <template #isSort="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_sort" /></template>
-              <!-- end -->
-              <!-- 查询方式 -->
-              <template #queryType="{ rowIndex }">
-                <a-select v-model="form.columns[rowIndex].query_type" :options="vars.queryType" allow-clear></a-select>
-              </template>
-              <!-- 组件 -->
-              <template #viewType="{ record, rowIndex }">
-                <a-space>
-                  <a-select v-model="form.columns[rowIndex].view_type" :style="{ width: '160px' }" :options="vars.viewComponent" allow-clear></a-select>
-                  <a-link
-                    v-if="! notNeedSettingComponents.includes(record.view_type)"
-                    @click="settingComponentRef.open(record)"
-                  >设置</a-link>
-                </a-space>
-              </template>
-              <!-- 字典 -->
-              <template #dictType="{ record, rowIndex }">
-                <a-select
-                  v-model="form.columns[rowIndex].dict_type"
-                  :options="dicts"
-                  allow-clear
-                  :field-names="{ label: 'name', value: 'code' }"
-                  placeholder="选择数据字典"
-                  :disabled="! ['select', 'radio', 'checkbox', 'transfer'].includes(record.view_type)"
-                ></a-select>
-              </template>
-              <!-- 允许角色 -->
-              <template #allowRoles="{ rowIndex }">
-                <a-select
-                  v-model="form.columns[rowIndex].allow_roles"
-                  multiple
-                  :options="roles"
-                  :max-tag-count="1"
-                  allow-clear
-                  :field-names="{ label: 'name', value: 'code' }"
-                  placeholder="选择允许查看字段的角色"
-                ></a-select>
+              <template #columns>
+                <a-table-column dataIndex="sort" title="排序" :width="100">
+                  <template #cell="{ rowIndex }"><a-input-number v-model="form.columns[rowIndex].sort" /></template>
+                </a-table-column>
+                <a-table-column dataIndex="column_name" title="字段名称" :width="150" tooltip></a-table-column>
+                <a-table-column dataIndex="column_comment" title="字段描述" :width="180">
+                  <template #cell="{ rowIndex }"><a-input v-model="form.columns[rowIndex].column_comment" allow-clear /></template>
+                </a-table-column>
+                <a-table-column dataIndex="column_type" title="物理类型" :width="120"></a-table-column>
+                <a-table-column dataIndex="is_required" title="必填" :width="80">
+                  <template #title>必填
+                    <a-tooltip content="全选 / 全不选" position="bottom"><a-checkbox @change="handlerAll($event, 'required')" /></a-tooltip>
+                  </template>
+                  <template #cell="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_required" /></template>
+                </a-table-column>
+                <a-table-column dataIndex="is_insert" title="插入" :width="80">
+                  <template #title>插入
+                    <a-tooltip content="全选 / 全不选" position="bottom"><a-checkbox @change="handlerAll($event, 'insert')" /></a-tooltip>
+                  </template>
+                  <template #cell="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_insert" /></template>
+                </a-table-column>
+                <a-table-column dataIndex="is_edit" title="编辑" :width="80">
+                  <template #title>编辑
+                    <a-tooltip content="全选 / 全不选" position="bottom"><a-checkbox @change="handlerAll($event, 'edit')" /></a-tooltip>
+                  </template>
+                  <template #cell="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_edit" /></template>
+                </a-table-column>
+                <a-table-column dataIndex="is_list" title="列表" :width="80">
+                  <template #title>列表
+                    <a-tooltip content="全选 / 全不选" position="bottom"><a-checkbox @change="handlerAll($event, 'list')" /></a-tooltip>
+                  </template>
+                  <template #cell="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_list" /></template>
+                </a-table-column>
+                <a-table-column dataIndex="is_query" title="查询" :width="80">
+                  <template #title>查询
+                    <a-tooltip content="全选 / 全不选" position="bottom"><a-checkbox @change="handlerAll($event, 'query')" /></a-tooltip>
+                  </template>
+                  <template #cell="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_query" /></template>
+                </a-table-column>
+                <a-table-column dataIndex="is_sort" title="排序" :width="80">
+                  <template #title>排序
+                    <a-tooltip content="全选 / 全不选" position="bottom"><a-checkbox @change="handlerAll($event, 'sort')" /></a-tooltip>
+                  </template>
+                  <template #cell="{ rowIndex }"><a-checkbox v-model="form.columns[rowIndex].is_sort" /></template>
+                </a-table-column>
+                <a-table-column dataIndex="query_type" title="查询方式" :width="180">
+                  <template #cell="{ rowIndex }"><a-select v-model="form.columns[rowIndex].query_type" :options="vars.queryType" allow-clear></a-select></template>
+                </a-table-column>
+                <a-table-column dataIndex="view_type" title="页面控件" :width="240">
+                  <template #cell="{ record, rowIndex }">
+                    <a-space>
+                      <a-select v-model="form.columns[rowIndex].view_type" :style="{ width: '160px' }" :options="vars.viewComponent" allow-clear></a-select>
+                      <a-link
+                        v-if="! notNeedSettingComponents.includes(record.view_type)"
+                        @click="settingComponentRef.open(record)"
+                      >设置</a-link>
+                    </a-space>
+                  </template>
+                </a-table-column>
+                <a-table-column dataIndex="dict_type" title="数据字典" :width="180">
+                  <template #cell="{ record, rowIndex }">
+                    <a-select
+                      v-model="form.columns[rowIndex].dict_type"
+                      :options="dicts"
+                      allow-clear
+                      :field-names="{ label: 'name', value: 'code' }"
+                      placeholder="选择数据字典"
+                      :disabled="! ['select', 'radio', 'checkbox', 'transfer'].includes(record.view_type)"
+                    ></a-select>
+                  </template>
+                </a-table-column>
+                <a-table-column dataIndex="allow_roles" title="允许角色" :width="200">
+                  <template #cell="{ record, rowIndex }">
+                    <a-select
+                      v-model="form.columns[rowIndex].allow_roles"
+                      multiple
+                      :options="roles"
+                      :max-tag-count="1"
+                      allow-clear
+                      :field-names="{ label: 'name', value: 'code' }"
+                      placeholder="选择允许查看字段的角色"
+                    ></a-select>
+                  </template>
+                </a-table-column>
               </template>
             </a-table>
           </a-tab-pane>
@@ -634,6 +671,9 @@ const save = async (done) => {
   emit('success', true)
   done(true)
 }
+
+// 全选 / 全不选
+const handlerAll = (value, type) => form.value.columns.map(item => { item['is_' + type] = value })
 
 // 新增关联定义
 const addRelation = () => {
