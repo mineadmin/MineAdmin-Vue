@@ -102,6 +102,12 @@ const columns = reactive([
     width: 180,
   },
   {
+    title: '配置说明',
+    dataIndex: 'remark',
+    formType: 'input',
+    width: 180,
+  },
+  {
     title: '配置选择数据',
     dataIndex: 'config_select_data',
     formType: 'code-editor',

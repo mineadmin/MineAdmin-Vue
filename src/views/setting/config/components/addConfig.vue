@@ -89,6 +89,13 @@ const columns = reactive([
     }
   },
   {
+    title: '配置说明',
+    dataIndex: 'remark',
+    placeholder: '在输入组件下方显示配置的解释说明信息',
+    formType: 'input',
+    labelWidth: '120px',
+  },
+  {
     title: '选择/默认数据',
     dataIndex: 'config_select_data',
     formType: 'code-editor',

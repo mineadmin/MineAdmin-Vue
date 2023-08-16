@@ -129,7 +129,10 @@
     const response = await config.getConfigList(params)
     let form = {}
     optionsArray.value[id] = response.data.map(item => {
-      let option = { title: item.name, dataIndex: item.key, formType: item.input_type, dict: {}, labelWidth: '120px' }
+      let option = {
+        title: item.name, dataIndex: item.key, formType: item.input_type, 
+        dict: {}, labelWidth: '120px', extra: item.remark
+      }
       const allowDictType = ['select', 'radio', 'checkbox']
       if (allowDictType.includes(item.input_type)) {
         option.dict = { data: item.config_select_data }
