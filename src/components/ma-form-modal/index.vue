@@ -51,6 +51,14 @@ const prop = defineProps({
   submit: { type: Function, default: () => {} },
 })
 
+if (window.screen.width < 768) {
+  options.formOption.width = window.screen.width
+  options.formOption.isFull = true
+}
+
+formColumns.value = [...prop.column, ...prop.columns]
+let submitEvent = prop.submit
+
 const maFormRef = ref()
 
 const modal = reactive({
