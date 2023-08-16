@@ -23,20 +23,11 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import config from '@/api/setting/config'
+import { inputComponent } from './js/configDefine.js'
 
 const emit = defineEmits(['success'])
 const formRef = ref()
 const form = ref({ input_type: 'input', sort: 0 })
-const inputComponent = [
-  { label: '文本框', value: 'input' },
-  { label: '文本域', value: 'textarea' },
-  { label: '下拉选择框', value: 'select' },
-  { label: '单选框', value: 'radio' },
-  { label: '复选框', value: 'checkbox' },
-  { label: '开关', value: 'switch' },
-  { label: '图片上传', value: 'upload' },
-  { label: '富文本编辑器', value: 'editor' },
-]
 
 const submit = async (data) => {
   if (data) {
@@ -93,17 +84,24 @@ const columns = reactive([
     labelWidth: '120px',
     dict: { data: inputComponent },
     control: (val) => {
-      const temp = ['select', 'radio', 'checkbox']
+            const temp = ['select', 'radio', 'checkbox']
       return { config_select_data: { display: temp.includes(val) } }
     }
   },
   {
-    title: '配置选择数据',
+    title: '配置说明',
+    dataIndex: 'remark',
+    placeholder: '在输入组件下方显示配置的解释说明信息',
+    formType: 'input',
+    labelWidth: '120px',
+  },
+  {
+    title: '选择/默认数据',
     dataIndex: 'config_select_data',
     formType: 'code-editor',
     labelWidth: '120px',
     height: 200,
-    formExtra: '用于配置下拉、单选、复选的数据，格式例子：[{"label":"数据一", "value":"shuju1"},...]',
+    extra: '用于配置下拉、单选、复选的数据，格式例子：[{"label":"数据一", "value":"shuju1"},...]',
   }
 ])
 

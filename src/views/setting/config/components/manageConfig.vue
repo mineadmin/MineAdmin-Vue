@@ -19,20 +19,11 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import config from '@/api/setting/config'
+import { inputComponent } from './js/configDefine.js'
 
 const visible = ref(false)
 const groupId = ref()
 const crudRef = ref()
-const inputComponent = [
-  { label: '文本框', value: 'input' },
-  { label: '文本域', value: 'textarea' },
-  { label: '下拉选择框', value: 'select' },
-  { label: '单选框', value: 'radio' },
-  { label: '复选框', value: 'checkbox' },
-  { label: '开关', value: 'switch' },
-  { label: '图片上传', value: 'upload' },
-  { label: '富文本编辑器', value: 'editor' },
-]
 
 const open = (id) => {
   groupId.value = id
@@ -111,12 +102,18 @@ const columns = reactive([
     width: 180,
   },
   {
+    title: '配置说明',
+    dataIndex: 'remark',
+    formType: 'input',
+    width: 180,
+  },
+  {
     title: '配置选择数据',
     dataIndex: 'config_select_data',
     formType: 'code-editor',
     height: 200,
     hide: true,
-    formExtra: '用于配置下拉、单选、复选的数据，格式例子：[{"label":"数据一", "code":"shuju1"},...]',
+    extra: '用于配置下拉、单选、复选的数据，格式例子：[{"label":"数据一", "value":"shuju1"},...]'
   }
 ])
 
