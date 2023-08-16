@@ -131,7 +131,7 @@
     optionsArray.value[id] = response.data.map(item => {
       let option = {
         title: item.name, dataIndex: item.key, formType: item.input_type, 
-        dict: {}, labelWidth: '120px', extra: item.remark
+        dict: {}, labelWidth: '120px', extra: item.remark, tooltip: item.key,
       }
       const allowDictType = ['select', 'radio', 'checkbox']
       if (allowDictType.includes(item.input_type)) {
