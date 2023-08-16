@@ -9,9 +9,17 @@
       {{ prop.title }}
     </template>
     <slot name="body"></slot>
+    <a-space
+      v-if="prop.infoColumns.length"
+    >
+      <ma-info
+          :columns="prop.infoColumns"
+          :data="prop.infoData"
+      />
+    </a-space>
     <ma-form
       ref="maFormRef"
-      :columns="prop.column"
+      :columns="formColumns"
       v-model="form"
       :options="{ ...options, showButtons: false }"
     />
@@ -27,11 +35,17 @@
 import { reactive, ref, watch } from "vue"
 import MaForm from "@/components/ma-form/index.vue"
 import {Message} from "@arco-design/web-vue"
+import MaInfo from "@/components/ma-info/index.vue"
+
 const emit = defineEmits(["visible", "validateError", "open", "cancel", "close"])
 const form = ref({})
+const formColumns = ref([])
 const prop = defineProps({
   title: { type: String, default: "" }, // 弹出框标题
-  column: { type: Array, default: [] }, // ma-form字段
+  column: { type: Array, default: []}, // ma-form字段
+  columns: {type: Array, default: []}, // ma-form字段 别名
+  infoColumns: {type: Array, default: []},
+  infoData: {type: Object, default:{}},
   default_visible: { type: Boolean, default: false }, // 默认隐藏
   options: { type: Object, default: {} }, // ma-form 属性
   submit: { type: Function, default: () => {} },
@@ -41,12 +55,20 @@ const maFormRef = ref()
 
 const modal = reactive({
   visible: prop.default_visible,
-  open(data) {
+  open(formData, infoData = {}) {
     modal.visible = true
-    for (let [key, value] of Object.entries(data)) {
+    for (let [key, value] of Object.entries(formData)) {
       form.value[key] = value
     }
-    emit("open", data)
+    for (let [key, value] of Object.entries(infoData)) {
+      prop.infoData[key] = value
+    }
+    emit("open", formData, infoData)
+  },
+  onSubmit(func)
+  {
+    submitEvent = func
+    return this
   },
   close() {
     modal.visible = false
@@ -57,7 +79,7 @@ const modal = reactive({
       emit("validateError", validate)
       return false
     }
-    return prop.submit(form._rawValue)
+    return submitEvent(form._rawValue)
   },
   cancel() {
     emit("cancel")
@@ -72,11 +94,17 @@ watch(
   { immediate: true }
 )
 
+const getAttr = (key) => {
+  return form.value[key]
+}
+
 defineExpose({
   open: modal.open,
   close: modal.close,
   form: form,
+  getAttr,
   formRef: maFormRef,
+  onSubmit: modal.onSubmit,
 })
 </script>
 
