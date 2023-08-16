@@ -56,7 +56,10 @@ const dataLoading = ref(true)
 const emit = defineEmits(['success', 'error'])
 
 provide('form', toRaw(form))
-
+if (window.screen.width < 768) {
+  options.formOption.width = window.screen.width
+  options.formOption.isFull = true
+}
 const submit = async () => {
   const formData = maFormRef.value.getFormData()
   if (await maFormRef.value.validateForm()) {
