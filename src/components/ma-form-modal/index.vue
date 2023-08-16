@@ -1,5 +1,7 @@
 <template>
   <a-modal
+    :width="prop.width"
+    :fullscreen="isFull"
     v-model:visible="modal.visible"
     :on-before-ok="modal.submit"
     unmount-on-close
@@ -36,11 +38,14 @@ import { reactive, ref, watch } from "vue"
 import MaForm from "@/components/ma-form/index.vue"
 import {Message} from "@arco-design/web-vue"
 import MaInfo from "@/components/ma-info/index.vue"
+import {setModalSizeEvent} from "@/utils/common";
 
 const emit = defineEmits(["visible", "validateError", "open", "cancel", "close"])
 const form = ref({})
 const formColumns = ref([])
 const prop = defineProps({
+  width: {type: Number, default: 1200}, // modal框大小
+  isFull: { type: Boolean, default: false,}, // 是否全屏
   title: { type: String, default: "" }, // 弹出框标题
   column: { type: Array, default: []}, // ma-form字段
   columns: {type: Array, default: []}, // ma-form字段 别名
@@ -51,10 +56,10 @@ const prop = defineProps({
   submit: { type: Function, default: () => {} },
 })
 
-if (window.screen.width < 768) {
-  options.formOption.width = window.screen.width
-  options.formOption.isFull = true
-}
+const isFull = ref(prop.isFull)
+setModalSizeEvent((config) => {
+  isFull.value = config.isFull
+})
 
 formColumns.value = [...prop.column, ...prop.columns]
 let submitEvent = prop.submit

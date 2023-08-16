@@ -1,6 +1,7 @@
 <template>
   <a-modal
       :width="prop.width"
+      :fullscreen="isFull"
       v-model:visible="modal.visible"
       :on-before-ok="modal.submit"
       :unmount-on-close="true"
@@ -9,6 +10,7 @@
     <template #title>
       {{ prop.title }}
     </template>
+    <slot></slot>
     <slot name="body"></slot>
     <a-card
         class="mt-2"
@@ -48,11 +50,13 @@ import MaInfo from "../ma-info/index.vue";
 import {getCurrentInstance, reactive, ref, watch} from "vue";
 import {isArray, isFunction, isObject, isString} from "lodash";
 import {isComponent} from "@arco-design/web-vue/es/_utils/vue-utils";
+import {setModalSizeEvent} from "@/utils/common";
 const emit = defineEmits(["visible", "validateError", "open", "cancel", "close"]);
 const app = getCurrentInstance().appContext.app
 const maFormRef = ref()
 const prop = defineProps({
   width: {type: Number, default: 1200}, // modal框大小
+  isFull: { type: Boolean, default: false},
   title: { type: String, default: "" }, // 弹出框标题
   column: { type: Array, default: [] }, // ma-form字段
   default_visible: { type: Boolean, default: false}, // 默认隐藏
@@ -62,6 +66,11 @@ const prop = defineProps({
   formOptions: {type: Object, default: {}}, // ma-form-options
   formColumns: { type: Array, default: []}
 });
+const isFull = ref(prop.isFull)
+setModalSizeEvent((config) => {
+  isFull.value = config.isFull
+})
+
 const maInfoRefs = ref([])
 const layout = ref([])
 const infoData = ref({})
@@ -128,6 +137,7 @@ const modal = reactive({
 });
 
 init()
+
 defineExpose({
   open: modal.open,
   close: modal.close,

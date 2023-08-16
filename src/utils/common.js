@@ -197,6 +197,10 @@ export const formatJson = (jsonObj, callback) => {
   return formatted.trim();
 }
 
+// 判断是否弹出层全屏
+export const setModalSizeEvent = (callback) => {
+  callback({isFull: window.screen.width < 768, width: window.screen.width})
+}
 // 加载远程js
 export const loadScript = (src, callback) => {  
   const s = document.createElement('script')
