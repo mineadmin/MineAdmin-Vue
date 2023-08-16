@@ -146,6 +146,9 @@
             break
         }
       }
+      if (item.input_type === 'keyValue') {
+        item.value = JSON.parse(item.value)
+      }
       if (/^\[/.test(item.value) && /\]$/.test(item.value) && item.input_type === 'checkbox') {
         item.value = JSON.parse(item.value)
       } else if (item.value && item.value.toString().indexOf(',') > -1 && item.input_type === 'checkbox') {
