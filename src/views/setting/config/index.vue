@@ -149,7 +149,7 @@
             break
         }
       }
-      if (item.input_type === 'keyValue') {
+      if (item.input_type === 'key-value') {
         item.value = JSON.parse(item.value)
       }
       if (/^\[/.test(item.value) && /\]$/.test(item.value) && item.input_type === 'checkbox') {

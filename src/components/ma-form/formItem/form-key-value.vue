@@ -69,7 +69,6 @@ if (! isArray(value.value) || value.value.length === 0) {
 }
 
 const handleChange = (data) => {
-  console.log(data)
   value.value = data
 }
 

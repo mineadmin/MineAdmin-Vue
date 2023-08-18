@@ -6,6 +6,6 @@ export const inputComponent = [
   { label: '复选框', value: 'checkbox' },
   { label: '开关', value: 'switch' },
   { label: '图片上传', value: 'upload' },
-  { label: '键值对', value: 'keyValue' },
+  { label: '键值对', value: 'key-value' },
   { label: '富文本编辑器', value: 'editor' },
 ]
