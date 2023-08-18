@@ -19,8 +19,9 @@
         <ma-operation />
       </div>
     </a-layout-header>
-    <div class="flex" :style="`height:calc(100% - ${appStore.tag ? '87px' : '52px'})`">
+    <div class="flex" :style="`height:calc(100% - ${appStore.tag ? '87px' : '52px'}); `">
       <a-layout-sider
+        id="layout-mixed-left-panel"
         class="layout-classic-sider h-full flex flex-col hidden lg:block"
         :style="`width: ${appStore.menuCollapse ? '48px' : appStore.menuWidth + 'px'};`"
         v-show="showMenu"
@@ -31,7 +32,7 @@
           :class="`${appStore.menuCollapse ? 'ml-1.5' : ''};`"
         />
       </a-layout-sider>
-      <div class="w-full">
+      <div class="w-full" :style="`width: calc(100% - ${containerWidth}px)`">
         <ma-tags class="hidden lg:flex ma-ui-tags" />
         <ma-worker-area />
       </div>
@@ -43,6 +44,7 @@
   import { ref, watch, onMounted } from 'vue'
   import { useAppStore, useUserStore } from '@/store'
   import { useRoute, useRouter } from 'vue-router'
+  import ResizeObserver from 'resize-observer-polyfill'
   import MaOperation from '../ma-operation.vue'
   import MaWorkerArea from '../ma-workerArea.vue'
   import MaTags from '../ma-tags.vue'
@@ -94,6 +96,23 @@
     }
     topMenuRef.value.updateActive(bigMenu.name)
   }
+
+  const containerWidth = ref(0)
+
+  onMounted(() => {
+    const dom = document.getElementById('layout-mixed-left-panel')
+    const robserver = new ResizeObserver( entries => {
+      for (const entry of entries) {
+        // 可以通过 判断 entry.target得知当前改变的 Element，分别进行处理。
+        switch(entry.target){
+          case dom :
+            containerWidth.value = entry.contentRect.width
+          break
+        }
+      }
+    })
+    robserver.observe(dom)
+  })
 </script>
 
 <style scoped lang="less">
