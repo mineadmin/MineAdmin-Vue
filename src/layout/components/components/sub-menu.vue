@@ -10,7 +10,7 @@
 <template>
   <a-sub-menu :key="menuInfo.name">
     <template #title>
-      {{ $t(`menus.${menuInfo.name}`).indexOf('.') > 0 ? menuInfo.meta.title : $t(`menus.${menuInfo.name}`) }}
+      {{ appStore.i18n ? ($t(`menus.${menuInfo.name}`).indexOf('.') > 0 ? menuInfo.meta.title : $t(`menus.${menuInfo.name}`)) : menuInfo.meta.title }}
     </template>
     <template #icon v-if="menuInfo.meta.icon">
       <component :is="menuInfo.meta.icon" :class="menuInfo.meta.icon.indexOf('ma') > 0 ? 'icon' : ''" />
@@ -21,7 +21,7 @@
           <template #icon v-if="item.meta.icon">
             <component :is="item.meta.icon" :class="menuInfo.meta.icon.indexOf('ma') > 0 ? 'icon' : ''" />
           </template>
-          {{ $t(`menus.${item.name}`).indexOf('.') > 0 ? item.meta.title : $t(`menus.${item.name}`) }}
+          {{ appStore.i18n ? ($t(`menus.${item.name}`).indexOf('.') > 0 ? item.meta.title : $t(`menus.${item.name}`)) : item.meta.title }}
         </a-menu-item>
       </template>
       <template v-else>
@@ -33,11 +33,12 @@
 
 <script setup name="SubMenu">
   import { useRouter, useRoute } from 'vue-router'
-  import { useTagStore } from '@/store'
+  import { useTagStore, useAppStore } from '@/store'
   defineProps({ menuInfo: Object })
   const emits = defineEmits(['go'])
   const router = useRouter()
   const tagStore = useTagStore()
+  const appStore = useAppStore()
   const routerPush = (menu) => {
     if (menu.meta && menu.meta.type === 'L') {
       window.open(menu.path)
