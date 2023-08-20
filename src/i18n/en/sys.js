@@ -73,6 +73,8 @@ export default {
   tags: {
     refresh: 'Refresh',
     fullscreen: 'Full screen',
+    closeRightTag: 'Close right tag',
+    closeLeftTag: 'Close left tag',
     closeTag: 'Close current tag',
     closeOtherTag: 'Close other tag',
   },
