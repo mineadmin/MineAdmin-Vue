@@ -94,7 +94,6 @@
   import uploadConfig from '@/config/upload'
   import MaTreeSlider from '@cps/ma-treeSlider/index.vue'
   import commonApi from '@/api/common'
-  import { cloneDeep, isArray } from 'lodash'
   import tool from '@/utils/tool'
   import { useI18n } from 'vue-i18n'
   import { Message } from '@arco-design/web-vue'
@@ -121,7 +120,7 @@
     modelValue: { type: [ String, Array ] },
     multiple: { type: Boolean, default: true },
     onlyData: { type: Boolean, default: true },
-    returnType: { type: String, default: 'url'},
+    returnType: { type: String, default: 'hash'},
   })
   
   onMounted(async () => {
@@ -170,9 +169,9 @@
 
     const children = rl.value.children
     const className = 'item rounded-sm'
-    // if (! /^(http|https)/g.test(item.url)) {
-    //   item.url = tool.attachUrl(item.url, getStoreMode(item.storage_mode))
-    // }
+    if (! /^(http|https)/g.test(item.url)) {
+      item.url = tool.attachUrl(item.url, getStoreMode(item.storage_mode))
+    }
     if (children[index].className.indexOf('active') !== -1) {
       children[index].className = className
       if (props.multiple) {

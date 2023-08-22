@@ -72,7 +72,7 @@ watch(
       imgs.map(img => {
 
         if (img.indexOf('.jpg') > -1 || img.indexOf('.png') > -1 || img.indexOf('.bmp') > -1 || img.indexOf('.jpeg') > -1 || img.indexOf('.svg') > -1 || img.indexOf('.gif') > -1) {
-          const node = {"type":"image","src": /^http|https/g.test(img) ? img : tool.attachUrl(img) ,"href":"","alt":"","style":{},"children":[{"text":""}]}
+          const node = {"type":"image","src":img,"href":"","alt":"","style":{},"children":[{"text":""}]}
           editorRef.value.insertNode(node)
         }
       })
