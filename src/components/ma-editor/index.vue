@@ -22,6 +22,7 @@
   import { reactive, ref, watch, computed } from 'vue'
   import MaResource from '@cps/ma-resource/index.vue'
   import { useAppStore } from '@/store'
+  import tool from '@/utils/tool'
 
   import Editor from '@tinymce/tinymce-vue'
   import tinymce from 'tinymce/tinymce'
@@ -126,7 +127,7 @@
       let tmp = ''
       imgs.map(img => {
         if (img.indexOf('.jpg') > -1 || img.indexOf('.png') > -1 || img.indexOf('.bmp') > -1 || img.indexOf('.jpeg') > -1 || img.indexOf('.svg') > -1 || img.indexOf('.gif') > -1) {
-          tmp += `<img src=${img} width="100%" />`
+          tmp += `<img src=${ /^http|https/g.test(img) ? img : tool.attachUrl(img)} width="100%" />`
         }
       })
       content.value = content.value ? content.value + tmp : tmp
