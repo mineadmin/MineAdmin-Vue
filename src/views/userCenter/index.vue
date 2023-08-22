@@ -11,7 +11,7 @@
   <div class="block">
     <div class="user-header rounded-sm text-center">
       <div class="pt-3 mx-auto avatar-box">
-        <ma-upload v-model="userInfo.avatar" rounded />
+        <ma-upload v-model="userInfo.avatar" rounded returnType="url" />
       </div>
       <div>
         <a-tag size="large" class="mt-3 rounded-full" color="#165dff">
