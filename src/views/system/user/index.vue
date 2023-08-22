@@ -207,7 +207,7 @@
   const columns = reactive([
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     {
-      title: '头像', dataIndex: 'avatar', width: 75, formType: 'upload',
+      title: '头像', dataIndex: 'avatar', width: 75, formType: 'upload', returnType: 'url',
       type: 'image', rounded: true, labelWidth: '86px'
     },
     { 
