@@ -1,10 +1,10 @@
 import axios from 'axios'
-import { Message } from '@arco-design/web-vue'
+import {Message} from '@arco-design/web-vue'
 import tool from '@/utils/tool'
-import { get, isEmpty } from 'lodash'
+import {get, isEmpty} from 'lodash'
 import qs from 'qs'
-import { h } from 'vue'
-import { IconFaceFrownFill } from '@arco-design/web-vue/dist/arco-vue-icon'
+import {h} from 'vue'
+import {IconFaceFrownFill} from '@arco-design/web-vue/dist/arco-vue-icon'
 import router from "@/router";
 
 function createService () {
@@ -55,9 +55,11 @@ function createService () {
             err('服务器内部错误')
             break
           case 401:
-            err('登录状态已过期，需要重新登录')
-            tool.local.clear()
-            router.push({name:'login'})
+            throttle(() => {
+              err('登录状态已过期，需要重新登录')
+              tool.local.clear()
+              router.push({name: 'login'})
+            })()
             break
           case 403:
             err('没有权限访问该资源')
@@ -73,6 +75,19 @@ function createService () {
 
   )
   return service
+}
+
+//节流
+function throttle(fn, wait = 1500) {
+  return function () {
+    let context = this;
+    if (!throttle.timer) {
+      fn.apply(context, arguments);
+      throttle.timer = setTimeout(function () {
+        throttle.timer = null;
+      }, wait)
+    }
+  }
 }
 
 function stringify (data) {
@@ -92,7 +107,7 @@ function createRequest (service) {
       headers: Object.assign(
         {
           Authorization: "Bearer " + token,
-          'Accept-Language': setting.language || 'zh_CN',
+          'Accept-Language': setting?.language || 'zh_CN',
           'Content-Type': get(config, 'headers.Content-Type', 'application/json;charset=UTF-8')
         },
         config.header
