@@ -51,6 +51,14 @@
         {{ $t('sys.tags.fullscreen') }}
       </li>
       <a-divider />
+      <li @click="contextMenuCloseRightTag">
+        <icon-arrow-right />
+        {{ $t('sys.tags.closeRightTag') }}
+      </li>
+      <li @click="contextMenuCloseLeftTag">
+        <icon-arrow-left />
+        {{ $t('sys.tags.closeLeftTag') }}
+      </li>
       <li @click="contextMenuCloseTag" :class="contextMenuItem.affix ? 'disabled' : ''">
         <icon-close-circle />
         {{ $t('sys.tags.closeTag') }}
@@ -199,6 +207,53 @@ const contextMenuCloseTag = () => {
     contextMenuVisible.value = false
   }
 }
+
+const contextMenuCloseRightTag = () => {
+  const currentTag = contextMenuItem.value
+  if (route.path != currentTag.path) {
+    router.push({ path: currentTag.path })
+  }
+  const list = [...tagStore.tags]
+  let index = null
+  list.forEach((tag, idx) => {
+    if (currentTag.path == tag.path) {
+      index = idx
+    }
+  })
+
+  list.forEach((tag, idx) => {
+    if (tag.affix || currentTag.path == tag.path) {
+      return true
+    } else {
+      idx > index && closeTag(tag)
+    }
+  })
+  contextMenuVisible.value = false
+}
+
+const contextMenuCloseLeftTag = () => {
+  const currentTag = contextMenuItem.value
+  if (route.path != currentTag.path) {
+    router.push({ path: currentTag.path })
+  }
+  const list = [...tagStore.tags]
+  let index = null
+  list.forEach((tag, idx) => {
+    if (currentTag.path == tag.path) {
+      index = idx
+    }
+  })
+
+  list.forEach((tag, idx) => {
+    if (tag.affix || currentTag.path == tag.path) {
+      return true
+    } else {
+      idx < index && closeTag(tag)
+    }
+  })
+  contextMenuVisible.value = false
+}
+
 const tagToolCloseOtherTag = () => {
   const list = [...tagStore.tags]
   list.forEach(tag => {

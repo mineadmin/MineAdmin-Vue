@@ -113,18 +113,26 @@ export const loadDict = async (dictList, item) => {
 }
 
 const requestCascaderData = async (val, dict, dictList, name) => {
-  if (dict && dict.url) {
+  if (dict && (dict.remote || dict.url)) {
+    let requestData = { openPage: dict?.openPage ?? false, remoteOption: dict.remoteOption ?? {} }
     let response
-    if (dict && dict.url.indexOf('{{key}}') > 0) {
-      response = await requestDict(dict.url.replace('{{key}}', val), dict.method || 'GET', dict.params || {}, dict.data || {})
+    const pageOption = Object.assign(requestData, dict.pageOption)
+    const url = dict.remote ?? dict.url
+    if (dict && url.indexOf('{{key}}') > 0) {
+      response = await requestDict(
+        url.replace('{{key}}', val), dict.method ?? 'GET',
+        Object.assign(dict.params || {}, requestData.openPage ? pageOption : {}),
+        Object.assign(dict.data || {}, requestData.openPage ? pageOption : {})
+      )
     } else {
-      let temp = { key: val }
+      let temp = Object.assign({ key: val }, requestData.openPage ? pageOption : {})
       const params = Object.assign(dict.params || {}, temp)
       const data   = Object.assign(dict.data || {}, temp)
-      response = await requestDict(dict.url, dict.method || 'GET', params || {}, data || {})
+      response = await requestDict(url, dict.method ?? 'GET', params || {}, data || {})
     }
     if (response.data && response.code === 200) {
-      dictList[name] = response.data.map(dicItem => {
+      let dataIems = requestData.openPage ? response.data.items : response.data
+      dictList[name] = dataIems.map(dicItem => {
         return {
           'label': dicItem[ (dict.props && dict.props.label) || 'label'  ],
           'value': dicItem[ (dict.props && dict.props.value) || 'value' ],
@@ -132,6 +140,8 @@ const requestCascaderData = async (val, dict, dictList, name) => {
           'indeterminate': (typeof dicItem['indeterminate'] == 'undefined') ? false : ( dicItem['indeterminate'] === true ? true : false )
         } 
       })
+      dictList[name].pageInfo = response.data.pageInfo ?? undefined
+      
     } else {
       console.error(response)
     }
