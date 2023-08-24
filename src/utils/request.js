@@ -5,6 +5,7 @@ import { get, isEmpty } from 'lodash'
 import qs from 'qs'
 import { h } from 'vue'
 import { IconFaceFrownFill } from '@arco-design/web-vue/dist/arco-vue-icon'
+import router from "@/router";
 
 function createService () {
   // 创建一个 axios 实例
@@ -12,7 +13,7 @@ function createService () {
 
   // HTTP request 拦截器
   service.interceptors.request.use(
-    config => config, 
+    config => config,
     error => {
       // 失败
       return Promise.reject(error);
@@ -37,13 +38,13 @@ function createService () {
       return response.data;
     },
     error => {
-      const err = (text) => { 
+      const err = (text) => {
         Message.error({
           content: ( error.response && error.response.data && error.response.data.message )
           ? error.response.data.message
           : text,
           icon: () => h( IconFaceFrownFill )
-        }) 
+        })
       }
       if (error.response && error.response.data) {
         switch (error.response.status) {
@@ -56,12 +57,12 @@ function createService () {
           case 401:
             err('登录状态已过期，需要重新登录')
             tool.local.clear()
-            window.location.href = '/'
+            router.push({name:'login'})
             break
           case 403:
             err('没有权限访问该资源')
             break
-          default: 
+          default:
             err('未知错误！')
         }
       } else {
@@ -69,7 +70,7 @@ function createService () {
       }
       return Promise.reject(error.response && error.response.data ? error.response.data : null)
     }
-  
+
   )
   return service
 }
@@ -112,7 +113,7 @@ function createRequest (service) {
     return service(option)
   }
 }
-  
+
 // 用于真实网络请求的实例和请求方法
 export const service = createService()
 export const request = createRequest(service)

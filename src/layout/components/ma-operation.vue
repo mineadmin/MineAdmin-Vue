@@ -121,7 +121,7 @@
   const handleLogout = async () => {
     await userStore.logout()
     document.querySelector('#app').style.filter = 'grayscale(0)'
-    window.location.href = '/'
+    router.push({name:'login'})
   }
 
   const handleLogoutCancel = () => {
