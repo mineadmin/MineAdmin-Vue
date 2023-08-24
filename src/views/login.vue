@@ -127,7 +127,7 @@ const handleSubmit = async ({ values, errors }) => {
               {{ $t('sys.login.loginBtn') }}
             </a-button>
           </a-form-item>
-          <!--
+
           <a-divider orientation="center">{{ $t('sys.login.otherLoginType') }}</a-divider>
           <div class="flex w-3/4 pt-2 mx-auto items-stretch justify-around">
             <a-avatar class="other-login wechat"><icon-wechat /></a-avatar>
@@ -135,7 +135,6 @@ const handleSubmit = async ({ values, errors }) => {
             <a-avatar class="other-login qq"><icon-qq /></a-avatar>
             <a-avatar class="other-login weibo"><icon-weibo /></a-avatar>
           </div>
-          -->
         </a-form>
       </div>
     </div>
