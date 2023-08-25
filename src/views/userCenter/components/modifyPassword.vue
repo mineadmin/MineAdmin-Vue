@@ -83,7 +83,8 @@
   const passwordSafePercent = ref(0)
 
   const resetLogin = () => {
-    window.location.href = '/'
+
+    router.push({name:'login'})
   }
 
   const modifyPassword = async (data) => {
@@ -110,7 +111,7 @@
 
     if (! (password.length >= 6) ) {
       passwordSafePercent.value = 0
-      return 
+      return
     }
 
     passwordSafePercent.value = 0.1
