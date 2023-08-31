@@ -13,7 +13,7 @@
 
     <a-modal v-model:visible="resourceVisible" :width="1080" :footer="false"  draggable>
       <template #title>资源选择器</template>
-      <ma-resource v-model="list" multiple ref="resource" />
+      <ma-resource v-model="list" multiple ref="resource" returnType="url" />
     </a-modal>
   </div>
 </template>
