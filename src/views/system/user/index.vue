@@ -34,7 +34,7 @@
         <!-- 头像列 -->
         <template #avatar="{ record }">
           <a-avatar>
-            <img :src="record.avatar || $url + 'avatar.jpg'" style="object-fit: cover" />
+            <img :src="record.avatar ? $tool.showFile(record.avatar) : $url + 'avatar.jpg'" style="object-fit: cover" />
           </a-avatar>
         </template>
         <!-- 操作列 -->
@@ -207,7 +207,7 @@
   const columns = reactive([
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     {
-      title: '头像', dataIndex: 'avatar', width: 75, formType: 'upload', returnType: 'url',
+      title: '头像', dataIndex: 'avatar', width: 75, formType: 'upload', returnType: 'hash',
       type: 'image', rounded: true, labelWidth: '86px'
     },
     { 

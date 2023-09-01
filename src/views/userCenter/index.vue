@@ -11,7 +11,7 @@
   <div class="block">
     <div class="user-header rounded-sm text-center">
       <div class="pt-3 mx-auto avatar-box">
-        <ma-upload v-model="userInfo.avatar" rounded returnType="url" />
+        <ma-upload v-model="userInfo.avatar" rounded />
       </div>
       <div>
         <a-tag size="large" class="mt-3 rounded-full" color="#165dff">
@@ -97,7 +97,7 @@
     })
   })
 
-  userInfo.avatar = (userStore.user && userStore.user.avatar) ? userStore.user.avatar : `${import.meta.env.VITE_APP_BASE}avatar.jpg`
+  userInfo.avatar = userStore?.user?.avatar ?? undefined
 
   watch(
     () => userInfo.avatar,

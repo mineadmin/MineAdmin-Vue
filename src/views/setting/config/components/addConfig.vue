@@ -84,7 +84,7 @@ const columns = reactive([
     labelWidth: '120px',
     dict: { data: inputComponent },
     control: (val) => {
-            const temp = ['select', 'radio', 'checkbox']
+      const temp = ['select', 'radio', 'checkbox']
       return { config_select_data: { display: temp.includes(val) } }
     }
   },

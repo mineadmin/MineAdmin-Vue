@@ -172,6 +172,11 @@ tool.viewImage = function(path, defaultStorage = 'LOCAL') {
   return uploadConfig.storage[mode] + path
 }
 
+tool.showFile = function(hash, defaultStorage = 'LOCAL') {
+  let mode = tool.local.get('site_storage_mode') ? tool.local.get('site_storage_mode').toUpperCase() : defaultStorage
+  return uploadConfig.storage[mode] + '/system/showFile/' + hash
+}
+
 /* 日期格式化 */
 tool.dateFormat = (date, fmt = 'yyyy-MM-dd hh:mm:ss', isDefault = '-') => {
   if (date.toString().length == 10) {

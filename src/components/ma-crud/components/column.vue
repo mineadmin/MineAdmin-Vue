@@ -179,23 +179,15 @@ const imageSee = async (row, record, dataIndex) => {
       return
     }
 
-    if (! ['id', 'hash'].includes(row.returnType)) {
-      Message.info('该图片无法查看')
-      return
-    }
-    Message.info('获取图片中，请稍等...')
-    const res = row.returnType === 'id' ? await commonApi.getFileInfoById({ id: record.id }) : await commonApi.getFileInfoByHash({ hash: record.hash })
-    const result  = res?.success ?? false
-    if (! result) {
-      Message.info('图片信息无法获取')
+    if (row.returnType === 'hash') {
+      emit('showImage', tool.showFile(record[dataIndex]))
       return
     }
 
-    const isImage = res.data.mime_type.indexOf('image') > -1
-    result && emit(
-        'showImage',
-        isImage ? tool.attachUrl(res.data.url, uploadConfig.storageMode[res.data.storage_mode]) : 'not-image.png'
-    )
+    if (row.returnType === 'id') {
+      Message.info('该图片无法查看')
+      return
+    }
 
   } else {
     if (! record[row.dataIndex]) {
