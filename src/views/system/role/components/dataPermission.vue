@@ -75,6 +75,7 @@
     { value: 2, label: "自定义数据权限" },
     { value: 3, label: "本部门数据权限" },
     { value: 4, label: "本部门及以下数据权限" },
+    { value: 6, label: "本部门及以下数据权限（数据表部门ID）" },
     { value: 5, label: "本人数据权限" },
   ])
 
