@@ -205,6 +205,7 @@
   const submit = async (data) => {
     if (! auth('setting:config:update')) {
       Message.info('没有权限修改配置')
+      return
     }
     const response = await config.updateByKeys(data)
     if (response.success) {
