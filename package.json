@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@arco-design/color": "^0.4.0",
-    "@arco-design/web-vue": "^2.50.1",
+    "@arco-design/web-vue": "^2.50.2",
     "@arco-themes/vue-mine-admin-v2": "^0.0.2",
     "@tinymce/tinymce-vue": "^5.0.0",
     "@vitejs/plugin-vue": "^4.2.1",
