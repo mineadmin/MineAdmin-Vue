@@ -67,9 +67,9 @@
               content="确定要删除数据吗?"
               position="bottom"
               @ok="deletesMultipleAction"
+              v-if="options.delete.show && isBatch(options.delete)"
             >
               <a-button
-                v-if="options.delete.show"
                 v-auth="options.delete.auth || []"
                 v-role="options.delete.role || []"
                 type="primary" status="danger"
@@ -84,9 +84,9 @@
               content="确定要恢复数据吗?"
               position="bottom"
               @ok="recoverysMultipleAction"
+              v-if="options.recovery.show && isRecovery && isBatch(options.delete)"
             >
               <a-button
-                v-if="options.recovery.show && isRecovery"
                 v-auth="options.recovery.auth || []"
                 v-role="options.recovery.role || []"
                 type="primary" status="success"
@@ -776,6 +776,8 @@ const tabsHandler = async () => {
         }
     }
 }
+
+const isBatch = (obj) => isUndefined(obj) ? true : (obj?.batch ?? true)
 
 onMounted(async() => {
   if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {

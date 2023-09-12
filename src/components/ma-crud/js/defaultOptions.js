@@ -194,6 +194,8 @@ export default {
 
     // 是否显示
     show: false,
+    // 是否显示批量处理按钮
+    batch: true,
   },
   recovery: {
     // 恢复api
@@ -206,6 +208,8 @@ export default {
     text: '恢复',
     // 是否显示
     show: false,
+    // 是否显示批量处理按钮
+    batch: true,
   },
   // see: {
   //   // 显示查看按钮的权限
