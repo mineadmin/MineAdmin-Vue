@@ -65,6 +65,13 @@
     }
   )
 
+  watch(
+    () => props.selectedKeys,
+    val => {
+      selectedKeys.value = val
+    }
+  )
+
   const handlerSelect = (item, data) => {
     selectedKeys.value = [ item ]
     emit('click', ...[item, data])

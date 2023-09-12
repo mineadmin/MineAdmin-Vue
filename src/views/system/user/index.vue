@@ -14,7 +14,7 @@
         v-model="depts"
         searchPlaceholder="搜索部门"
         :field-names="{ title: 'label', key: 'value' }"
-        :selectedKeys="['all']"
+        :selectedKeys="defaultKey"
         @click="switchDept"
       />
     </div>
@@ -90,6 +90,7 @@
   const setHomeVisible = ref(false)
   const userid = ref()
   const homePage = ref('')
+  const defaultKey = ref(['all'])
 
   onMounted(() => {
     dept.tree().then(res => {
@@ -104,6 +105,7 @@
   const switchDept = (id) => {
     crudRef.value.requestParams = id[0] === 'all' ? { dept_id: undefined } : { dept_id: id[0] }
     crudRef.value.requestData()
+    defaultKey.value = id
   }
 
   const changeStatus = async (status, id) => {
