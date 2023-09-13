@@ -111,7 +111,7 @@
     * @param {Object} evt Websocket 消息
     */
    onClose(evt) {
-     clearInterval(this.heaerbeatTimer)
+     clearInterval(this.heaerbeat.timer)
  
      if (evt.code == 1006) {
        this.reconnect()
