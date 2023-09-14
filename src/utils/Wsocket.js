@@ -111,7 +111,7 @@
     * @param {Object} evt Websocket 消息
     */
    onClose(evt) {
-     clearInterval(this.heaerbeat.timer)
+     clearInterval(this.heartbeat.timer)
  
      if (evt.code == 1006) {
        this.reconnect()
@@ -146,7 +146,7 @@
     */
    sendHeartbeat() {
      if (this.heartbeat.openHeartbeat) {
-       this.heaerbeat.timer = setInterval(_ => {
+       this.heartbeat.timer = setInterval(_ => {
          this.ws.send('PONG')
        }, this.heartbeat.interval)
      }
