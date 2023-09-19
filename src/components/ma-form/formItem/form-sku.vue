@@ -492,7 +492,6 @@ export default {
 .specification {
   display: inline-block;
   vertical-align: top;
-  //width: 480px;
   width: 100%;
 }
 
