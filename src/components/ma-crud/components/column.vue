@@ -1,6 +1,6 @@
 <template>
   <template v-for="row in props.columns" :key="row[options.pk]">
-    <template v-if="!row.hide">
+    <template v-if="isFunction(row.hide) ? row.hide() : !row.hide">
       <a-table-column
           :title="row.title"
           :width="row.width"

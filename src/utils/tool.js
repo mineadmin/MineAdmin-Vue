@@ -173,6 +173,9 @@ tool.viewImage = function(path, defaultStorage = 'LOCAL') {
 }
 
 tool.showFile = function(hash, defaultStorage = 'LOCAL') {
+  if (hash.indexOf('.') !== -1 ) {
+    return tool.viewImage(hash, defaultStorage)
+  }
   let mode = tool.local.get('site_storage_mode') ? tool.local.get('site_storage_mode').toUpperCase() : defaultStorage
   return uploadConfig.storage[mode] + '/system/showFile/' + hash
 }
