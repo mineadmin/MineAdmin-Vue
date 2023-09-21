@@ -83,7 +83,6 @@
   const operationLogList = ref([])
 
   const requestParams = reactive({
-    username: userStore.user.username,
     pageSize: 5
   })
 
