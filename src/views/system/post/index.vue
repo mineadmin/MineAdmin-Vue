@@ -62,7 +62,7 @@
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 200,
+    operationColumnWidth: 200,
     add: { show: true, api: post.save, auth: ['system:post:save'] },
     edit: { show: true, api: post.update, auth: ['system:post:update'] },
     delete: {

@@ -41,7 +41,7 @@ const options = reactive({
   },
   pk: 'id',
   operationColumn: true,
-  operationWidth: 180,
+  operationColumnWidth: 180,
   searchLabelWidth: '100px',
   labelWidth: '120px',
   searchColNumber: 2,

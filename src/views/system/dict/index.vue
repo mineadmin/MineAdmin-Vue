@@ -65,7 +65,7 @@
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 240,
+    operationColumnWidth: 240,
     add: { show: true, api: dictType.save, auth: ['system:dict:save'] },
     edit: { show: true, api: dictType.update, auth: ['system:dict:update'] },
     delete: {

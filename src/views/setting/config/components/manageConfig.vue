@@ -37,7 +37,7 @@ const crud = reactive({
   rowSelection: { showCheckedAll: true, key: 'key' },
   showIndex: false,
   operationColumn: true,
-  operationWidth: 160,
+  operationColumnWidth: 160,
   edit: { show: true, api: config.update, auth: ['setting:config:update'] },
   delete: { show: true, api: config.delete, auth: ['setting:config:delete'] },
   beforeRequest: (params) => params.group_id = groupId.value,

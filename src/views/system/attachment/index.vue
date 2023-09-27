@@ -188,7 +188,7 @@
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 200,
+    operationColumnWidth: 200,
     delete: {
       show: true,
       api: attachment.deletes, auth: ['system:attachment:delete'],

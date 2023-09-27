@@ -118,7 +118,7 @@
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 350,
+    operationColumnWidth: 350,
     delete: {
       show: true,
       api: generate.deletes, auth: ['setting:code:delete'],

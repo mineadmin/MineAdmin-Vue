@@ -36,7 +36,7 @@
     api: monitor.getOnlineUserPageList,
     showIndex: false,
     operationColumn: true,
-    operationWidth: 120,
+    operationColumnWidth: 120,
     searchColNumber: 2,
     pageLayout: 'fixed',
   })
