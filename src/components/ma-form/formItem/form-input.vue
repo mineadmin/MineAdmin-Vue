@@ -37,7 +37,7 @@
         @clear="maEvent.handleCommonEvent(props.component, 'onClear')"
         @focus="maEvent.handleCommonEvent(props.component, 'onFocus')"
         @blur="maEvent.handleCommonEvent(props.component, 'onBlur')"
-        @search="maEvent.handleInputSearchEvent(props.component, $event)"
+        @search="maEvent.customeEvent(props.component, $event, 'onSearch')"
       >
 
         <template #prepend v-if="props.component.openPrepend">
