@@ -116,7 +116,7 @@
   }
 
   const updateCache = id => {
-    user.clearCache(id).then(res => {
+    user.clearCache({ id }).then(res => {
       if (res.success) Message.success(res.message)
     })
   }
