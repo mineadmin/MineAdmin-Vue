@@ -96,7 +96,9 @@ watch(
   () => appStore.tag,
   r => {
     nextTick(() => {
-      tagShowPrevNext.value = tags.value.scrollWidth > tags.value.offsetWidth
+      if ( (tags.value.scrollWidth ?? false) && tags.value.offsetWidth ) {
+        tagShowPrevNext.value = tags.value.scrollWidth > tags.value.offsetWidth
+      }
     })
   },
   { deep: true }
@@ -105,7 +107,9 @@ watch(
   () => tagStore.tags,
   r => {
     nextTick(() => {
-      tagShowPrevNext.value = tags.value.scrollWidth > tags.value.offsetWidth
+      if ( (tags.value.scrollWidth ?? false) && tags.value.offsetWidth ) {
+        tagShowPrevNext.value = tags.value.scrollWidth > tags.value.offsetWidth
+      }
     })
   },
   { deep: true }
