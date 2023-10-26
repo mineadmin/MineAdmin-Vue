@@ -48,6 +48,7 @@
         </template>
       </ma-search>
     </div>
+    <div class="mb-2"><slot name="middleContent"></slot></div>
     <div class="_crud-content">
       <div class="operation-tools lg:flex justify-between mb-3" ref="crudOperationRef">
         <a-space class="lg:flex block lg:inline-block" >
