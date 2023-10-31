@@ -367,7 +367,7 @@ const dictColors = (dataIndex, value) => {
  // 公用模板
 columns.value.map((item, index) => {
   if (item.common && globalColumn[item.dataIndex]) {
-    columns.value[index] = globalColumn[item.dataIndex]
+    columns.value[index] = Object.assign(globalColumn[item.dataIndex], item)
     item = columns.value[index]
   }
   !item.width && (item.width = options.value.columnWidth)
