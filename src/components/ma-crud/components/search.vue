@@ -100,6 +100,13 @@ const handlerSearch = () => {
 
 const resetSearch = async () => {
   searchRef.value.resetFields()
+  Object.keys(searchForm.value).map(item => {
+    let temp = item.match(/^(.+)Min$/)
+    if (temp) {
+      searchForm.value[temp[1] + 'Min'] = undefined
+      searchForm.value[temp[1] + 'Max'] = undefined
+    }
+  })
   if (options.resetSearch && isFunction(options.resetSearch)) {
     await options.resetSearch(searchForm.value)
   }
