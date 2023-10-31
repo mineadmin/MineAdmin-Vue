@@ -50,6 +50,9 @@ const value = ref(get(searchForm.value, props.component.dataIndex, props.compone
 if (props.component.formType === 'input-number' && (props.component?.rangeSearch ?? false)) {
   set(searchForm.value, `${props.component.dataIndex}Min`, minData.value)
   set(searchForm.value, `${props.component.dataIndex}Max`, maxData.value)
+  
+  watch( () => get(searchForm.value, props.component.dataIndex + 'Min'), vl => minData.value = vl )
+  watch( () => get(searchForm.value, props.component.dataIndex + 'Max'), vl => maxData.value = vl )
 } else {
   set(searchForm.value, props.component.dataIndex, value.value)
 }
