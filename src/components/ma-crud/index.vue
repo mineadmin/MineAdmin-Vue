@@ -612,7 +612,7 @@ const dbClickOpenEdit = (record) => {
         }
       }
 
-      if (options.value.edit.api && isFunction(options.value.edit.api)) {
+      if (options.value.edit.api && options.value.edit.show && isFunction(options.value.edit.api)) {
         editAction(record)
       }
     }
