@@ -69,7 +69,7 @@
     plugins: {
       type: [String, Array],
       default:
-        "preview searchreplace autolink directionality visualblocks visualchars fullscreen link media template code codesample table charmap nonbreaking insertdatetime advlist lists wordcount autosave"
+        "preview searchreplace autolink directionality visualblocks visualchars fullscreen link media code codesample table charmap nonbreaking insertdatetime advlist lists wordcount autosave"
     },
     toolbar: {
       type: [String, Array],
