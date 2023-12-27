@@ -34,6 +34,8 @@ const props = defineProps({
   placeholder: { type: String, default: '请选择颜色' },
 })
 
+val.value = props.modelValue
+
 const selectColor = (color) => {
   val.value = color.hex
 }
