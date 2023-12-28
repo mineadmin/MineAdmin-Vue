@@ -163,8 +163,10 @@
   const selectFile = (item, index) => {
 
     if ( ! props.multiple && selecteds.value ) {
-      if (props.onlyData && item.url != selecteds.value) return
-      if (! props.onlyData && item.id != selecteds.value.id) return
+      // 给用户一个可以选择其他选项的机会😁
+      clearSelecteds()
+      // if (props.onlyData && item.url != selecteds.value) return
+      // if (! props.onlyData && item.id != selecteds.value.id) return
     }
 
     const children = rl.value.children
