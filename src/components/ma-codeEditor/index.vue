@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, toRaw } from 'vue'
 import { useAppStore } from '@/store'
 import { formatJson } from '@/utils/common'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
@@ -29,6 +29,14 @@ const props = defineProps({
   modelValue: {
     type: [String, Object, Array],
     default: () => ''
+  },
+  valueType: {
+    type: String,
+    default: 'value'
+  },
+  miniMap: {
+    type: Boolean,
+    default: false
   },
   isBind: {
     type: Boolean,
@@ -48,40 +56,47 @@ const props = defineProps({
   }
 })
 
+const options = {
+  tabSize: 2,
+  automaticLayout: true,
+  scrollBeyondLastLine: false,
+  language: props.language,
+  theme: appStore.mode === 'light' ? 'vs' : 'vs-dark',
+  autoIndent: true,
+  minimap: { enabled: props.miniMap },
+  readOnly: props.readonly,
+  folding: true,
+  acceptSuggestionOnCommitCharacter: true,
+  acceptSuggestionOnEnter: true,
+  contextmenu: true
+}
+
 const emit = defineEmits(['update:modelValue'])
 const dom = ref()
 
 let instance
 
-onMounted(() => {
-  instance = monaco.editor.create(dom.value, {
-    value: (typeof props.modelValue === 'string') ? props.modelValue : formatJson(props.modelValue),
-    tabSize: 2,
-    automaticLayout: true,
-    scrollBeyondLastLine: false,
-    language: props.language,
-    theme: appStore.mode === 'light' ? 'vs' : 'vs-dark',
-    autoIndent: true,
-    minimap: { enabled: false },
-    readOnly: props.readonly,
-    folding: true,
-    acceptSuggestionOnCommitCharacter: true,
-    acceptSuggestionOnEnter: true,
-    contextmenu: true
-  })
-
-  instance.onDidChangeModelContent(() => {
-    emit('update:modelValue', instance.getValue())
-  })
-})
-
-if (props.isBind) {
-  watch(
-    () => props.modelValue,
-    vl => instance.setValue((typeof vl === 'string') ? vl : formatJson(vl))
-  )
+const initEditorValue = () => {
+  if (props.valueType === 'value' && typeof props.modelValue === 'string') {
+    instance.setValue(props.modelValue)
+  } else if (props.valueType === 'value' && props.modelValue._onWillDispose === undefined) {
+    instance.setValue(formatJson(props.modelValue))
+  } else if (props.modelValue){
+    console.log(props.modelValue)
+    instance.setModel(toRaw(props.modelValue))
+  } else {
+    instance.setModel(monaco.editor.createModel('', props.language))
+  }
 }
 
+onMounted(() => {
+  instance = monaco.editor.create(dom.value, options)
+  initEditorValue()
+
+  instance.onDidChangeModelContent(() => {
+    emit('update:modelValue', toRaw(props.valueType === 'value' ? instance.getValue() : instance.getModel()))
+  })
+})
 </script>
 
 <style scoped lang="less">
