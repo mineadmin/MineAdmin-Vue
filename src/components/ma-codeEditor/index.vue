@@ -30,6 +30,10 @@ const props = defineProps({
     type: [String, Object, Array],
     default: () => ''
   },
+  defaultModelValue: {
+    type: String,
+    default: '',
+  },
   valueType: {
     type: String,
     default: 'value'
@@ -82,10 +86,9 @@ const initEditorValue = () => {
   } else if (props.valueType === 'value' && props.modelValue._onWillDispose === undefined) {
     instance.setValue(formatJson(props.modelValue))
   } else if (props.modelValue){
-    console.log(props.modelValue)
     instance.setModel(toRaw(props.modelValue))
   } else {
-    instance.setModel(monaco.editor.createModel('', props.language))
+    instance.setModel(monaco.editor.createModel(props.defaultModelValue, props.language))
   }
 }
 
