@@ -14,7 +14,7 @@ export const handlerDictProps = (item, tmpArr) => {
   let colors = {}
   let labelName = 'label'
   let valueName = 'value'
-  if (item.dict.name && (!item.dict.url || !item.dict.data)) {
+  if (item?.dict?.name && (!item.dict.url || !item.dict.data)) {
     labelName = 'title'
     valueName = 'key'
   }
