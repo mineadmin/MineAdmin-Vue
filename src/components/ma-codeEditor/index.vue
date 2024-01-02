@@ -100,6 +100,10 @@ onMounted(() => {
     emit('update:modelValue', toRaw(props.valueType === 'value' ? instance.getValue() : instance.getModel()))
   })
 })
+
+const getInstance = () => instance
+
+defineExpose({ getInstance })
 </script>
 
 <style scoped lang="less">
