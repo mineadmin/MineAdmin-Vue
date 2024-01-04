@@ -17,14 +17,13 @@
       <a-input-tag v-model="userList" v-if="props.isEcho" :style="{ width:'320px' }" :placeholder="'请点击前面按钮' + props.text" :max-tag-count="3" disabled/>
     </a-space>
 
-    <a-modal v-model:visible="visible" width="1000px" draggable :on-before-ok="close" unmountOnClose>
+    <a-modal v-model:visible="visible" width="1000px" draggable :on-before-ok="close" @cancel="cancel" @open="open" unmountOnClose>
       <template #title>{{ props.text }}</template>
 
       <ma-crud
         ref="crudRef"
         :options="crud"
         :columns="columns"
-        v-model:selected-keys="selecteds"
         @selection-change="selectHandler"
       />
     </a-modal>
@@ -45,7 +44,7 @@
     text: { type: String, default: '选择用户' }
   })
 
-  const emit = defineEmits(['update:modelValue', 'success'])
+  const emit = defineEmits(['update:modelValue', 'success', 'cancel'])
 
   const visible = ref(false)
   const selecteds = ref([])
@@ -61,6 +60,14 @@
       if (props.isEcho && props.onlyId) selecteds.value = val
     }
   )
+
+  const open = () => {
+    crudRef.value.setSelecteds(selecteds.value)
+  }
+
+  const cancel = () => {
+    emit('cancel')
+  }
 
   const selectHandler = (rows) => {
     selecteds.value = rows

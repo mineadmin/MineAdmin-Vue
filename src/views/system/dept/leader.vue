@@ -5,7 +5,7 @@
     <!-- CRUD 组件 -->
     <ma-crud :options="crud" :columns="columns" ref="crudRef" class="mt-3">
       <template #tableBeforeButtons>
-        <ma-user text="新增领导" :onlyId="false" :isEcho="false" v-model="users" @success="selectedSuccess" />
+        <ma-user text="新增领导" :onlyId="false" :isEcho="false" v-model="users" @cancel="cancel" @success="selectedSuccess" />
       </template>
     </ma-crud>
 
@@ -25,7 +25,16 @@
   const open = (row) => {
     deptId.value = row.id
     visible.value = true
-    crudRef.value.requestData()
+    requestData()
+  }
+
+  const cancel =() => {
+    requestData()
+  }
+
+  const requestData = async () => {
+    await crudRef.value.requestData()
+    users.value = crudRef.value.getTableData().map(item=> item.id)
   }
 
   const selectedSuccess = async () => {
