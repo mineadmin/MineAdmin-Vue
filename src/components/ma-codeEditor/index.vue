@@ -92,6 +92,13 @@ const initEditorValue = () => {
   }
 }
 
+watch(
+    () => props.modelValue,
+    (newModelValue) => {
+      initEditorValue()
+    }
+)
+
 onMounted(() => {
   instance = monaco.editor.create(dom.value, options)
   initEditorValue()
