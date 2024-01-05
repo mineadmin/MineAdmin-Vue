@@ -17,7 +17,7 @@
       <component
         :is="getComponentName()"
         v-model="value"
-        :placeholder="props.component.formType === 'range' ? ['请选择开始时间', '请选择结束时间'] : `请选择${props.component.title}`"
+        :placeholder="props.component.formType === 'range' ? props.component.placeholder ?? ['请选择开始时间', '请选择结束时间'] : props.component.placeholder ?? `请选择${props.component.title}`"
         :hide-trigger="props.component.hideTrigger"
         :allow-clear="props.component.allowClear ?? true"
         :format="props.component.format"
