@@ -4,7 +4,7 @@ import tool from '@/utils/tool'
 import router from '@/router'
 import webRouter from '@/router/webRouter'
 import { homePage } from '@/router/homePageRoutes'
-import { useAppStore } from '@/store'
+import { useAppStore, useTagStore } from '@/store'
 
 const useUserStore = defineStore('user', {
 
@@ -85,7 +85,9 @@ const useUserStore = defineStore('user', {
 
     async logout() {
       await loginApi.logout()
+      const tagStore = useTagStore()
       tool.local.remove('tags')
+      tagStore.clearTags()
       this.clearToken()
       this.resetUserInfo()
     },
