@@ -86,7 +86,7 @@
 <script setup>
 import { ref, inject, onMounted, nextTick, watch } from 'vue'
 import MaFormItem from './form-item.vue'
-import { get, isUndefined, set, xor, isObject } from 'lodash'
+import { get, isUndefined, set, xor, isObject, indexOf } from 'lodash'
 import { maEvent } from '../js/formItemMixin.js'
 import { handlerCascader, loadDict } from '../js/networkRequest.js'
 
@@ -130,7 +130,9 @@ const handleSelectAll = (status) => {
   }
   if (status) {
     dictList.value[dictIndex].map(item=>{
-      value.value.push(item.value)
+      if(indexOf(value.value, item.value) === -1) {
+        value.value.push(item.value)
+      }
     })
   } else {
     value.value = []
