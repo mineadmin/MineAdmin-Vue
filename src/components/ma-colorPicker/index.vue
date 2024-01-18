@@ -21,7 +21,7 @@
   </a-input-group>
 </template>
 <script setup>
-import { ref, watch, reactive } from 'vue'
+import { ref, watch, reactive, onMounted } from 'vue'
 import { ColorPicker } from 'vue-color-kit'
 import 'vue-color-kit/dist/vue-color-kit.css'
 import { generate, getRgbStr } from '@arco-design/color'
@@ -32,6 +32,10 @@ const val = ref()
 const props = defineProps({
   modelValue: String,
   placeholder: { type: String, default: '请选择颜色' },
+})
+
+onMounted(() => {
+  val.value = props.modelValue
 })
 
 const selectColor = (color) => {
