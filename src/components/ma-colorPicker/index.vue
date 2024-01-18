@@ -21,18 +21,28 @@
   </a-input-group>
 </template>
 <script setup>
-import { ref, watch, reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import { ColorPicker } from 'vue-color-kit'
 import 'vue-color-kit/dist/vue-color-kit.css'
-import { generate, getRgbStr } from '@arco-design/color'
 import useClipboard from 'vue-clipboard3'
 import { Message } from '@arco-design/web-vue'
 
-const val = ref()
 const props = defineProps({
   modelValue: String,
   placeholder: { type: String, default: '请选择颜色' },
 })
+
+const emit = defineEmits(['update:modelValue'])
+
+const val = computed({
+    get() {
+      return props.modelValue
+    },
+    set(newVal) {
+      emit('update:modelValue', newVal)
+    }
+  }
+)
 
 const selectColor = (color) => {
   val.value = color.hex
@@ -53,10 +63,4 @@ const defaultColorList = reactive([
   '#86909c', '#6d4c41',
 ])
 
-const emit = defineEmits(['update:modelValue'])
-
-watch(
-  () => val.value,
-  vl => emit('update:modelValue', vl)
-)
 </script>
