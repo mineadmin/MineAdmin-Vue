@@ -11,6 +11,7 @@
 import { reactive, ref } from 'vue'
 import verifyCode from '@cps/ma-verifyCode/index.vue'
 import { useUserStore } from '@/store'
+import { useTagStore } from '@/store'
 import { useRouter, useRoute } from 'vue-router'
 import { request } from '@/utils/request'
 
@@ -50,6 +51,7 @@ const handleSubmit = async ({ values, errors }) => {
       loading.value = false
       return
     }
+    useTagStore().tags = [];
     router.push(redirect)
   }
   loading.value = false
