@@ -297,13 +297,16 @@ const settingFormLayout = (layout) => {
 }
 
 const formItemShow = (item) => {
+  if (item.display === false) {
+    return false
+  }
   if (currentAction.value === 'add') {
     return item.addDisplay !== false
   }
   if (currentAction.value === 'edit') {
     return item.editDisplay !== false
   }
-  return item.display !== false
+  return true
 }
 const formItemDisabled = (item) => {
   if (currentAction.value === 'add' && ! isUndefined(item.addDisabled)) {
@@ -342,7 +345,7 @@ const toRules = (rules) => {
   if (isArray(rules)) {
     return rules.map(v => ({...v}))
   }
-  
+
   if (!rules.validator && isFunction(rules.validatorFormData)) {
     rules.validator = (value, cb) => {
        rules.validatorFormData(value, cb, form.value)
