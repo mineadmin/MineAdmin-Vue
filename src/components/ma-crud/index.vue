@@ -705,23 +705,29 @@ const __summary = ({ data }) => {
     let summarySuffixText = {}
     let length = data.length || 0
     summary.map( item => {
-      summaryData[item.dataIndex] = 0
-      summaryPrefixText[item.dataIndex] = item?.prefixText ?? ''
-      summarySuffixText[item.dataIndex] = item?.suffixText ?? ''
-      data.map(record => {
-        if (record[item.dataIndex]) {
-          if (item.action && item.action === 'sum') {
-            summaryData[item.dataIndex] += parseFloat(record[item.dataIndex])
+      if (item.action && item.action === 'text') {
+        summaryData[item.dataIndex] = item.content
+      } else {
+        summaryData[item.dataIndex] = 0
+        summaryPrefixText[item.dataIndex] = item?.prefixText ?? ''
+        summarySuffixText[item.dataIndex] = item?.suffixText ?? ''
+        data.map(record => {
+          if (record[item.dataIndex]) {
+            if (item.action && item.action === 'sum') {
+              summaryData[item.dataIndex] += parseFloat(record[item.dataIndex])
+            }
+            if (item.action && item.action === 'avg') {
+              summaryData[item.dataIndex] += parseFloat(record[item.dataIndex]) / length
+            }
           }
-          if (item.action && item.action === 'avg') {
-            summaryData[item.dataIndex] += parseFloat(record[item.dataIndex]) / length
-          }
-        }
-      })
+        })
+      }
     })
 
     for (let i in summaryData) {
-      summaryData[i] = summaryPrefixText[i] + tool.groupSeparator(summaryData[i].toFixed(2)) + summarySuffixText[i]
+      if (/^\d+(\.\d+)?$/.test(summaryData[i])) {
+        summaryData[i] = summaryPrefixText[i] + tool.groupSeparator(summaryData[i].toFixed(2)) + summarySuffixText[i]
+      }
     }
 
     return [ summaryData ]
