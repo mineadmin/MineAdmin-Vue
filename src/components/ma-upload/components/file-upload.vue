@@ -141,7 +141,7 @@ const init = async () => {
       if (config.returnType === 'url') {
         showFileList.value = data.map(url => { return { url } })
       } else {
-        showFileList.value = data.map(item => { return  { url: item.url } })
+        showFileList.value = data.map(item => { return  { url: item.url, [config.returnType]: item[config.returnType] } })
       }
     } else {
       showFileList.value = []

@@ -143,7 +143,7 @@ const init = async () => {
       if (config.returnType === 'url') {
         showImgList.value = data.map(url => { return { url } })
       } else {
-        showImgList.value = data.map(item => { return  { url: item.url } })
+        showImgList.value = data.map(item => { return  { url: item.url, [config.returnType]: item[config.returnType] } })
       }
     } else {
       showImgList.value = []

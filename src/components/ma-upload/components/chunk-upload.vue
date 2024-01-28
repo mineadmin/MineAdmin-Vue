@@ -167,7 +167,7 @@ const chunkUpload = async (options) => {
         return
       }
       if (res.data && res.data.code && res.data.code === 201) {
-        const percent = parseFloat((1 / chunks).toFixed(2))
+        const percent = parseFloat((1 / chunks).toFixed(4))
         if (config.multiple) {
           showFileList.value[idx].percent += percent
         } else {
@@ -204,10 +204,12 @@ const init = async () => {
         return await getFileUrl(config.returnType, item, storageMode)
       })
       const data = await Promise.all(result)
+
+      let fileItemObj = { percent: 100, status: 'complete' };
       if (config.returnType === 'url') {
-        showFileList.value = data.map(url => { return { url } })
+        showFileList.value = data.map(url => { return { url, ...fileItemObj } })
       } else {
-        showFileList.value = data.map(item => { return  { url: item.url } })
+        showFileList.value = data.map(item => { return  { url: item.url, [config.returnType]: item[config.returnType], ...fileItemObj } })
       }
     } else {
       showFileList.value = []
