@@ -7,6 +7,26 @@ import {h} from 'vue'
 import {IconFaceFrownFill} from '@arco-design/web-vue/dist/arco-vue-icon'
 import router from "@/router";
 
+function createExternalService() {
+  // 创建一个外部网络 axios 实例
+  const service = axios.create()
+
+  // HTTP request 拦截器
+  service.interceptors.request.use(
+    config => config,
+    error => Promise.reject(error)
+  );
+
+  // HTTP response 拦截器
+  service.interceptors.response.use(
+    response => response,
+    error => {
+      Promise.reject(error.response ?? null)
+    }
+  )
+  return service
+}
+
 function createService () {
   // 创建一个 axios 实例
   const service = axios.create()
@@ -15,6 +35,7 @@ function createService () {
   service.interceptors.request.use(
     config => config,
     error => {
+      console.log(error)
       // 失败
       return Promise.reject(error);
     }
@@ -96,9 +117,10 @@ function stringify (data) {
 
 /**
  * @description 创建请求方法
- * @param {Object} service axios 实例
+ * @param service
+ * @param externalService
  */
-function createRequest (service) {
+ function createRequest (service, externalService) {
   return function (config) {
     const env = import.meta.env
     const token = tool.local.get(env.VITE_APP_TOKEN_PREFIX)
@@ -114,7 +136,6 @@ function createRequest (service) {
       ),
 
       timeout: 10000,
-      baseURL: env.VITE_APP_OPEN_PROXY === 'true' ? env.VITE_APP_PROXY_PREFIX : env.VITE_APP_BASE_URL,
       data: {}
     }
     const option = Object.assign(configDefault, config)
@@ -125,10 +146,15 @@ function createRequest (service) {
       option.params = {}
     }
 
-    return service(option)
+    if (! /^(http|https)/g.test(option.url) ) {
+      option.baseURL = env.VITE_APP_OPEN_PROXY === 'true' ? env.VITE_APP_PROXY_PREFIX : env.VITE_APP_BASE_URL
+      return service(option)
+    } else {
+      return externalService(option)
+    }
   }
 }
 
-// 用于真实网络请求的实例和请求方法
 export const service = createService()
-export const request = createRequest(service)
+export const externalService = createExternalService()
+export const request = createRequest(service, externalService)

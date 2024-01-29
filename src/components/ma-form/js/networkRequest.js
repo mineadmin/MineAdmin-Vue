@@ -1,12 +1,56 @@
 import { isArray, isFunction, set } from 'lodash'
 import { request } from '@/utils/request'
 import commonApi from '@/api/common'
+import { Message } from '@arco-design/web-vue'
 import tool from '@/utils/tool'
 
 export const allowUseDictComponent  = ['radio', 'checkbox', 'select', 'transfer', 'treeSelect', 'tree-select', 'cascader']
 export const allowCoverComponent    = ['radio', 'checkbox', 'select', 'transfer', 'cascader']
 
-export const requestDict = (url, method, params, data, timeout = 10 * 1000) => request({ url, method, params, data, timeout })
+export const coverSourceArrayToObj = (arr) => {
+  if (arr === null || arr.length === 0) {
+    return null
+  }
+  let obj = {}
+  const checkDataType = (type, value) => {
+    if (type === 'string') {
+      return value.toString()
+    }
+    if (type === 'number') {
+      return parseInt(value)
+    }
+    if (type === 'bool') {
+      return ((value !== 'false' && value !== 0) && (value === 'true' || value )) ? true : false
+    }
+  }
+  arr.map( item => obj[item.name] = checkDataType(item.type, item.value) )
+
+  return obj
+}
+
+export const requestDict = (url, method, params, data, header = {}, timeout = 10 * 1000) => {
+  return request({ url, method, params, data, header, timeout })
+}
+
+export const requestDataSource = async (config, formConfig, runCode, errorCode) => {
+  try {
+    const response = await requestDict(
+      config.url,
+      config.type,
+      coverSourceArrayToObj(config.params),
+      coverSourceArrayToObj(config.data),
+      coverSourceArrayToObj(config.header),
+      config.timeout * 1000,
+    )
+
+    const func = new Function('response', 'config', 'formConfig', runCode)
+    return await func.call( null, response, config, formConfig )
+  } catch (err) {
+    const func = new Function('message', 'response', 'config', errorCode)
+    await func.call( null, Message, err, config )
+    return err
+  }
+}
 
 export const handlerDictProps = (item, tmpArr) => {
   let data = []
