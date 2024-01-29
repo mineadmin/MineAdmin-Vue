@@ -41,31 +41,31 @@
           :src="image.url"
         />
       </div>
-    </a-space>
 
-    <a-upload
-      :custom-request="uploadImageHandler"
-      :show-file-list="false"
-      :multiple="config.multiple"
-      :accept="config.accept ?? '.jpg,jpeg,.gif,.png,.svg,.bpm'"
-      :disabled="config.disabled"
-      :tip="config.tip"
-      :limit="config.limit"
-    >
-      <template #upload-button>
-        <slot name="customer">
-          <div
-            :class="'upload-skin ' + (config.rounded ? 'rounded-full' : 'rounded-sm')"
-            v-if="!props.modelValue || config.multiple"
-          >
-            <div class="icon text-3xl"><component :is="config.icon" /></div>
-            <div class="title">
-              {{ config.title === 'buttonText' ? $t('upload.buttonText') : config.title }}
+      <a-upload
+        :custom-request="uploadImageHandler"
+        :show-file-list="false"
+        :multiple="config.multiple"
+        :accept="config.accept ?? '.jpg,jpeg,.gif,.png,.svg,.bpm'"
+        :disabled="config.disabled"
+        :tip="config.tip"
+        :limit="config.limit"
+      >
+        <template #upload-button>
+          <slot name="customer">
+            <div
+              :class="'upload-skin ' + (config.rounded ? 'rounded-full' : 'rounded-sm')"
+              v-if="!props.modelValue || config.multiple"
+            >
+              <div class="icon text-3xl"><component :is="config.icon" /></div>
+              <div class="title">
+                {{ config.title === 'buttonText' ? $t('upload.buttonText') : config.title }}
+              </div>
             </div>
-          </div>
-        </slot>
-      </template>
-    </a-upload>
+          </slot>
+        </template>
+      </a-upload>
+    </a-space>
   </div>
 </template>
 <script setup>
@@ -143,7 +143,7 @@ const init = async () => {
       if (config.returnType === 'url') {
         showImgList.value = data.map(url => { return { url } })
       } else {
-        showImgList.value = data.map(item => { return  { url: item.url } })
+        showImgList.value = data.map(item => { return  { url: item.url, [config.returnType]: item[config.returnType] } })
       }
     } else {
       showImgList.value = []
