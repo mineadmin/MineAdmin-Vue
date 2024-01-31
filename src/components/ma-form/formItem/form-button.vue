@@ -8,36 +8,41 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <template>
-  <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
-    <a-button
-      :type="props.component.type"
-      :status="props.component.status"
-      :size="props.component.size"
-      :shape="props.component.shape"
-      :disabled="props.component.disabled"
-      :long="props.component.long"
-      :loading="props.component.loading"
-      :html-type="props.component.htmlType"
-      :href="props.component.href"
-      @click="maEvent.handleCommonEvent(props.component, 'onClick')"
-    >
-      <template #icon v-if="props.component.icon">
-        <component :is="props.component.icon" />
-      </template>
-      {{ props.component.title ?? 'button' }}
-    </a-button>
-  </slot>
+  <div>
+    <slot :name="`form-${props.component.dataIndex}`" v-bind="props.component">
+      <a-button
+        :type="props.component.type"
+        :status="props.component.status"
+        :size="props.component.size"
+        :shape="props.component.shape"
+        :disabled="props.component.disabled"
+        :long="props.component.long"
+        :loading="props.component.loading"
+        :html-type="props.component.htmlType"
+        :href="props.component.href"
+        @click="rv('onClick')"
+      >
+        <template #icon v-if="props.component.icon">
+          <component :is="props.component.icon" />
+        </template>
+        {{ props.component.title ?? 'button' }}
+      </a-button>
+    </slot>
+  </div>
 </template>
   
 <script setup>
-import { onMounted } from 'vue'
-import { maEvent } from '../js/formItemMixin.js'
+import { onMounted, inject } from 'vue'
+import { runEvent } from '../js/event.js'
 const props = defineProps({
   component: Object,
 })
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
-onMounted(() => {
-  maEvent.handleCommonEvent(props.component, 'onMounted')
-})
+const formModel = inject('formModel')
+const columnService= inject('columnService')
+const columns = inject('columns')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, columnService, columns }, value)
+
+rv('onCreated')
+onMounted(() => rv('onMounted') )
 </script>

@@ -23,10 +23,10 @@
     :hide-content="props.component?.hideContent"
     :lazy-load="props.component?.lazyLoad"
     :destroy-on-hide="props.component?.destroyOnHide"
-    @change="maEvent.handleChangeEvent(props.component, $event)"
-    @tab-click="maEvent.handleTabClickEvent(props.component, $event)"
-    @add="maEvent.handleTabAddEvent(props.component)"
-    @delete="maEvent.handleTabDeleteEvent(props.component, $event)"
+    @change="rv('onChange', $event)"
+    @tab-click="rv('onTabClick', $event)"
+    @add="tabAddEvent(props.component, { formModel, columnService, columns })"
+    @delete="tabDeleteEvent(props.component, $event, { formModel, columnService, columns })"
   >
     <template #extra>
       <slot :name="`tabExtra-${props.component?.dataIndex ?? ''}`"></slot>
@@ -57,13 +57,16 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, inject } from 'vue'
 import { getComponentName } from '../js/utils.js'
-import { maEvent } from '../js/formItemMixin.js'
+import { runEvent, tabAddEvent, tabDeleteEvent } from '../js/event.js'
 const props = defineProps({ component: Object })
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
-onMounted(() => {
-  maEvent.handleCommonEvent(props.component, 'onMounted')
-})
+const formModel = inject('formModel')
+const columnService= inject('columnService')
+const columns = inject('columns')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, columnService, columns }, value)
+
+rv('onCreated')
+onMounted(() => rv('onMounted'))
 </script>

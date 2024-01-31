@@ -130,38 +130,18 @@
         data: menuType, translation: true,
         tagColors: { 'M': 'blue', 'B': 'green', 'L': 'orangered', 'I': 'pinkpurple' }
       },
-      control: (value) => {
-        if ( value == 'B') {
-          return {
-            'icon': { display: false },
-            'route': { display: false },
-            'component': { display: false },
-            'redirect': { display: false },
-            'sort': { display: false },
-            'is_hidden': { display: false },
-            'restful': { display: false },
-          }
-        } else if ( value == 'I' || value == 'L') {
-          return {
-            'icon': { display: true },
-            'route': { display: true },
-            'component': { display: false },
-            'redirect': { display: false },
-            'sort': { display: true },
-            'is_hidden': { display: true },
-            'restful': { display: false },
-          }
-        } else {
-          return {
-            'icon': { display: true },
-            'route': { display: true },
-            'component': { display: true },
-            'redirect': { display: true },
-            'sort': { display: true },
-            'is_hidden': { display: true },
-            'restful': { display: true },
-          }
+      onChange: (value, maFormObject) => {
+        const service = maFormObject.columnService()
+        const dataIndexList = ['icon', 'route', 'component', 'redirect', 'sort', 'is_hidden', 'restful']
+        if ( value === 'B' ) {
+          dataIndexList.map(name => service.get(name).setAttr('display', false))
+          return
         }
+        if ( ['I', 'L'].includes(value) ) {
+          dataIndexList.map(name => service.get(name).setAttr('display', ['icon', 'route', 'sort', 'is_hidden'].includes(name)) )
+          return
+        }
+        dataIndexList.map(name => service.get(name).setAttr('display', true))
       },
     },
     {  title: '图标', dataIndex: 'icon', width: 80, formType: 'icon-picker', style: { width: '100%' } },

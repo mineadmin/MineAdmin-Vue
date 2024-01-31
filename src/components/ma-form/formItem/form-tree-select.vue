@@ -46,10 +46,10 @@
         :fallback-option="props.component.fallbackOption"
         :selectable="props.component.selectable"
         :scrollbar="props.component.scrollbar"
-        @change="maEvent.handleChangeEvent(props.component, $event)"
-        @popup-visible-change="maEvent.customeEvent(props.component, $event, 'onPopupVisibleChange')"
-        @clear="maEvent.handleCommonEvent(props.component, 'onClear')"
-        @search="maEvent.customeEvent(props.component, $event, 'onSearch')"
+        @change="rv('onChange', $event)"
+        @popup-visible-change="rv('onPopupVisibleChange', $event)"
+        @clear="rv('onClear')"
+        @search="rv('onSearch', $event)"
       >
       </a-tree-select>
     </slot>
@@ -60,7 +60,7 @@
 import { ref, inject, onMounted, watch } from 'vue'
 import { get, set } from 'lodash'
 import MaFormItem from './form-item.vue'
-import { maEvent } from '../js/formItemMixin.js'
+import { runEvent } from '../js/event.js'
 import { handlerCascader } from '../js/networkRequest.js'
 
 const props = defineProps({
@@ -69,7 +69,10 @@ const props = defineProps({
 })
 
 const formModel = inject('formModel')
+const columnService= inject('columnService')
+const columns = inject('columns')
 const dictList  = inject('dictList')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, columnService, columns }, value)
 const index = props.customField ?? props.component.dataIndex
 const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1] + props.component.dataIndex : props.component.dataIndex
 const value = ref(get(formModel.value, index))
@@ -84,8 +87,6 @@ if (props.component.dict && (props.component.dict.name || props.component.dict.d
   value.value = value.value + ''
 }
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
-onMounted(() => {
-  maEvent.handleCommonEvent(props.component, 'onMounted')
-})
+rv('onCreated')
+onMounted(() => rv('onMounted'))
 </script>

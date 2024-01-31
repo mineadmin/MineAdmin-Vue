@@ -43,13 +43,13 @@
         :value-key="props.component.valueKey"
         :fallback="props.component.fallback"
         :expand-child="props.component.expandChild"
-        @change="maEvent.handleChangeEvent(props.component, $event)"
-        @input-value-change="maEvent.handleInputEvent(props.component, $event)"
-        @popup-visible-change="maEvent.customeEvent(props.component, $event, 'onPopupVisibleChange')"
-        @clear="maEvent.handleCommonEvent(props.component, 'onClear')"
-        @focus="maEvent.handleCommonEvent(props.component, 'onFocus')"
-        @blur="maEvent.handleCommonEvent(props.component, 'onBlur')"
-        @search="maEvent.customeEvent(props.component, $event, 'onSearch')"
+        @change="rv('onChange', $event)"
+        @search="rv('onSearch', $event)"
+        @input-value-change="rv('onInputValueChange', $event)"
+        @popup-visible-change="rv('onPopupVisibleChange', $event)"
+        @clear="rv('onClear')"
+        @focus="rv('onFocus')"
+        @blur="rv('onBlur')"
       >
       </a-cascader>
     </slot>
@@ -60,7 +60,7 @@
 import { ref, inject, onMounted, watch } from 'vue'
 import { get, set } from 'lodash'
 import MaFormItem from './form-item.vue'
-import { maEvent } from '../js/formItemMixin.js'
+import { runEvent } from '../js/event.js'
 
 const props = defineProps({
   component: Object,
@@ -68,7 +68,10 @@ const props = defineProps({
 })
 
 const formModel = inject('formModel')
-const dictList  = inject('dictList')
+const dictList = inject('dictList')
+const columnService= inject('columnService')
+const columns = inject('columns')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, columnService, columns }, value)
 const index = props.customField ?? props.component.dataIndex
 const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1] + props.component.dataIndex : props.component.dataIndex
 const value = ref(get(formModel.value, index))
@@ -83,8 +86,6 @@ if (props.component.dict && (props.component.dict.name || props.component.dict.d
   value.value = value.value + ''
 }
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
-onMounted(() => {
-  maEvent.handleCommonEvent(props.component, 'onMounted')
-})
+rv('onCreated')
+onMounted(() => rv('onMounted') )
 </script>

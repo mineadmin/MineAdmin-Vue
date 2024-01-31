@@ -30,11 +30,11 @@
         :formatter="props.component.formatter"
         :parser="props.component.parser"
         :model-event="props.component.modelEvent"
-        @input="maEvent.handleInputEvent(props.component, $event)"
-        @change="maEvent.handleChangeEvent(props.component, $event)"
-        @clear="maEvent.handleCommonEvent(props.component, 'onClear')"
-        @focus="maEvent.handleCommonEvent(props.component, 'onFocus')"
-        @blur="maEvent.handleCommonEvent(props.component, 'onBlur')"
+        @input="rv('onInput', $event)"
+        @change="rv('onChange', $event)"
+        @clear="rv('onClear')"
+        @focus="rv('onFocus')"
+        @blur="rv('onBlur')"
       >
         <template #suffix v-if="props.component.openSuffix">
           <slot :name="`inputSuffix-${props.component.dataIndex}`" />
@@ -51,13 +51,16 @@
 import { ref, inject, onMounted, watch } from 'vue'
 import { get, set, toNumber, isNaN } from 'lodash'
 import MaFormItem from './form-item.vue'
-import { maEvent } from '../js/formItemMixin.js'
+import { runEvent } from '../js/event.js'
 const props = defineProps({
   component: Object,
   customField: { type: String, default: undefined }
 })
 
 const formModel = inject('formModel')
+const columnService= inject('columnService')
+const columns = inject('columns')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, columnService, columns }, value)
 const index = props.customField ?? props.component.dataIndex
 const value = ref(toNumber(get(formModel.value, index)))
 
@@ -68,8 +71,6 @@ watch( () => value.value, v => {
   index.indexOf('.') > -1 && delete formModel.value[index]
 } )
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
-onMounted(() => {
-  maEvent.handleCommonEvent(props.component, 'onMounted')
-})
+rv('onCreated')
+onMounted(() => rv('onMounted'))
 </script>

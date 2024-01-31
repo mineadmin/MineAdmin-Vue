@@ -17,7 +17,7 @@
           :type="options.tabs.type"
           :hide-content="true"
           @change="tabChange"
-          @tab-click="maEvent.customeEvent(options.tabs, $event, 'onClick')"
+          @tab-click="runEvent(options.tabs, 'onClick', undefined, $event)"
           class="ma-tabs mb-5"
       >
         <template #extra><slot name="tabExtra"></slot></template>
@@ -254,7 +254,7 @@ import config from '@/config/crud'
 import { ref, watch, provide, nextTick, onMounted, onUnmounted } from 'vue'
 import defaultOptions from './js/defaultOptions'
 import { loadDict } from '@cps/ma-form/js/networkRequest.js'
-import ColumnService from './js/columnService'
+import ColumnService from '@cps/ma-form/js/columnService'
 
 import MaSearch from './components/search.vue'
 import MaForm from './components/form.vue'
@@ -269,7 +269,7 @@ import { request } from '@/utils/request'
 import tool from '@/utils/tool'
 import Print from '@/utils/print'
 import { isArray, isFunction, isObject, isUndefined } from 'lodash'
-import { maEvent } from '@cps/ma-form/js/formItemMixin.js'
+import { runEvent } from '@cps/ma-form/js/event.js'
 import globalColumn from '@/config/column.js'
 import { useFormStore } from '@/store/index'
 
@@ -744,7 +744,7 @@ const tabChange = async (value) => {
   const params = {}
   params[searchKey] = value
   requestParams.value = Object.assign(requestParams.value, params)
-  await maEvent.customeEvent(options.value.tabs, value, 'onChange')
+  await runEvent(options.value.tabs, 'onChange', undefined, value)
   await refresh()
 }
 
@@ -766,7 +766,7 @@ const execContextMenuCommand = async (args) => {
     case 'edit': editAction(record); break;
     case 'delete': crudColumnRef.value.deleteAction(record); break;
     default:
-      await maEvent.customeEvent(item, args, 'onCommand')
+      await runEvent(item, 'onCommand', undefined, args)
       break;
   }
 }

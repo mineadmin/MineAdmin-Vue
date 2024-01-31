@@ -122,6 +122,7 @@
                 </td>
                 <template v-for="component in viewFormList[index]">
                   <td class="arco-table-td">
+                    {{ component.hideLabel = true ? '' : '' }}
                     <span class="arco-table-cell">
                       <component
                         v-if="! containerItems.includes(component.formType)"
@@ -149,7 +150,7 @@
 import {ref, inject, provide, onMounted, watch, nextTick, shallowRef, isRef} from 'vue'
 import {cloneDeep, get, isArray, isUndefined, set} from 'lodash'
 import { getComponentName, containerItems } from '../js/utils.js'
-import { maEvent } from '../js/formItemMixin.js'
+import { runEvent } from '../js/event.js'
 import { loadDict, handlerCascader } from '../js/networkRequest.js'
 import arrayComponentDefault from '../js/defaultArrayComponent.js'
 
@@ -159,6 +160,10 @@ const viewFormList = ref([])
 const options = inject('options')
 const formModel = inject('formModel')
 const dictList = inject('dictList')
+const columnService= inject('columnService')
+const columns = inject('columns')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, columnService, columns }, value)
+
 const defaultOpenKeys = [0]
 
 if (! formModel.value[props.component.dataIndex]) {
@@ -216,14 +221,14 @@ const getChildrenDataIndex = (index, dataIndex) => {
   return [ props.component.dataIndex, index, dataIndex ].join('.')
 }
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
+rv('onCreated')
 onMounted(async () => {
   if (formModel.value[props.component.dataIndex].length === 0) {
     for (let i = 0; i < (props.component.emptyRow ?? 1); i++) {
       await addItem()
     }
   }
-  maEvent.handleCommonEvent(props.component, 'onMounted')
+  rv('onMounted')
 })
 </script>
 

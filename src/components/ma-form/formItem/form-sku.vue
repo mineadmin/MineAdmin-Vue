@@ -143,7 +143,7 @@ import {get, set} from 'lodash'
 // 引入 MaFormItem 组件
 import MaFormItem from './form-item.vue'
 // 引入处理事件的函数
-import {maEvent} from '../js/formItemMixin.js'
+import { runEvent } from '../js/event.js'
 
 // 组件都需要定义以下的props
 const props = defineProps({
@@ -155,6 +155,10 @@ const props = defineProps({
 const index = props.customField ?? props.component.dataIndex
 
 const formModel = inject('formModel')
+const columnService= inject('columnService')
+const columns = inject('columns')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, columnService, columns }, value)
+
 const value = ref(get(formModel.value, index))
 
 // 规格
@@ -475,10 +479,8 @@ function countSum(specIndex) {
 //
 
 // 绑定组件事件
-maEvent.handleCommonEvent(props.component, 'onCreated')
-onMounted(() => {
-  maEvent.handleCommonEvent(props.component, 'onMounted')
-})
+rv('onCreated')
+onMounted(() => rv('onMounted'))
 
 </script>
 

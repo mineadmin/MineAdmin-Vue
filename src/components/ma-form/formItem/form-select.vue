@@ -42,19 +42,16 @@
         :limit="props.component.limit"
         :field-names="props.component.fieldNames"
         :scrollbar="props.component.scrollbar"
-        @input-value-change="maEvent.handleInputEvent(props.component, $event)"
+        @input-value-change="rv('onInputValueChange', $event)"
         @change="handleCascaderChangeEvent($event)"
-        @remove="maEvent.customeEvent(props.component, $event, 'onRemove')"
-        @popup-visible-change="maEvent.customeEvent(props.component, $event, 'onPopupVisibleChange')"
-        @dropdown-scroll="maEvent.handleCommonEvent(props.component, 'onDropdownScroll')"
-        @dropdown-reach-bottom="maEvent.handleCommonEvent(props.component, 'onDropdownReachBottom')"
-        @exceed-limit="maEvent.customeEvent(props.component, $event, 'onExceedLimit')"
-        @clear="maEvent.handleCommonEvent(props.component, 'onClear')"
-        @focus="maEvent.handleCommonEvent(props.component, 'onFocus')"
-        @blur="maEvent.handleCommonEvent(props.component, 'onBlur')"
-        @search="maEvent.customeEvent(props.component, $event, 'onSearch')"
+        @remove="rv('onRemove', $event)"
+        @popup-visible-change="rv('onPopupVisibleChange', $event)"
+        @dropdown-scroll="rv('onDropdownScroll')"
+        @dropdown-reach-bottom="rv('onDropdownReachBottom')"
+        @exceed-limit="rv('onExceedLimit', $event)"
+        @search="rv('onSearch', $event)"
       >
-        <template #header v-if="props.component.multiple">
+        <template #header v-if="props.component.multiple && props.component.selectAll === true">
           <div style="padding: 6px 12px;" >
             <a-space>
               <a-checkbox :value="false" @change="handleSelectAll">全选/清除</a-checkbox>
@@ -87,7 +84,7 @@
 import { ref, inject, onMounted, nextTick, watch } from 'vue'
 import MaFormItem from './form-item.vue'
 import { get, isUndefined, set, xor, isObject, indexOf } from 'lodash'
-import { maEvent } from '../js/formItemMixin.js'
+import { runEvent } from '../js/event.js'
 import { handlerCascader, loadDict } from '../js/networkRequest.js'
 
 const props = defineProps({
@@ -106,6 +103,8 @@ const formModel = inject('formModel')
 const dictList  = inject('dictList')
 const formLoading = inject('formLoading')
 const columns = inject('columns')
+const columnService= inject('columnService')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, columnService, columns }, value)
 
 const index = props.customField ?? props.component.dataIndex
 const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1] + props.component.dataIndex : props.component.dataIndex
@@ -158,7 +157,7 @@ const handleCascaderChangeEvent = async (value) => {
   const component = props.component
   // 执行自定义事件
   if (component.onChange) {
-    maEvent.handleChangeEvent(component, value)
+    rv('onChange', value)
   }
 
   // 处理联动
@@ -169,13 +168,13 @@ const handleCascaderChangeEvent = async (value) => {
 
 }
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
+rv('onCreated')
 onMounted(() => {
   setTimeout(() => {
     if (isObject(dictList.value[index])) {
       dataTotal.value = dictList.value[index]?.pageInfo?.total
     }
   }, 800);
-  maEvent.handleCommonEvent(props.component, 'onMounted')
+  maEvent.handleCommonEvent(props.component, 'onMounted', { formModel, dictList, columns })
 })
 </script>
