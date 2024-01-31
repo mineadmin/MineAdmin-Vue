@@ -175,6 +175,6 @@ onMounted(() => {
       dataTotal.value = dictList.value[index]?.pageInfo?.total
     }
   }, 800);
-  maEvent.handleCommonEvent(props.component, 'onMounted', { formModel, dictList, columns })
+  rv('onMounted')
 })
 </script>
