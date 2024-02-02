@@ -68,7 +68,7 @@
               content="确定要删除数据吗?"
               position="bottom"
               @ok="deletesMultipleAction"
-              v-if="options.delete.show && isBatch(options.delete)"
+              v-if="options.delete.show && isBatch(options.delete) && options.rowSelection"
             >
               <a-button
                 v-auth="options.delete.auth || []"
