@@ -41,31 +41,31 @@
           :src="image.url"
         />
       </div>
-
-      <a-upload
-        :custom-request="uploadImageHandler"
-        :show-file-list="false"
-        :multiple="config.multiple"
-        :accept="config.accept ?? '.jpg,jpeg,.gif,.png,.svg,.bpm'"
-        :disabled="config.disabled"
-        :tip="config.tip"
-        :limit="config.limit"
-      >
-        <template #upload-button>
-          <slot name="customer">
-            <div
-              :class="'upload-skin ' + (config.rounded ? 'rounded-full' : 'rounded-sm')"
-              v-if="!props.modelValue || config.multiple"
-            >
-              <div class="icon text-3xl"><component :is="config.icon" /></div>
-              <div class="title">
-                {{ config.title === 'buttonText' ? $t('upload.buttonText') : config.title }}
-              </div>
-            </div>
-          </slot>
-        </template>
-      </a-upload>
     </a-space>
+    <a-upload
+      v-if="config.multiple || !currentItem.url"
+      :custom-request="uploadImageHandler"
+      :show-file-list="false"
+      :multiple="config.multiple"
+      :accept="config.accept ?? '.jpg,jpeg,.gif,.png,.svg,.bpm'"
+      :disabled="config.disabled"
+      :tip="config.tip"
+      :limit="config.limit"
+    >
+      <template #upload-button>
+        <slot name="customer">
+          <div
+            :class="'upload-skin ' + (config.rounded ? 'rounded-full' : 'rounded-sm')"
+            v-if="!props.modelValue || config.multiple"
+          >
+            <div class="icon text-3xl"><component :is="config.icon" /></div>
+            <div class="title">
+              {{ config.title === 'buttonText' ? $t('upload.buttonText') : config.title }}
+            </div>
+          </div>
+        </slot>
+      </template>
+    </a-upload>
   </div>
 </template>
 <script setup>
