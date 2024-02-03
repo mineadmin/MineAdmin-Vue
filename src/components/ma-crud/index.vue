@@ -177,9 +177,8 @@
                   @dblclick="dbClickOpenEdit(record)"
                 />
               </template>
-
-              <template #expand-row="record" v-if="options.showExpandRow">
-                <slot name="expand-row" v-bind="record"></slot>
+              <template #expand-row="record">
+                <slot name="expandRow" v-bind="record"></slot>
               </template>
               <template #columns>
                 <ma-column
