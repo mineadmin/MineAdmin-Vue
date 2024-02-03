@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@arco-design/color": "^0.4.0",
-    "@arco-design/web-vue": "^2.53.3",
+    "@arco-design/web-vue": "^2.54.3",
     "@arco-themes/vue-mine-admin-v2": "^0.0.2",
     "@tinymce/tinymce-vue": "^5.0.0",
     "@vitejs/plugin-vue": "^4.2.1",
@@ -19,7 +19,7 @@
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "autoprefixer": "^10.4.0",
-    "axios": "^0.27.2",
+    "axios": "^1.6.0",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.2",
     "echarts": "^5.4.2",
