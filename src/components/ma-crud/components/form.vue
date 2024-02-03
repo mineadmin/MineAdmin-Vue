@@ -39,14 +39,15 @@ import { useRouter } from 'vue-router'
 import tool from '@/utils/tool'
 import { useFormStore } from '@/store/index'
 
+const columns = inject('columns')
+const options = inject('options')
+
 const formStore = useFormStore()
 const router = useRouter()
 const app = getCurrentInstance().appContext.app
 const maFormRef = ref()
 const componentName = ref('a-modal')
-const columns = inject('columns')
 const layoutColumns = ref(new Map());
-const options = inject('options')
 const formColumns = ref([])
 const currentAction = ref('')
 const dataVisible = ref(false)
@@ -105,7 +106,7 @@ const open = () => {
     }
     const config = {
       options,
-      sourceColumns: columns,
+      sourceColumns: columns.value,
       formColumns: formColumns.value
     }
 
@@ -169,7 +170,7 @@ const init = () => {
   dataLoading.value = true
   const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
 
-  columns.map(async item => {
+  columns.value.map(async item => {
     await columnItemHandle(item)
   })
   // 设置表单布局
@@ -177,7 +178,7 @@ const init = () => {
   if (isArray(layout) && layout.length > 0) {
     formColumns.value = layout
     const excludeColumns = ['__index', '__operation']
-    columns.map(item => {
+    columns.value.map(item => {
       if (options.formExcludePk) excludeColumns.push(options.pk)
       if (excludeColumns.includes(item.dataIndex)) return
       ! item.__formLayoutSetting && formColumns.value.push(item)

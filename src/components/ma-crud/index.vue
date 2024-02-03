@@ -31,7 +31,7 @@
         ref="crudSearchRef"
       >
         <template
-          v-for="(slot, slotIndex) in searchSlots"
+          v-for="(slot, slotIndex) in getSearchSlot()"
           :key="slotIndex"
           #[slot]="{ searchForm, component }"
         >
@@ -185,7 +185,7 @@
                 <ma-column
                   ref="crudColumnRef"
                   v-if="reloadColumn"
-                  :columns="props.columns"
+                  :columns="columns"
                   :isRecovery="isRecovery"
                   :crudFormRef="crudFormRef"
                   @refresh="() => refresh()"
@@ -204,7 +204,7 @@
                   </template>
 
                   <template
-                    v-for="(slot, slotIndex) in slots"
+                    v-for="(slot, slotIndex) in getSlot(columns)"
                     :key="slotIndex"
                     #[slot]="{ record, column, rowIndex }"
                   >
@@ -294,8 +294,6 @@ const imgVisible = ref(false)
 const imgUrl = ref(import.meta.env.VITE_APP_BASE + 'not-image.png')
 const total = ref(0)
 const requestParams = ref({})
-const slots = ref([])
-const searchSlots = ref([])
 const isRecovery = ref(false)
 const expandState = ref(false)
 
@@ -330,13 +328,13 @@ const init = async () => {
   }
 
   // 收集数据
-  props.columns.map(item => {
+  columns.value.map(item => {
     if (item.cascaderItem && item.cascaderItem.length > 0) {
       cascaders.value.push(...item.cascaderItem)
     }
   })
 
-  await props.columns.map(async item => {
+  await columns.value.map(async item => {
     // 字典
     if (! cascaders.value.includes(item.dataIndex) && item.dict) {
       await loadDict(dicts.value, item)
@@ -374,11 +372,10 @@ columns.value.map((item, index) => {
 })
 
 provide('options', options.value)
-provide('columns', props.columns)
-provide('layout', props.layout)
-provide('dicts', dicts.value)
-provide('dictColors', dictColors.value)
 provide('requestParams', requestParams.value)
+provide('columns', columns)
+provide('dicts', dicts)
+provide('layout', props.layout)
 provide('dictTrans', dictTrans)
 provide('dictColors', dictColors)
 provide('isRecovery', isRecovery)
@@ -403,6 +400,11 @@ watch(
     }
 )
 
+const showImage = (url) => {
+  imgUrl.value = url
+  imgVisible.value = true
+}
+
 const getSlot = (cls = []) => {
   let sls = []
   cls.map(item => {
@@ -416,23 +418,15 @@ const getSlot = (cls = []) => {
   return sls
 }
 
-const showImage = url => {
-  imgUrl.value = url
-  imgVisible.value = true
-}
-
 const getSearchSlot = () => {
   let sls = []
-  props.columns.map(item => {
+  columns.value.map(item => {
     if (item.search && item.search === true) {
       sls.push(item.dataIndex)
     }
   })
   return sls
 }
-
-slots.value = getSlot(props.columns)
-searchSlots.value = getSearchSlot(props.columns)
 
 const requestData = async () => {
   await init()
@@ -777,7 +771,7 @@ const tabsHandler = async () => {
     if ( isFunction(tabs.data) || isArray(tabs.data) ) {
         tabs.data = isFunction(tabs.data) ? await tabs.data() : tabs.data
     } else if (! isUndefined(tabs.dataIndex) ) {
-        const col = props.columns.find( item => item.dataIndex === tabs.dataIndex )
+        const col = columns.value.find( item => item.dataIndex === tabs.dataIndex )
         if ( col.search === true && isObject(col.dict) ) {
             tabs.data = dicts.value[tabs.dataIndex]
         }

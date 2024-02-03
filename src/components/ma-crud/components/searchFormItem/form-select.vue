@@ -84,7 +84,7 @@ const handleSelectAll = (status) => {
     value.value = []
   }
   if (status) {
-    dicts[dictIndex].map(item=>{
+    dicts.value[dictIndex].map(item=>{
       value.value.push(item.value)
     })
   } else {
@@ -97,13 +97,13 @@ const handleInverse = () => {
     value.value = []
   }
   const ids = []
-  dicts[dictIndex].map( item => ids.push(item.value) )
+  dicts.value[dictIndex].map( item => ids.push(item.value) )
   value.value = xor(ids, value.value)
 }
 
 const handlePage = async (page) => {
   props.component.dict.pageOption.page = page
-  await loadDict(dicts, props.component)
+  await loadDict(dicts.value, props.component)
 }
 
 watch( () => get(searchForm.value, props.component.dataIndex), vl => value.value = vl )
@@ -111,14 +111,14 @@ watch( () => value.value, v => set(searchForm.value, props.component.dataIndex, 
 
 const handlerChangeeEvent = (value) => {
   handlerCascader(
-    value, props.component, columns, dicts, searchForm.value
+    value, props.component, columns.value, dicts.value, searchForm.value
   )
 }
 
 onMounted(() => {
   setTimeout(() => {
-    if (isObject(dicts[dictIndex])) {
-      dataTotal.value = dicts[dictIndex]?.pageInfo?.total
+    if (isObject(dicts.value[dictIndex])) {
+      dataTotal.value = dicts.value[dictIndex]?.pageInfo?.total
     }
   }, 3000);
 })
