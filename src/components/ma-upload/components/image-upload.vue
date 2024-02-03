@@ -1,63 +1,67 @@
 <template>
   <div class="upload-image flex">
     <!-- 单图 -->
-    <div
-      :class="'image-list ' + (config.rounded ? 'rounded-full' : '')"
-      v-if="! config.multiple && currentItem?.url && config.showList"
-    >
-      <a-button
-        class="delete"
-        @click="removeSignImage()"
-      >
-        <template #icon><icon-delete /></template>
-      </a-button>
-      <a-image
-        width="130"
-        height="130"
-        :class="config.rounded ? 'rounded-full' : ''"
-        :src="currentItem.url"
-      />
-    </div>
-    <!-- 多图显示 -->
-    <a-space
-      v-else-if="config.multiple && config.showList"
-      :class="showImgList.length > 0 ? 'mr-2' : ''"
-      wrap
-    >
+    <a-space wrap>
       <div
-        :class="'image-list ' + (config.rounded ? 'rounded-full' : '')"
-        v-for="(image, idx) in showImgList" :key="idx"
+          :class="'image-list ' + (config.rounded ? 'rounded-full' : '')"
+          v-if="! config.multiple && currentItem?.url && config.showList"
       >
         <a-button
-          class="delete"
-          @click="removeImage(idx)"
+            class="delete"
+            @click="removeSignImage()"
         >
-          <template #icon><icon-delete /></template>
+          <template #icon>
+            <icon-delete/>
+          </template>
         </a-button>
         <a-image
-          width="130"
-          height="130"
-          :class="config.rounded ? 'rounded-full' : ''"
-          :src="image.url"
+            width="130"
+            height="130"
+            :class="config.rounded ? 'rounded-full' : ''"
+            :src="currentItem.url"
         />
       </div>
+      <!-- 多图显示 -->
+      <template v-else-if="config.multiple && config.showList">
+        <div
+            :class="'image-list ' + (config.rounded ? 'rounded-full' : '')"
+            v-for="(image, idx) in showImgList" :key="idx"
+        >
+          <a-button
+              class="delete"
+              @click="removeImage(idx)"
+          >
+            <template #icon>
+              <icon-delete/>
+            </template>
+          </a-button>
+          <a-image
+              width="130"
+              height="130"
+              :class="config.rounded ? 'rounded-full' : ''"
+              :src="image.url"
+          />
+        </div>
+      </template>
 
       <a-upload
-        :custom-request="uploadImageHandler"
-        :show-file-list="false"
-        :multiple="config.multiple"
-        :accept="config.accept ?? '.jpg,jpeg,.gif,.png,.svg,.bpm'"
-        :disabled="config.disabled"
-        :tip="config.tip"
-        :limit="config.limit"
+          :custom-request="uploadImageHandler"
+          :show-file-list="false"
+          :multiple="config.multiple"
+          :accept="config.accept ?? '.jpg,jpeg,.gif,.png,.svg,.bpm'"
+          :disabled="config.disabled"
+          :tip="config.tip"
+          :limit="config.limit"
       >
         <template #upload-button>
           <slot name="customer">
             <div
-              :class="'upload-skin ' + (config.rounded ? 'rounded-full' : 'rounded-sm')"
-              v-if="!props.modelValue || config.multiple"
+                :class="'upload-skin ' + (config.rounded ? 'rounded-full' : 'rounded-sm')"
+                v-if="!props.modelValue || config.multiple"
             >
-              <div class="icon text-3xl"><component :is="config.icon" /></div>
+              <div class="icon text-3xl">
+                <component :is="config.icon"/>
+              </div>
               <div class="title">
                 {{ config.title === 'buttonText' ? $t('upload.buttonText') : config.title }}
               </div>
@@ -76,10 +80,14 @@ import { getFileUrl, uploadRequest } from '../js/utils'
 import { Message } from '@arco-design/web-vue'
 
 import { useI18n } from 'vue-i18n'
+
 const { t } = useI18n()
 
 const props = defineProps({
-  modelValue: { type: [ String, Number, Array ], default: () => {} }
+  modelValue: {
+    type: [String, Number, Array], default: () => {
+    }
+  }
 })
 const emit = defineEmits(['update:modelValue'])
 const config = inject('config')
@@ -88,13 +96,13 @@ const showImgList = ref([])
 const signImage = ref()
 const currentItem = ref({})
 
-const uploadImageHandler = async (options) => {
-  if (! options.fileItem) return
-  if (! config.multiple) {
+const uploadImageHandler = async(options) => {
+  if(!options.fileItem) return
+  if(!config.multiple) {
     currentItem.value = options.fileItem
   }
   const file = options.fileItem.file
-  if (file.size > config.size) {
+  if(file.size > config.size) {
     Message.warning(file.name + ' ' + t('upload.sizeLimit'))
     currentItem.value = {}
     return
@@ -102,9 +110,9 @@ const uploadImageHandler = async (options) => {
 
   const result = await uploadRequest(file, 'image', 'uploadImage', config.requestData)
 
-  if (result) {
+  if(result) {
     result.url = tool.attachUrl(result.url, storageMode[result.storage_mode])
-    if (! config.multiple) {
+    if(!config.multiple) {
       signImage.value = result[config.returnType]
       emit('update:modelValue', signImage.value)
     } else {
@@ -133,23 +141,27 @@ const removeImage = (idx) => {
   emit('update:modelValue', files)
 }
 
-const init = async () => {
-  if (config.multiple) {
-    if (isArray(props.modelValue) && props.modelValue.length > 0) {
-      const result = await props.modelValue.map(async (item) => {
+const init = async() => {
+  if(config.multiple) {
+    if(isArray(props.modelValue) && props.modelValue.length > 0) {
+      const result = await props.modelValue.map(async(item) => {
         return await getFileUrl(config.returnType, item, storageMode)
       });
       const data = await Promise.all(result)
-      if (config.returnType === 'url') {
-        showImgList.value = data.map(url => { return { url } })
+      if(config.returnType === 'url') {
+        showImgList.value = data.map(url => {
+          return { url }
+        })
       } else {
-        showImgList.value = data.map(item => { return  { url: item.url, [config.returnType]: item[config.returnType] } })
+        showImgList.value = data.map(item => {
+          return { url: item.url, [config.returnType]: item[config.returnType] }
+        })
       }
     } else {
       showImgList.value = []
     }
-  } else if (props.modelValue) {
-    if (config.returnType === 'url') {
+  } else if(props.modelValue) {
+    if(config.returnType === 'url') {
       signImage.value = props.modelValue
       currentItem.value.url = props.modelValue
     } else {
@@ -158,7 +170,7 @@ const init = async () => {
       currentItem.value.url = result.url
     }
     currentItem.value.percent = 100
-    currentItem.value.status  = 'complete'
+    currentItem.value.status = 'complete'
   } else {
     removeSignImage()
   }
@@ -175,23 +187,31 @@ watch(() => props.modelValue, (val) => {
 .upload-skin {
   background-color: var(--color-fill-2);
   border: 1px dashed var(--color-fill-4);
-  width: 130px; height: 130px;
+  width: 130px;
+  height: 130px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  .icon, .title
-  {
+
+  .icon, .title {
     color: var(--color-text-3);
   }
 }
 
 .image-list {
-  cursor: pointer; position: relative;
+  cursor: pointer;
+  position: relative;
   background-color: var(--color-fill-2);
-  width: 130px; height: 130px;
+  width: 130px;
+  height: 130px;
+
   .delete {
-    position: absolute; z-index: 99; right: 3px; top: 3px; display: none;
+    position: absolute;
+    z-index: 99;
+    right: 3px;
+    top: 3px;
+    display: none;
   }
 
   .progress {
@@ -207,6 +227,7 @@ watch(() => props.modelValue, (val) => {
     display: block;
   }
 }
+
 .upload-skin:hover {
   border: 1px dashed rgb(var(--primary-6));
 }
