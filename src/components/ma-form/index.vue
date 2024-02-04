@@ -83,25 +83,6 @@ import ColumnService from './js/columnService.js'
 import { runEvent } from './js/event.js'
 import { Message } from '@arco-design/web-vue'
 
-const containerList = import.meta.globEager('./containerItem/*.vue')
-const componentList = import.meta.globEager('./formItem/*.vue')
-const _this = getCurrentInstance().appContext
-for (const path in containerList) {
-  const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
-  const containerName = `Ma${toHump(name)}`
-  if (! _this.components[containerName]) {
-    _this.app.component(containerName, containerList[path].default)
-  }
-}
-
-for (const path in componentList) {
-  const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
-  const componentName = `Ma${toHump(name)}`
-  if (! _this.components[componentName]) {
-    _this.app.component(componentName, componentList[path].default)
-  }
-}
-
 const formLoading = ref(false)
 const maFormRef = ref()
 const flatteningColumns = ref([])
@@ -125,7 +106,7 @@ watch(
 watch(
   () => form.value,
   vl => {
-    interactiveControl(vl, flatteningColumns.value)
+    interactiveControl(vl, flatteningColumns.value, { getColumnService, dictList })
     emit('update:modelValue', vl)
   },
   { deep: true }
@@ -175,7 +156,7 @@ const init = async () => {
   })
 
   await nextTick(() => {
-    interactiveControl(form.value, flatteningColumns.value)
+    interactiveControl(form.value, flatteningColumns.value, { getColumnService, dictList })
     formLoading.value = false
   })
 }
@@ -183,6 +164,29 @@ const init = async () => {
 // maEvent.handleCommonEvent(options.value, 'onCreated')
 
 onMounted(async () => {
+
+  const containerList = import.meta.glob('./containerItem/*.vue')
+  const componentList = import.meta.glob('./formItem/*.vue')
+  const _this = getCurrentInstance().appContext
+
+  for (const path in containerList) {
+    const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
+    const containerName = `Ma${toHump(name)}`
+    if (! _this.components[containerName]) {
+      const container = await containerList[path]()
+      _this.app.component(containerName, container.default)
+    }
+  }
+
+  for (const path in componentList) {
+    const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
+    const componentName = `Ma${toHump(name)}`
+    if (! _this.components[componentName]) {
+      const component = await componentList[path]()
+      _this.app.component(componentName, component.default)
+    }
+  }
+
   // maEvent.handleCommonEvent(options.value, 'onMounted')
   options.value.init && await init()
   // maEvent.handleCommonEvent(options.value, 'onInit')
@@ -222,7 +226,7 @@ provide('columns', flatteningColumns)
 provide('dictList', dictList)
 provide('formModel', form)
 provide('formLoading', formLoading)
-provide('columnService', getColumnService)
+provide('getColumnService', getColumnService)
 
 defineExpose({
   init, getFormRef, getColumns, getDictList, getColumnService, getCascaderList, getFormData,

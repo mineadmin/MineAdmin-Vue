@@ -4,12 +4,12 @@ export const containerItems = ['tabs', 'table', 'card', 'grid', 'grid-tailwind',
 export const inputType      = ['input', 'input-password', 'input-search']
 export const pickerType     = ['date', 'month', 'year', 'week', 'quarter', 'range', 'time']
 
-export const interactiveControl = (form, columns) => {
+export const interactiveControl = (form, columns, maFormObject) => {
   const obj = []
   for (let name in form) {
     columns.map( item => {
       if (item.dataIndex === name && item.control && isFunction(item.control)) {
-        obj.push(item.control(get(form, name), form))
+        obj.push(item.control(get(form, name), maFormObject))
       }
     })
   }

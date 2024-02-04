@@ -25,8 +25,8 @@
     :destroy-on-hide="props.component?.destroyOnHide"
     @change="rv('onChange', $event)"
     @tab-click="rv('onTabClick', $event)"
-    @add="tabAddEvent(props.component, { formModel, columnService, columns })"
-    @delete="tabDeleteEvent(props.component, $event, { formModel, columnService, columns })"
+    @add="tabAddEvent(props.component, { formModel, getColumnService, columns })"
+    @delete="tabDeleteEvent(props.component, $event, { formModel, getColumnService, columns })"
   >
     <template #extra>
       <slot :name="`tabExtra-${props.component?.dataIndex ?? ''}`"></slot>
@@ -63,9 +63,9 @@ import { runEvent, tabAddEvent, tabDeleteEvent } from '../js/event.js'
 const props = defineProps({ component: Object })
 
 const formModel = inject('formModel')
-const columnService= inject('columnService')
+const getColumnService= inject('getColumnService')
 const columns = inject('columns')
-const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, columnService, columns }, value)
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, getColumnService, columns }, value)
 
 rv('onCreated')
 onMounted(() => rv('onMounted'))

@@ -160,9 +160,9 @@ const viewFormList = ref([])
 const options = inject('options')
 const formModel = inject('formModel')
 const dictList = inject('dictList')
-const columnService= inject('columnService')
+const getColumnService= inject('getColumnService')
 const columns = inject('columns')
-const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, columnService, columns }, value)
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, getColumnService, columns }, value)
 
 const defaultOpenKeys = [0]
 

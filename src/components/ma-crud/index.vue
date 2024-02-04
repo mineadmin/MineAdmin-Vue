@@ -157,7 +157,7 @@
             :pagination="options.tablePagination"
             :stripe="options.stripe"
             :bordered="options.bordered"
-            :rowSelection="options.rowSelection || undefined"
+            :rowSelection="options.rowSelection ?? undefined"
             :row-key="options?.rowSelection?.key ?? options.pk"
             :scroll="options.scroll"
             :column-resizable="options.resizable"
@@ -165,7 +165,7 @@
             :row-class="options.rowClass"
             :hide-expand-button-on-empty="options.hideExpandButtonOnEmpty"
             :default-expand-all-rows="options.expandAllRows"
-            :summary="options.customerSummary || __summary || options.showSummary"
+            :summary="(options.customerSummary || options.showSummary) && __summary"
             @selection-change="setSelecteds"
             @sorter-change="handlerSort"
           >
@@ -177,8 +177,9 @@
                   @dblclick="dbClickOpenEdit(record)"
                 />
               </template>
-              <template #expand-row="record">
-                <slot name="expandRow" v-bind="record"></slot>
+
+              <template #expand-row="record" v-if="options.showExpandRow">
+                <slot name="expand-row" v-bind="record"></slot>
               </template>
               <template #columns>
                 <ma-column

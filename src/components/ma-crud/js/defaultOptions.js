@@ -46,7 +46,7 @@ export default {
   // 是否显示总结行
   showSummary: false,
   // 自定义总结行，要传入函数
-  customerSummary: false,
+  customerSummary: undefined,
   // 是否显示工具栏
   showTools: true,
   // 表头是否吸顶

@@ -32,11 +32,11 @@ app.use(ArcoVue, {})
 .use(globalComponents)
 
 // 注册ma-icon图标
-const modules = import.meta.globEager('./assets/ma-icons/*.vue')
+const modules = import.meta.glob('./assets/ma-icons/*.vue')
 for (const path in modules) {
   const name = path.match(/([A-Za-z0-9_-]+)/g)[2]
   const componentName = `MaIcon${name}`
-  app.component(componentName, modules[path].default)
+  modules[path]().then( cmp => app.component(componentName, cmp.default) )
 }
 
 app.config.globalProperties.$tool = tool

@@ -31,9 +31,9 @@ const props = defineProps({ component: Object })
 const gridClass = ref(['ma-grid', 'grid', 'lg:grid-cols-' + props.component?.colNumber ?? 1])
 
 const formModel = inject('formModel')
-const columnService= inject('columnService')
+const getColumnService= inject('getColumnService')
 const columns = inject('columns')
-const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, columnService, columns }, value)
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, getColumnService, columns }, value)
 
 rv('onCreated')
 onMounted(() => rv('onMounted'))
