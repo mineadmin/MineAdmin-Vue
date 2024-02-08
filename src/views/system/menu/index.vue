@@ -130,7 +130,7 @@
         data: menuType, translation: true,
         tagColors: { 'M': 'blue', 'B': 'green', 'L': 'orangered', 'I': 'pinkpurple' }
       },
-      control: (value, maFormObject) => {
+      onControl: (value, maFormObject) => {
         const service = maFormObject.getColumnService()
         const dataIndexList = ['icon', 'route', 'component', 'redirect', 'sort', 'is_hidden', 'restful']
         if ( value === 'B' ) {

@@ -8,8 +8,8 @@ export const interactiveControl = (form, columns, maFormObject) => {
   const obj = []
   for (let name in form) {
     columns.map( item => {
-      if (item.dataIndex === name && item.control && isFunction(item.control)) {
-        obj.push(item.control(get(form, name), maFormObject))
+      if (item.dataIndex === name && item.onControl && isFunction(item.onControl)) {
+        obj.push(item.onControl(get(form, name), maFormObject))
       }
     })
   }
