@@ -96,8 +96,8 @@ watch(
   () => appStore.tag,
   r => {
     nextTick(() => {
-      if ( (tags.value.scrollWidth ?? false) && tags.value.offsetWidth ) {
-        tagShowPrevNext.value = tags.value.scrollWidth > tags.value.offsetWidth
+      if ( (tags.value?.scrollWidth ?? false) && tags.value?.offsetWidth ) {
+        tagShowPrevNext.value = tags.value?.scrollWidth > tags.value.offsetWidth
       }
     })
   },
