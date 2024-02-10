@@ -1,8 +1,8 @@
 {
   "name": "mineadmin-vue",
   "admin_name": "mineadmin-vue",
-  "type": "module",
   "version": "2.0",
+  "type": "module",
   "license": "MIT",
   "scripts": {
     "dev": "vite serve --mode development",
@@ -13,12 +13,12 @@
   "dependencies": {
     "@arco-design/color": "^0.4.0",
     "@arco-design/web-vue": "^2.54.4",
-    "@arco-themes/vue-mine-admin-v2": "^0.0.2",
+    "@arco-themes/vue-mine-admin-v2": "^0.0.3",
     "@tinymce/tinymce-vue": "^5.0.0",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "autoprefixer": "^10.4.17",
-    "axios": "^1.6.0",
+    "axios": "^1.6.7",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.2",
     "echarts": "^5.4.2",

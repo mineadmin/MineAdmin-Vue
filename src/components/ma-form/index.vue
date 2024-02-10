@@ -118,6 +118,28 @@ const options = ref(Object.assign(cloneDeep(defaultOptions), props.options))
 // 初始化
 const init = async () => {
 
+  const containerList = import.meta.glob('./containerItem/*.vue')
+  const componentList = import.meta.glob('./formItem/*.vue')
+  const _this = getCurrentInstance().appContext
+
+  for (const path in containerList) {
+    const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
+    const containerName = `Ma${toHump(name)}`
+    if (! _this.components[containerName]) {
+      const container = await containerList[path]()
+      _this.app.component(containerName, container.default)
+    }
+  }
+
+  for (const path in componentList) {
+    const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
+    const componentName = `Ma${toHump(name)}`
+    if (! _this.components[componentName]) {
+      const component = await componentList[path]()
+      _this.app.component(componentName, component.default)
+    }
+  }
+
   formLoading.value = true
   
   handleFlatteningColumns(props.columns, flatteningColumns.value)
@@ -164,29 +186,6 @@ const init = async () => {
 // maEvent.handleCommonEvent(options.value, 'onCreated')
 
 onMounted(async () => {
-
-  const containerList = import.meta.glob('./containerItem/*.vue')
-  const componentList = import.meta.glob('./formItem/*.vue')
-  const _this = getCurrentInstance().appContext
-
-  for (const path in containerList) {
-    const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
-    const containerName = `Ma${toHump(name)}`
-    if (! _this.components[containerName]) {
-      const container = await containerList[path]()
-      _this.app.component(containerName, container.default)
-    }
-  }
-
-  for (const path in componentList) {
-    const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
-    const componentName = `Ma${toHump(name)}`
-    if (! _this.components[componentName]) {
-      const component = await componentList[path]()
-      _this.app.component(componentName, component.default)
-    }
-  }
-
   // maEvent.handleCommonEvent(options.value, 'onMounted')
   options.value.init && await init()
   // maEvent.handleCommonEvent(options.value, 'onInit')

@@ -36,10 +36,10 @@
     resize-observer-polyfill "^1.5.1"
     scroll-into-view-if-needed "^2.2.28"
 
-"@arco-themes/vue-mine-admin-v2@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@arco-themes/vue-mine-admin-v2/-/vue-mine-admin-v2-0.0.2.tgz#bab703f8a49c065c24420419e65dec7262dfd186"
-  integrity sha512-x/osOJbJyBnbyMuh6mDBXwM84VMMhGrVYdiy8JABmdKlOOT5K996ryDcLuXMzpifRSw4+2yNS0etvc3EkKmfgw==
+"@arco-themes/vue-mine-admin-v2@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@arco-themes/vue-mine-admin-v2/-/vue-mine-admin-v2-0.0.3.tgz#80a42d28ae600e4ce6cfef8de2a23846c43a06bf"
+  integrity sha512-xnb1xz/DLcC0ruOqT/nTOxMC7laU5KP6wsdP6kOGGUpWr7ANJhqMbHWsXOo9ahKRuF/aolBCypdv4f9pvXVvZg==
 
 "@babel/code-frame@^7.23.5":
   version "7.23.5"
@@ -955,7 +955,7 @@ axios@^0.27.2:
     follow-redirects "^1.14.9"
     form-data "^4.0.0"
 
-axios@^1.6.0:
+axios@^1.6.7:
   version "1.6.7"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.6.7.tgz#7b48c2e27c96f9c68a2f8f31e2ab19f59b06b0a7"
   integrity sha512-/hDJGff6/c7u0hDkvkGxR/oy6CbCs8ziCsC7SqmhjfozqiJGc8Z11wrv9z9lYfY4K8l+H9TpjcMDX0xOZmx+RA==

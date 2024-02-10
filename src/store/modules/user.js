@@ -51,10 +51,10 @@ const useUserStore = defineStore('user', {
 
     requestUserInfo() {
       return new Promise((resolve, reject) => {
-        loginApi.getInfo().then(response => {
+        loginApi.getInfo().then(async response => {
           if (! response || ! response.data) {
             this.clearToken()
-            router.push({ name: 'login' })
+            await router.push({name: 'login'})
             reject(false)
           } else {
             this.setInfo(response.data)
@@ -62,7 +62,7 @@ const useUserStore = defineStore('user', {
             this.setMenu(this.routers)
             this.routers = removeButtonMenu(this.routers)
             this.routers.unshift(homePage)
-            this.setApp()
+            await this.setApp()
             resolve(response.data)
           }
         })
@@ -152,7 +152,7 @@ const filterAsyncRouter = (routerMap) => {
       const route = {
         path: item.path,
         name: item.name,
-        hidden: item.hidden == 1,
+        hidden: item.hidden === 1,
         meta: item.meta,
         children: item.children ? filterAsyncRouter(item.children) : null,
         component: views[`../../views/${item.component}.vue`]

@@ -25,12 +25,12 @@
     </a-input-group>
     <a-tree
       blockNode
+      ref="maTree"
       :data="treeData"
       class="h-full w-full"
       @select="handlerSelect"
       :field-names="props.fieldNames"
-      v-model:selected-keys="selectedKeys"
-      ref="maTree"
+      v-model:selected-keys="modelValue"
       v-bind="$attrs"
     >
       <template #icon v-if="props.icon"><component :is="props.icon" /></template>
@@ -39,49 +39,49 @@
 </template>
 
 <script setup>
-  import { ref, watch, onMounted } from 'vue'
+  import { ref, watch, computed } from 'vue'
 
   const treeData = ref([])
-  const selectedKeys = ref([])
   const maTree = ref()
   const isExpand = ref(false)
 
-  const emit = defineEmits(['click'])
+  const emit = defineEmits(['update:modelValue', 'click'])
 
   const props = defineProps({
     modelValue: { type: Array },
+    data: { type: Array },
     searchPlaceholder: { type: String },
-    selectedKeys: { type: Array },
-    fieldNames: { type: Object, default: () => { return { title: 'label', value: 'code' } } },
+    fieldNames: { type: Object, default: () => { return { title: 'label', key: 'value' } } },
     icon: { type: String, default: undefined },
   })
 
-  onMounted( () => selectedKeys.value = props.selectedKeys )
-
-  watch(
-    () => props.modelValue,
-    val => { 
-      treeData.value = val
+  const modelValue = computed({
+    get() {
+      return props.modelValue
+    },
+    set(newVal) {
+      emit('update:modelValue', newVal)
     }
-  )
+  })
 
   watch(
-    () => props.selectedKeys,
+    () => props.data,
     val => {
-      selectedKeys.value = val
-    }
+      treeData.value = val
+    },
+    { immediate: true, deep: true }
   )
 
   const handlerSelect = (item, data) => {
-    selectedKeys.value = [ item ]
+    modelValue.value = [ item ]
     emit('click', ...[item, data])
   }
 
-  const resetData = () => treeData.value = props.modelValue
+  const resetData = () => treeData.value = props.data
 
   const changeKeyword = (keyword) => {
     if (!keyword || keyword === '') {
-      treeData.value = Object.assign(props.modelValue, [])
+      treeData.value = Object.assign(props.data, [])
       return false
     }
     treeData.value = searchNode(keyword)
