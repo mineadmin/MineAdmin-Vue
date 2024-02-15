@@ -3,7 +3,7 @@
 </p>
 <p align="center">
   <img src="https://svg.hamm.cn/badge.svg?key=License&value=MIT" />
-  <img src="https://svg.hamm.cn/badge.svg?key=Version&value=2.0 LTS" />
+  <img src="https://svg.hamm.cn/badge.svg?key=Version&value=2.0%20LTS" />
 </p>
 
 ## 简介
