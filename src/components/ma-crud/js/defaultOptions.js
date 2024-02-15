@@ -211,16 +211,22 @@ export default {
     // 是否显示批量处理按钮
     batch: true,
   },
-  // see: {
-  //   // 显示查看按钮的权限
-  //   auth: [],
-  //   // 显示查看按钮的角色
-  //   role: [],
-  //   // 按钮文案
-  //   text: '查看',
-  //   // 是否显示
-  //   show: false,
-  // },
+  see: {
+    // 显示查看按钮的权限
+    auth: [],
+    // 显示查看按钮的角色
+    role: [],
+    // 按钮文案
+    text: '查看',
+    // 是否显示
+    show: false,
+    // 数据来源：table(表格行数据) | api(通过接口获取数据)
+    dataSource: 'table',
+    // 数据源API接口 
+    dataSourceApi: undefined,
+    // 是否禁用，仅表格行内按钮有效
+    disabled: false,
+  },
   import: {
     // 导入url
     url: undefined,

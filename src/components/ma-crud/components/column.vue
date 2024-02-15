@@ -61,14 +61,14 @@
               <a-space size="mini">
                 <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
                 <slot name="operationCell" v-bind="{ record, column, rowIndex }">
-                  <!-- <a-link
-                    v-if="
-                      options.see.show
-                      && ($common.auth(options.see.auth || [])
-                      || (options.see.role || []))
-                    "
+                  <a-link
+                    v-if="(isFunction(options.see.show) ? options.see.show(record) : options.see.show) && !props.isRecovery"
+                    v-auth="options.see.auth || []"
+                    v-role="options.see.role || []"
                     type="primary"
-                  ><icon-eye /> {{ options.see.text || '查看' }}</a-link> -->
+                    :disabled="(isFunction(options.see.disabled) ? options.see.disabled(record) : options.see.disabled)"
+                    @click="seeAction(record)"
+                  ><icon-eye /> {{ options.see.text || '查看' }}</a-link>
                   <a-link
                       v-if="(isFunction(options.edit.show) ? options.edit.show(record) : options.edit.show) && !props.isRecovery"
                       v-auth="options.edit.auth || []"
@@ -216,6 +216,17 @@ const getIndex = rowIndex => {
     return index
   } else {
     return (requestParams[config.request.page] - 1) * requestParams[config.request.pageSize] + index
+  }
+}
+
+const seeAction = record => {
+  if (isFunction(options.beforeOpenSee) && ! options.beforeOpenSee(record)) {
+    return false
+  }
+  if (options.see.action && isFunction(options.see.action)) {
+    options.see.action(record)
+  } else {
+    props.crudFormRef.see(record)
   }
 }
 
