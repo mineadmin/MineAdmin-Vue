@@ -111,7 +111,7 @@ const props = defineProps({
   columns: { type: Array },
   options: { type: Object, default: {} },
 })
-const emit = defineEmits(['onSubmit', 'update:modelValue'])
+const emit = defineEmits(['submit', 'update:modelValue'])
 
 watch(
   () => props.modelValue,
@@ -203,7 +203,10 @@ const validateForm = async () => {
 const resetForm = async() => await maFormRef.value.resetFields()
 const clearValidate = async() => await maFormRef.value.clearValidate()
 
-const formSubmit = async () =>  (await validateForm() && !formLoading.value ) || emit('onSubmit', form.value, done)
+const formSubmit = async () => {
+  await validateForm()
+  emit('submit', form.value, done)
+}
 
 const getFormRef = () => maFormRef.value
 const getDictList = () => dictList.value
