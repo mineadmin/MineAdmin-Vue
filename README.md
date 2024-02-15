@@ -53,7 +53,7 @@ yarn build
 ## 协议说明
 `MineAdmin Vue` 遵循MIT开源协议发布，免费开源。
 
-版权所有Copyright © 2020-2022 by MineAdmin (http://www.mineadmin.com)
+版权所有Copyright © 2020-2024 by MineAdmin (http://www.mineadmin.com)
 
 All rights reserved。
 
