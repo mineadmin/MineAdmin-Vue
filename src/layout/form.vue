@@ -6,7 +6,7 @@
       :subtitle="`数据${opName}页`"
       @back="pageBack"
     >
-      <ma-form v-model="form" :columns="formConfig?.formColumns ?? []" ref="maFormRef" @onSubmit="submitForm" />
+      <ma-form v-model="form" :columns="formConfig?.formColumns ?? []" ref="maFormRef" @submit="submitForm" />
     </a-page-header>
   </div>
 </template>
