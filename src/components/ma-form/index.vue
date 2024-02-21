@@ -118,8 +118,8 @@ const options = ref({})
 
 // 初始化
 const init = async () => {
-  const containerList = import.meta.glob('./containerItem/*.vue')
-  const componentList = import.meta.glob('./formItem/*.vue')
+  const containerList = import.meta.glob('./containerItem/*.vue', { eager: true })
+  const componentList = import.meta.glob('./formItem/*.vue', { eager: true })
   const _this = getCurrentInstance()?.appContext ?? undefined
 
   if (_this) {
@@ -127,8 +127,7 @@ const init = async () => {
       const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
       const containerName = `Ma${toHump(name)}`
       if (!_this.components[containerName]) {
-        const container = await containerList[path]()
-        _this.app.component(containerName, container.default)
+        _this.app.component(containerName, containerList[path].default)
       }
     }
 
@@ -136,8 +135,7 @@ const init = async () => {
       const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
       const componentName = `Ma${toHump(name)}`
       if (!_this.components[componentName]) {
-        const component = await componentList[path]()
-        _this.app.component(componentName, component.default)
+        _this.app.component(componentName, componentList[path].default)
       }
     }
   }
