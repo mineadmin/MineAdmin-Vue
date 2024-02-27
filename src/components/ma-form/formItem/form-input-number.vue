@@ -36,6 +36,12 @@
         @focus="maEvent.handleCommonEvent(props.component, 'onFocus')"
         @blur="maEvent.handleCommonEvent(props.component, 'onBlur')"
       >
+        <template #prepend v-if="props.component.openPrepend">
+          <slot :name="`inputPrepend-${props.component.dataIndex}`" />
+        </template>
+        <template #append v-if="props.component.openAppend">
+          <slot :name="`inputAppend-${props.component.dataIndex}`" />
+        </template>
         <template #suffix v-if="props.component.openSuffix">
           <slot :name="`inputSuffix-${props.component.dataIndex}`" />
         </template>
