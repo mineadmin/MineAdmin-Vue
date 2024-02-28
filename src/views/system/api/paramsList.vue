@@ -100,12 +100,9 @@ const columns = reactive([
     title: '必填', dataIndex: 'is_required', search: true,
     dict: { data: [{ label: '是', value: 2 }, { label: '否', value: 1 }], translation: true },
     addDefaultValue: 2, formType: 'radio', span: 8,
-    control: (value) => {
-      if ( value == 2) {
-        return { 'default_value': { display: false } }
-      } else {
-        return { 'default_value': { display: true } }
-      }
+    onControl: (value, maFormObject) => {
+      const service = maFormObject.getColumnService()
+      service.get('default_value').setAttr('display', value == 2 ? false : true)
     }
   },
   {

@@ -132,12 +132,15 @@ function stringify (data) {
           'Accept-Language': setting?.language || 'zh_CN',
           'Content-Type': get(config, 'headers.Content-Type', 'application/json;charset=UTF-8')
         },
-        config.header
+        config.headers
       ),
 
       timeout: 10000,
       data: {}
     }
+
+    delete config.headers
+    // return
     const option = Object.assign(configDefault, config)
 
     // json

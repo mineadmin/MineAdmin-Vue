@@ -6,9 +6,9 @@ const setting = tool.local.get('setting')
 const getLanguage = () => {
   const loadFile = () => {
     if (setting.language === 'zh_CN') {
-      return import.meta.glob('./zh_CN/**/*.js', {eager:true})
+      return import.meta.glob('./zh_CN/**/*.js', { eager:true })
     } else if (setting.language === 'en') {
-      return import.meta.glob('./en/**/*.js', {eager:true})
+      return import.meta.glob('./en/**/*.js', { eager:true })
     }
   }
 

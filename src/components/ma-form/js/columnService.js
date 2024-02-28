@@ -15,6 +15,8 @@ const objectService = function (item) {
     return item[key]
   }
 
+
+
   this.get = () => {
     return item
   }
@@ -79,6 +81,8 @@ class ColumnService {
 
   dicts
 
+  refs
+
   strictMode
 
   /**
@@ -89,6 +93,7 @@ class ColumnService {
     this.columns = data.columns
     this.cascaders = data.cascaders
     this.dicts = data.dicts
+    this.refs = data?.refs ?? {}
     this.strictMode = strictMode
 
     this.columns.forEach(item => {
@@ -98,6 +103,10 @@ class ColumnService {
     for (const [dataIndex, dictData] of Object.entries(this.dicts)) {
       this.dictMap.set(dataIndex, new dictService(dataIndex, dictData))
     }
+  }
+
+  getDialogRefs(refName = undefined) {
+    return refName ? this.refs[refName] : this.refs
   }
 
   getDictService(dataIndex) {

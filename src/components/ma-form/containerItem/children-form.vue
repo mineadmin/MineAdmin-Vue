@@ -147,12 +147,11 @@
 </template>
 
 <script setup>
-import {ref, inject, provide, onMounted, watch, nextTick, shallowRef, isRef} from 'vue'
-import {cloneDeep, get, isArray, isUndefined, set} from 'lodash'
+import {ref, inject, onMounted, watch, nextTick } from 'vue'
+import {cloneDeep, isArray, isUndefined } from 'lodash'
 import { getComponentName, containerItems } from '../js/utils.js'
 import { runEvent } from '../js/event.js'
-import { loadDict, handlerCascader } from '../js/networkRequest.js'
-import arrayComponentDefault from '../js/defaultArrayComponent.js'
+import { loadDict } from '../js/networkRequest.js'
 
 const props = defineProps({ component: Object })
 const formList = props.component.formList
@@ -183,7 +182,7 @@ watch(() => formModel.value[props.component.dataIndex], (value) => {
         value[index] = Object.fromEntries(data)
       }
       viewFormList.value[index] = cloneDeep(formList)
-      maEvent.customeEvent(props.component, {formList: viewFormList.value[index], data, index}, 'onAdd')
+      rv('onAdd', { formList: viewFormList.value[index], data, index } )
     })
   }
 },{
@@ -204,12 +203,12 @@ if (props.component.type == 'table') {
 const addItem = async (data = {}) => {
   let index = formModel.value[props.component.dataIndex].length
   viewFormList.value[index] = cloneDeep(formList)
-  maEvent.customeEvent(props.component, {formList: viewFormList.value[index], data, index: index}, 'onAdd')
+  rv('onAdd', { formList: viewFormList.value[index], data, index } )
   formModel.value[props.component.dataIndex].push(data)
 }
 
 const deleteItem = async (index) => {
-  let res = await maEvent.customeEvent(props.component, {index}, 'onDelete')
+  let res = await rv('onDelete', { index })
   if (isUndefined(res) || res === true) {
     viewFormList.value.splice(index, 1)
     await nextTick()

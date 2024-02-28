@@ -21,7 +21,7 @@
   >
     <template #title>{{ actionTitle }}</template>
     <a-spin :loading="dataLoading" tip="加载中..." class="w-full">
-      <ma-form v-model="form" :columns="formColumns" :options="{ showButtons: false }" ref="maFormRef">
+      <ma-form v-model="form" :columns="formColumns" :options="formOptions" ref="maFormRef">
         <template v-for="slot in Object.keys($slots)" #[slot]="component">
           <slot :name="slot" v-bind="component" />
         </template>
@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { ref, toRaw, getCurrentInstance, inject, provide } from 'vue'
+import { ref, toRaw, getCurrentInstance, inject, provide, nextTick } from 'vue'
 import { Message } from '@arco-design/web-vue'
 import { containerItems } from '@cps/ma-form/js/utils'
 import { isArray, isFunction, get, cloneDeep, isUndefined } from 'lodash'
@@ -44,7 +44,7 @@ const options = inject('options')
 
 const formStore = useFormStore()
 const router = useRouter()
-const app = getCurrentInstance().appContext.app
+const formOptions = ref({ showButtons: false })
 const maFormRef = ref()
 const componentName = ref('a-modal')
 const layoutColumns = ref(new Map());
@@ -95,7 +95,7 @@ const open = () => {
   formColumns.value = []
   layoutColumns.value = new Map()
   init()
-  if (options.formOption.viewType === 'tag') {
+  if (options.formOption.viewType === 'tag' && currentAction.value !== 'see') {
     if (! options.formOption.tagId ) {
       Message.info('未配置 tagId')
       return
@@ -144,15 +144,18 @@ const close = () => {
   formColumns.value = []
   form.value = {}
 }
-const add = () => {
+const add = async () => {
   actionTitle.value = options.add.title ?? '新增'
   currentAction.value = 'add'
+  formOptions.value['disabled'] = false
   form.value = {}
   open()
+  await nextTick(() => maFormRef.value.updateOptions() )
 }
 const edit = async (data) => {
   actionTitle.value = options.edit.title ?? '编辑'
   currentAction.value = 'edit'
+  formOptions.value['disabled'] = false
   form.value = {}
   if (options.edit.dataSource && options.edit.dataSource === 'api') {
     const response = await options.edit.dataSourceApi(data[options.pk])
@@ -164,6 +167,24 @@ const edit = async (data) => {
     for (let i in data) form.value[i] = data[i]
     open(data)
   }
+  await nextTick(() => maFormRef.value.updateOptions() )
+}
+const see = async (data) => {
+  actionTitle.value = options.see.title ?? '查看'
+  currentAction.value = 'see'
+  formOptions.value['disabled'] = true
+  form.value = {}
+  if (options.see.dataSource && options.see.dataSource === 'api') {
+    const response = await options.see.dataSourceApi(data[options.pk])
+    if (response.success) {
+      form.value = response.data
+      open(response.data)
+    }
+  } else {
+    for (let i in data) form.value[i] = data[i]
+    open(data)
+  }
+  await nextTick(() => maFormRef.value.updateOptions() )
 }
 
 const init = () => {
@@ -212,8 +233,8 @@ const columnItemHandle = async (item) => {
         form.value[item.dataIndex] = item.addDefaultValue
       }
     }
-    // edit 默认值处理
-    if (currentAction.value === 'edit') {
+    // edit 和 see 默认值处理
+    if (currentAction.value === 'edit' || currentAction.value === 'see') {
       if (item.editDefaultValue && isFunction(item.editDefaultValue)) {
         form.value[item.dataIndex] = await item.editDefaultValue(form.value)
       } else if (typeof item.editDefaultValue != 'undefined') {
@@ -301,7 +322,7 @@ const formItemShow = (item) => {
   if (currentAction.value === 'add') {
     return item.addDisplay !== false
   }
-  if (currentAction.value === 'edit') {
+  if (currentAction.value === 'edit' || currentAction.value === 'see') {
     return item.editDisplay !== false
   }
   return item.display !== false
@@ -312,6 +333,9 @@ const formItemDisabled = (item) => {
   }
   if (currentAction.value === 'edit' && ! isUndefined(item.editDisabled)) {
     return item.editDisabled
+  }
+  if (currentAction.value === 'see') {
+    return true
   }
   if (! isUndefined(item.disabled)) {
     return item.disabled
@@ -365,5 +389,5 @@ const getFormColumns = async (type = 'add') => {
   await init()
   return formColumns.value
 }
-defineExpose({ add, edit, currentAction, form, getFormColumns })
+defineExpose({ add, edit, see, currentAction, form, getFormColumns })
 </script>

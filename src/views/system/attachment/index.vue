@@ -11,12 +11,12 @@
   <div class="ma-content-block lg:flex justify-between p-4">
     <div class="lg:w-2/12 w-full h-full p-2 shadow">
       <ma-tree-slider
-        v-model="sliderData"
+        :data="sliderData"
         :search-placeholder="$t('maResource.searchResource')"
         :field-names="{ title: 'title', key: 'key' }"
         @click="handlerClick"
         icon="icon-folder"
-        :selected-keys="['all']"
+        v-model="defaultKey"
       />
     </div>
 
@@ -118,6 +118,7 @@
   const { t } = useI18n()
   const crudRef = ref()
   const mode = ref('list')
+  const defaultKey = ref(['all'])
   const sliderData = ref([])
   const selecteds = ref([])
 
@@ -128,6 +129,7 @@
   })
 
   const handlerClick = async (value) => {
+    defaultKey.value = value
     const type = value[0] === 'all' ? undefined : value[0]
     crudRef.value.requestParams.mime_type = type
     crudRef.value.refresh()

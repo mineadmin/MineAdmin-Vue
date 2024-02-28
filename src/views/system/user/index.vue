@@ -11,10 +11,9 @@
   <div class="ma-content-block lg:flex justify-between p-4">
     <div class="lg:w-2/12 w-full h-full p-2 shadow">
       <ma-tree-slider
-        v-model="depts"
+        :data="depts"
         searchPlaceholder="搜索部门"
-        :field-names="{ title: 'label', key: 'value' }"
-        :selectedKeys="defaultKey"
+        v-model="defaultKey"
         @click="switchDept"
       />
     </div>
@@ -83,19 +82,20 @@
   import commonApi from '@/api/common'
   import { Message, Modal } from '@arco-design/web-vue'
 
-  const depts = ref([])
+  const depts = ref([{ label: '所有部门', value: 0 }])
   const homePageList = ref([])
   const crudRef = ref()
 
   const setHomeVisible = ref(false)
   const userid = ref()
   const homePage = ref('')
-  const defaultKey = ref(['all'])
+  const defaultKey = ref([0])
 
   onMounted(() => {
     dept.tree().then(res => {
-      depts.value = res.data
-      depts.value.unshift({ label: '所有部门', value: 'all' })
+      res.data.map(item => {
+        depts.value.push(item)
+      })
     })
     commonApi.getDict('dashboard').then(res => homePageList.value = res.data )
   })
@@ -103,7 +103,7 @@
   let isRecovery = computed(() => crudRef.value ? crudRef.value.isRecovery : false )
 
   const switchDept = (id) => {
-    crudRef.value.requestParams = id[0] === 'all' ? { dept_id: undefined } : { dept_id: id[0] }
+    crudRef.value.requestParams = id[0] === 0 ? { dept_id: undefined } : { dept_id: id[0] }
     crudRef.value.requestData()
     defaultKey.value = id
   }
