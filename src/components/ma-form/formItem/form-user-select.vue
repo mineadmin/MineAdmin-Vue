@@ -36,7 +36,6 @@ const props = defineProps({
   customField: { type: String, default: undefined }
 })
 
-
 const formModel = inject('formModel')
 const index = props.customField ?? props.component.dataIndex
 const value = ref(get(formModel.value, index))
@@ -44,7 +43,7 @@ const value = ref(get(formModel.value, index))
 watch( () => get(formModel.value, index), vl => value.value = vl )
 watch( () => value.value, v => {
   if(props.component.multiple === false && v.length === 1) {
-    v = v.shift();
+    v = v.shift(); 
   }
   set(formModel.value, index, v)
   index.indexOf('.') > -1 && delete formModel.value[index]
