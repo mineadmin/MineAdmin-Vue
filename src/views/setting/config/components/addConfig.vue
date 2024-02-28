@@ -15,7 +15,7 @@
       v-model="form"
       :columns="columns"
       class="mt-7"
-      @onSubmit="submit"
+      @submit="submit"
     ></ma-form>
   </div>
 </template>

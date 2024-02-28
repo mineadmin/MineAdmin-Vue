@@ -11,7 +11,7 @@
   <a-modal v-model:visible="visible" :footer="false" draggable width="600px">
     <template #title>添加配置组</template>
 
-    <ma-form v-model="form" v-model:columns="columns" @onSubmit="submit" ref="maformRef"></ma-form>
+    <ma-form v-model="form" v-model:columns="columns" @submit="submit" ref="maformRef"></ma-form>
   </a-modal>
 </template>
 
