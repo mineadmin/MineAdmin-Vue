@@ -27,7 +27,7 @@
 
 <script setup>
 import { ref, inject, onMounted, watch } from 'vue'
-import { get, set } from 'lodash'
+import { get, set, isArray } from 'lodash'
 import MaUserSelect from '@/components/ma-user/index.vue'
 import MaFormItem from './form-item.vue'
 import { maEvent } from '../js/formItemMixin.js'
@@ -42,7 +42,7 @@ const value = ref(get(formModel.value, index))
 
 watch( () => get(formModel.value, index), vl => value.value = vl )
 watch( () => value.value, v => {
-  if(props.component.multiple === false && v.length === 1) {
+  if(props.component.multiple === false && isArray(v) && v.length === 1) {
     v = v.shift(); 
   }
   set(formModel.value, index, v)

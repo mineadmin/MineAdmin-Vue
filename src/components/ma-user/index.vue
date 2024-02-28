@@ -51,14 +51,25 @@
   const selecteds = ref([])
   const userList = ref([])
 
-  onMounted(() => {
-    if (props.isEcho && props.onlyId) selecteds.value = props.modelValue
+  onMounted(async () => {
+    if (props.onlyId) {
+      selecteds.value = isArray(props.modelValue) ? props.modelValue : [props.modelValue]
+
+      if (isArray(selecteds.value) && selecteds.value.length > 0) {
+        const response = await commonApi.getUserInfoByIds({ ids: selecteds.value })
+        if (! isEmpty(response) && isArray(response.data)) {
+          userList.value = response.data.map( item => {
+            return `${item.username}(${item.id})`
+          })
+        }
+      }
+    }
   })
 
   watch(
     ()  => props.modelValue,
     val => {
-      if (props.isEcho && props.onlyId) selecteds.value = val
+      if (props.onlyId) selecteds.value = isArray(val) ? val : [val]
     }
   )
 
