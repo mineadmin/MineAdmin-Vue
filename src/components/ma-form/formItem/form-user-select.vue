@@ -42,6 +42,9 @@ const value = ref(get(formModel.value, index))
 
 watch( () => get(formModel.value, index), vl => value.value = vl )
 watch( () => value.value, v => {
+  if(props.component.multiple === false && v.length === 1) {
+    v = v.shift(); 
+  }
   set(formModel.value, index, v)
   index.indexOf('.') > -1 && delete formModel.value[index]
 } )
