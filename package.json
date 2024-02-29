@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@arco-design/color": "^0.4.0",
-    "@arco-design/web-vue": "^2.54.4",
+    "@arco-design/web-vue": "^2.54.5",
     "@arco-themes/vue-mine-admin-v2": "^0.0.3",
     "@tinymce/tinymce-vue": "^5.0.0",
     "@wangeditor/editor": "^5.1.23",
