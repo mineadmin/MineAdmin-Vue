@@ -90,14 +90,12 @@ export const handleFlatteningColumns = (data, columns, isChildrenForm = undefine
             })
           }
           break
-        // case 'children-form':
-        //   item.formList && handleFlatteningColumns(item.formList, columns, item.dataIndex, true)
-        //   break
+        case 'children-form':
+          item.formList.map(list => list.parentDataIndex = item.dataIndex)
+          item.formList && handleFlatteningColumns(item.formList, columns, item.dataIndex, true)
+          break
       }
     } else {
-      // if (isChildrenForm) {
-      //   item['isChildrenForm'] = true
-      // }
       columns.push(item)
     }
   }

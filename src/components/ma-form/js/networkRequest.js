@@ -87,10 +87,11 @@ export const handlerDictProps = (item, tmpArr) => {
 
 export const loadDict = async (dictList, item) => {
   if (allowUseDictComponent.includes(item.formType) && item.dict) {
+    const dataIndex = item.parentDataIndex ? `${item.parentDataIndex}.${item.dataIndex}` : item.dataIndex
     if (item.dict.name) {
       const response = await commonApi.getDict(item.dict.name)
       if (response.data) {
-        dictList[item.dataIndex] = handlerDictProps(item, response.data)
+        dictList[dataIndex] = handlerDictProps(item, response.data)
       }
     } else if (item.dict.remote) {
       let requestData = {
@@ -101,17 +102,17 @@ export const loadDict = async (dictList, item) => {
 
       if (requestData.openPage) {
         const { data } = await requestDict(item.dict.remote, 'POST', {}, requestData)
-        dictList[item.dataIndex] = handlerDictProps(item, data.items)
-        dictList[item.dataIndex].pageInfo = data.pageInfo
+        dictList[dataIndex] = handlerDictProps(item, data.items)
+        dictList[dataIndex].pageInfo = data.pageInfo
       } else {
         const dictData = tool.local.get('dictData')
-        if (item.dict.cache && dictData[item.dataIndex]) {
-          dictList[item.dataIndex] = dictData[item.dataIndex]
+        if (item.dict.cache && dictData[dataIndex]) {
+          dictList[dataIndex] = dictData[dataIndex]
         } else {
           const { data } = await requestDict(item.dict.remote, 'POST', {}, requestData)
-          dictList[item.dataIndex] = handlerDictProps(item, data)
+          dictList[dataIndex] = handlerDictProps(item, data)
           if (item.dict.cache) {
-            dictData[item.dataIndex] = dictList[item.dataIndex]
+            dictData[dataIndex] = dictList[dataIndex]
             tool.local.set('dictData', dictData)
           }
         }
@@ -130,27 +131,27 @@ export const loadDict = async (dictList, item) => {
           item.dict.body = Object.assign(item.dict.body ?? {}, requestData)
         }
         const { data } = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
-        dictList[item.dataIndex] = handlerDictProps(item, data.items)
-        dictList[item.dataIndex].pageInfo = data.pageInfo
+        dictList[dataIndex] = handlerDictProps(item, data.items)
+        dictList[dataIndex].pageInfo = data.pageInfo
       } else {
         const dictData = tool.local.get('dictData')
-        if (item.dict.cache && dictData[item.dataIndex]) {
-          dictList[item.dataIndex] = dictData[item.dataIndex]
+        if (item.dict.cache && dictData[dataIndex]) {
+          dictList[dataIndex] = dictData[dataIndex]
         } else {
           const { data } = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
-          dictList[item.dataIndex] = handlerDictProps(item, data)
+          dictList[dataIndex] = handlerDictProps(item, data)
           if (item.dict.cache) {
-            dictData[item.dataIndex] = dictList[item.dataIndex]
+            dictData[dataIndex] = dictList[dataIndex]
             tool.local.set('dictData', dictData)
           }
         }
       }
     } else if (item.dict.data) {
       if (isArray(item.dict.data)) {
-        dictList[item.dataIndex] = handlerDictProps(item, item.dict.data)
+        dictList[dataIndex] = handlerDictProps(item, item.dict.data)
       } else if (isFunction(item.dict.data)) {
         const response = await item.dict.data()
-        dictList[item.dataIndex] = handlerDictProps(item, response)
+        dictList[dataIndex] = handlerDictProps(item, response)
       }
     }
   }
@@ -195,9 +196,10 @@ const requestCascaderData = async (val, dict, dictList, name) => {
 export const handlerCascader = async (val, column, columns, dictList, formModel, clearData = true) => {
   if (column.cascaderItem && isArray(column.cascaderItem)) {
     column.cascaderItem.map(async name => {
-      const dict = columns.find(col => col.dataIndex === name && col.dict).dict
-      clearData && set(formModel, name, undefined)
-      requestCascaderData(val, dict, dictList, name)
+      const columnItem = columns.find(col => col.dataIndex === name && col.dict)
+      const dataIndex = columnItem.parentDataIndex ? `${columnItem.parentDataIndex}.${columnItem.dataIndex}` : columnItem.dataIndex
+      clearData && set(formModel, dataIndex, undefined)
+      await requestCascaderData(val, columnItem.dict, dictList, dataIndex)
     })
   }
 }
