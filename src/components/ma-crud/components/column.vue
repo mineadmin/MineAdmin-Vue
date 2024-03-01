@@ -55,7 +55,7 @@
           v-else
       >
         <template #title>
-          <slot :name="`tableTitle-${row.dataIndex}`">{{ row.title }}</slot>
+          <slot :name="`tableTitle-${row.dataIndex}`" v-bind="{ column: row }">{{ row.title }}</slot>
         </template>
         <template #cell="{ record, column, rowIndex }">
           <!-- 操作栏 -->

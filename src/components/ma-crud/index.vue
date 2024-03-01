@@ -203,8 +203,8 @@
                     <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
                   </template>
 
-                  <template v-for="slot in getTitleSlot(columns)" #[slot]>
-                    <slot :name="`${slot}`" />
+                  <template v-for="slot in getTitleSlot(columns)" #[slot]="{ column }">
+                    <slot :name="`${slot}`" v-bind="{ column }" />
                   </template>
 
                   <template
