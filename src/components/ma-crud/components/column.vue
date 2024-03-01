@@ -54,6 +54,9 @@
           :sortable="row.sortable"
           v-else
       >
+        <template #title>
+          <slot :name="`tableTitle-${row.dataIndex}`">{{ row.title }}</slot>
+        </template>
         <template #cell="{ record, column, rowIndex }">
           <!-- 操作栏 -->
           <template v-if="row.dataIndex === '__operation'">

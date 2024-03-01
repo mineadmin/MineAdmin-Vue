@@ -203,6 +203,10 @@
                     <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
                   </template>
 
+                  <template v-for="slot in getTitleSlot(columns)" #[slot]>
+                    <slot :name="`${slot}`" />
+                  </template>
+
                   <template
                     v-for="(slot, slotIndex) in getSlot(columns)"
                     :key="slotIndex"
@@ -415,6 +419,19 @@ const getSlot = (cls = []) => {
       sls.push(...tmp)
     } else if (item.dataIndex) {
       sls.push(item.dataIndex)
+    }
+  })
+  return sls
+}
+
+const getTitleSlot = (cls = []) => {
+  let sls = []
+  cls.map(item => {
+    if (item.children && item.children.length > 0) {
+      let tmp = getTitleSlot(item.children)
+      sls.push(...tmp)
+    } else if (item.dataIndex) {
+      sls.push(`tableTitle-${item.dataIndex}`)
     }
   })
   return sls
