@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "./dist",
     "composite": false,
     "declaration": true,
     "declarationMap": true,
@@ -32,5 +33,6 @@
     "lib": ["dom", "esnext"],
     "types": ["vite/client"]
   },
-  "include": ["src", "mock", "vite.config.ts","node_modules", "dist", "build"]
+  "exclude": ["node_modules", "dist", "build"],
+  "include": ["src", "mock", "vite.config.ts", "src/**/*.vue"]
 }

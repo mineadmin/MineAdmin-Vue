@@ -1,0 +1,8 @@
+dist/*
+node_modlues/*
+*css
+*jpg
+*jpeg
+*png
+*gif
+*.d.ts

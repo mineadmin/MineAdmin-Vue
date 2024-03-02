@@ -1,5 +1,34 @@
 {
-    "githubPullRequests.ignoredPullRequestBranches": [
-        "main"
-    ]
+  // VS Code忽略当从名为 main 的分支发起 Pull Request
+  "githubPullRequests.ignoredPullRequestBranches": ["main"],
+  // 设置编辑器的默认缩进为2个空格
+  "editor.tabSize": 2,
+  // 启用了每行的格式化
+  "editor.formatOnSave": true,
+  // 指定编辑器使用的换行符，这里设置为Unix格式的换行符LF
+  "files.eol": "\n",
+  // 启用保存文件时自动移除尾随空格
+  "files.trimTrailingWhitespace": true,
+  // 启用保存文件时自动移除末尾的换行符
+  "files.trimFinalNewlines": true,
+  // 启用了代码自动折行
+  "editor.wordWrap": "on",
+  // 控制编辑器是否在显示垂直标尺线，这里设置为80列
+  "editor.rulers": [120],
+  // 控制编辑器是否在文件末尾添加一空行
+  "files.insertFinalNewline": true,
+  // 启用编辑器的字体连字，可以提高代码的可读性
+  "editor.fontLigatures": true,
+  // 配置保存时自动格式化的语言，这里设置为JavaScript和Vue
+  "[javascript]": {
+    "editor.formatOnSave": true
+  },
+  "[vue]": {
+    "editor.formatOnSave": true
+  },
+  // 配置 ESLint 插件，使其能够与 Vite 正确协作
+  "eslint.validate": ["javascript", "javascriptreact", "vue"],
+  "eslint.options": {
+    "extensions": [".js", ".jsx", ".vue"]
+  }
 }
