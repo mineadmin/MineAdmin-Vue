@@ -26,7 +26,7 @@
     <a-tree
       blockNode
       ref="maTree"
-      :data="treeData"
+      :data="modelValue"
       class="h-full w-full"
       @select="handlerSelect"
       :field-names="props.fieldNames"
