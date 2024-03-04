@@ -4,7 +4,7 @@
         <a-col :span="16">
             <ma-editor v-model="value" :height="props.component.height"
             :toolbar="toolbar"
-                :id="props.component.id" @change="maEvent.handleChangeEvent(props.component, $event)">
+                :id="props.component.id" @change="rv('onChange', $event)">
             </ma-editor>
         </a-col>
         <a-col :span="8">
