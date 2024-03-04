@@ -26,7 +26,7 @@
     <a-tree
       blockNode
       ref="maTree"
-      :data="modelValue"
+      :data="treeData"
       class="h-full w-full"
       @select="handlerSelect"
       :field-names="props.fieldNames"
@@ -102,7 +102,7 @@
 
       return tree
     }
-    return loop(props.modelValue)
+    return loop(treeData.value)
   }
 
   defineExpose({ maTree })

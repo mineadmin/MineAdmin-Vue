@@ -39,7 +39,7 @@
             <div class="tree-container p-2">
               <ma-tree-slider
                 ref="tree"
-                v-model="deptList"
+                :data="deptList"
                 checkable
                 :fieldNames="{ title: 'label', key: 'id' }"
                 searchPlaceholder="过滤部门"
