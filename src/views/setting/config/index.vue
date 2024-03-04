@@ -210,6 +210,7 @@
     const response = await config.updateByKeys(data)
     if (response.success) {
       Message.success(response.message)
+      getConfigGroupList()
     }
   }
 
