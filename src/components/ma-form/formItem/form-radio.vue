@@ -23,7 +23,26 @@
         @change="handleCascaderChangeEvent($event)"
       >
         <template v-for="(item, index) in (dictList[dictIndex] ?? [])">
-          <a-radio :value="item.value" :disabled="item.disabled">{{ item.label }}</a-radio>
+          <a-radio :value="item.value" :disabled="item.disabled" v-if="props.component.styleType == 'card'" class="pl-0">
+                    <template #radio="{ checked }">
+                        <a-space :align="'start'"
+                            class="item-style mb-1 rounded  border-sole border hover:bg-gray-100"
+                            :class="{'radio-active': checked}"
+                            >
+                            <div class="relative w-[120px] h-[60px] flex items-center justify-center transition-all duration-100 ease-in-out ">
+                                <div class="text-center">
+                                    <div class="font-semibold text-black">{{ item.label }}</div>
+                                    <div class="font-normal describe-txt text-gray-500 " v-if="dictData[index].describe ?? false">{{'('+ dictData[index].describe+')'}}</div>
+                                </div>
+                                <div v-if="checked">
+                                    <span class="mark"></span>
+                                    <div class="absolute bottom-[-2px] right-[2px] text-white font-system">✓</div>
+                                </div>
+                            </div>
+                        </a-space>
+                    </template>
+                </a-radio>
+          <a-radio :value="item.value" :disabled="item.disabled" v-else>{{ item.label }}</a-radio>
         </template>
       </a-radio-group>
     </slot>
@@ -44,6 +63,7 @@ const props = defineProps({
 
 const formModel = inject('formModel')
 const dictList  = inject('dictList')
+const dictData = props.component.dict.data;
 const formLoading = inject('formLoading')
 const getColumnService= inject('getColumnService')
 const columns = inject('columns')
@@ -84,3 +104,23 @@ const handleCascaderChangeEvent = async (value) => {
 rv('onCreated')
 onMounted(() => rv('onMounted'))
 </script>
+<style scoped>
+    .mark{
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 0;
+        height: 0;
+        border-bottom: 26px solid rgb(var(--arcoblue-7));
+        border-left: 26px solid transparent;
+    }
+    .radio-active{
+      border-color: rgb(var(--arcoblue-7));
+    }
+    .item-style:hover{
+      border:1px solid rgb(var(--arcoblue-5))
+    }
+    .describe-txt{
+        font-size:smaller
+    }
+</style>

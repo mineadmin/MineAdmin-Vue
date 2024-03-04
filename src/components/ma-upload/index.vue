@@ -11,6 +11,7 @@
   <div>
     <ma-image-upload v-if="props.type === 'image'" v-model="file" />
     <ma-file-upload v-if="props.type === 'file'" v-model="file" />
+    <ma-custom-image-upload v-if="props.type === 'custom-image'" v-model="file" />
     <ma-chunk-upload v-if="props.type === 'chunk'" v-model="file" />
   </div>
 </template>
@@ -22,6 +23,8 @@ import uploadConfig from '@/config/upload'
 import MaImageUpload from './components/image-upload.vue'
 import MaFileUpload from './components/file-upload.vue'
 import MaChunkUpload from './components/chunk-upload.vue'
+import MaCustomImageUpload from './components/custom-image-upload.vue'
+
 
 const emit = defineEmits(['update:modelValue'])
 const file = ref()
@@ -44,6 +47,11 @@ const props = defineProps({
   fileType: { type: String, default: 'button' },
   showList: { type: Boolean, default: true },
   requestData: { type: Object, default: {} },
+  width: { type: Number, default:50},
+  height: { type: Number, default:50},
+  center:{type: Boolean, default:false},
+  fit: { type: String, default:"fill" },
+  iconTitle:{type: String, default:""}
 })
 
 if (! ['id', 'url', 'hash'].includes(props.returnType)) {

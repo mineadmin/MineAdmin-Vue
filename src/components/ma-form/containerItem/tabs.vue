@@ -10,6 +10,7 @@
 <template>
   <a-tabs
     v-if="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
+    v-model:active-key="props.component.active"
     :class="[props.component?.customClass]"
     :trigger="props.component?.trigger"
     :position="props.component?.position"

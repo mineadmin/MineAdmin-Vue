@@ -33,6 +33,11 @@
         :fileType="props.component.fileType"
         :showList="props.component.showList"
         :requestData="props.component.requestData"
+        :width="props.component.width"
+        :height="props.component.height"
+        :center = "props.component.center"
+        :fit = "props.component.fit"
+        :iconTitle="props.component.iconTitle"
       >
       </ma-upload>
     </slot>
