@@ -42,7 +42,7 @@
           <ma-form
             v-model="formArray[item.id]"
             :columns="optionsArray[item.id]"
-            @onSubmit="submit"
+            @submit="submit"
             class="mt-3"
             ref="maFormRef"
           />
@@ -130,7 +130,7 @@
     let form = {}
     optionsArray.value[id] = response.data.map(item => {
       let option = {
-        title: item.name, dataIndex: item.key, formType: item.input_type, 
+        title: item.name, dataIndex: item.key, formType: item.input_type,
         dict: {}, labelWidth: '120px', extra: item.remark, tooltip: item.key,
       }
       const allowDictType = ['select', 'radio', 'checkbox']
@@ -210,6 +210,7 @@
     const response = await config.updateByKeys(data)
     if (response.success) {
       Message.success(response.message)
+      getConfigGroupList()
     }
   }
 
