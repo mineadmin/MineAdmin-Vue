@@ -6,7 +6,7 @@ export const haveArgsEvent = async (component, value, evName, maformObj) => {
       return await component[evName](value, maformObj)
     }
     if ( isString(component[evName]) ) {
-      const customFn = new Function('value', 'maformObj', component[evName])
+      const customFn = new Function('value', 'maFormObject', component[evName])
       return await customFn.call(component, value, maformObj)
     }
   }
@@ -18,7 +18,7 @@ export const notHaveArgsEvent = async (component, evName, maformObj) => {
       return await component[evName](maformObj)
     }
     if ( isString(component[evName]) ) {
-      const customFn = new Function('maformObj', component[evName])
+      const customFn = new Function('maFormObject', component[evName])
       return await customFn.call(component[evName], maformObj)
     }
   }
