@@ -8,6 +8,7 @@
     "dev": "vite serve --mode development",
     "build": "vite build",
     "preview": "vite preview",
+    "tailwind": "tailwind-config-viewer -o -c tailwind.config.cjs",
     "generate:version": "generate-version-file dist public"
   },
   "dependencies": {
@@ -43,11 +44,12 @@
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
-    "less": "^4.1.3",
-    "less-loader": "^11.1.4",
-    "typescript": "^4.7.4",
     "@vitejs/plugin-vue": "^5.0.0",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
+    "less": "^4.1.3",
+    "less-loader": "^11.1.4",
+    "tailwind-config-viewer": "^1.7.3",
+    "typescript": "^4.7.4",
     "vite": "^5.1.0"
   }
 }
