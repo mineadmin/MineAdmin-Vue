@@ -1,7 +1,7 @@
 <template>
     <div class="w-full">
         <a-table :data="tableData" @cell-mouse-enter="handleCellMouseEnter" @cell-mouse-leave="handleCellMouseLeave"
-            v-bind="tableConfig">
+            v-bind="tableConfig" @change="handleChange">
             <template #columns>
                 <a-table-column :align="'center'" fixed="left" :width="65" v-if="columns.length > 0">
                     <template #title>
@@ -218,6 +218,16 @@ const handleRowDel = (rowIndex) => {
     value.value.splice(rowIndex, 1)
 }
 
+/**
+ * 表格数据发生变化时触发
+ */
+const handleChange = (data)=>{
+    value.value = data
+}
+
+/**
+ * 生成属性
+ */
 const buildProperties = () => {
     let specData = value.value;
     attrProps.value.specData = specData;
