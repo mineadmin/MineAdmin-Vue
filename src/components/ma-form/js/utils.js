@@ -100,3 +100,32 @@ export const handleFlatteningColumns = (data, columns) => {
     }
   }
 }
+
+export const insertGlobalCssToHead = (cssCode) => {
+  const head = document.getElementsByTagName('head')[0]
+  const oldStyle = document.getElementById('mineadmin-global-css')
+  oldStyle && head.removeChild(oldStyle)
+
+  const newStyle = document.createElement('style')
+  newStyle.rel = 'stylesheet'
+  newStyle.id = 'mineadmin-global-css'
+  try {
+    newStyle.appendChild(document.createTextNode(cssCode))
+  } catch(ex) {
+    newStyle.styleSheet.cssText = cssCode
+  }
+
+  head.appendChild(newStyle)
+}
+
+export const insertGlobalFunctionsToHtml = (functionsCode) => {
+  const bodyEle = document.getElementsByTagName('body')[0]
+  const oldScriptEle = document.getElementById('mineadmin-global-functions')
+  oldScriptEle && bodyEle.removeChild(oldScriptEle)
+
+  const newScriptEle = document.createElement('script')
+  newScriptEle.id = 'mineadmin-global-functions'
+  newScriptEle.type = 'text/javascript'
+  newScriptEle.innerHTML = functionsCode
+  bodyEle.appendChild(newScriptEle)
+}

@@ -75,7 +75,8 @@ import { isNil, get, cloneDeep } from 'lodash'
 import defaultOptions from './js/defaultOptions.js'
 import {
   getComponentName, toHump,
-  interactiveControl, handleFlatteningColumns
+  interactiveControl, handleFlatteningColumns, 
+  insertGlobalCssToHead, insertGlobalFunctionsToHtml
 } from './js/utils.js'
 import { loadDict, handlerCascader } from './js/networkRequest.js'
 import arrayComponentDefault from './js/defaultArrayComponent.js'
@@ -163,7 +164,12 @@ const init = async () => {
 
     // 字典
     if (! cascaderList.value.includes(item.dataIndex) && item.dict) {
-      await loadDict(dictList.value, item)
+      await loadDict(
+        dictList.value,
+        item,
+        options.value.sourceList,
+        { formModel: form.value, getColumnService, columns: flatteningColumns.value }
+      )
     }
 
     // 联动
@@ -198,6 +204,8 @@ const setDialogRef = async (ref) => {
 
 onMounted(async () => {
   updateOptions()
+  insertGlobalCssToHead(options.value.globalCss)
+  insertGlobalFunctionsToHtml(options.value.globalFunction)
   // maEvent.handleCommonEvent(options.value, 'onMounted')
   options.value.init && await init()
   // maEvent.handleCommonEvent(options.value, 'onInit')

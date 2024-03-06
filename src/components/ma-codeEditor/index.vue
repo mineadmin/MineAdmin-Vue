@@ -92,12 +92,7 @@ const initEditorValue = () => {
   }
 }
 
-watch(
-    () => props.modelValue,
-    (newModelValue) => {
-      initEditorValue()
-    }
-)
+watch( () => props.modelValue, () => initEditorValue() )
 
 onMounted(() => {
   instance = monaco.editor.create(dom.value, options)
@@ -110,7 +105,7 @@ onMounted(() => {
 
 const getInstance = () => instance
 
-defineExpose({ getInstance })
+defineExpose({ getInstance, initEditorValue })
 </script>
 
 <style scoped lang="less">
