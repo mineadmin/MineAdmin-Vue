@@ -15,6 +15,18 @@ export const dictType = {
   },
 
   /**
+   * 获取字典，无分页
+   * @returns
+   */
+  getList(params = {}) {
+    return request({
+      url: 'system/dictType/list',
+      method: 'get',
+      params
+    })
+  },
+
+  /**
    * 从回收站获取字典类型
    * @returns
    */
