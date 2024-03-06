@@ -52,7 +52,7 @@ const maDialog = (p, ctx) => {
           props.component[key](...argsList, { formModel, getColumnService, columns })
         }
       } else {
-        evs[key] = evs[key] = function() {
+        evs[key] = function() {
           const argsList = Array.prototype.slice.call(arguments)
           rv(key, { ...argsList })
         }
@@ -72,7 +72,7 @@ const maDialog = (p, ctx) => {
           columns: componentProps.formList,
           options: Object.assign(componentProps.options),
           modelValue: form.value,
-          onSubmit: async (data, done) => evs.onSubmit && await evs?.onSubmit(data, done),
+          onSubmit: async (data, done) => await rv('onSubmit', { data, done })
         },
         componentProps?.formSlot,
       ),

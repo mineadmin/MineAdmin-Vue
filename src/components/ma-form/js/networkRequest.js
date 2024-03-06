@@ -1,4 +1,5 @@
-import { isArray, isFunction, set } from 'lodash'
+import { toRaw } from 'vue'
+import { isArray, isFunction, set, isUndefined } from 'lodash'
 import { request } from '@/utils/request'
 import commonApi from '@/api/common'
 import { Message } from '@arco-design/web-vue'
@@ -32,7 +33,7 @@ export const requestDict = (url, method, params, data, header = {}, timeout = 10
   return request({ url, method, params, data, header, timeout })
 }
 
-export const requestDataSource = async (config, formConfig, runCode, errorCode) => {
+export const requestDataSource = async (config, maFormObject = {}) => {
   try {
     const response = await requestDict(
       config.url,
@@ -42,11 +43,10 @@ export const requestDataSource = async (config, formConfig, runCode, errorCode) 
       coverSourceArrayToObj(config.header),
       config.timeout * 1000,
     )
-
-    const func = new Function('response', 'config', 'formConfig', runCode)
-    return await func.call( null, response, config, formConfig )
+    const func = new Function('response', 'config', 'maFormObject', toRaw(config.response).getValue())
+    return await func.call( null, response, config, maFormObject )
   } catch (err) {
-    const func = new Function('message', 'response', 'config', errorCode)
+    const func = new Function('message', 'response', 'config', toRaw(config.errorHandle).getValue())
     await func.call( null, Message, err, config )
     return err
   }
@@ -85,15 +85,17 @@ export const handlerDictProps = (item, tmpArr) => {
   return data
 }
 
-export const loadDict = async (dictList, item) => {
-  if (allowUseDictComponent.includes(item.formType) && item.dict) {
-    const dataIndex = item.parentDataIndex ? `${item.parentDataIndex}.${item.dataIndex}` : item.dataIndex
-    if (item.dict.name) {
-      const response = await commonApi.getDict(item.dict.name)
-      if (response.data) {
-        dictList[dataIndex] = handlerDictProps(item, response.data)
-      }
-    } else if (item.dict.remote) {
+export const loadDict = async (dictList, item, sourceList = [], maFormObject = {}) => {
+  if (! allowUseDictComponent.includes(item.formType)) {
+    return
+  }
+  const dataIndex = item.parentDataIndex ? `${item.parentDataIndex}.${item.dataIndex}` : item.dataIndex
+  if (item.dict.name) {
+    const response = await commonApi.getDict(item.dict.name)
+    if (response.data) {
+      dictList[dataIndex] = handlerDictProps(item, response.data)
+    }
+  } else if (item.dict.remote) {
       let requestData = {
         openPage: item.dict?.openPage ?? false,
         remoteOption: item.dict.remoteOption ?? {}
@@ -117,42 +119,47 @@ export const loadDict = async (dictList, item) => {
           }
         }
       }
-    } else if (item.dict.url) {
-      let requestData = {
-        openPage: item.dict?.openPage ?? false,
-        remoteOption: item.dict.remoteOption ?? {}
-      }
-      requestData = Object.assign(requestData, item.dict.pageOption)
+  } else if (item.dict.url) {
+    let requestData = {
+      openPage: item.dict?.openPage ?? false,
+      remoteOption: item.dict.remoteOption ?? {}
+    }
+    requestData = Object.assign(requestData, item.dict.pageOption)
 
-      if (requestData.openPage) {
-        if (item.dict?.method === 'GET' || item.dict?.method === 'get') {
-          item.dict.params = Object.assign(item.dict.params ?? {}, requestData)
-        } else {
-          item.dict.body = Object.assign(item.dict.body ?? {}, requestData)
-        }
-        const { data } = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
-        dictList[dataIndex] = handlerDictProps(item, data.items)
-        dictList[dataIndex].pageInfo = data.pageInfo
+    if (requestData.openPage) {
+      if (item.dict?.method === 'GET' || item.dict?.method === 'get') {
+        item.dict.params = Object.assign(item.dict.params ?? {}, requestData)
       } else {
-        const dictData = tool.local.get('dictData')
-        if (item.dict.cache && dictData[dataIndex]) {
-          dictList[dataIndex] = dictData[dataIndex]
-        } else {
-          const { data } = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
-          dictList[dataIndex] = handlerDictProps(item, data)
-          if (item.dict.cache) {
-            dictData[dataIndex] = dictList[dataIndex]
-            tool.local.set('dictData', dictData)
-          }
+        item.dict.body = Object.assign(item.dict.body ?? {}, requestData)
+      }
+      const { data } = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
+      dictList[dataIndex] = handlerDictProps(item, data.items)
+      dictList[dataIndex].pageInfo = data.pageInfo
+    } else {
+      const dictData = tool.local.get('dictData')
+      if (item.dict.cache && dictData[dataIndex]) {
+        dictList[dataIndex] = dictData[dataIndex]
+      } else {
+        const { data } = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
+        dictList[dataIndex] = handlerDictProps(item, data)
+        if (item.dict.cache) {
+          dictData[dataIndex] = dictList[dataIndex]
+          tool.local.set('dictData', dictData)
         }
       }
-    } else if (item.dict.data) {
-      if (isArray(item.dict.data)) {
-        dictList[dataIndex] = handlerDictProps(item, item.dict.data)
-      } else if (isFunction(item.dict.data)) {
-        const response = await item.dict.data()
-        dictList[dataIndex] = handlerDictProps(item, response)
-      }
+    }
+  } else if ((item?.sourceIndex || item?.sourceIndex === 0)
+    && !isUndefined(sourceList[item?.sourceIndex])
+  ) {
+    const config = sourceList[item.sourceIndex]
+    const data = await requestDataSource(config, maFormObject)
+    dictList[dataIndex] = handlerDictProps(item, data)
+  } else if (item.dict.data) {
+    if (isArray(item.dict.data)) {
+      dictList[dataIndex] = handlerDictProps(item, item.dict.data)
+    } else if (isFunction(item.dict.data)) {
+      const response = await item.dict.data()
+      dictList[dataIndex] = handlerDictProps(item, response)
     }
   }
 }
