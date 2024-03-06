@@ -177,7 +177,7 @@
     add: { show: true, text: '发私信', api: queueMessage.sendPrivateMessage },
     delete: { show: true, api: queueMessage.deletes },
     operationColumn: true,
-    operationWidth: 240,
+    operationColumnWidth: 240,
     formOption: { width: 800 },
     api: () => {}
   })

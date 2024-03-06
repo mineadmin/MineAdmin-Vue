@@ -73,6 +73,8 @@ export default {
   tags: {
     refresh: '刷新',
     fullscreen: '全屏',
+    closeRightTag: '关闭右侧标签',
+    closeLeftTag: '关闭左侧标签',
     closeTag: '关闭当前标签',
     closeOtherTag: '关闭其他标签',
   },

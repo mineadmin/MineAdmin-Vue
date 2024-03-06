@@ -73,7 +73,6 @@ const searchColumns = ref([])
 const searchForm = ref({})
 
 provide('searchForm', searchForm)
-provide('columns', columns)
 
 const emit = defineEmits(['search'])
 
@@ -90,8 +89,8 @@ const getSearchAllColumns = (cls = []) => {
   return sls
 }
  
-if (columns.length > 0) {
-  searchColumns.value = cloneDeep(getSearchAllColumns(columns).filter( item => item.search === true && ( options.tabs?.dataIndex != item.dataIndex ) ))
+if (columns.value.length > 0) {
+  searchColumns.value = cloneDeep(getSearchAllColumns(columns.value).filter( item => item.search === true && ( options.tabs?.dataIndex != item.dataIndex ) ))
 }
 
 const handlerSearch = () => {

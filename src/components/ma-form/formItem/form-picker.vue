@@ -17,7 +17,7 @@
       <component
         :is="getComponentName()"
         v-model="value"
-        :placeholder="props.component.formType === 'range' ? ['请选择开始时间', '请选择结束时间'] : `请选择${props.component.title}`"
+        :placeholder="props.component.formType === 'range' ? props.component.placeholder ?? ['请选择开始时间', '请选择结束时间'] : props.component.placeholder ?? `请选择${props.component.title}`"
         :hide-trigger="props.component.hideTrigger"
         :allow-clear="props.component.allowClear ?? true"
         :format="props.component.format"
@@ -39,7 +39,7 @@
         :show-time="props.component.showTime"
         :preview-shortcut="props.component.previewShortcut"
         :show-confirm-btn="props.component.showConfirmBtn"
-        :type="props.component.range ? 'time-range' : ''"
+        :type="props.component.range ? props.component.formType === 'time' ? 'time-range' : 'range' : ''"
         :time-picker-props="props.component.formType == 'range' ? { defaultValue: ['00:00:00', '23:59:59'] } : {}"
         :separator="props.component.separator"
         :mode="props.component.mode"
@@ -47,9 +47,9 @@
         @change="handlePickerChangeEvent"
         @select="handlePickerSelectEvent"
         @ok="handlePickerOkEvent"
-        @clear="maEvent.handleCommonEvent(props.component, 'onClear')"
-        @popup-visible-change="maEvent.customeEvent(props.component, $event, 'onvVisibleChange')"
-        @select-shortcut="maEvent.customeEvent(props.component, $event, 'onSelectShortcut')"
+        @clear="rv('onClear')"
+        @popup-visible-change="rv('onvVisibleChange', $event)"
+        @select-shortcut="rv('onSelectShortcut', $event)"
         @picker-value-change="handlePickerValueChangeEvent"
       />
     </slot>
@@ -60,13 +60,16 @@
 import { ref, inject, onMounted, watch } from 'vue'
 import { get, set } from 'lodash'
 import MaFormItem from './form-item.vue'
-import { maEvent } from '../js/formItemMixin.js'
+import { runEvent } from '../js/event.js'
 const props = defineProps({
   component: Object,
   customField: { type: String, default: undefined }
 })
 
 const formModel = inject('formModel')
+const getColumnService= inject('getColumnService')
+const columns = inject('columns')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, getColumnService, columns }, value)
 const index = props.customField ?? props.component.dataIndex
 const value = ref(get(formModel.value, index))
 
@@ -83,23 +86,21 @@ const getComponentName = () => {
 }
 
 const handlePickerChangeEvent = (value, date, dateString) => {
-  maEvent.handleChangeEvent(props.component, { value, date, dateString })
+  rv('onPickerChange', { value, date, dateString })
 }
 
 const handlePickerSelectEvent = (value, date, dateString) => {
-  maEvent.customeEvent(props.component, { value, date, dateString }, 'onSelect')
+  rv('onSelect', { value, date, dateString })
 }
 
 const handlePickerValueChangeEvent = (value, date, dateString) => {
-  maEvent.customeEvent(props.component, { value, date, dateString }, 'onPickerValueChange')
+  rv('onPickerValueChange', { value, date, dateString })
 }
 
 const handlePickerOkEvent = (value, date, dateString) => {
-  maEvent.customeEvent(props.component, { value, date, dateString }, 'onOk')
+  rv('onOk', { value, date, dateString })
 }
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
-onMounted(() => {
-  maEvent.handleCommonEvent(props.component, 'onMounted')
-})
+rv('onCreated')
+onMounted(() => rv('onMounted'))
 </script>

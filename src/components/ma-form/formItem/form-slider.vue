@@ -28,7 +28,7 @@
         :marks="props.component.marks"
         :show-input="props.component.showInput"
         :show-ticks="props.component.showTicks"
-        @change="maEvent.handleChangeEvent(props.component, $event)"
+        @change="rv('onChange', $event)"
       >
       </a-slider>
     </slot>
@@ -39,13 +39,16 @@
 import { ref, inject, onMounted, watch } from 'vue'
 import { get, set } from 'lodash'
 import MaFormItem from './form-item.vue'
-import { maEvent } from '../js/formItemMixin.js'
+import { runEvent } from '../js/event.js'
 const props = defineProps({
   component: Object,
   customField: { type: String, default: undefined }
 })
 
 const formModel = inject('formModel')
+const getColumnService= inject('getColumnService')
+const columns = inject('columns')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, getColumnService, columns }, value)
 const index = props.customField ?? props.component.dataIndex
 const value = ref(get(formModel.value, index))
 
@@ -55,8 +58,6 @@ watch( () => value.value, v => {
   index.indexOf('.') > -1 && delete formModel.value[index]
 } )
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
-onMounted(() => {
-  maEvent.handleCommonEvent(props.component, 'onMounted')
-})
+rv('onCreated')
+onMounted(() => rv('onMounted'))
 </script>

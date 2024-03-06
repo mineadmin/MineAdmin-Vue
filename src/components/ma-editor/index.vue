@@ -13,7 +13,7 @@
 
     <a-modal v-model:visible="resourceVisible" :width="1080" :footer="false"  draggable>
       <template #title>资源选择器</template>
-      <ma-resource v-model="list" multiple ref="resource" />
+      <ma-resource v-model="list" multiple ref="resource" returnType="url" />
     </a-modal>
   </div>
 </template>
@@ -69,7 +69,7 @@
     plugins: {
       type: [String, Array],
       default:
-        "preview searchreplace autolink directionality visualblocks visualchars fullscreen link media template code codesample table charmap nonbreaking insertdatetime advlist lists wordcount autosave"
+        "preview searchreplace autolink directionality visualblocks visualchars fullscreen link media code codesample table charmap nonbreaking insertdatetime advlist lists wordcount autosave"
     },
     toolbar: {
       type: [String, Array],

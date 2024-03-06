@@ -27,7 +27,7 @@ import { ref, inject, onMounted, watch } from 'vue'
 import { get, set } from 'lodash'
 import MaColorPicker from '@/components/ma-colorPicker/index.vue'
 import MaFormItem from './form-item.vue'
-import { maEvent } from '../js/formItemMixin.js'
+import { runEvent } from '../js/event.js'
 
 const props = defineProps({
   component: Object,
@@ -35,6 +35,9 @@ const props = defineProps({
 })
 
 const formModel = inject('formModel')
+const dictList = inject('dictList')
+const columns = inject('columns')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, value, { formModel, dictList, columns })
 const index = props.customField ?? props.component.dataIndex
 const value = ref(get(formModel.value, index))
 
@@ -44,8 +47,6 @@ watch( () => value.value, v => {
   index.indexOf('.') > -1 && delete formModel.value[index]
 } )
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
-onMounted(() => {
-  maEvent.handleCommonEvent(props.component, 'onMounted')
-})
+rv('onCreated')
+onMounted(() => rv('onMounted') )
 </script>

@@ -68,7 +68,7 @@ const crud = reactive({
   pageLayout: 'fixed',
   rowSelection: { showCheckedAll: true },
   operationColumn: true,
-  operationWidth: 160,
+  operationColumnWidth: 160,
   beforeAdd: (form) => {
     form.code = currentRow.value?.code
     form.type_id = currentRow.value?.id

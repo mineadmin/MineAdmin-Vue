@@ -33,15 +33,18 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, inject } from 'vue'
 import MaTableCell from './table-cell.vue'
-import { maEvent } from '../js/formItemMixin.js'
+import { runEvent } from '../js/event.js'
 const props = defineProps({ component: Object })
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
-onMounted(() => {
-  maEvent.handleCommonEvent(props.component, 'onMounted')
-})
+const formModel = inject('formModel')
+const getColumnService= inject('getColumnService')
+const columns = inject('columns')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, getColumnService, columns }, value)
+
+rv('onCreated')
+onMounted(() => rv('onMounted'))
 </script>
 
 <style lang="less">

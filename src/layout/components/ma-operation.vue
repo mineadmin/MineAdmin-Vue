@@ -60,7 +60,7 @@
 
       <a-avatar class="bg-blue-500 text-3xl avatar" style="top: -1px;">
         <img
-          :src="(userStore.user && userStore.user.avatar) ? userStore.user.avatar : $url + 'avatar.jpg'"
+          :src="(userStore.user && userStore.user.avatar) ? $tool.showFile(userStore.user.avatar) : $url + 'avatar.jpg'"
         />
       </a-avatar>
 
@@ -121,7 +121,7 @@
   const handleLogout = async () => {
     await userStore.logout()
     document.querySelector('#app').style.filter = 'grayscale(0)'
-    window.location.href = '/'
+    router.push({name:'login'})
   }
 
   const handleLogoutCancel = () => {

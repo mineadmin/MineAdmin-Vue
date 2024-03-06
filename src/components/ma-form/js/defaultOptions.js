@@ -48,4 +48,7 @@ export default {
   formTitleStyle: '',
   // 自定义标题样式class
   formTitleClass: [],
+
+  // 数据源列表，配合表单设计器使用，单独无法使用
+  sourceList: [],
 }

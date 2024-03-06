@@ -24,15 +24,20 @@
 </template>
   
 <script setup>
-import { onMounted, getCurrentInstance, watch } from 'vue'
+import { onMounted, getCurrentInstance, watch, inject } from 'vue'
 import { get, set } from 'lodash'
 import MaFormItem from './form-item.vue'
-import { maEvent } from '../js/formItemMixin.js'
+import { runEvent } from '../js/event.js'
 
 const props = defineProps({
   component: Object,
   customField: { type: String, default: undefined }
 })
+
+const formModel = inject('formModel')
+const getColumnService= inject('getColumnService')
+const columns = inject('columns')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, getColumnService, columns }, value)
 
 const app = getCurrentInstance().appContext.app
 
@@ -40,8 +45,8 @@ if (props.component.formType === 'component' && props.component.component && !ap
   app.component(props.component.dataIndex, props.component.component)
 }
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
+runEvent('onCreated', 'handleCommonEvent')
 onMounted(() => {
-  maEvent.handleCommonEvent(props.component, 'onMounted')
+  runEvent('onMounted', 'handleCommonEvent')
 })
 </script>

@@ -105,6 +105,7 @@ export default {
       url: 'system/uploadImage',
       method: 'post',
       timeout: 30000,
+      headers: { 'Content-Type': 'multipart/form-data' },
       data
     })
   },
@@ -118,6 +119,7 @@ export default {
       url: 'system/uploadFile',
       method: 'post',
       timeout: 30000,
+      headers: { 'Content-Type': 'multipart/form-data' },
       data
     })
   },
@@ -131,6 +133,7 @@ export default {
       url: 'system/chunkUpload',
       method: 'post',
       timeout: 30000,
+      headers: { 'Content-Type': 'multipart/form-data' },
       data
     })
   },
@@ -184,7 +187,7 @@ export default {
    * 通用导入Excel 
    */
   importExcel (url, data) {
-    return request({ url, method: 'post', data, timeout: 30 * 1000 })
+    return request({ url, method: 'post', data, timeout: 30 * 1000, headers: { 'Content-Type': 'multipart/form-data' }, })
   },
 
   /**

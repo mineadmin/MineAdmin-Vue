@@ -4,7 +4,7 @@ import tool from '@/utils/tool'
 import router from '@/router'
 import webRouter from '@/router/webRouter'
 import { homePage } from '@/router/homePageRoutes'
-import { useAppStore } from '@/store'
+import { useAppStore, useTagStore } from '@/store'
 
 const useUserStore = defineStore('user', {
 
@@ -51,10 +51,10 @@ const useUserStore = defineStore('user', {
 
     requestUserInfo() {
       return new Promise((resolve, reject) => {
-        loginApi.getInfo().then(response => {
+        loginApi.getInfo().then(async response => {
           if (! response || ! response.data) {
             this.clearToken()
-            router.push({ name: 'login' })
+            await router.push({name: 'login'})
             reject(false)
           } else {
             this.setInfo(response.data)
@@ -62,7 +62,7 @@ const useUserStore = defineStore('user', {
             this.setMenu(this.routers)
             this.routers = removeButtonMenu(this.routers)
             this.routers.unshift(homePage)
-            this.setApp()
+            await this.setApp()
             resolve(response.data)
           }
         })
@@ -85,14 +85,16 @@ const useUserStore = defineStore('user', {
 
     async logout() {
       await loginApi.logout()
+      const tagStore = useTagStore()
       tool.local.remove('tags')
+      tagStore.clearTags()
       this.clearToken()
       this.resetUserInfo()
     },
 
     async setApp() {
       const appStore = useAppStore()
-      const setting = this.user.backend_setting
+      const setting = typeof this.user.backend_setting === 'string' ? JSON.parse(this.user.backend_setting) : this.user.backend_setting
       if (setting) {
         appStore.toggleMode(setting.mode)
         appStore.toggleMenu(setting.menuCollapse)
@@ -150,7 +152,7 @@ const filterAsyncRouter = (routerMap) => {
       const route = {
         path: item.path,
         name: item.name,
-        hidden: item.hidden == 1,
+        hidden: item.hidden === 1,
         meta: item.meta,
         children: item.children ? filterAsyncRouter(item.children) : null,
         component: views[`../../views/${item.component}.vue`]

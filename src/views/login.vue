@@ -8,44 +8,54 @@
  - @Link   https://gitee.com/xmo/mineadmin-vue
 -->
 <script setup>
-  import { reactive, ref } from 'vue'
-  import verifyCode from '@cps/ma-verifyCode/index.vue'
-  import { useUserStore } from '@/store'
-  import { useRouter, useRoute } from 'vue-router'
-  import { request } from '@/utils/request'
+import { reactive, ref } from 'vue'
+import verifyCode from '@cps/ma-verifyCode/index.vue'
+import { useUserStore } from '@/store'
+import { useTagStore } from '@/store'
+import { useRouter, useRoute } from 'vue-router'
+import { request } from '@/utils/request'
 
-  request({
-    url: 'system/getBingBackgroundImage', timeout: 10000, method: 'get'
-  }).then( res => {
-    document.getElementById('background').style.backgroundImage = `url(${res.data.url})`
-  })
+request({
+  url: 'system/getBingBackgroundImage', timeout: 10000, method: 'get'
+}).then( res => {
+  document.getElementById('background').style.backgroundImage = `url(${res.data.url})`
+})
 
-  const router = useRouter()
-  const route  = useRoute()
-  const Verify = ref(null)
+const router = useRouter()
+const route  = useRoute()
+const Verify = ref(null)
 
-  const loading = ref(false)
-  const form = reactive({ username: 'superAdmin', password: 'admin123', code: '' })
+const loading = ref(false)
 
-  const userStore = useUserStore()
+let isDevelop =  import.meta.env.VITE_APP_ENV === 'development'
 
-  const redirect = route.query.redirect ? route.query.redirect : '/'
+var odata = isDevelop ?
+    { username: 'superAdmin', password: 'admin123', code: '' }
+    : { username: '', password: '', code: '' }
 
-  const handleSubmit = async ({ values, errors }) => {
-    if (loading.value) {
+
+const form = reactive(odata)
+
+const userStore = useUserStore()
+
+const redirect = route.query.redirect ? route.query.redirect : '/'
+
+const handleSubmit = async ({ values, errors }) => {
+  if (loading.value) {
+    return
+  }
+  loading.value = true
+  if ((isDevelop || Verify.value.checkResult(form.code)) && (! errors)) {
+    const result = await userStore.login(form)
+    if (! result) {
+      loading.value = false
       return
     }
-    loading.value = true
-    if (Verify.value.checkResult(form.code) && (! errors)) {
-      const result = await userStore.login(form)
-      if (! result) {
-        loading.value = false
-        return
-      }
-      router.push(redirect)
-    }
-    loading.value = false
+    useTagStore().tags = [];
+    router.push(redirect)
   }
+  loading.value = false
+}
 </script>
 <template>
   <div id="background" class="fixed"></div>
@@ -61,50 +71,51 @@
         <h2 class="mt-10 text-3xl pb-0 mb-10">{{ $t('sys.login.title') }}</h2>
         <a-form :model="form" @submit="handleSubmit">
           <a-form-item
-            field="username"
-            :hide-label="true"
-            :rules="[{ required: true, message: $t('sys.login.usernameNotice') }]"
+              field="username"
+              :hide-label="true"
+              :rules="[{ required: true, message: $t('sys.login.usernameNotice') }]"
           >
             <a-input
-              v-model="form.username"
-              class="w-full"
-              size="large"
-              :placeholder="$t('sys.login.username')"
-              allow-clear
+                v-model="form.username"
+                class="w-full"
+                size="large"
+                :placeholder="$t('sys.login.username')"
+                allow-clear
             >
               <template #prefix><icon-user /></template>
             </a-input>
           </a-form-item>
 
           <a-form-item
-            field="password"
-            :hide-label="true"
-            :rules="[{ required: true, message: $t('sys.login.passwordNotice') }]"
+              field="password"
+              :hide-label="true"
+              :rules="[{ required: true, message: $t('sys.login.passwordNotice') }]"
           >
             <a-input-password
-              v-model="form.password"
-              :placeholder="$t('sys.login.password')"
-              size="large"
-              allow-clear
+                v-model="form.password"
+                :placeholder="$t('sys.login.password')"
+                size="large"
+                allow-clear
             >
               <template #prefix><icon-lock /></template>
             </a-input-password>
           </a-form-item>
 
           <a-form-item
-            field="code"
-            :hide-label="true"
-            :rules="[{
+              v-if="!isDevelop"
+              field="code"
+              :hide-label="true"
+              :rules="[{
               required: true,
               match: /^[a-zA-Z0-9]{4}$/,
               message: $t('sys.login.verifyCodeNotice')
             }]"
           >
             <a-input
-              v-model="form.code"
-              :placeholder="$t('sys.login.verifyCode')"
-              size="large"
-              allow-clear
+                v-model="form.code"
+                :placeholder="$t('sys.login.verifyCode')"
+                size="large"
+                allow-clear
             >
               <template #prefix><icon-safe /></template>
               <template #append>

@@ -34,7 +34,7 @@
 import { ref, inject, onMounted, nextTick, watch } from 'vue'
 import MaFormItem from './form-item.vue'
 import { get, set, isUndefined } from 'lodash'
-import { maEvent } from '../js/formItemMixin.js'
+import { runEvent } from '../js/event.js'
 import { handlerCascader } from '../js/networkRequest.js'
 
 const props = defineProps({
@@ -45,7 +45,9 @@ const props = defineProps({
 const formModel = inject('formModel')
 const dictList  = inject('dictList')
 const formLoading = inject('formLoading')
+const getColumnService= inject('getColumnService')
 const columns = inject('columns')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, getColumnService, columns }, value)
 
 const index = props.customField ?? props.component.dataIndex
 const dictIndex = index.match(/^(\w+\.)\d+\./) ? index.match(/^(\w+\.)\d+\./)[1] + props.component.dataIndex : props.component.dataIndex
@@ -68,7 +70,7 @@ const handleCascaderChangeEvent = async (value) => {
   const component = props.component
   // 执行自定义事件
   if (component.onChange) {
-    maEvent.handleChangeEvent(component, value)
+    rv('onChange', value)
   }
   
   // 处理联动
@@ -79,8 +81,6 @@ const handleCascaderChangeEvent = async (value) => {
 
 }
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
-onMounted(() => {
-  maEvent.handleCommonEvent(props.component, 'onMounted')
-})
+rv('onCreated')
+onMounted(() => rv('onMounted'))
 </script>

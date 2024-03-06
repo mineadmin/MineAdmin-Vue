@@ -55,7 +55,7 @@
     showIndex: false,
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 100,
+    operationColumnWidth: 100,
     delete: {
       show: true,
       api: crontab.deleteLog, auth: ['setting:crontab:deleteCrontabLog'],

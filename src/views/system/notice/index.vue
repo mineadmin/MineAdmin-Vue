@@ -29,7 +29,7 @@
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 160,
+    operationColumnWidth: 160,
     add: { show: true, api: notice.save, auth: ['system:notice:save'] },
     edit: { show: true, api: notice.update, auth: ['system:notice:update'] },
     delete: {

@@ -72,7 +72,9 @@
   import { Message } from '@arco-design/web-vue'
   import user from '@/api/system/user'
   import tool from '@/utils/tool'
+  import { useRouter } from 'vue-router'
 
+  const router = useRouter()
   const password = reactive({
     oldPassword: '',
     newPassword: '',
@@ -83,7 +85,8 @@
   const passwordSafePercent = ref(0)
 
   const resetLogin = () => {
-    window.location.href = '/'
+
+    router.push({name:'login'})
   }
 
   const modifyPassword = async (data) => {
@@ -110,7 +113,7 @@
 
     if (! (password.length >= 6) ) {
       passwordSafePercent.value = 0
-      return 
+      return
     }
 
     passwordSafePercent.value = 0.1

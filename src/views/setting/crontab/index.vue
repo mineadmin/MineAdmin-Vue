@@ -72,7 +72,7 @@
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 280,
+    operationColumnWidth: 280,
     add: { show: true, api: crontab.save, auth: ['setting:crontab:save'] },
     edit: { show: true, api: crontab.update, auth: ['setting:crontab:update'] },
     delete: {

@@ -17,7 +17,7 @@
         :title="item.tab_name"
       >
         <div class="relative">
-          <ma-code-editor v-model="item.code" readonly isBind :language="item.lang" :height="600" />
+          <ma-code-editor v-model="item.code" readonly miniMap :language="item.lang" :height="600" />
           <a-button class="copy-button" type="primary" @click="copyCode(item.code)"><icon-copy /> 复制</a-button>
         </div>
       </a-tab-pane>

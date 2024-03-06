@@ -9,7 +9,7 @@
 -->
 <template>
   <div class="w-full">
-    <a-spin :loading="formLoading" :tip="options.loadingText" class="w-full">
+    <a-spin :loading="formLoading" :tip="options.loadingText" class="w-full ma-form-spin">
       <div
         v-if="options.showFormTitle"
         :class="['ma-form-title', options.formTitleClass]"
@@ -28,36 +28,39 @@
         :rules="options?.rules"
         @submit="formSubmit"
       >
-        <template v-for="(component, componentIndex) in columns" :key="componentIndex">
-          <component
-            :is="getComponentName(component?.formType ?? 'input')"
-            :component="component"
-          >
-            <template v-for="slot in Object.keys($slots)" #[slot]="component">
-              <slot :name="slot" v-bind="component" />
-            </template>
-          </component>
-        </template>
-        <div class="text-center" v-if="options.showButtons">
-          <a-space>
-            <slot name="formBeforeButtons" />
-            <slot name="formButtons">
-              <a-button :type="options.submitType" :status="options.submitStatus" v-if="options.submitShowBtn" html-type="submit">
-                <template #icon v-if="options?.submitIcon">
-                  <component :is="options.submitIcon" />
-                </template>
-                {{ options.submitText }}
-              </a-button>
-              <a-button :type="options.resetType" :status="options.resetStatus" v-if="options.resetShowBtn" @click="resetForm">
-                <template #icon v-if="options?.resetIcon">
-                  <component :is="options.resetIcon" />
-                </template>
-                {{ options.resetText }}
-              </a-button>
-            </slot>
-            <slot name="formAfterButtons" />
-          </a-space>
-        </div>
+        <slot name="formContent">
+          <template v-for="(component, componentIndex) in columns" :key="componentIndex">
+            <component
+              :is="getComponentName(component?.formType ?? 'input')"
+              :component="component"
+              :ref="setDialogRef"
+            >
+              <template v-for="slot in Object.keys($slots)" #[slot]="component">
+                <slot :name="slot" v-bind="component" />
+              </template>
+            </component>
+          </template>
+          <div class="text-center" v-if="options.showButtons">
+            <a-space>
+              <slot name="formBeforeButtons" />
+              <slot name="formButtons">
+                <a-button :type="options.submitType" :status="options.submitStatus" v-if="options.submitShowBtn" html-type="submit">
+                  <template #icon v-if="options?.submitIcon">
+                    <component :is="options.submitIcon" />
+                  </template>
+                  {{ options.submitText }}
+                </a-button>
+                <a-button :type="options.resetType" :status="options.resetStatus" v-if="options.resetShowBtn" @click="resetForm">
+                  <template #icon v-if="options?.resetIcon">
+                    <component :is="options.resetIcon" />
+                  </template>
+                  {{ options.resetText }}
+                </a-button>
+              </slot>
+              <slot name="formAfterButtons" />
+            </a-space>
+          </div>
+        </slot>
       </a-form>
     </a-spin>
   </div>
@@ -68,7 +71,7 @@ import {
   ref, watch, provide,
   onMounted, nextTick, getCurrentInstance
 } from 'vue'
-import { isNil, get } from 'lodash'
+import { isNil, get, cloneDeep } from 'lodash'
 import defaultOptions from './js/defaultOptions.js'
 import {
   getComponentName, toHump,
@@ -76,31 +79,14 @@ import {
 } from './js/utils.js'
 import { loadDict, handlerCascader } from './js/networkRequest.js'
 import arrayComponentDefault from './js/defaultArrayComponent.js'
+import ColumnService from './js/columnService.js'
 
-import { maEvent } from './js/formItemMixin.js'
+import { runEvent } from './js/event.js'
 import { Message } from '@arco-design/web-vue'
-
-const containerList = import.meta.globEager('./containerItem/*.vue')
-const componentList = import.meta.globEager('./formItem/*.vue')
-const _this = getCurrentInstance().appContext
-for (const path in containerList) {
-  const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
-  const containerName = `Ma${toHump(name)}`
-  if (! _this.components[containerName]) {
-    _this.app.component(containerName, containerList[path].default)
-  }
-}
-
-for (const path in componentList) {
-  const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
-  const componentName = `Ma${toHump(name)}`
-  if (! _this.components[componentName]) {
-    _this.app.component(componentName, componentList[path].default)
-  }
-}
 
 const formLoading = ref(false)
 const maFormRef = ref()
+const dialogRefs = ref({})
 const flatteningColumns = ref([])
 const dictList = ref({})
 const cascaderList = ref([])
@@ -111,7 +97,7 @@ const props = defineProps({
   columns: { type: Array },
   options: { type: Object, default: {} },
 })
-const emit = defineEmits(['onSubmit', 'update:modelValue'])
+const emit = defineEmits(['submit', 'update:modelValue'])
 
 watch(
   () => props.modelValue,
@@ -122,17 +108,37 @@ watch(
 watch(
   () => form.value,
   vl => {
-    interactiveControl(vl, flatteningColumns.value)
+    interactiveControl(vl, flatteningColumns.value, { getColumnService, dictList })
     emit('update:modelValue', vl)
   },
   { deep: true }
 )
 
-
-const options = ref(Object.assign(JSON.parse(JSON.stringify(defaultOptions)), props.options))
+const options = ref({})
 
 // 初始化
 const init = async () => {
+  const containerList = import.meta.glob('./containerItem/*.vue', { eager: true })
+  const componentList = import.meta.glob('./formItem/*.vue', { eager: true })
+  const _this = getCurrentInstance()?.appContext ?? undefined
+
+  if (_this) {
+    for (const path in containerList) {
+      const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
+      const containerName = `Ma${toHump(name)}`
+      if (!_this.components[containerName]) {
+        _this.app.component(containerName, containerList[path].default)
+      }
+    }
+
+    for (const path in componentList) {
+      const name = path.match(/([A-Za-z0-9_-]+)/g)[1]
+      const componentName = `Ma${toHump(name)}`
+      if (!_this.components[componentName]) {
+        _this.app.component(componentName, componentList[path].default)
+      }
+    }
+  }
 
   formLoading.value = true
   
@@ -172,22 +178,29 @@ const init = async () => {
   })
 
   await nextTick(() => {
-    interactiveControl(form.value, flatteningColumns.value)
+    interactiveControl(form.value, flatteningColumns.value, { getColumnService, dictList })
     formLoading.value = false
   })
 }
 
-provide('options', options.value)
-provide('columns', flatteningColumns)
-provide('dictList', dictList)
-provide('formModel', form)
-provide('formLoading', formLoading)
-maEvent.handleCommonEvent(options.value, 'onCreated')
+const setDialogRef = async (ref) => {
+  await nextTick(() => {
+    if (ref?.getDataIndex) {
+      dialogRefs.value[ref.getDataIndex()] = ref
+      if (! form.value[ref.getDataIndex()] ) {
+        form.value[ref.getDataIndex()] = {}
+      }
+    }
+  })
+}
+
+// maEvent.handleCommonEvent(options.value, 'onCreated')
 
 onMounted(async () => {
-  maEvent.handleCommonEvent(options.value, 'onMounted')
+  updateOptions()
+  // maEvent.handleCommonEvent(options.value, 'onMounted')
   options.value.init && await init()
-  maEvent.handleCommonEvent(options.value, 'onInit')
+  // maEvent.handleCommonEvent(options.value, 'onInit')
 })
 
 const done = (status) => formLoading.value = status
@@ -203,68 +216,44 @@ const validateForm = async () => {
 const resetForm = async() => await maFormRef.value.resetFields()
 const clearValidate = async() => await maFormRef.value.clearValidate()
 
-const formSubmit = async () =>  (await validateForm() && !formLoading.value ) || emit('onSubmit', form.value, done)
+const formSubmit = async () => {
+  await validateForm()
+  emit('submit', form.value, done)
+}
+
+/**
+ * 获取column属性服务类
+ * @returns ColumnService
+ */
+const getColumnService = (strictMode = true) => {
+  return new ColumnService(
+    {
+      columns: flatteningColumns.value,
+      cascaders: cascaderList.value,
+      dicts: dictList.value,
+      refs: dialogRefs.value
+    },
+    strictMode
+  )
+}
 
 const getFormRef = () => maFormRef.value
 const getDictList = () => dictList.value
-const getDictService = () => {
-  const DictService = function (dictList) {
-    /**
-     * dict项服务类
-     * @param dataIndex
-     * @param dictData
-     * @constructor
-     */
-    const DictItemService = function (dataIndex, dictData) {
-      this.dict = dictData
-      this.dataIndex = dataIndex
-
-      /**
-       * 返回原DictData对象
-       * @returns {*}
-       */
-      this.getRawDictData = () => {
-        return this.dict
-      }
-      /**
-       * 追加
-       * @param label
-       * @param value
-       * @param extend
-       */
-      this.append = (label, value, extend = {}) => {
-        this.getRawDictData().push(Object.assign({
-          label: label,
-          value: value,
-        }, extend))
-      }
-      /**
-       * 重新加载dict
-       * @param dictConfig
-       * @returns {Promise<void>}
-       */
-      this.loadDict = (dictConfig) => {
-        return loadDict(dictList, {formType: "select", dict: dictConfig, dataIndex: this.dataIndex})
-      }
-    }
-
-    this.dictMap = new Map()
-    for (const [dataIndex, dictData] of Object.entries(dictList)) {
-      this.dictMap.set(dataIndex, new DictItemService(dataIndex, dictData))
-    }
-    this.get = (key) => {
-      return this.dictMap.get(key)
-    }
-  }
-  return new DictService(getDictList())
-}
 const getColumns = () => flatteningColumns.value
 const getCascaderList = () => cascaderList.value
 const getFormData = () => form.value
+const updateOptions = () => options.value = Object.assign(cloneDeep(defaultOptions), props.options)
+
+provide('options', options.value)
+provide('columns', flatteningColumns)
+provide('dictList', dictList)
+provide('formModel', form)
+provide('formLoading', formLoading)
+provide('getColumnService', getColumnService)
 
 defineExpose({
-  init, getFormRef, getColumns, getDictList, getDictService, getCascaderList, getFormData,
-  validateForm, resetForm, clearValidate
+  init, getFormRef, getColumns, getDictList, getColumnService, getCascaderList, getFormData,
+  validateForm, resetForm, clearValidate, updateOptions
 })
 </script>
 

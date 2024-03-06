@@ -44,7 +44,7 @@
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 160,
+    operationColumnWidth: 160,
     delete: {
       show: true,
       api: dept.delLeader, auth: ['system:dept:update'],

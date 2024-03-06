@@ -40,7 +40,7 @@ const props = defineProps({
   tip: { type: String, default: undefined },
   type: { type: String, default: 'image' },
   accept: { type: String, default: '*' },
-  returnType: { type: String, default: 'url' },
+  returnType: { type: String, default: 'hash' },
   fileType: { type: String, default: 'button' },
   showList: { type: Boolean, default: true },
   requestData: { type: Object, default: {} },

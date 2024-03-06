@@ -37,7 +37,7 @@ const crud = reactive({
   rowSelection: { showCheckedAll: true, key: 'key' },
   showIndex: false,
   operationColumn: true,
-  operationWidth: 160,
+  operationColumnWidth: 160,
   edit: { show: true, api: config.update, auth: ['setting:config:update'] },
   delete: { show: true, api: config.delete, auth: ['setting:config:delete'] },
   beforeRequest: (params) => params.group_id = groupId.value,
@@ -95,9 +95,9 @@ const columns = reactive([
     formType: 'select',
     commonRules: [{ required: true, message: '输入组件必选' }],
     dict: { data: inputComponent },
-    control: (val) => {
-      const temp = ['select', 'radio', 'checkbox']
-      return { config_select_data: { display: temp.includes(val) } }
+    onControl: (val, maFormObject) => {
+      const service = maFormObject.getColumnService()
+      service.get('config_select_data').setAttr('display', ['select', 'radio', 'checkbox'].includes(val))
     },
     width: 180,
   },

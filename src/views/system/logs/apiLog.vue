@@ -54,10 +54,10 @@
         class="mt-3"
       >
         <a-collapse-item header="请求数据" key="request">
-          <ma-code-editor v-model="currentRow.request_data" is-bind :height="150" readonly />
+          <ma-code-editor v-model="currentRow.request_data" v-if="visible" :height="150" readonly />
         </a-collapse-item>
         <a-collapse-item header="响应数据" key="response">
-          <ma-code-editor v-model="currentRow.response_data" is-bind :height="150" readonly />
+          <ma-code-editor v-model="currentRow.response_data" v-if="visible" :height="150" readonly />
         </a-collapse-item>
       </a-collapse>
     </a-drawer>

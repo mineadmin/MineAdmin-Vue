@@ -28,7 +28,7 @@
             <div class="tree-container p-2">
               <ma-tree-slider
                 ref="tree"
-                v-model="menuList"
+                :data="menuList"
                 checkable
                 :fieldNames="{ title: 'label', key: 'id' }"
                 searchPlaceholder="过滤菜单"

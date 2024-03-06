@@ -31,13 +31,13 @@
         :search-button="props.component.searchButton"
         :loading="props.component.invisibleButton"
         :button-text="props.component.buttonText"
-        @input="maEvent.handleInputEvent(props.component, $event)"
-        @change="maEvent.handleChangeEvent(props.component, $event)"
-        @press-enter="maEvent.handleCommonEvent(props.component, 'onPressEnter')"
-        @clear="maEvent.handleCommonEvent(props.component, 'onClear')"
-        @focus="maEvent.handleCommonEvent(props.component, 'onFocus')"
-        @blur="maEvent.handleCommonEvent(props.component, 'onBlur')"
-        @search="maEvent.handleInputSearchEvent(props.component, $event)"
+        @input="rv('onInput', $event)"
+        @change="rv('onChange', $event)"
+        @press-enter="rv('onPressEnter')"
+        @clear="rv('onClear')"
+        @focus="rv('onFocus')"
+        @blur="rv('onBlur')"
+        @search="rv('onSearch', $event)"
       >
 
         <template #prepend v-if="props.component.openPrepend">
@@ -61,13 +61,16 @@
 import { ref, inject, onMounted, watch } from 'vue'
 import { get, set } from 'lodash'
 import MaFormItem from './form-item.vue'
-import { maEvent } from '../js/formItemMixin.js'
+import { runEvent } from '../js/event.js'
 const props = defineProps({
   component: Object,
   customField: { type: String, default: undefined }
 })
 
 const formModel = inject('formModel')
+const getColumnService= inject('getColumnService')
+const columns = inject('columns')
+const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, getColumnService, columns }, value)
 const index = props.customField ?? props.component.dataIndex
 const value = ref(get(formModel.value, index))
 
@@ -89,8 +92,6 @@ const getComponentName = () => {
   }
 }
 
-maEvent.handleCommonEvent(props.component, 'onCreated')
-onMounted(() => {
-  maEvent.handleCommonEvent(props.component, 'onMounted')
-})
+rv('onCreated')
+onMounted(() => rv('onMounted'))
 </script>

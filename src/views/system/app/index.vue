@@ -66,7 +66,7 @@
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 270,
+    operationColumnWidth: 270,
     add: { show: true, api: app.save, auth: ['system:app:save'] },
     edit: { show: true, api: app.update, auth: ['system:app:update'] },
     delete: {

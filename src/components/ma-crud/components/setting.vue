@@ -89,16 +89,20 @@
 import { ref, inject } from 'vue'
 
 const options = inject('options')
-let columns = inject('columns')
+const columns = inject('columns')
+const allowShowColumns = ref([])
 
-const allowShowColumns = columns.filter(item => {
-  return ! (item?.settingHide ?? false)
-})
+const setShowColumns = () => {
+  allowShowColumns.value = columns.value.filter(item => {
+    return ! (item?.settingHide ?? false)
+  })
+}
 
 const visible = ref(false)
 const bordered = ref('column')
 
 const open = () => {
+  setShowColumns()
   visible.value = true
 }
 
@@ -107,7 +111,7 @@ const onCancel = () => {
 }
 
 const changeColumn = (ev, type, name) => {
-  const column = columns.find( item =>  item.dataIndex === name )
+  const column = columns.value.find( item =>  item.dataIndex === name )
   switch (type) {
     case 'order':
       if (ev === 'page') {
@@ -137,7 +141,8 @@ const changeBordered = (v) => {
 }
 
 const onTableChange = (_data) => {
-  columns = _data
+  columns.value = _data
+  setShowColumns()
 }
 
 defineExpose({ open })

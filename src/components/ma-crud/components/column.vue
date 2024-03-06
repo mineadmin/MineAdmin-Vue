@@ -1,6 +1,6 @@
 <template>
   <template v-for="row in props.columns" :key="row[options.pk]">
-    <template v-if="!row.hide">
+    <template v-if="isFunction(row.hide) ? row.hide() : !row.hide">
       <a-table-column
           :title="row.title"
           :width="row.width"
@@ -54,6 +54,9 @@
           :sortable="row.sortable"
           v-else
       >
+        <template #title>
+          <slot :name="`tableTitle-${row.dataIndex}`" v-bind="{ column: row }">{{ row.title }}</slot>
+        </template>
         <template #cell="{ record, column, rowIndex }">
           <!-- 操作栏 -->
           <template v-if="row.dataIndex === '__operation'">
@@ -61,14 +64,14 @@
               <a-space size="mini">
                 <slot name="operationBeforeExtend" v-bind="{ record, column, rowIndex }"></slot>
                 <slot name="operationCell" v-bind="{ record, column, rowIndex }">
-                  <!-- <a-link
-                    v-if="
-                      options.see.show
-                      && ($common.auth(options.see.auth || [])
-                      || (options.see.role || []))
-                    "
+                  <a-link
+                    v-if="(isFunction(options.see.show) ? options.see.show(record) : options.see.show) && !props.isRecovery"
+                    v-auth="options.see.auth || []"
+                    v-role="options.see.role || []"
                     type="primary"
-                  ><icon-eye /> {{ options.see.text || '查看' }}</a-link> -->
+                    :disabled="(isFunction(options.see.disabled) ? options.see.disabled(record) : options.see.disabled)"
+                    @click="seeAction(record)"
+                  ><icon-eye /> {{ options.see.text || '查看' }}</a-link>
                   <a-link
                       v-if="(isFunction(options.edit.show) ? options.edit.show(record) : options.edit.show) && !props.isRecovery"
                       v-auth="options.edit.auth || []"
@@ -179,23 +182,15 @@ const imageSee = async (row, record, dataIndex) => {
       return
     }
 
-    if (! ['id', 'hash'].includes(row.returnType)) {
-      Message.info('该图片无法查看')
-      return
-    }
-    Message.info('获取图片中，请稍等...')
-    const res = row.returnType === 'id' ? await commonApi.getFileInfoById({ id: record.id }) : await commonApi.getFileInfoByHash({ hash: record.hash })
-    const result  = res?.success ?? false
-    if (! result) {
-      Message.info('图片信息无法获取')
+    if (row.returnType === 'hash') {
+      emit('showImage', tool.showFile(record[dataIndex]))
       return
     }
 
-    const isImage = res.data.mime_type.indexOf('image') > -1
-    result && emit(
-        'showImage',
-        isImage ? tool.attachUrl(res.data.url, uploadConfig.storageMode[res.data.storage_mode]) : 'not-image.png'
-    )
+    if (row.returnType === 'id') {
+      Message.info('该图片无法查看')
+      return
+    }
 
   } else {
     if (! record[row.dataIndex]) {
@@ -224,6 +219,17 @@ const getIndex = rowIndex => {
     return index
   } else {
     return (requestParams[config.request.page] - 1) * requestParams[config.request.pageSize] + index
+  }
+}
+
+const seeAction = record => {
+  if (isFunction(options.beforeOpenSee) && ! options.beforeOpenSee(record)) {
+    return false
+  }
+  if (options.see.action && isFunction(options.see.action)) {
+    options.see.action(record)
+  } else {
+    props.crudFormRef.see(record)
   }
 }
 

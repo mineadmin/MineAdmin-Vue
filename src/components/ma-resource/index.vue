@@ -120,7 +120,7 @@
     modelValue: { type: [ String, Array ] },
     multiple: { type: Boolean, default: true },
     onlyData: { type: Boolean, default: true },
-    returnType: { type: String, default: 'url'},
+    returnType: { type: String, default: 'hash'},
   })
   
   onMounted(async () => {

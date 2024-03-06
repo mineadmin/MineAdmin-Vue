@@ -113,7 +113,7 @@
     searchColNumber: 3,
     pageLayout: 'fixed',
     operationColumn: true,
-    operationWidth: 240,
+    operationColumnWidth: 240,
     add: { show: true, api: module.save, auth: ['setting:module:save'] },
   })
 

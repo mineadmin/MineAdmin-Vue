@@ -99,7 +99,7 @@
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 300,
+    operationColumnWidth: 300,
     add: { show: true, api: role.save, auth: ['system:role:save'] },
     edit: { show: true, api: role.update, auth: ['system:role:update'] },
     delete: {

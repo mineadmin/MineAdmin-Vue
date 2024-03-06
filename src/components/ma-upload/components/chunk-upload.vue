@@ -16,7 +16,7 @@
           class="rounded text-center p-7 w-full"
         >
           <div>
-            <icon-upload class="text-5xl text-gray-400" />
+            <icon-upload class="text-5xl text-gray-400"/>
             <div class="text-red-600 font-bold">
               {{ config.title === 'buttonText' ? $t('upload.buttonText') : config.title }}
             </div>
@@ -27,7 +27,7 @@
     </template>
   </a-upload>
 
-    <!-- 单文件 -->
+  <!-- 单文件 -->
   <div
     class="file-list mt-2"
     v-if="!config.multiple && config.showList && currentItem?.percent"
@@ -38,21 +38,29 @@
       animation
       type="circle"
       size="mini"
+      show-text
       class="progress"
     />
+    <span v-if="currentItem.percent < 100">上传中...</span>
+
+    <a-tooltip content="点击文件名预览/下载" position="tr">
+      <a :href="currentItem.url"
+         v-if="currentItem?.url && currentItem.percent === 100 && currentItem?.status === 'complete'"
+         class="file-name"
+         target="_blank"
+      >{{ currentItem.name }}</a>
+    </a-tooltip>
+
     <a-button
-      class="delete"
+      type="text"
+      size="small"
       @click="removeSignFile()"
       v-if="currentItem.percent === 100"
     >
-      <template #icon><icon-delete /></template>
+      <template #icon>
+        <icon-delete/>
+      </template>
     </a-button>
-    <div
-      v-if="currentItem?.url && currentItem.percent === 100 && currentItem?.status === 'complete'"
-      class="file-item"
-    >
-      {{ currentItem.url }}
-    </div>
   </div>
 
   <!-- 多文件 -->
@@ -69,19 +77,26 @@
       size="mini"
       class="progress"
     />
+    <span v-if="file.percent < 100">上传中...</span>
+
+    <a-tooltip content="点击文件名预览/下载" position="tr">
+      <a :href="file.url"
+         v-if="file?.url && file.percent === 100 && file?.status === 'complete'"
+         class="file-name"
+         target="_blank"
+      >{{ file.name }}</a>
+    </a-tooltip>
+
     <a-button
-      class="delete"
+      type="text"
+      size="small"
       @click="removeFile(idx)"
       v-if="file.percent === 100"
     >
-      <template #icon><icon-delete /></template>
+      <template #icon>
+        <icon-delete/>
+      </template>
     </a-button>
-    <div
-      v-if="file?.url && file.percent === 100 && file?.status === 'complete'"
-      class="file-item"
-    >
-      {{ file.url }}
-    </div>
   </div>
 </template>
 <script setup>
@@ -94,10 +109,14 @@ import { Message } from '@arco-design/web-vue'
 import file2md5 from 'file2md5'
 
 import { useI18n } from 'vue-i18n'
+
 const { t } = useI18n()
 
 const props = defineProps({
-  modelValue: { type: [ String, Number, Array ], default: () => {} }
+  modelValue: {
+    type: [String, Number, Array], default: () => {
+    }
+  }
 })
 const emit = defineEmits(['update:modelValue'])
 const config = inject('config')
@@ -106,9 +125,9 @@ const showFileList = ref([])
 const signFile = ref()
 const currentItem = ref({})
 
-const chunkUpload = async (options) => {
+const chunkUpload = async(options) => {
   let idx
-  if (config.multiple) {
+  if(config.multiple) {
     showFileList.value.push(options.fileItem)
     idx = showFileList.value.length - 1
   } else {
@@ -118,16 +137,16 @@ const chunkUpload = async (options) => {
   try {
     const file = options.fileItem.file
     const hash = await file2md5(file)
-    if (! file.type) {
+    if(!file.type) {
       Message.error('获取文件类型失败，无法上传')
       return
     }
     const chunks = Math.ceil(file.size / config.chunkSize)
-    for (let currentChunk = 0; currentChunk < chunks; currentChunk++) {
+    for(let currentChunk = 0; currentChunk < chunks; currentChunk++) {
       const start = currentChunk * config.chunkSize
       const end = (start + config.chunkSize >= file.size)
-                  ? file.size
-                  : start + config.chunkSize
+        ? file.size
+        : start + config.chunkSize
       const dataForm = new FormData()
       dataForm.append('package', file.slice(start, end))
       dataForm.append('hash', hash)
@@ -137,14 +156,15 @@ const chunkUpload = async (options) => {
       dataForm.append('size', file.size)
       dataForm.append('index', currentChunk + 1)
       dataForm.append('ext', /[^.]+$/g.exec(file.name)[0])
-      for (let name in config.requestData) {
+      for(let name in config.requestData) {
         dataForm.append(name, config.requestData[name])
       }
       const res = await commonApi.chunkUpload(dataForm)
 
-      if (res.data && res.data.hash) {
+      if(res.data && res.data.hash) {
         res.data.url = tool.attachUrl(res.data.url, storageMode[res.data.storage_mode])
-        if (config.multiple) {
+        if(config.multiple) {
+          showFileList.value[idx].name = res.data.origin_name
           showFileList.value[idx].percent = 100
           showFileList.value[idx].status = 'complete'
           showFileList.value[idx].url = res.data.url
@@ -166,9 +186,11 @@ const chunkUpload = async (options) => {
         }
         return
       }
-      if (res.data && res.data.code && res.data.code === 201) {
-        const percent = parseFloat((1 / chunks).toFixed(2))
-        if (config.multiple) {
+      if(res.data && res.data.code && res.data.code === 201) {
+        const percent = Math.floor((1 / chunks) * 10000) / 10000;
+        console.log('showFileList.value[idx].percent', showFileList.value[idx].percent)
+        console.log('percent', percent)
+        if(config.multiple) {
           showFileList.value[idx].percent += percent
         } else {
           currentItem.value.status = 'uploading'
@@ -176,7 +198,7 @@ const chunkUpload = async (options) => {
         }
       }
     }
-  } catch (e) {
+  } catch(e) {
     console.error(e)
     Message.error(t('upload.fileHashFail'))
   }
@@ -197,32 +219,45 @@ const removeFile = (idx) => {
   emit('update:modelValue', files)
 }
 
-const init = async () => {
-  if (config.multiple) {
-    if (isArray(props.modelValue) && props.modelValue.length > 0) {
+const init = async() => {
+  if(config.multiple) {
+    if(isArray(props.modelValue) && props.modelValue.length > 0) {
       const result = await props.modelValue.map(async item => {
         return await getFileUrl(config.returnType, item, storageMode)
       })
       const data = await Promise.all(result)
-      if (config.returnType === 'url') {
-        showFileList.value = data.map(url => { return { url } })
+
+      let fileItemObj = { percent: 100, status: 'complete' };
+      if(config.returnType === 'url') {
+        showFileList.value = data.map(url => {
+          return { url, name: url.substring(url.lastIndexOf('/') + 1), ...fileItemObj }
+        })
       } else {
-        showFileList.value = data.map(item => { return  { url: item.url } })
+        showFileList.value = data.map(item => {
+          return {
+            name: item.origin_name,
+            [config.returnType]: item[config.returnType],
+            url: item.url,
+            ...fileItemObj
+          }
+        })
       }
     } else {
       showFileList.value = []
     }
-  } else if (props.modelValue) {
-    if (config.returnType === 'url') {
+  } else if(props.modelValue) {
+    if(config.returnType === 'url') {
       signFile.value = props.modelValue
       currentItem.value.url = props.modelValue
+      currentItem.value.name = (props.modelValue)?.substring((props.modelValue?.lastIndexOf('/') || 0) + 1)
     } else {
       const result = await getFileUrl(config.returnType, props.modelValue, storageMode)
       signFile.value = result.url
       currentItem.value.url = result.url
+      currentItem.value.name = result.origin_name
     }
     currentItem.value.percent = 100
-    currentItem.value.status  = 'complete'
+    currentItem.value.status = 'complete'
   } else {
     removeSignFile()
   }
@@ -236,20 +271,21 @@ watch(() => props.modelValue, (val) => {
 </script>
 <style lang="less" scoped>
 .file-list {
-  position: relative;
   background-color: var(--color-primary-light-1);
   border-radius: 4px;
-  height: 36px; line-height: 36px; padding: 0 10px;
+  height: 36px;
+  padding: 0 5px;
   width: 100%;
-  .delete {
-    position: absolute; z-index: 99; right: 2px; top: 2px;
-  }
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 
-  .progress {
-    position: absolute;
-    left: 30px;
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%);
+  .file-name {
+    max-width: 90%;
+    margin: 0 5px;
+    overflow: hidden;
+    color: #165DFF
   }
 }
 </style>

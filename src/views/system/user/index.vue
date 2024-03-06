@@ -11,10 +11,9 @@
   <div class="ma-content-block lg:flex justify-between p-4">
     <div class="lg:w-2/12 w-full h-full p-2 shadow">
       <ma-tree-slider
-        v-model="depts"
+        :data="depts"
         searchPlaceholder="搜索部门"
-        :field-names="{ title: 'label', key: 'value' }"
-        :selectedKeys="['all']"
+        v-model="defaultKey"
         @click="switchDept"
       />
     </div>
@@ -34,7 +33,7 @@
         <!-- 头像列 -->
         <template #avatar="{ record }">
           <a-avatar>
-            <img :src="record.avatar || $url + 'avatar.jpg'" style="object-fit: cover" />
+            <img :src="record.avatar ? $tool.showFile(record.avatar) : $url + 'avatar.jpg'" style="object-fit: cover" />
           </a-avatar>
         </template>
         <!-- 操作列 -->
@@ -83,18 +82,20 @@
   import commonApi from '@/api/common'
   import { Message, Modal } from '@arco-design/web-vue'
 
-  const depts = ref([])
+  const depts = ref([{ label: '所有部门', value: 0 }])
   const homePageList = ref([])
   const crudRef = ref()
 
   const setHomeVisible = ref(false)
   const userid = ref()
   const homePage = ref('')
+  const defaultKey = ref([0])
 
   onMounted(() => {
     dept.tree().then(res => {
-      depts.value = res.data
-      depts.value.unshift({ label: '所有部门', value: 'all' })
+      res.data.map(item => {
+        depts.value.push(item)
+      })
     })
     commonApi.getDict('dashboard').then(res => homePageList.value = res.data )
   })
@@ -102,8 +103,9 @@
   let isRecovery = computed(() => crudRef.value ? crudRef.value.isRecovery : false )
 
   const switchDept = (id) => {
-    crudRef.value.requestParams = id[0] === 'all' ? { dept_id: undefined } : { dept_id: id[0] }
+    crudRef.value.requestParams = id[0] === 0 ? { dept_id: undefined } : { dept_id: id[0] }
     crudRef.value.requestData()
+    defaultKey.value = id
   }
 
   const changeStatus = async (status, id) => {
@@ -114,7 +116,7 @@
   }
 
   const updateCache = id => {
-    user.clearCache(id).then(res => {
+    user.clearCache({ id }).then(res => {
       if (res.success) Message.success(res.message)
     })
   }
@@ -164,7 +166,7 @@
     pageLayout: 'fixed',
     rowSelection: { showCheckedAll: true },
     operationColumn: true,
-    operationWidth: 200,
+    operationColumnWidth: 200,
     add: { show: true, api: user.save, auth: ['system:user:save'] },
     edit: { show: true, api: user.update, auth: ['system:user:update'] },
     delete: {
@@ -207,7 +209,7 @@
   const columns = reactive([
     { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
     {
-      title: '头像', dataIndex: 'avatar', width: 75, formType: 'upload',
+      title: '头像', dataIndex: 'avatar', width: 75, formType: 'upload', returnType: 'hash',
       type: 'image', rounded: true, labelWidth: '86px'
     },
     { 

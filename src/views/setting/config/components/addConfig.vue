@@ -15,7 +15,7 @@
       v-model="form"
       :columns="columns"
       class="mt-7"
-      @onSubmit="submit"
+      @submit="submit"
     ></ma-form>
   </div>
 </template>
@@ -83,9 +83,9 @@ const columns = reactive([
     rules: [{ required: true, message: '输入组件必选' }],
     labelWidth: '120px',
     dict: { data: inputComponent },
-    control: (val) => {
-            const temp = ['select', 'radio', 'checkbox']
-      return { config_select_data: { display: temp.includes(val) } }
+    onControl: (val, maFormObject) => {
+      const service = maFormObject.getColumnService()
+      service.get('config_select_data').setAttr('display', ['select', 'radio', 'checkbox'].includes(val))
     }
   },
   {

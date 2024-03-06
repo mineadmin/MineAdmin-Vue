@@ -83,7 +83,7 @@ const crud = reactive({
   showIndex: false,
   rowSelection: { showCheckedAll: true, key: 'name' },
   operationColumn: true,
-  operationWidth: 100,
+  operationColumnWidth: 100,
 })
 
 const columns = reactive([

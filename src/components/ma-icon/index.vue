@@ -10,7 +10,7 @@
 <template>
   <div class="w-full">
     <a-input-group class="w-full">
-      <a-input placeholder="请点击右侧按钮选择图标" allow-clear v-model="currentIcon" />
+      <a-input placeholder="请点击右侧按钮选择图标" v-if="props.preview" allow-clear v-model="currentIcon" />
       <div class="icon-container" v-if="props.preview">
         <component :is="currentIcon" v-if="currentIcon" />
       </div>
@@ -71,7 +71,7 @@
 
   arcodesignIcons.pop()
 
-  const modules = import.meta.globEager('../../assets/ma-icons/*.vue')
+  const modules = import.meta.glob('../../assets/ma-icons/*.vue')
   for (const path in modules) {
     const name = path.match(/([A-Za-z0-9_-]+)/g)[2]
     mineadminIcons.push(`MaIcon${name}`)

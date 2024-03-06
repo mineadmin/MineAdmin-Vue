@@ -1,10 +1,31 @@
 import axios from 'axios'
-import { Message } from '@arco-design/web-vue'
+import {Message} from '@arco-design/web-vue'
 import tool from '@/utils/tool'
-import { get, isEmpty } from 'lodash'
+import {get, isEmpty} from 'lodash'
 import qs from 'qs'
-import { h } from 'vue'
-import { IconFaceFrownFill } from '@arco-design/web-vue/dist/arco-vue-icon'
+import {h} from 'vue'
+import {IconFaceFrownFill} from '@arco-design/web-vue/dist/arco-vue-icon'
+import router from "@/router";
+
+function createExternalService() {
+  // 创建一个外部网络 axios 实例
+  const service = axios.create()
+
+  // HTTP request 拦截器
+  service.interceptors.request.use(
+    config => config,
+    error => Promise.reject(error)
+  );
+
+  // HTTP response 拦截器
+  service.interceptors.response.use(
+    response => response,
+    error => {
+      Promise.reject(error.response ?? null)
+    }
+  )
+  return service
+}
 
 function createService () {
   // 创建一个 axios 实例
@@ -12,8 +33,9 @@ function createService () {
 
   // HTTP request 拦截器
   service.interceptors.request.use(
-    config => config, 
+    config => config,
     error => {
+      console.log(error)
       // 失败
       return Promise.reject(error);
     }
@@ -37,13 +59,13 @@ function createService () {
       return response.data;
     },
     error => {
-      const err = (text) => { 
+      const err = (text) => {
         Message.error({
           content: ( error.response && error.response.data && error.response.data.message )
           ? error.response.data.message
           : text,
           icon: () => h( IconFaceFrownFill )
-        }) 
+        })
       }
       if (error.response && error.response.data) {
         switch (error.response.status) {
@@ -54,14 +76,16 @@ function createService () {
             err('服务器内部错误')
             break
           case 401:
-            err('登录状态已过期，需要重新登录')
-            tool.local.clear()
-            window.location.href = '/'
+            throttle(() => {
+              err('登录状态已过期，需要重新登录')
+              tool.local.clear()
+              router.push({name: 'login'})
+            })()
             break
           case 403:
             err('没有权限访问该资源')
             break
-          default: 
+          default:
             err('未知错误！')
         }
       } else {
@@ -69,9 +93,22 @@ function createService () {
       }
       return Promise.reject(error.response && error.response.data ? error.response.data : null)
     }
-  
+
   )
   return service
+}
+
+//节流
+function throttle(fn, wait = 1500) {
+  return function () {
+    let context = this;
+    if (!throttle.timer) {
+      fn.apply(context, arguments);
+      throttle.timer = setTimeout(function () {
+        throttle.timer = null;
+      }, wait)
+    }
+  }
 }
 
 function stringify (data) {
@@ -80,9 +117,10 @@ function stringify (data) {
 
 /**
  * @description 创建请求方法
- * @param {Object} service axios 实例
+ * @param service
+ * @param externalService
  */
-function createRequest (service) {
+ function createRequest (service, externalService) {
   return function (config) {
     const env = import.meta.env
     const token = tool.local.get(env.VITE_APP_TOKEN_PREFIX)
@@ -91,16 +129,18 @@ function createRequest (service) {
       headers: Object.assign(
         {
           Authorization: "Bearer " + token,
-          'Accept-Language': setting.language || 'zh_CN',
+          'Accept-Language': setting?.language || 'zh_CN',
           'Content-Type': get(config, 'headers.Content-Type', 'application/json;charset=UTF-8')
         },
-        config.header
+        config.headers
       ),
 
       timeout: 10000,
-      baseURL: env.VITE_APP_OPEN_PROXY === 'true' ? env.VITE_APP_PROXY_PREFIX : env.VITE_APP_BASE_URL,
       data: {}
     }
+
+    delete config.headers
+    // return
     const option = Object.assign(configDefault, config)
 
     // json
@@ -109,10 +149,15 @@ function createRequest (service) {
       option.params = {}
     }
 
-    return service(option)
+    if (! /^(http|https)/g.test(option.url) ) {
+      option.baseURL = env.VITE_APP_OPEN_PROXY === 'true' ? env.VITE_APP_PROXY_PREFIX : env.VITE_APP_BASE_URL
+      return service(option)
+    } else {
+      return externalService(option)
+    }
   }
 }
-  
-// 用于真实网络请求的实例和请求方法
+
 export const service = createService()
-export const request = createRequest(service)
+export const externalService = createExternalService()
+export const request = createRequest(service, externalService)

@@ -17,7 +17,7 @@
           :type="options.tabs.type"
           :hide-content="true"
           @change="tabChange"
-          @tab-click="maEvent.customeEvent(options.tabs, $event, 'onClick')"
+          @tab-click="runEvent(options.tabs, 'onClick', undefined, $event)"
           class="ma-tabs mb-5"
       >
         <template #extra><slot name="tabExtra"></slot></template>
@@ -31,7 +31,7 @@
         ref="crudSearchRef"
       >
         <template
-          v-for="(slot, slotIndex) in searchSlots"
+          v-for="(slot, slotIndex) in getSearchSlot()"
           :key="slotIndex"
           #[slot]="{ searchForm, component }"
         >
@@ -48,6 +48,7 @@
         </template>
       </ma-search>
     </div>
+    <div class="mb-2"><slot name="middleContent"></slot></div>
     <div class="_crud-content">
       <div class="operation-tools lg:flex justify-between mb-3" ref="crudOperationRef">
         <a-space class="lg:flex block lg:inline-block" >
@@ -67,9 +68,9 @@
               content="确定要删除数据吗?"
               position="bottom"
               @ok="deletesMultipleAction"
+              v-if="options.delete.show && isBatch(options.delete) && options.rowSelection"
             >
               <a-button
-                v-if="options.delete.show"
                 v-auth="options.delete.auth || []"
                 v-role="options.delete.role || []"
                 type="primary" status="danger"
@@ -84,9 +85,9 @@
               content="确定要恢复数据吗?"
               position="bottom"
               @ok="recoverysMultipleAction"
+              v-if="options.recovery.show && isRecovery && isBatch(options.delete)"
             >
               <a-button
-                v-if="options.recovery.show && isRecovery"
                 v-auth="options.recovery.auth || []"
                 v-role="options.recovery.role || []"
                 type="primary" status="success"
@@ -156,7 +157,7 @@
             :pagination="options.tablePagination"
             :stripe="options.stripe"
             :bordered="options.bordered"
-            :rowSelection="options.rowSelection || undefined"
+            :rowSelection="options.rowSelection ?? undefined"
             :row-key="options?.rowSelection?.key ?? options.pk"
             :scroll="options.scroll"
             :column-resizable="options.resizable"
@@ -164,7 +165,7 @@
             :row-class="options.rowClass"
             :hide-expand-button-on-empty="options.hideExpandButtonOnEmpty"
             :default-expand-all-rows="options.expandAllRows"
-            :summary="options.customerSummary || __summary || options.showSummary"
+            :summary="(options.customerSummary || options.showSummary) && __summary"
             @selection-change="setSelecteds"
             @sorter-change="handlerSort"
           >
@@ -184,7 +185,7 @@
                 <ma-column
                   ref="crudColumnRef"
                   v-if="reloadColumn"
-                  :columns="props.columns"
+                  :columns="columns"
                   :isRecovery="isRecovery"
                   :crudFormRef="crudFormRef"
                   @refresh="() => refresh()"
@@ -202,8 +203,12 @@
                     <slot name="operationAfterExtend" v-bind="{ record, column, rowIndex }"></slot>
                   </template>
 
+                  <template v-for="slot in getTitleSlot(columns)" #[slot]="{ column }">
+                    <slot :name="`${slot}`" v-bind="{ column }" />
+                  </template>
+
                   <template
-                    v-for="(slot, slotIndex) in slots"
+                    v-for="(slot, slotIndex) in getSlot(columns)"
                     :key="slotIndex"
                     #[slot]="{ record, column, rowIndex }"
                   >
@@ -253,7 +258,7 @@ import config from '@/config/crud'
 import { ref, watch, provide, nextTick, onMounted, onUnmounted } from 'vue'
 import defaultOptions from './js/defaultOptions'
 import { loadDict } from '@cps/ma-form/js/networkRequest.js'
-import ColumnService from './js/columnService'
+import ColumnService from '@cps/ma-form/js/columnService'
 
 import MaSearch from './components/search.vue'
 import MaForm from './components/form.vue'
@@ -268,7 +273,7 @@ import { request } from '@/utils/request'
 import tool from '@/utils/tool'
 import Print from '@/utils/print'
 import { isArray, isFunction, isObject, isUndefined } from 'lodash'
-import { maEvent } from '@cps/ma-form/js/formItemMixin.js'
+import { runEvent } from '@cps/ma-form/js/event.js'
 import globalColumn from '@/config/column.js'
 import { useFormStore } from '@/store/index'
 
@@ -329,13 +334,13 @@ const init = async () => {
   }
 
   // 收集数据
-  props.columns.map(item => {
+  columns.value.map(item => {
     if (item.cascaderItem && item.cascaderItem.length > 0) {
       cascaders.value.push(...item.cascaderItem)
     }
   })
 
-  await props.columns.map(async item => {
+  await columns.value.map(async item => {
     // 字典
     if (! cascaders.value.includes(item.dataIndex) && item.dict) {
       await loadDict(dicts.value, item)
@@ -373,11 +378,10 @@ columns.value.map((item, index) => {
 })
 
 provide('options', options.value)
-provide('columns', props.columns)
-provide('layout', props.layout)
-provide('dicts', dicts.value)
-provide('dictColors', dictColors.value)
 provide('requestParams', requestParams.value)
+provide('columns', columns)
+provide('dicts', dicts)
+provide('layout', props.layout)
 provide('dictTrans', dictTrans)
 provide('dictColors', dictColors)
 provide('isRecovery', isRecovery)
@@ -402,6 +406,11 @@ watch(
     }
 )
 
+const showImage = (url) => {
+  imgUrl.value = url
+  imgVisible.value = true
+}
+
 const getSlot = (cls = []) => {
   let sls = []
   cls.map(item => {
@@ -415,23 +424,28 @@ const getSlot = (cls = []) => {
   return sls
 }
 
-const showImage = url => {
-  imgUrl.value = url
-  imgVisible.value = true
+const getTitleSlot = (cls = []) => {
+  let sls = []
+  cls.map(item => {
+    if (item.children && item.children.length > 0) {
+      let tmp = getTitleSlot(item.children)
+      sls.push(...tmp)
+    } else if (item.dataIndex) {
+      sls.push(`tableTitle-${item.dataIndex}`)
+    }
+  })
+  return sls
 }
 
 const getSearchSlot = () => {
   let sls = []
-  props.columns.map(item => {
+  columns.value.map(item => {
     if (item.search && item.search === true) {
       sls.push(item.dataIndex)
     }
   })
   return sls
 }
-
-slots.value = getSlot(props.columns)
-searchSlots.value = getSearchSlot(props.columns)
 
 const requestData = async () => {
   await init()
@@ -487,7 +501,7 @@ const requestHandle = async () => {
   } else {
     console.error(`ma-crud error：crud.api not is Function.`)
   }
-  isFunction(options.value.afterRequest) && options.value.afterRequest(tableData.value)
+  isFunction(options.value.afterRequest) && (tableData.value = options.value.afterRequest(tableData.value))
   loading.value = false
 }
 
@@ -611,7 +625,7 @@ const dbClickOpenEdit = (record) => {
         }
       }
 
-      if (options.value.edit.api && isFunction(options.value.edit.api)) {
+      if (options.value.edit.api && options.value.edit.show && isFunction(options.value.edit.api)) {
         editAction(record)
       }
     }
@@ -704,23 +718,29 @@ const __summary = ({ data }) => {
     let summarySuffixText = {}
     let length = data.length || 0
     summary.map( item => {
-      summaryData[item.dataIndex] = 0
-      summaryPrefixText[item.dataIndex] = item?.prefixText ?? ''
-      summarySuffixText[item.dataIndex] = item?.suffixText ?? ''
-      data.map(record => {
-        if (record[item.dataIndex]) {
-          if (item.action && item.action === 'sum') {
-            summaryData[item.dataIndex] += parseFloat(record[item.dataIndex])
+      if (item.action && item.action === 'text') {
+        summaryData[item.dataIndex] = item.content
+      } else {
+        summaryData[item.dataIndex] = 0
+        summaryPrefixText[item.dataIndex] = item?.prefixText ?? ''
+        summarySuffixText[item.dataIndex] = item?.suffixText ?? ''
+        data.map(record => {
+          if (record[item.dataIndex]) {
+            if (item.action && item.action === 'sum') {
+              summaryData[item.dataIndex] += parseFloat(record[item.dataIndex])
+            }
+            if (item.action && item.action === 'avg') {
+              summaryData[item.dataIndex] += parseFloat(record[item.dataIndex]) / length
+            }
           }
-          if (item.action && item.action === 'avg') {
-            summaryData[item.dataIndex] += parseFloat(record[item.dataIndex]) / length
-          }
-        }
-      })
+        })
+      }
     })
 
     for (let i in summaryData) {
-      summaryData[i] = summaryPrefixText[i] + tool.groupSeparator(summaryData[i].toFixed(2)) + summarySuffixText[i]
+      if (/^\d+(\.\d+)?$/.test(summaryData[i])) {
+        summaryData[i] = summaryPrefixText[i] + tool.groupSeparator(summaryData[i].toFixed(2)) + summarySuffixText[i]
+      }
     }
 
     return [ summaryData ]
@@ -737,7 +757,7 @@ const tabChange = async (value) => {
   const params = {}
   params[searchKey] = value
   requestParams.value = Object.assign(requestParams.value, params)
-  await maEvent.customeEvent(options.value.tabs, value, 'onChange')
+  await runEvent(options.value.tabs, 'onChange', undefined, value)
   await refresh()
 }
 
@@ -759,7 +779,7 @@ const execContextMenuCommand = async (args) => {
     case 'edit': editAction(record); break;
     case 'delete': crudColumnRef.value.deleteAction(record); break;
     default:
-      await maEvent.customeEvent(item, args, 'onCommand')
+      await runEvent(item, 'onCommand', undefined, args)
       break;
   }
 }
@@ -770,12 +790,14 @@ const tabsHandler = async () => {
     if ( isFunction(tabs.data) || isArray(tabs.data) ) {
         tabs.data = isFunction(tabs.data) ? await tabs.data() : tabs.data
     } else if (! isUndefined(tabs.dataIndex) ) {
-        const col = props.columns.find( item => item.dataIndex === tabs.dataIndex )
+        const col = columns.value.find( item => item.dataIndex === tabs.dataIndex )
         if ( col.search === true && isObject(col.dict) ) {
             tabs.data = dicts.value[tabs.dataIndex]
         }
     }
 }
+
+const isBatch = (obj) => isUndefined(obj) ? true : (obj?.batch ?? true)
 
 onMounted(async() => {
   if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {
