@@ -43,7 +43,6 @@
 
   const settingRef = ref()
   const systemSearchRef = ref()
-console.log(appStore.layout)
   watch(() => appStore.settingOpen, vl => {
     if (vl === true) {
       settingRef.value.open()

@@ -188,8 +188,6 @@ const chunkUpload = async(options) => {
       }
       if(res.data && res.data.code && res.data.code === 201) {
         const percent = Math.floor((1 / chunks) * 10000) / 10000;
-        console.log('showFileList.value[idx].percent', showFileList.value[idx].percent)
-        console.log('percent', percent)
         if(config.multiple) {
           showFileList.value[idx].percent += percent
         } else {
