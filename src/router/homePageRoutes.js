@@ -37,16 +37,16 @@ const homePageRoutes = [
     },
     component: () => import('@/views/demo.vue'),
   }
-  // , {
-  //   name: 'formDemo2',
-  //   path: '/formDemo2',
-  //   meta: {
-  //     title: '发布商品示例',
-  //     icon: 'icon-message',
-  //     type: 'M',
-  //   },
-  //   component: () => import('@/views/demo2.vue'),
-  // }
+  , {
+    name: '表单设计器',
+    path: '/formDesign',
+    meta: {
+      title: '表单设计器',
+      icon: 'icon-scissor',
+      type: 'M',
+    },
+    component: () => import('@/views/formdesign.vue'),
+  }
 ]
 
 export const homePage = {

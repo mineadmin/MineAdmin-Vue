@@ -29,12 +29,7 @@ const loading = ref(false)
 
 let isDevelop =  import.meta.env.VITE_APP_ENV === 'development'
 
-var odata = isDevelop ?
-    { username: 'superAdmin', password: 'admin123', code: '' }
-    : { username: '', password: '', code: '' }
-
-
-const form = reactive(odata)
+const form = reactive({ username: 'superAdmin', password: 'admin123', code: '' })
 
 const userStore = useUserStore()
 
