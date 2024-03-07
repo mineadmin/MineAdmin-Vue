@@ -98,16 +98,18 @@ const tableColumnsBase = reactive([
         placeholder: '请输入原价'
     },
     {
-        title: '商品条形码',
+        title: '条形码',
         dataIndex: 'bar_code',
         formType: 'input',
+        align: 'center',
         width: 160,
         placeholder: '请输入商品条形码'
     },
     {
-        title: '商品编号',
+        title: 'SKU编号',
         dataIndex: 'sku_code',
         formType: 'input',
+        align: 'center',
         width: 160,
         placeholder: '请输入商品编号'
     },

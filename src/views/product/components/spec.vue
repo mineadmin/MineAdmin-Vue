@@ -24,27 +24,44 @@
                                 {{ record[column.dataIndex] }}
                             </a-typography-text>
                             <template v-else-if="component.formType === 'grid-input'">
-                                <a-grid :cols="{ xs: 1, sm: 2, md: 2, lg: 2, xl: 3, xxl: 4 }" :colGap="12" :rowGap="12">
-                                    <a-grid-item v-for="(item, itemIndex) in record[column.dataIndex]" :key="itemIndex">
-                                      <a-space class="border p-2">
-                                            <a-input v-model="record[column.dataIndex][itemIndex]"
-                                                :placeholder="'请输入' + component.title"
-                                                @change="checkItemRepeat($event, record[column.dataIndex], itemIndex)"></a-input>
-                                            <a-link
-                                                @click="handleItemDel(rowIndex, column, itemIndex)"><icon-delete /></a-link>
-                                        </a-space>
+                                 <a-grid :cols="{ xs: 1, sm: 2, md: 2, lg: 2, xl: 3, xxl: 4 }" :colGap="12" :rowGap="12">
+                                    <a-grid-item v-for="(item, itemIndex) in record[column.dataIndex]" :key="itemIndex"
+                                        class="border">
+                                        <a-row :gutter="3" :align="'center'" justify="center" class="p-2">
+                                            <a-col :flex="12">
+                                                <a-input v-model="record[column.dataIndex][itemIndex]"
+                                                    :placeholder="'请输入' + component.title"
+                                                    @change="checkItemRepeat($event, record[column.dataIndex], itemIndex)" />
+                                            </a-col>
+                                            <a-col :flex="1">
+                                                <a-link class="inline-block"
+                                                    @click="handleItemDel(rowIndex, column, itemIndex)"><icon-delete /></a-link>
+                                            </a-col>
+                                        </a-row>
+                                        <a-row class="p-2 border-t" v-if="rowIndex === 0">
+                                            <a-col :flex="12">
+                                                <ma-upload v-model="specImages[itemIndex]" fit="contain" :width="'100%'"
+                                                    :height="80" :center="true" :onlyUrl="true" returnType="url"
+                                                    type="custom-image" />
+                                            </a-col>
+                                        </a-row>
                                     </a-grid-item>
-                                    <a-grid-item>
-                                        <a-space class="border p-2">
-                                            <a-input v-model="children[rowIndex]" :placeholder="'新增' + component.title" />
-                                            <a-button type="primary" size="mini"
-                                                :disabled="children[rowIndex]?false:true"
-                                                @click="handleAddItem(record, column.dataIndex, rowIndex)">
-                                                <template #icon>
-                                                    <icon-plus />
-                                                </template>
-                                            </a-button>
-                                        </a-space>
+                                    <a-grid-item class="border">
+                                        <a-row :gutter="3" :align="'center'" justify="center" class="p-2">
+                                            <a-col :flex="12">
+                                                <a-input v-model="children[rowIndex]"
+                                                    :placeholder="'新增' + component.title" />
+                                            </a-col>
+                                            <a-col :flex="1">
+                                                <a-button type="primary" size="mini"
+                                                    :disabled="children[rowIndex] ? false : true"
+                                                    @click="handleAddItem(record, column.dataIndex, rowIndex)">
+                                                    <template #icon>
+                                                        <icon-plus />
+                                                    </template>
+                                                </a-button>
+                                            </a-col>
+                                        </a-row>
                                     </a-grid-item>
                                 </a-grid>
                             </template>
@@ -67,7 +84,7 @@
     </div>
 </template>
 <script setup>
-import { ref,reactive, provide,inject,computed } from 'vue'
+import { ref,reactive, provide,inject,computed,onMounted } from 'vue'
 import { Message } from '@arco-design/web-vue'
 import attributeTable from './attribute.vue'
 import { get, set } from 'lodash'
@@ -118,7 +135,7 @@ const formModel = inject('formModel')
 //表单字段名称
 const index = props.customField ?? props.component.dataIndex
 //表单数据
-const value = ref(get(formModel.value, index))
+const value = ref(get(formModel.value, index) ?? [])
 //规格组图片
 const specImages = ref([])
 //新增子项数据：为了更通用不写死原则
@@ -231,6 +248,9 @@ const handleChange = (data)=>{
  * 从数组中删除不满足条件的对象  
  */
 function removeInvalidSpecs(specData) {  
+    if(!specData.length) {
+        return [];
+    }
     return specData.filter(spec => {  
         return spec[specName.value] !== undefined && spec[specName.value] !== '' &&  
             Array.isArray(spec[specValue.value]) && spec[specValue.value].length > 0;  
@@ -246,6 +266,9 @@ const buildProperties = () => {
     attrProps.value.specData = removeInvalidSpecs(specData);
     componentIndex.value +=1;
 }
+onMounted(()=>{
+    buildProperties()
+})
 </script>
 <style scoped>
     :deep(.arco-input-wrapper) {
