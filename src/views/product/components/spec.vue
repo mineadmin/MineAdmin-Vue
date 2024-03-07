@@ -33,11 +33,6 @@
                                             <a-link
                                                 @click="handleItemDel(rowIndex, column, itemIndex)"><icon-delete /></a-link>
                                         </a-space>
-                                        <div class="w-[228px]" v-if="rowIndex == 0">
-                                            <ma-upload class="mt-1" v-model="specImages[itemIndex]" fit="contain"
-                                                :width="228" :height="80" :center="true" :onlyUrl="true" returnType="url"
-                                                type="custom-image"></ma-upload>
-                                        </div>
                                     </a-grid-item>
                                     <a-grid-item>
                                         <a-space class="border p-2">
