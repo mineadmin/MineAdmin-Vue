@@ -26,13 +26,18 @@
                             <template v-else-if="component.formType === 'grid-input'">
                                 <a-grid :cols="{ xs: 1, sm: 2, md: 2, lg: 2, xl: 3, xxl: 4 }" :colGap="12" :rowGap="12">
                                     <a-grid-item v-for="(item, itemIndex) in record[column.dataIndex]" :key="itemIndex">
-                                        <a-space class="border p-2">
+                                      <a-space class="border p-2">
                                             <a-input v-model="record[column.dataIndex][itemIndex]"
                                                 :placeholder="'请输入' + component.title"
                                                 @change="checkItemRepeat($event, record[column.dataIndex], itemIndex)"></a-input>
                                             <a-link
                                                 @click="handleItemDel(rowIndex, column, itemIndex)"><icon-delete /></a-link>
                                         </a-space>
+                                        <div class="w-[228px]" v-if="rowIndex == 0">
+                                            <ma-upload class="mt-1" v-model="specImages[itemIndex]" fit="contain"
+                                                :width="228" :height="80" :center="true" :onlyUrl="true" returnType="url"
+                                                type="custom-image"></ma-upload>
+                                        </div>
                                     </a-grid-item>
                                     <a-grid-item>
                                         <a-space class="border p-2">
@@ -119,6 +124,8 @@ const formModel = inject('formModel')
 const index = props.customField ?? props.component.dataIndex
 //表单数据
 const value = ref(get(formModel.value, index))
+//规格组图片
+const specImages = ref([])
 //新增子项数据：为了更通用不写死原则
 const children = ref([])
 //表单数据处理
@@ -226,11 +233,22 @@ const handleChange = (data)=>{
 }
 
 /**
+ * 从数组中删除不满足条件的对象  
+ */
+function removeInvalidSpecs(specData) {  
+    return specData.filter(spec => {  
+        return spec[specName.value] !== undefined && spec[specName.value] !== '' &&  
+            Array.isArray(spec[specValue.value]) && spec[specValue.value].length > 0;  
+    });  
+}  
+
+
+/**
  * 生成属性
  */
 const buildProperties = () => {
     let specData = value.value;
-    attrProps.value.specData = specData;
+    attrProps.value.specData = removeInvalidSpecs(specData);
     componentIndex.value +=1;
 }
 </script>
