@@ -1,7 +1,7 @@
 <template>
     <div>
         <div :class="{ 'flex': config.multiple, 'items-center': !config.multiple, 'justify-center': !config.multiple }">
-            <div :style="{ width: config.width + 'px', height: config.height + 'px' }"
+            <div :style="{ width: typeof config.width == 'string' ? config.width : config.width + 'px', height: config.height + 'px' }"
                :class="{'relative':true,'border':true,'m-auto': config.center}"
                 v-if="!config.multiple && currentItem?.url && config.showList">
                 <div class="h-full w-full p-[2px]">
@@ -20,7 +20,7 @@
                 :style="{ height: config.height + 'px' }">
                 <ma-drag-sort :list="showImgList" :isHorizontal="true" :onSortComplete="handleSort">
                     <template v-slot="{ item, index }">
-                        <div :style="{ width: config.width + 'px' }" class="relative border overflow-hidden h-full mr-2">
+                        <div :style="{ width: typeof config.width == 'string' ? config.width : config.width + 'px' }" class="relative border overflow-hidden h-full mr-2">
                             <div class="h-full w-full p-[2px]">
                                 <a-image width="100%" height="100%" :src="item.url" :fit="config.fit ?? 'fill'" />
                             </div>
@@ -42,7 +42,7 @@
                 <template #upload-button>
                     <slot name="customer">
                         <div :style="{
-                            width: config.width + 'px',
+                            width: typeof config.width == 'string' ? config.width : config.width + 'px',
                             height: config.height + 'px',
                         }"
                             class="upload-skin hover-custom-image bg-[rgba(0,0,0,.02)] border-dashed border flex items-center justify-center flex-col transition-all duration-100 ease-in-out hover:bg-gray-100">

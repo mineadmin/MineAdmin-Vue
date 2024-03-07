@@ -47,7 +47,7 @@ const props = defineProps({
   fileType: { type: String, default: 'button' },
   showList: { type: Boolean, default: true },
   requestData: { type: Object, default: {} },
-  width: { type: Number, default:50},
+  width: { type: [Number,String], default:50},
   height: { type: Number, default:50},
   center:{type: Boolean, default:false},
   fit: { type: String, default:"fill" },
