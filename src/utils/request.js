@@ -76,10 +76,10 @@ function createService () {
             err('服务器内部错误')
             break
           case 401:
+            // 不要搞自动跳转到登录页！！！
             throttle(() => {
               err('登录状态已过期，需要重新登录')
               tool.local.clear()
-              router.push({name: 'login'})
             })()
             break
           case 403:
