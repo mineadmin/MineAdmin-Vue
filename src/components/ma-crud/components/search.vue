@@ -88,7 +88,7 @@ const getSearchAllColumns = (cls = []) => {
   })
   return sls
 }
- 
+
 if (columns.value.length > 0) {
   searchColumns.value = cloneDeep(getSearchAllColumns(columns.value).filter( item => item.search === true && ( options.tabs?.dataIndex != item.dataIndex ) ))
 }
@@ -118,7 +118,7 @@ const componentList = ref({
   'MaFormCascader': markRaw(MaFormCascader),
   'MaFormTreeSelect': markRaw(MaFormTreeSelect),
   'MaFormInput': markRaw(MaFormInput),
-}) 
+})
 
 const getComponentName = (formType) => {
   if (['select', 'radio', 'checkbox', 'transfer'].includes(formType)) {
@@ -142,7 +142,7 @@ const getSearchFormRef = () => searchRef.value
 const getSearchColumns = () => searchColumns.value
 
 defineExpose({
-  getSearchFormRef, getSearchColumns, showSearch,
+  getSearchFormRef, getSearchColumns, showSearch, resetSearch,
   setSearchHidden, setSearchDisplay, setSearchLoading, setSearchUnLoading
 })
 </script>
