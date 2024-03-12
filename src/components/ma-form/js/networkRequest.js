@@ -75,6 +75,10 @@ export const handlerDictProps = (item, tmpArr) => {
       else value = tmp
       tran[value] = label
       colors[value] = item.dict.tagColors && item.dict.tagColors[value] || undefined
+      if (item.formType === 'cascader' && dicItem.children) {
+        let children = dicItem.children;
+        return { label, value, disabled, indeterminate, children }
+      }
       return { label, value, disabled, indeterminate }
     })
   } else {
