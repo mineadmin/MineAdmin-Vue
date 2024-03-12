@@ -71,7 +71,7 @@ import {
   ref, watch, provide,
   onMounted, nextTick, getCurrentInstance
 } from 'vue'
-import { isNil, get, cloneDeep } from 'lodash'
+import { isNil, set, get, cloneDeep } from 'lodash'
 import defaultOptions from './js/defaultOptions.js'
 import {
   getComponentName, toHump,
@@ -155,11 +155,17 @@ const init = async () => {
   // 初始化数据
   flatteningColumns.value.map(async item => {
 
-    if ( isNil(form.value[item.dataIndex]) && ! item.isChildrenForm ) {
+    if ( isNil(form.value[item.dataIndex])) {
       form.value[item.dataIndex] = undefined
-      if (arrayComponentDefault.includes(item.formType) && ! item.isChildrenForm) {
+      if (arrayComponentDefault.includes(item.formType)) {
         form.value[item.dataIndex] = []
       }
+    }
+
+    // 处理带点的字段
+    if (item.dataIndex.indexOf('.') > -1) {
+      delete form.value[item.dataIndex]
+      set(form.value, item.dataIndex, undefined)
     }
 
     // 字典
