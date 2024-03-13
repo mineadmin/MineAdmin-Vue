@@ -19,7 +19,7 @@
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "autoprefixer": "^10.4.17",
-    "axios": "^1.6.7",
+    "axios": "^0.27.2",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.2",
     "echarts": "^5.4.2",
