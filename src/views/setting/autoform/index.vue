@@ -53,6 +53,19 @@ let options = ref({});
 let columns = ref([]);
 let table_id = ref(0);
 
+
+const getFormViewType = (item) => {
+  if (item.view_type === 'text') {
+    return 'input'
+  }
+  if (item.view_type === 'date') {
+    if (item.options.range) {
+      return 'range'
+    }
+  }
+  return item.view_type;
+}
+
 const getFromOption = (data) => {
   let opt = {};
   switch (data.component_type) {
@@ -88,7 +101,7 @@ getTableConfig().then(response => {
     response.data.columns.forEach((item) => {
       columns.value.push({
         title: item.column_comment,
-        formType: item.view_type === 'text' ? 'input' : item.view_type,
+        formType: getFormViewType(item),
         dataIndex: item.column_name,
         addDisplay: item.is_insert === 2,
         editDisplay: item.is_edit === 2,
@@ -96,7 +109,15 @@ getTableConfig().then(response => {
         search: item.is_query === 2,
         commonRules: item.is_required === 2 ? {
           required: true,
-          message: "请输入主键"
+          message: "请输入" + item.column_comment
+        } : null,
+        dict: item.dict_type ? {
+          name: item.dict_type,
+          props: {
+            label: "title",
+            value: "key"
+          },
+          translation: true
         } : null,
         ...item.options
       })
