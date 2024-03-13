@@ -28,6 +28,9 @@
       <!-- 操作前置扩展 -->
       <template #operationBeforeExtend="{ record }">
         <a-link
+            @click="autoForm(record.id, record.table_name, record.menu_name)"
+        ><icon-link /> 测试</a-link>
+        <a-link
           v-auth="['setting:code:preview']"
           @click="previewRef.open(record.id)"
         ><icon-eye /> 预览</a-link>
@@ -60,6 +63,7 @@
   import { ref, reactive } from 'vue'
   import generate from '@/api/setting/generate'
   import { useRouter } from 'vue-router'
+  import {useTagStore} from "@/store/index.js";
   import { Message } from '@arco-design/web-vue'
   import tool from '@/utils/tool'
 
@@ -72,13 +76,18 @@
   const previewRef = ref()
   const loadTableRef = ref()
   const selections = ref([])
-
+  const tagStore = useTagStore()
   const router = useRouter()
 
   const types = [
     { label: '单表CRUD', value: 'single' },
     { label: '树表CRUD', value: 'tree' },
   ]
+
+  const autoForm = (id, table_name, menu_name) => {
+    router.push('/autoform/' + id)
+    tagStore.addTag({ name: table_name + ' - test', title: menu_name + ' - 测试', path: '/autoform/' + id })
+  }
 
   const selectSuccess = (result) => {
     result && crudRef.value.refresh()

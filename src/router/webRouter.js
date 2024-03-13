@@ -22,6 +22,20 @@ const routes = [
         component: () => import('@/layout/form.vue'),
     }]
   }, {
+    name: 'autoform',
+    path: '/autoform',
+    component: () => import('@/layout/index.vue'),
+    redirect: '/autoform/:id',
+    children: [{
+      name: 'autoformList',
+      path: '/autoform:/:id',
+      meta: {
+        title: '自动表单',
+        type: 'M',
+      },
+      component: () => import('@/views/setting/autoform/index.vue'),
+    }]
+  }, {
     name: 'login',
     path: '/login',
     component: () => import('@/views/login.vue'),
