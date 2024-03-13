@@ -3,6 +3,24 @@
     <a-spin dot  v-if="configOK === false"/>
     <!-- CRUD 组件 -->
     <ma-crud :options="options" :columns="columns" ref="crudRef" v-if="configOK === true">
+      <template #status="{ record }">
+        <a-switch
+            :checked-value="1"
+            unchecked-value="2"
+            @change="switchStatus($event, record.id)"
+            :default-checked="record.status == 1"
+        />
+      </template>
+<!--      -->
+<!--      <template v-slot:[slotName] = "{ record }"  >-->
+<!--&lt;!&ndash;        <a-switch&ndash;&gt;-->
+<!--&lt;!&ndash;            :checked-value="1"&ndash;&gt;-->
+<!--&lt;!&ndash;            unchecked-value="2"&ndash;&gt;-->
+<!--&lt;!&ndash;            @change="changeStatus($event, record.id)"&ndash;&gt;-->
+<!--&lt;!&ndash;            :default-checked="record.status == 1"&ndash;&gt;-->
+<!--&lt;!&ndash;        />&ndash;&gt;-->
+<!--      </template>-->
+
     </ma-crud>
   </div>
 </template>
@@ -21,6 +39,8 @@ const configOK = ref(false)
 const {currentRoute} = useRouter();
 const route = currentRoute.value;
 
+let slotName = ref('status');
+
 const getTableConfig = (params = {}) => {
   return request({
     url: 'setting' + route.path,
@@ -31,6 +51,7 @@ const getTableConfig = (params = {}) => {
 
 let options = ref({});
 let columns = ref([]);
+let table_id = ref(0);
 
 const getFromOption = (data) => {
   let opt = {};
@@ -63,6 +84,7 @@ getTableConfig().then(response => {
   if (response.success) {
 
     console.log(response.data.id)
+    table_id.value = response.data.id
     response.data.columns.forEach((item) => {
       columns.value.push({
         title: item.column_comment,
@@ -76,6 +98,7 @@ getTableConfig().then(response => {
           required: true,
           message: "请输入主键"
         } : null,
+        ...item.options
       })
     });
     let menus = response.data.generate_menus.split(',');
@@ -183,113 +206,19 @@ getTableConfig().then(response => {
 //   })
 // }
 //
-// const switchStatus = (statusValue, id, statusName) => {
-//   testCrontab.changeStatus({id, statusName, statusValue}).then(res => {
-//     res.success && Message.success(res.message)
-//   }).catch(e => {
-//     console.log(e)
-//   })
-// }
 
+const switchStatus = (statusValue, id, statusName) => {
+  let data = {id, statusName, statusValue}
+  request({
+    url: 'setting/autoform/changeStatus/' + table_id.value,
+    method: 'put',
+    data
+  }).then(res => {
+    res.success && Message.success(res.message)
+  }).catch(e => {
+    console.log(e)
+  })
+}
 
-//
-// const columns = reactive([
-//   {
-//     title: "主键",
-//     dataIndex: "id",
-//     formType: "input",
-//     addDisplay: false,
-//     editDisplay: false,
-//     hide: true,
-//     commonRules: {
-//       required: true,
-//       message: "请输入主键"
-//     }
-//   },
-//   {
-//     title: "任务名称",
-//     dataIndex: "name",
-//     formType: "input",
-//     search: true
-//   },
-//   {
-//     title: "任务类型 (1 command, 2 class, 3 url, 4 eval)",
-//     dataIndex: "type",
-//     formType: "input",
-//     search: true
-//   },
-//   {
-//     title: "调用任务字符串",
-//     dataIndex: "target",
-//     formType: "input",
-//     search: true
-//   },
-//   {
-//     title: "调用任务参数",
-//     dataIndex: "parameter",
-//     formType: "input",
-//     search: true
-//   },
-//   {
-//     title: "任务执行表达式",
-//     dataIndex: "rule",
-//     formType: "input",
-//     search: true
-//   },
-//   {
-//     title: "是否单次执行 (1 是 2 不是)",
-//     dataIndex: "singleton",
-//     formType: "input",
-//     search: true
-//   },
-//   {
-//     title: "状态 (1正常 2停用)",
-//     dataIndex: "status",
-//     formType: "input",
-//     search: true
-//   },
-//   {
-//     title: "创建者",
-//     dataIndex: "created_by",
-//     formType: "input",
-//     addDisplay: false,
-//     editDisplay: false,
-//     hide: true
-//   },
-//   {
-//     title: "更新者",
-//     dataIndex: "updated_by",
-//     formType: "input",
-//     addDisplay: false,
-//     editDisplay: false,
-//     hide: true
-//   },
-//   {
-//     title: "创建时间",
-//     dataIndex: "created_at",
-//     formType: "date",
-//     addDisplay: false,
-//     editDisplay: false,
-//     hide: true,
-//     showTime: true
-//   },
-//   {
-//     title: "更新时间",
-//     dataIndex: "updated_at",
-//     formType: "date",
-//     addDisplay: false,
-//     editDisplay: false,
-//     hide: true,
-//     showTime: true
-//   },
-//   {
-//     title: "备注",
-//     dataIndex: "remark",
-//     formType: "input",
-//     addDisplay: false,
-//     editDisplay: false,
-//     hide: true
-//   }
-// ])
 </script>
 <script> export default {name: 'test:crontab'} </script>
