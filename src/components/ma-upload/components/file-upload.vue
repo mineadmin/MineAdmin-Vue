@@ -179,6 +179,7 @@ const init = async() => {
       const result = await getFileUrl(config.returnType, props.modelValue, storageMode)
       signFile.value = result.url
       currentItem.value.url = result.url
+      currentItem.value.name = result.origin_name
     }
     currentItem.value.percent = 100
     currentItem.value.status = 'complete'
