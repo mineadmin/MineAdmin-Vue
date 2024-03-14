@@ -156,7 +156,7 @@ getTableConfig().then(response => {
             data
           })
         },
-        //auth: ['test:crontab:save']
+        auth: ['setting:autoform:' + table_id.value + ':save']
       },
       edit: {
         show: menus.includes('update'),
@@ -167,7 +167,7 @@ getTableConfig().then(response => {
             data
           })
         },
-        // auth: ['test:crontab:update']
+        auth: ['setting:autoform:' + table_id.value + ':update']
       },
       delete: {
         show: menus.includes('delete'),
@@ -178,7 +178,7 @@ getTableConfig().then(response => {
             data
           })
         },
-        // auth: ['test:crontab:delete'],
+        auth: ['setting:autoform:' + table_id.value + ':delete'],
         realApi: (data) => {
           return request({
             url: 'setting/autoform/realDelete/' + response.data.id,
@@ -186,7 +186,7 @@ getTableConfig().then(response => {
             data
           })
         },
-        // realAuth: ['test:crontab:realDeletes']
+        realAuth: ['setting:autoform:' + table_id.value + ':realDeletes']
       },
       recovery: {
         show: menus.includes('recycle'),
@@ -197,18 +197,18 @@ getTableConfig().then(response => {
             data
           })
         },
-        // auth: ['test:crontab:recovery']
+        auth: ['setting:autoform:' + table_id.value + ':recovery']
       },
       import: {
         show: false,
         url: 'autoform/import',
         templateUrl: 'test/crontab/downloadTemplate',
-        auth: ['test:crontab:import']
+        auth: ['setting:autoform:' + table_id.value + ':import']
       },
       export: {
         show: false,
         url: 'autoform/export',
-        auth: [], //'test:crontab:export']
+        auth: ['setting:autoform:' + table_id.value + ':export']
       }
     })
 
