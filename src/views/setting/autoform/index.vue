@@ -89,7 +89,6 @@ const getFromOption = (data) => {
       break
   }
   opt.width = 600
-  console.log(opt)
   return opt
 }
 
@@ -122,7 +121,10 @@ getTableConfig().then(response => {
         ...item.options
       })
     });
-    let menus = response.data.generate_menus.split(',');
+    let menus = []
+    if (response.data.generate_menus) {
+      menus = response.data.generate_menus.split(',');
+    }
 
     options = reactive({
       id: response.data.table_name,
@@ -215,7 +217,7 @@ getTableConfig().then(response => {
     configOK.value = true
   }
 }).catch(err => {
-  console.error(error)
+  console.error(err)
 });
 
 //
