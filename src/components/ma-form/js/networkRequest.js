@@ -169,10 +169,17 @@ const requestCascaderData = async (val, dict, dictList, name) => {
     let requestData = { openPage: dict?.openPage ?? false, remoteOption: dict.remoteOption ?? {} }
     let response
     const pageOption = Object.assign(requestData, dict.pageOption)
-    const url = dict.remote ?? dict.url
+    let url = dict.remote ?? dict.url
     if (dict && url.indexOf('{{key}}') > 0) {
+      url = url.replace('{{key}}', val);
+      // 解析参数
+      let queryParams = tool.getRequestParams(url);
+      let urlIndex = url.indexOf("?");
+      if(urlIndex !== -1) {
+        url =  url.substring(0, urlIndex);
+      }
       response = await requestDict(
-        url.replace('{{key}}', val), dict.method ?? 'GET',
+        url, dict.method ?? 'GET',
         Object.assign(dict.params || {}, requestData.openPage ? pageOption : {}),
         Object.assign(dict.data || {}, requestData.openPage ? pageOption : {})
       )
