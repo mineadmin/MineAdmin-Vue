@@ -180,7 +180,7 @@ const requestCascaderData = async (val, dict, dictList, name) => {
       }
       response = await requestDict(
         url, dict.method ?? 'GET',
-        Object.assign(dict.params || {}, requestData.openPage ? pageOption : {}),
+        Object.assign(dict.params || {}, requestData.openPage ? pageOption : {}, queryParams),
         Object.assign(dict.data || {}, requestData.openPage ? pageOption : {})
       )
     } else {
