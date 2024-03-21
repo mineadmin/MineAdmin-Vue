@@ -51,7 +51,7 @@ const handleSubmit = async ({ values, errors }) => {
       loading.value = false
       return
     }
-    useTagStore().tags = [];
+    useTagStore().clearTags()
     router.push(redirect)
   }
   loading.value = false

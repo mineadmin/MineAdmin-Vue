@@ -83,7 +83,7 @@ let instance
 const initEditorValue = () => {
   if (props.valueType === 'value' && typeof props.modelValue === 'string') {
     instance.setValue(props.modelValue)
-  } else if (props.valueType === 'value' && props.modelValue._onWillDispose === undefined) {
+  } else if (props.valueType === 'value' && props.modelValue?._onWillDispose === undefined) {
     instance.setValue(formatJson(props.modelValue))
   } else if (props.modelValue){
     instance.setModel(toRaw(props.modelValue))
