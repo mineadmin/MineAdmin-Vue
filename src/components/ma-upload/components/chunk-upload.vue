@@ -103,7 +103,7 @@
 import { ref, inject, watch } from 'vue'
 import commonApi from '@/api/common'
 import tool from '@/utils/tool'
-import { isArray } from 'lodash'
+import { isArray, throttle } from 'lodash'
 import { getFileUrl } from '../js/utils'
 import { Message } from '@arco-design/web-vue'
 import file2md5 from 'file2md5'
@@ -217,7 +217,7 @@ const removeFile = (idx) => {
   emit('update:modelValue', files)
 }
 
-const init = async() => {
+const init = throttle(async() => {
   if(config.multiple) {
     if(isArray(props.modelValue) && props.modelValue.length > 0) {
       const result = await props.modelValue.map(async item => {
@@ -259,7 +259,7 @@ const init = async() => {
   } else {
     removeSignFile()
   }
-}
+}, 1000);
 
 watch(() => props.modelValue, (val) => {
   init()
