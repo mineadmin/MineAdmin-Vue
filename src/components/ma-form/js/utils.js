@@ -6,10 +6,21 @@ export const pickerType     = ['date', 'month', 'year', 'week', 'quarter', 'rang
 
 export const interactiveControl = (form, columns, maFormObject) => {
   const obj = []
+  const names = []
+  const keys = Object.keys(form)
+  if (keys && keys.length > 0) {
+    keys.map(item => {
+      if (form[item] && typeof form[item] === 'object') {
+        for (let name in form[item]) {
+          names.push(`${item}.${name}`)
+        }
+      }
+    })
+  }
   for (let name in form) {
     columns.map( item => {
-      if (item.dataIndex === name && item.onControl && isFunction(item.onControl)) {
-        obj.push(item.onControl(get(form, name), maFormObject))
+      if ((item.dataIndex === name || names.includes(item.dataIndex)) && item.onControl && isFunction(item.onControl)) {
+        obj.push(item.onControl(get(form, item.dataIndex), maFormObject))
       }
     })
   }
