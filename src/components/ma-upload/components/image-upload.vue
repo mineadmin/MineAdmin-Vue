@@ -75,7 +75,7 @@
 <script setup>
 import { ref, inject, watch } from 'vue'
 import tool from '@/utils/tool'
-import { isArray } from 'lodash'
+import { isArray, throttle } from 'lodash'
 import { getFileUrl, uploadRequest } from '../js/utils'
 import { Message } from '@arco-design/web-vue'
 
@@ -141,7 +141,7 @@ const removeImage = (idx) => {
   emit('update:modelValue', files)
 }
 
-const init = async() => {
+const init = throttle(async() => {
   if(config.multiple) {
     if(isArray(props.modelValue) && props.modelValue.length > 0) {
       const result = await props.modelValue.map(async(item) => {
@@ -174,7 +174,7 @@ const init = async() => {
   } else {
     removeSignImage()
   }
-}
+}, 1000);
 
 watch(() => props.modelValue, (val) => {
   init()
