@@ -164,8 +164,9 @@ const init = async () => {
 
     // 处理带点的字段
     if (item.dataIndex.indexOf('.') > -1) {
+      const value = cloneDeep(form.value[item.dataIndex])
       delete form.value[item.dataIndex]
-      set(form.value, item.dataIndex, undefined)
+      set(form.value, item.dataIndex, value)
     }
 
     // 字典
