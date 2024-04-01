@@ -107,7 +107,7 @@ export const loadDict = async (dictList, item, sourceList = [], maFormObject = {
         dictList[dataIndex] = handlerDictProps(item, data.items)
         dictList[dataIndex].pageInfo = data.pageInfo
       } else {
-        const dictData = tool.local.get('dictData')
+        const dictData = tool.local.get('dictData') ?? {}
         if (item.dict.cache && dictData[dataIndex]) {
           dictList[dataIndex] = dictData[dataIndex]
         } else {
@@ -136,7 +136,7 @@ export const loadDict = async (dictList, item, sourceList = [], maFormObject = {
       dictList[dataIndex] = handlerDictProps(item, data.items)
       dictList[dataIndex].pageInfo = data.pageInfo
     } else {
-      const dictData = tool.local.get('dictData')
+      const dictData = tool.local.get('dictData') ?? {}
       if (item.dict.cache && dictData[dataIndex]) {
         dictList[dataIndex] = dictData[dataIndex]
       } else {
