@@ -109,12 +109,12 @@ export const loadDict = async (dictList, item, sourceList = [], maFormObject = {
       } else {
         const dictData = tool.local.get('dictData') ?? {}
         if (item.dict.cache && dictData[dataIndex]) {
-          dictList[dataIndex] = dictData[dataIndex]
+          dictList[dataIndex] = handlerDictProps(item, dictData[dataIndex])
         } else {
           const { data } = await requestDict(item.dict.remote, 'POST', {}, requestData)
           dictList[dataIndex] = handlerDictProps(item, data)
           if (item.dict.cache) {
-            dictData[dataIndex] = dictList[dataIndex]
+            dictData[dataIndex] = data
             tool.local.set('dictData', dictData)
           }
         }
@@ -138,12 +138,12 @@ export const loadDict = async (dictList, item, sourceList = [], maFormObject = {
     } else {
       const dictData = tool.local.get('dictData') ?? {}
       if (item.dict.cache && dictData[dataIndex]) {
-        dictList[dataIndex] = dictData[dataIndex]
+        dictList[dataIndex] = handlerDictProps(item, dictData[dataIndex])
       } else {
         const { data } = await requestDict(item.dict.url, item.dict.method || 'GET', item.dict.params || {}, item.dict.body || {})
         dictList[dataIndex] = handlerDictProps(item, data)
         if (item.dict.cache) {
-          dictData[dataIndex] = dictList[dataIndex]
+          dictData[dataIndex] = data
           tool.local.set('dictData', dictData)
         }
       }
