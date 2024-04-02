@@ -23,12 +23,13 @@
 </template>
   
 <script setup>
-import { ref, inject, watch } from 'vue'
+import { inject, computed } from 'vue'
 import { get, set } from 'lodash'
 const props = defineProps({
   component: Object,
 })
 const searchForm = inject('searchForm')
+const emit = defineEmits(['update:modelValue'])
 
 const getComponentName = () => {
   if (['date', 'month', 'year', 'week', 'quarter', 'range', 'time'].includes(props.component.formType)) {
@@ -36,18 +37,23 @@ const getComponentName = () => {
   }
 }
 
-let defaultValue
-
-if (props.component.formType === 'range') {
-  defaultValue = props.component.searchDefaultValue ?? []
-} else {
-  defaultValue = props.component.searchDefaultValue ?? ''
-}
-
-const value = ref(get(searchForm.value, props.component.dataIndex, defaultValue))
-set(searchForm.value, props.component.dataIndex, value.value)
-
-watch( () => get(searchForm.value, props.component.dataIndex), vl => value.value = vl )
-watch( () => value.value, v => set(searchForm.value, props.component.dataIndex, v) )
+const value = computed({
+  get() {
+    let val =  get(searchForm.value, props.component.dataIndex)
+    if (val === undefined) {
+      if (props.component.formType === 'range') {
+        return props.component.searchDefaultValue ?? []
+      } else {
+        return props.component.searchDefaultValue ?? ''
+      }
+    } else {
+      return val
+    }
+  },
+  set(newVal) {
+    emit('update:modelValue', newVal)
+    set(searchForm.value, props.component.dataIndex, newVal)
+  }
+})
 
 </script>
