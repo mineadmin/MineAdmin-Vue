@@ -98,7 +98,7 @@ onMounted(() => {
   instance = monaco.editor.create(dom.value, options)
   initEditorValue()
 
-  instance.onDidChangeModelContent(() => {
+  instance.onDidBlurEditorText(() => {
     emit('update:modelValue', toRaw(props.valueType === 'value' ? instance.getValue() : instance.getModel()))
   })
 })
