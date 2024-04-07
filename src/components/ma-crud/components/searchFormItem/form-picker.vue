@@ -42,15 +42,23 @@ const value = computed({
     let val =  get(searchForm.value, props.component.dataIndex)
     if (val === undefined) {
       if (props.component.formType === 'range') {
-        return props.component.searchDefaultValue ?? []
+        val = props.component.searchDefaultValue ?? []
       } else {
-        return props.component.searchDefaultValue ?? ''
+        val = props.component.searchDefaultValue ?? ''
       }
-    } else {
-      return val
     }
+
+    return val
   },
   set(newVal) {
+    if (newVal === undefined) {
+      if (props.component.formType === 'range') {
+        newVal = []
+      } else {
+        newVal = ''
+      }
+    }
+
     emit('update:modelValue', newVal)
     set(searchForm.value, props.component.dataIndex, newVal)
   }
