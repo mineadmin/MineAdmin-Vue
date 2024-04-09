@@ -89,8 +89,11 @@ const getSearchAllColumns = (cls = []) => {
   return sls
 }
 
-if (columns.value.length > 0) {
-  searchColumns.value = cloneDeep(getSearchAllColumns(columns.value).filter( item => item.search === true && ( options.tabs?.dataIndex != item.dataIndex ) ))
+
+const initSearchColumns = () => {
+  if (columns.value.length > 0) {
+    searchColumns.value = cloneDeep(getSearchAllColumns(columns.value).filter( item => item.search === true && ( options.tabs?.dataIndex != item.dataIndex ) ))
+  }
 }
 
 const handlerSearch = () => {
@@ -134,6 +137,8 @@ const getComponentName = (formType) => {
   }
 }
 
+initSearchColumns()
+
 const setSearchHidden = () => showSearch.value = false
 const setSearchDisplay = () => showSearch.value = true
 const setSearchLoading = () => searchLoading.value = true
@@ -142,7 +147,7 @@ const getSearchFormRef = () => searchRef.value
 const getSearchColumns = () => searchColumns.value
 
 defineExpose({
-  getSearchFormRef, getSearchColumns, showSearch, resetSearch,
+  initSearchColumns, getSearchFormRef, getSearchColumns, showSearch, resetSearch,
   setSearchHidden, setSearchDisplay, setSearchLoading, setSearchUnLoading
 })
 </script>
