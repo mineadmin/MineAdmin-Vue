@@ -237,6 +237,7 @@
     </div>
 
     <ma-setting ref="crudSettingRef" />
+    <ma-filter ref="crudFilterRef" @onChange="onFilterChange"/>
 
     <ma-form ref="crudFormRef" @success="requestSuccess">
       <template v-for="slot in Object.keys($slots)" #[slot]="component">
@@ -263,6 +264,7 @@ import ColumnService from '@cps/ma-form/js/columnService'
 import MaSearch from './components/search.vue'
 import MaForm from './components/form.vue'
 import MaSetting from './components/setting.vue'
+import MaFilter from './components/filter.vue'
 import MaImport from './components/import.vue'
 import MaColumn from './components/column.vue'
 import MaContextMenu from './components/contextMenu.vue'
@@ -313,6 +315,7 @@ const crudFormRef = ref()
 const crudImportRef = ref()
 const crudColumnRef = ref()
 const crudContextMenuRef = ref()
+const crudFilterRef = ref()
 
 const options = ref(
   Object.assign(JSON.parse(JSON.stringify(defaultOptions)), props.options, props.crud)
@@ -553,17 +556,13 @@ const pageChangeHandler = async (currentPage) => {
 }
 
 const toggleSearch = async () => {
-  const dom = crudHeaderRef.value?.style
-  if (dom) {
-    crudSearchRef.value.showSearch
-    ? crudSearchRef.value.setSearchHidden()
-    : crudSearchRef.value.setSearchDisplay()
+  crudFilterRef.value.open()
+}
 
-    await nextTick(() => {
-      headerHeight.value = crudHeaderRef.value.offsetHeight
-      options.value.pageLayout === 'fixed' && settingFixedPage()
-    })
-  }
+const onFilterChange = async ({dataIndex, value}) => {
+  const service = getColumnService()
+  service.get(dataIndex).setAttr('search', value)
+  initSearchColumns()
 }
 
 const settingFixedPage = () => {
