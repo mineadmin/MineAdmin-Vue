@@ -127,24 +127,46 @@
           </template>
           <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else>
             <template v-if="row.dataIndex === '__index'">{{ getIndex(rowIndex) }}</template>
-
-            <template v-if="row.dict && row.dict.translation">
-              <template v-if="isArray(get(record, row.dataIndex))">
-                <a-tag v-for="item in get(record, row.dataIndex)" class="ml-1">{{ getDataIndex(row, item) }}</a-tag>
+            <span :class="['relative', row?.quickEdit && allowQuickEdit(row.formType) ? 'flex' : '']">
+              <template v-if="row.isEdit">
+                <a-form>
+                  <a-button-group class="flex">
+                    <a-input />
+                    <a-link
+                      v-if="row?.quickEdit && allowQuickEdit(row.formType) && row.isEdit === true"
+                      @click="quickEdit(row, record, rowIndex)"
+                    >
+                      <icon-check />
+                    </a-link>
+                  </a-button-group>
+                </a-form>
               </template>
-              <a-tag v-else-if="row.dict.tagColors" :color="getTagColor(row, record)">
-                {{ getDataIndex(row, record) }}
-              </a-tag>
-              <a-tag v-else-if="row.dict.tagColor" :color="row.dict.tagColor">{{ getDataIndex(row, record) }}</a-tag>
-              <span v-else>{{ getDataIndex(row, record) }}</span>
-            </template>
-            <template v-else-if="row.dataIndex && row.dataIndex.indexOf('.') !== -1">
-              {{ get(record, row.dataIndex) }}
-            </template>
-            <template v-else-if="row.formType === 'upload'">
-              <a-link @click="imageSee(row, record, row.dataIndex)"><icon-image /> 查看图片</a-link>
-            </template>
-            <template v-else>{{ record[row.dataIndex] }}</template>
+              <template v-else-if="row.dict && row.dict.translation">
+                <template v-if="isArray(get(record, row.dataIndex))">
+                  <a-tag v-for="item in get(record, row.dataIndex)" class="ml-1">{{ getDataIndex(row, item) }}</a-tag>
+                </template>
+                <a-tag v-else-if="row.dict.tagColors" :color="getTagColor(row, record)">
+                  {{ getDataIndex(row, record) }}
+                </a-tag>
+                <a-tag v-else-if="row.dict.tagColor" :color="row.dict.tagColor">{{ getDataIndex(row, record) }}</a-tag>
+                <span v-else>{{ getDataIndex(row, record) }}</span>
+              </template>
+              <template v-else-if="row.dataIndex && row.dataIndex.indexOf('.') !== -1">
+                {{ get(record, row.dataIndex) }}
+              </template>
+              <template v-else-if="row.formType === 'upload'">
+                <a-link @click="imageSee(row, record, row.dataIndex)"><icon-image /> 查看图片</a-link>
+              </template>
+              <template v-else>{{ record[row.dataIndex] }} {{ row.formType }}</template>
+
+              <a-link
+                class="absolute top-1 right-0"
+                v-if="row?.quickEdit && allowQuickEdit(row.formType) && !row.isEdit"
+                @click="quickEdit(row, record, rowIndex)"
+              >
+                <icon-edit />
+              </a-link>
+            </span>
           </slot>
         </template>
       </a-table-column>
@@ -153,7 +175,7 @@
 </template>
 
 <script setup>
-import { inject } from 'vue'
+import { inject, ref, provide } from 'vue'
 import config from '@/config/crud'
 import uploadConfig from '@/config/upload'
 import { Message } from '@arco-design/web-vue'
@@ -162,13 +184,14 @@ import CustomRender from '../js/custom-render'
 import tool from '@/utils/tool'
 import commonApi from '@/api/common'
 
+import formInput from '@cps/ma-form/formItem/form-input.vue'
+
 const emit = defineEmits(['refresh', 'showImage'])
 const props = defineProps({
   columns: Array,
   isRecovery: Boolean,
   crudFormRef: Object
 })
-
 const options = inject('options')
 const requestParams = inject('requestParams')
 const dictTrans = inject('dictTrans')
@@ -242,6 +265,13 @@ const editAction = record => {
   } else {
     props.crudFormRef.edit(record)
   }
+}
+
+const allowQuickEdit = (formType) => ['select', 'input', 'input-number', 'date'].includes(formType ?? 'input')
+
+const quickEdit = (row, record, index) => {
+  console.log(props.crudFormRef.form)
+  row.isEdit = true
 }
 
 const recoveryAction = async record => {

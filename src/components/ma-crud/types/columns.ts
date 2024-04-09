@@ -118,6 +118,8 @@ export interface BasicColumn {
   searchDefaultValue?: number | string | undefined;
   // 搜索描述
   searchPlaceholder?: string;
+  // 表格是否快捷编辑，只支持 input date select
+  quickEdit?: boolean;
   //编辑|创建 通用规则
   commonRules?: FieldRule | FieldRule[];
   // 创建时规则
