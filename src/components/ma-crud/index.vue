@@ -244,7 +244,7 @@
       </template>
     </ma-form>
 
-    <ma-import ref="crudImportRef" />
+    <ma-import ref="crudImportRef" @success="refresh"/>
 
     <ma-context-menu ref="crudContextMenuRef" @execCommand="execContextMenuCommand" />
 

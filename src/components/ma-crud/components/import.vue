@@ -37,6 +37,7 @@ import { Message } from '@arco-design/web-vue'
 const visible = ref(false)
 
 const options = inject('options')
+const emit = defineEmits(['success'])
 
 const open = () => visible.value = true
 const close = () => visible.value = false
@@ -46,8 +47,9 @@ const upload = (fileOption) => {
 
   const dataForm = new FormData()
   dataForm.append('file', fileOption.fileItem.file)
-  commonApi.importExcel(options.import.url, dataForm).then( res => {
+  commonApi.importExcel(options.import.url, dataForm).then( async res => {
     res.success && Message.success(res.message || '导入成功')
+    emit('success')
     close()
   })
 }
