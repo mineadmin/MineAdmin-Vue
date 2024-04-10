@@ -119,10 +119,10 @@
           </template>
           <template v-else-if="row.customRender">
             <custom-render
-                :column="column"
-                :record="record"
-                :render="row.customRender"
-                :rowIndex="rowIndex"
+              :column="column"
+              :record="record"
+              :render="row.customRender"
+              :rowIndex="rowIndex"
             ></custom-render>
           </template>
           <slot :name="row.dataIndex" v-bind="{ record, column, rowIndex }" v-else>
@@ -131,10 +131,13 @@
               <template v-if="row.isEdit">
                 <a-form>
                   <a-button-group class="flex">
-                    <a-input />
+                    <a-input v-if="row?.formType === undefined || row.formType === 'input'" v-bind="row" v-model="record[row.dataIndex]" />
+                    <a-input-number v-if="row.formType === 'input-number'" v-bind="row" v-model="record[row.dataIndex]" />
+                    <a-select v-if="['select', 'radio'].includes(row.formType)" v-bind="row" v-model="record[row.dataIndex]" :options="dicts[row.dataIndex]" />
                     <a-link
+                      class="block"
                       v-if="row?.quickEdit && allowQuickEdit(row.formType) && row.isEdit === true"
-                      @click="quickEdit(row, record, rowIndex)"
+                      @click="updateQuickEditData(row, record)"
                     >
                       <icon-check />
                     </a-link>
@@ -157,12 +160,12 @@
               <template v-else-if="row.formType === 'upload'">
                 <a-link @click="imageSee(row, record, row.dataIndex)"><icon-image /> 查看图片</a-link>
               </template>
-              <template v-else>{{ record[row.dataIndex] }} {{ row.formType }}</template>
+              <template v-else>{{ record[row.dataIndex] }}</template>
 
               <a-link
                 class="absolute top-1 right-0"
                 v-if="row?.quickEdit && allowQuickEdit(row.formType) && !row.isEdit"
-                @click="quickEdit(row, record, rowIndex)"
+                @click="quickEdit(row, record)"
               >
                 <icon-edit />
               </a-link>
@@ -194,6 +197,7 @@ const props = defineProps({
 })
 const options = inject('options')
 const requestParams = inject('requestParams')
+const dicts = inject('dicts')
 const dictTrans = inject('dictTrans')
 const dictColors = inject('dictColors')
 
@@ -267,11 +271,23 @@ const editAction = record => {
   }
 }
 
-const allowQuickEdit = (formType) => ['select', 'input', 'input-number', 'date'].includes(formType ?? 'input')
+const allowQuickEdit = (formType) => ['select', 'input', 'input-number', 'radio'].includes(formType ?? 'input')
 
-const quickEdit = (row, record, index) => {
-  console.log(props.crudFormRef.form)
+const quickEdit = (row, record) => {
+  if (row.formType === 'select' || row.formType === 'radio') {
+    record[row.dataIndex] = record[row.dataIndex].toString()
+  }
   row.isEdit = true
+}
+
+const updateQuickEditData = async (row, record) => {
+  if (isFunction(options.beforeEdit) && ! await options.beforeEdit(record)) {
+    return false
+  }
+  const response = await options.edit.api(record[options.pk], record)
+  row.isEdit = false
+  isFunction(options.afterEdit) && await options.afterEdit(response, record)
+  Message.success(response.message || `修改成功！`)
 }
 
 const recoveryAction = async record => {

@@ -57,7 +57,10 @@
               <span v-else> / </span>
           </template>
         </a-table-column>
-        <a-table-column title="隐藏" data-index="hide" align="center">
+        <a-table-column title="搜索" data-index="hide" align="center">
+          <template #cell="{ record }"><a-checkbox v-model="record.search" @change="changeColumn($event, 'search', record.dataIndex)" /></template>
+        </a-table-column>
+        <a-table-column title="表格" data-index="hide" align="center">
           <template #cell="{ record }"><a-checkbox v-model="record.hide" @change="changeColumn($event, 'hide', record.dataIndex)" /></template>
         </a-table-column>
         <a-table-column title="固定" data-index="fixed" align="center">
@@ -92,6 +95,8 @@ const options = inject('options')
 const columns = inject('columns')
 const allowShowColumns = ref([])
 
+const emit = defineEmits([ 'onChangeSearchHide' ])
+
 const setShowColumns = () => {
   allowShowColumns.value = columns.value.filter(item => {
     return ! (item?.settingHide ?? false)
@@ -121,6 +126,9 @@ const changeColumn = (ev, type, name) => {
       } else {
         column.sortable = undefined
       }
+      break
+    case 'search':
+      emit('onChangeSearchHide')
       break
   }
 }
