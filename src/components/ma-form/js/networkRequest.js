@@ -69,7 +69,7 @@ export const handlerDictProps = (item, tmpArr) => {
       let disabled = (typeof dicItem['disabled'] == 'undefined') ? false : ( dicItem['disabled'] === true ? true : false )
       let indeterminate = (typeof dicItem['indeterminate'] == 'undefined') ? false : ( dicItem['indeterminate'] === true ? true : false )
       let value
-      if (item.dict.name || item.dict.data) value = tmp.toString()
+      if (item.dict.name || item.dict.data) value = tmp?.toString() ?? tmp
       else if (tmp === 'true') value = true
       else if (tmp === 'false') value = false
       else value = tmp
