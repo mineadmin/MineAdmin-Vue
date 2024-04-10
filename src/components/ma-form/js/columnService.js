@@ -34,8 +34,10 @@ const objectService = function (item) {
  * @param dictData
  * @constructor
  */
-const dictService = function (dataIndex, dictData) {
-  this.dict = dictData
+const dictService = function (dataIndex, dictData, dicts, columns) {
+  this.columns = columns
+  this.dicts = dicts
+  this.dictData = dictData
   this.dataIndex = dataIndex
 
   /**
@@ -43,7 +45,7 @@ const dictService = function (dataIndex, dictData) {
    * @returns {*}
    */
   this.getRawDictData = () => {
-    return this.dict
+    return this.dictData
   }
   /**
    * 追加
@@ -62,8 +64,9 @@ const dictService = function (dataIndex, dictData) {
    * @param dictConfig
    * @returns {Promise<void>}
    */
-  this.loadDict = (dictConfig) => {
-    return loadDict(dictList, { formType: "select", dict: dictConfig, dataIndex: this.dataIndex })
+  this.loadDict = async (dictConfig) => {
+    this.columns.setAttr('dict', dictConfig)
+    await loadDict(this.dicts, { formType: "select", dict: dictConfig, dataIndex: this.dataIndex })
   }
 }
 
@@ -101,7 +104,7 @@ class ColumnService {
     })
 
     for (const [dataIndex, dictData] of Object.entries(this.dicts)) {
-      this.dictMap.set(dataIndex, new dictService(dataIndex, dictData))
+      this.dictMap.set(dataIndex, new dictService(dataIndex, dictData, this.dicts, this.columnMap.get(dataIndex)))
     }
   }
 
