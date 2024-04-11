@@ -147,7 +147,7 @@
       <div ref="crudContentRef">
         <slot name="content" v-bind="tableData">
           <a-table
-            v-if="! options.expandAllRows || tableData.length > 0"
+            v-if="(! options.expandAllRows || tableData.length > 0) && tableIsShow"
             v-bind="$attrs"
             ref="tableRef"
             :key="options.pk"
@@ -297,6 +297,7 @@ const dicts = ref({})
 const cascaders = ref([])
 
 const reloadColumn = ref(true)
+const tableIsShow = ref(true)
 const openPagination = ref(false)
 const imgVisible = ref(false)
 const imgUrl = ref(import.meta.env.VITE_APP_BASE + 'not-image.png')
@@ -802,6 +803,11 @@ const tabsHandler = async () => {
 }
 
 const isBatch = (obj) => isUndefined(obj) ? true : (obj?.batch ?? true)
+
+const changeColumn = async () => {
+  tableIsShow.value = false
+  await nextTick(() => tableIsShow.value = true)
+}
 
 onMounted(async() => {
   if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {
