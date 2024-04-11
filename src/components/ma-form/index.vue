@@ -232,7 +232,9 @@ const resetForm = async() => await maFormRef.value.resetFields()
 const clearValidate = async() => await maFormRef.value.clearValidate()
 
 const formSubmit = async () => {
-  await validateForm()
+  if ( await validateForm() ) {
+    return false
+  }
   emit('submit', form.value, done)
 }
 
