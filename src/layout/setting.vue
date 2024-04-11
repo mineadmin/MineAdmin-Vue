@@ -46,6 +46,9 @@
           <a-option value="mixed">{{ $t('sys.layout.mixed') }}</a-option>
         </a-select>
       </a-form-item>
+      <a-form-item :label="$t('sys.ws')" :help="$t('sys.wsHelp')">
+        <a-switch v-model="form.ws" @change="handleWs" />
+      </a-form-item>
       <a-form-item :label="$t('sys.i18n')" :help="$t('sys.i18nHelp')">
         <a-switch v-model="form.i18n" @change="handleI18n" />
       </a-form-item>
@@ -110,6 +113,7 @@ const form = reactive({
   language: appStore.language,
   animation: appStore.animation,
   i18n: appStore.i18n,
+  ws: appStore.ws,
 })
 
 const defaultColorList = reactive([
@@ -136,6 +140,7 @@ const close = () => visible.value = false
 
 const handleLayout = (val) => appStore.changeLayout(val)
 const handleI18n = (val) => appStore.toggleI18n(val)
+const handleWs = (val) => appStore.toggleWs(val)
 const handleLanguage = (val) => appStore.changeLanguage(val)
 const handleAnimation = (val) => appStore.changeAnimation(val)
 const handleSettingMode = (val) => appStore.toggleMode(val ? 'dark' : 'light')
@@ -157,6 +162,7 @@ const save = async (done) => {
     language: appStore.language,
     animation: appStore.animation,
     color: appStore.color,
+    ws: appStore.ws,
   }
 
   user.updateInfo({ id: userStore.user.id, backend_setting: data }).then(res => {

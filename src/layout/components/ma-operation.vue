@@ -133,16 +133,18 @@
     isFullScreen.value = !isFullScreen.value
   }
 
-  const Wsm = new WsMessage()
-  Wsm.connection()
-  Wsm.getMessage()
+  if (appStore.ws) {
+    const Wsm = new WsMessage()
+    Wsm.connection()
+    Wsm.getMessage()
 
-  Wsm.ws.on("ev_new_message", (msg, data) => {
-    if (data.length > messageStore.messageList.length) {
-      info('新消息提示', '您有新的消息，请注意查收！')
-    }
-    messageStore.messageList = data
-  });
+    Wsm.ws.on("ev_new_message", (msg, data) => {
+      if (data.length > messageStore.messageList.length) {
+        info('新消息提示', '您有新的消息，请注意查收！')
+      }
+      messageStore.messageList = data
+    });
+  }
 
 </script>
 <style scoped>

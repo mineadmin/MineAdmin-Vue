@@ -11,6 +11,7 @@ let defaultSetting = {
   color: '#165dff',
   settingOpen: false,
   searchOpen: false,
+  ws: true,
   registerWangEditorButtonFlag: false
 }
 
@@ -64,6 +65,12 @@ const useAppStore = defineStore('app', {
     toggleI18n(i18n) {
       this.i18n = i18n
       defaultSetting.i18n = this.i18n
+      tool.local.set('setting', defaultSetting)
+    },
+
+    toggleWs(val) {
+      this.ws = val
+      defaultSetting.ws = this.ws
       tool.local.set('setting', defaultSetting)
     },
 

@@ -61,6 +61,8 @@ export default {
   },
   i18n: '开启多语言',
   i18nHelp: '是否开启多语言功能',
+  ws: '开启Ws',
+  wsHelp: '是否开启Websocket连接',
   animation: '切换动画',
   animationHelp: '工作区页面切换的进场和出场动画效果',
   animate: {
