@@ -94,6 +94,7 @@
   import uploadConfig from '@/config/upload'
   import MaTreeSlider from '@cps/ma-treeSlider/index.vue'
   import commonApi from '@/api/common'
+  import { xor } from 'lodash'
   import tool from '@/utils/tool'
   import { useI18n } from 'vue-i18n'
   import { Message } from '@arco-design/web-vue'
@@ -162,13 +163,9 @@
 
   const selectFile = (item, index) => {
 
-    if ( ! props.multiple && selecteds.value ) {
-      if (props.onlyData && item.url != selecteds.value) return
-      if (! props.onlyData && item.id != selecteds.value.id) return
-    }
-
     const children = rl.value.children
     const className = 'item rounded-sm'
+
     if (! /^(http|https)/g.test(item.url)) {
       item.url = tool.attachUrl(item.url, getStoreMode(item.storage_mode))
     }
@@ -176,18 +173,20 @@
       children[index].className = className
       if (props.multiple) {
         selecteds.value.map((file, idx) => {
-          if (props.onlyData && file == item.url) selecteds.value.splice(idx, 1)
-          if (! props.onlyData && file.id == item.id) selecteds.value.splice(idx, 1)
+          selecteds.value.splice(idx, 1)
         })
       } else {
         selecteds.value = ''
       }
     } else {
-      children[index].className = className + ' active'
       if (props.multiple) {
+        children[index].className = className + ' active'
         selecteds.value.push(props.onlyData ? item[props.returnType] : item)
       } else {
-        selecteds.value = props.onlyData ? item[props.returnType] : item
+        if (document.querySelectorAll('.item.active').length < 1) {
+          children[index].className = className + ' active'
+          selecteds.value = props.onlyData ? item[props.returnType] : item
+        }
       }
     }
   }
