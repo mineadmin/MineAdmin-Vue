@@ -9,7 +9,10 @@
 -->
 <template>
   <a-card
-    v-if="(typeof props.component?.display == 'undefined' || props.component?.display === true)"
+    v-if="(typeof props.component?.display == 'undefined' ||
+     props.component?.display === true) &&
+     (hasDisplayTrue((props.component?.formList ?? [])) ||
+     props.component?.forceShow)"
     :class="[props.component?.customClass]"
     :extra="props.component?.extra"
     :bordered="props.component?.bordered"
@@ -53,6 +56,11 @@ const props = defineProps({ component: Object })
 const formModel = inject('formModel')
 const getColumnService= inject('getColumnService')
 const columns = inject('columns')
+
+const hasDisplayTrue = (list) => {
+  return list.some(item => item.display === true);
+}
+
 const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, getColumnService, columns }, value)
 
 rv('onCreated')
