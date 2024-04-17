@@ -11,7 +11,7 @@ const checkRole = (el, binding) => {
       })
 
       if (!isHas && el.parentNode) {
-        el.parentNode.removeChild(el)
+        el.parentNode.remove()
       }
     }
   } else {
