@@ -8,8 +8,8 @@ const useTagStore = defineStore('tag', {
   }),
 
   getters: {
-    currentTag(state) {
-      return { ...state }
+    getState() {
+      return { ...this.$state }
     },
   },
 

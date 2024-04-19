@@ -32,8 +32,8 @@ const useAppStore = defineStore('app', {
   state: () => ({ ...defaultSetting }),
 
   getters: {
-    appCurrentSetting(state) {
-      return { ...state }
+    appCurrentSetting() {
+      return { ...this.$state }
     },
   },
 

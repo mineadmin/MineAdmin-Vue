@@ -10,8 +10,8 @@ const useDocStore = defineStore('doc', {
   }),
 
   getters: {
-    setDoc(state) {
-      return { ...state };
+    getState() {
+      return { ...this.$state }
     },
   },
 

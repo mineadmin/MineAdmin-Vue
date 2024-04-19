@@ -17,8 +17,8 @@ const useUserStore = defineStore('user', {
   }),
 
   getters: {
-    setUserInfo(state) {
-      return { ...state };
+    getState() {
+      return { ...this.$state }
     },
   },
 

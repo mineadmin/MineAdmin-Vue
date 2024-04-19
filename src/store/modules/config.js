@@ -15,8 +15,8 @@ const useConfigStore = defineStore('config', {
   state: () => ({ ...defaultConfig }),
 
   getters: {
-    appCurrentConfig(state) {
-      return { ...state }
+    appCurrentConfig() {
+      return { ...this.$state }
     },
   },
 

@@ -7,8 +7,8 @@ const useKeepAliveStore = defineStore('keepAlive', {
   }),
 
   getters: {
-    currentKeepAlive(state) {
-      return { ...state }
+    getState() {
+      return { ...this.$state }
     },
   },
 

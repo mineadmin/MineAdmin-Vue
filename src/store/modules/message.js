@@ -9,8 +9,8 @@ const useMessageStore = defineStore('message', {
   state: () => ({ ...defaultType }),
 
   getters: {
-    appCurrentMessage(state) {
-      return { ...state }
+    getState() {
+      return { ...this.$state }
     },
   },
 

@@ -8,8 +8,8 @@ const useIframeStore = defineStore('iframe', {
   }),
 
   getters: {
-    currentIframe(state) {
-      return { ...state }
+    getState() {
+      return { ...this.$state }
     },
   },
 
