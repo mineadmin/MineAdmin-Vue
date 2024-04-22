@@ -3,6 +3,7 @@ export default {
   chinese: '简体中文',
   english: 'English',
   search: '搜索',
+  store: '应用市场',
   fullScreen: '全屏',
   closeFullScreen: '关闭全屏',
   changeSkin: '换肤',
