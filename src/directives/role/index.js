@@ -7,7 +7,9 @@ const checkRole = (el, binding) => {
     if (value.length > 0) {
       let isHas = false
       value.map(item => {
-        isHas = role(item)
+        if(!isHas) {
+          isHas = role(item)
+        }
       })
 
       if (!isHas && el.parentNode) {
