@@ -1,7 +1,7 @@
 const colors = require('tailwindcss/colors')
 module.exports = {
   content: [ './src/**/*.{js,jxs,vue}' ],
-  darkMode: 'media', // or 'media' or 'class'
+  darkMode: 'class', // or 'media' or 'class'
   theme: {
     fontFamily: {
       sans: ['Graphik', 'sans-serif'],
