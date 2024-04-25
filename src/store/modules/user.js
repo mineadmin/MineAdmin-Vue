@@ -95,15 +95,13 @@ const useUserStore = defineStore('user', {
     async setApp() {
       const appStore = useAppStore()
       const setting = typeof this.user.backend_setting === 'string' ? JSON.parse(this.user.backend_setting) : this.user.backend_setting
-      if (setting) {
-        appStore.toggleMode(setting.mode)
-        appStore.toggleMenu(setting.menuCollapse)
-        appStore.toggleTag(setting.tag)
-        appStore.changeMenuWidth(setting.menuWidth)
-        appStore.changeLayout(setting.layout)
-        appStore.useSkin(setting.skin)
-        appStore.changeColor(setting.color)
-      }
+      appStore.toggleMode(setting?.mode ?? appStore.mode)
+      appStore.toggleMenu(setting?.menuCollapse ?? appStore.menuCollapse)
+      appStore.toggleTag(setting?.tag ?? appStore.tag)
+      appStore.changeMenuWidth(setting?.menuWidth ?? appStore.menuWidth)
+      appStore.changeLayout(setting?.layout ?? appStore.layout)
+      appStore.useSkin(setting?.skin ?? appStore.skin)
+      appStore.changeColor(setting?.color ?? appStore.color)
     }
   }
 

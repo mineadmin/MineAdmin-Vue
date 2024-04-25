@@ -6,10 +6,12 @@ import dayjs from 'dayjs'
 const isDev = ref(import.meta.env.DEV)
 const isHasAccessToken = ref(false)
 
+const appList = ref([])
+
 const imgs = []
 
-for (let i = 1; i <= 30; i++) {
-  imgs.push('https://picsum.photos/400/500?random=' + i)
+for (let i = 1; i <= 40; i++) {
+  imgs.push('https://picsum.photos/800/800?random=' + i)
 }
 
 if (isDev) {
@@ -53,22 +55,45 @@ if (isDev) {
           style="width: 300px"
         />
       </div>
-      <div class="sticky card mt-2 -top-4 z-10 backdrop-blur border p-3 border-gray-200 dark:border-gray-800 -mb-px">
-        <ul class="leading-7">
-          <li class="flex"><span>类型：</span></li>
-          <li><span>价格：</span></li>
-          <li><span>标签：</span></li>
+      <div class="sticky card mt-2 -top-4 z-10 backdrop-blur border p-3 border-gray-200 dark:border-0 -mb-px rounded">
+        <ul class="leading-8">
+          <li class="flex items-center">
+            <span>类型：</span>
+            <div class="space-x-3 ml-3">
+              <a-tag checkable color="arcoblue" :default-checked="true">全部</a-tag>
+              <a-tag checkable color="arcoblue" :default-checked="false">完整应用</a-tag>
+              <a-tag checkable color="arcoblue" :default-checked="false">后端应用</a-tag>
+              <a-tag checkable color="arcoblue" :default-checked="false">前端应用</a-tag>
+            </div>
+          </li>
+          <li class="flex items-center">
+            <span>价格：</span>
+            <div class="space-x-3 ml-3">
+              <a-tag checkable color="arcoblue" :default-checked="true">全部</a-tag>
+              <a-tag checkable color="arcoblue" :default-checked="false">免费应用</a-tag>
+              <a-tag checkable color="arcoblue" :default-checked="false">积分应用</a-tag>
+              <a-tag checkable color="arcoblue" :default-checked="false">收费应用</a-tag>
+            </div>  
+          </li>
+          <li class="flex items-center">
+            <span>标签：</span>
+            <div class="space-x-3 ml-3">
+              <a-tag checkable color="arcoblue" :default-checked="true">全部</a-tag>
+              <a-tag checkable color="arcoblue" :default-checked="false">biaoqian</a-tag>
+            </div>  
+          </li>
         </ul>
       </div>
-      <div class="sm:grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mt-2 -top-5 md:top-0 relative md:mt-2.5">
+      <!-- <a-empty v-if="appList.length === 0" description="暂无应用" class="my-5" /> -->
+      <div class="sm:grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-2 -top-5 md:top-0 relative md:mt-2.5">
         <div
             class="h-auto mt-8 sm:mt-0 border border-gray-150 dark:border-gray-600 hover:border-primary-500 dark:hover:border-gray-400 rounded-md top-0 hover:shadow-md hover:-top-1 dark:shadow-gray-600 transition-all duration-300 group overflow-hidden"
-            v-for="(item, idx) in 30"
+            v-for="(item, idx) in 40"
         >
           <a class="h-44 w-full">
             <div class="relative">
               <img
-                class="!rounded-b-none !rounded-t-md pointer-events-none w-full object-cover object-top sm:rounded-md h-44 transform transition-transform duration-200 group-hover:scale-105"
+                class="!rounded-b-none !rounded-t-md pointer-events-none w-full object-cover object-top sm:rounded-md h-60 transform transition-transform duration-200 group-hover:scale-105"
                 :src="imgs[item]"
               />
               <div class="absolute bottom-2 right-2 space-x-2">
@@ -91,7 +116,7 @@ if (isDev) {
             <div class="text-xs mt-5 grid grid-cols-2">
               <div class="leading-6 text-gray-700 dark:text-gray-300"><a class="hover:underline">X.Mo</a></div>
               <div class="text-right">
-                <a-badge color="green">免费</a-badge>
+                <a-tag color="green">免费</a-tag>
                 <!-- <div v-else-if="item.auth.type === 1">
                   <div class="flex items-center justify-end leading-6">
                     <div class="line-through text-gray-400" v-if="item.auth.integral_discount !== '0.00'">{{ item.auth.integral_quota }} 积分</div>
