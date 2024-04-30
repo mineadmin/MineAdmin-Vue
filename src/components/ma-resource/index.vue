@@ -16,12 +16,12 @@
     </a-modal>
     <div class="lg:w-1/5 w-full p-2 shadow">
       <ma-tree-slider
-        v-model="sliderData"
+        :data="sliderData"
         :search-placeholder="$t('maResource.searchResource')"
         :field-names="{ title: 'title', key: 'key' }"
         @click="handlerClick"
         icon="icon-folder"
-        :selected-keys="['all']"
+        v-model="defaultKey"
       />
     </div>
     <div class="w-full lg:ml-3 mt-3 lg:mt-2 flex flex-col">
@@ -101,6 +101,7 @@
 
   const { t } = useI18n()
   const sliderData = ref([])
+  const defaultKey = ref(['all'])
   const uploadFile = ref()
   const attachmentList = ref([])
   const openNetworkModal = ref(false)
@@ -153,6 +154,7 @@
   }
 
   const handlerClick = async (item) => {
+    defaultKey.value = item
     const type = item[0] === 'all' ? undefined : item[0]
     await getAttachmentList({ mime_type: type })
   }
