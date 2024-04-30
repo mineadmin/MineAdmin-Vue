@@ -527,6 +527,7 @@ const refresh = async () => {
     : options.value.api
     await requestHandle()
   }
+  tableRef.value.selectAll(false)
 }
 
 const searchSubmitHandler = async (formData) => {
