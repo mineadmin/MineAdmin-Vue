@@ -664,6 +664,7 @@ const deletesMultipleAction = async () => {
       options.value.afterDelete(response)
     }
     response.success && Message.success(response.message || `删除成功！`)
+    selecteds.value = []
     await refresh()
   } else {
     Message.error('至少选择一条数据')
@@ -674,6 +675,7 @@ const recoverysMultipleAction = async () => {
   if (selecteds.value && selecteds.value.length > 0) {
     const response = await options.value.recovery.api({ ids: selecteds.value })
     response.success && Message.success(response.message || `恢复成功！`)
+    selecteds.value = []
     await refresh()
   } else {
     Message.error('至少选择一条数据')
