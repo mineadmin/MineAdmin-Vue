@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { hasAccessToken } from '@/api/store'
+import { hasAccessToken, getAppList } from '@/api/store'
 import dayjs from 'dayjs'
 
 const isDev = ref(import.meta.env.DEV)
@@ -14,12 +14,24 @@ for (let i = 1; i <= 40; i++) {
   imgs.push('https://picsum.photos/800/800?random=' + i)
 }
 
+const requestApplist = (params = { page: 1, size: 9999 }) => {
+  getAppList(params).then(res => {
+    if (res.code === 200) {
+      appList.value = res.data
+    }
+  })
+}
+
 if (isDev) {
   hasAccessToken().then(res => {
     if (res.code === 200) {
       isHasAccessToken.value = ! res.data.isHas
     }
   })
+
+  if (!!! isHasAccessToken.value) {
+    requestApplist()
+  }
 }
 </script>
 
@@ -44,10 +56,7 @@ if (isDev) {
               <a-button type="primary" status="warning"><template #icon><icon-upload /></template>上传安装</a-button>
               <a-button type="primary" status="warning"><template #icon><icon-desktop /></template>本地应用</a-button>
             </a-button-group>
-            <a-button-group>
-              <a-button type="primary"><template #icon><icon-home /></template>MineAdmin官网</a-button>
-              <a-button type="primary"><template #icon><icon-user /></template>个人信息</a-button>
-            </a-button-group>
+            <a-button type="primary"><template #icon><icon-user /></template>个人信息</a-button>
           </a-space>
         </div>
         <a-input-search
