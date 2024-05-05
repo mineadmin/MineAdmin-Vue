@@ -13,9 +13,21 @@ export const hasAccessToken = () => {
 /**
  * 请求应用列表
  */
- export const getAppList = () => {
+export const getAppList = (params) => {
   return request({
     url: 'plugin/store/index',
     method: 'get',
+    params
   })
+}
+
+/**
+ * 详情
+ */
+export const getDetail = (params) => {
+    return request({
+        url: 'plugin/store/detail',
+        method: 'get',
+        params
+    })
 }

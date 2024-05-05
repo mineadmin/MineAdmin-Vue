@@ -30,7 +30,7 @@ const homePageRoutes = [
   }, {
     name: 'store',
     path: '/store',
-    component: () => import('@/views/store.vue'),
+    component: () => import('@/views/appStore/index.vue'),
     meta: { title: '应用市场', hidden: true }
   },
 ]

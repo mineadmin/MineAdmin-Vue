@@ -230,3 +230,7 @@ export const loadCss = (href, callback) => {
   }
   document.body.appendChild(s)
 }
+
+export const discount = (discount, price) => {
+  return (price * ( (discount === '0.00' || discount === 0) ? 10 : discount ) / 10).toFixed(2)
+}
