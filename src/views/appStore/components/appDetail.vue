@@ -26,7 +26,25 @@ defineExpose({ open })
   >
     <a-spin tip="获取数据中..." :loading="loading" class="w-full">
       <div class="flex">
-
+        <a-carousel
+          :style="{
+            width: '400px',
+            height: '230px',
+            borderRadius: '4px',
+          }"
+          :auto-play="true"
+          indicator-type="line"
+          show-arrow="hover"
+        >
+          <a-carousel-item v-for="image in data?.app?.homepage">
+            <img
+              :src="image"
+              :style="{
+                width: '100%',
+              }"
+            />
+          </a-carousel-item>
+        </a-carousel>
       </div>
     </a-spin>
   </a-drawer>
