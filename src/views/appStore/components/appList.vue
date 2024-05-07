@@ -16,6 +16,7 @@ const loading = ref(false)
 const detailRef = ref()
 
 const appList = ref([])
+const myAppList = ref([])
 const total = ref(0)
 const filterParams = reactive({
   page: 1,
@@ -73,6 +74,12 @@ onMounted(() => {
   if (!!! props.isHasAccessToken) {
     requestAppList()
   }
+
+  getAppList({ page:1, size: 9999, is_self: 1 }).then(res => {
+    if (res.code === 200) {
+      myAppList.value = list
+    }
+  })
 })
 </script>
 
@@ -165,7 +172,7 @@ onMounted(() => {
           <div class="text-xs mt-5 grid grid-cols-2">
             <div class="leading-6 text-gray-700 dark:text-gray-300"><span class="hover:underline">X.Mo</span></div>
             <div class="text-right">
-              <a-tag v-if="item.auth.type === 0">免费</a-tag>
+              <a-tag v-if="item.auth.type === 0" color="green">免费</a-tag>
               <div v-else-if="item.auth.type === 1">
                 <div class="flex items-center justify-end leading-6">
                   <div class="line-through text-gray-400" v-if="item.auth.integral_discount !== '0.00'">{{ item.auth.integral_quota }} 积分</div>
