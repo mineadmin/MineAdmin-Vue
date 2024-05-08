@@ -813,12 +813,12 @@ const changeColumn = async () => {
 }
 
 onMounted(async() => {
-  if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {
-    await requestData()
-  }
-
   if (! options.value.expandSearch && crudSearchRef.value) {
     crudSearchRef.value.setSearchHidden()
+  }
+
+  if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {
+    await requestData()
   }
 
   if (options.value.pageLayout === 'fixed') {
