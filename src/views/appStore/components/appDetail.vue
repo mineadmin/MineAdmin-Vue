@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
 import { getDetail } from "@/api/store"
 import { discount } from "@/utils/common"
@@ -6,6 +6,10 @@ import dayjs from "dayjs"
 import { useAppStore } from "@/store"
 import { MdPreview } from 'md-editor-v3'
 import './style/preview.css'
+
+const props = defineProps({
+  myApp: Array
+})
 
 const appStore = useAppStore()
 
@@ -22,6 +26,14 @@ const open = (identifier) => {
     data.value = res.data.data
     console.log(data.value)
   })
+}
+
+const openPage = () => {
+  window.open('https://www.mineadmin.com/store/' + data.value.app.identifier)
+}
+
+const installApp = () => {
+  
 }
 
 defineExpose({ open })
@@ -93,7 +105,8 @@ defineExpose({ open })
             </a-descriptions-item>
           </a-descriptions>
 
-          <a-button class="mt-4" type="primary">安装此应用</a-button>
+          <a-button class="mt-4" type="primary" @click="installApp" v-if="props.myApp.includes(data?.app?.identifier)">安装此应用</a-button>
+          <a-button class="mt-4" type="primary" @click="openPage" status="success" v-else>购买此应用</a-button>
         </div>
       </div>
 
@@ -135,7 +148,7 @@ defineExpose({ open })
                 :theme="appStore.mode === 'dark' ? 'dark' : 'light'"
                 previewTheme="github"
               />
-              <div class="border-t pt-2 dark:border-gray-700">
+              <div class="border-t pt-2 dark:border-gray-700" v-if="props.myApp.includes(data?.app?.identifier)">
                 <a-button><template #icon><icon-cloud-download /></template>安装此版本</a-button>
               </div>
             </div>

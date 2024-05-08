@@ -77,7 +77,9 @@ onMounted(() => {
 
   getAppList({ page:1, size: 9999, is_self: 1 }).then(res => {
     if (res.code === 200) {
-      myAppList.value = list
+      res.data?.data?.list.map(item => {
+        myAppList.value.push(item.identifier)
+      })
     }
   })
 })
@@ -105,7 +107,7 @@ onMounted(() => {
           class="w-52"
       />
     </div>
-    <div class="sticky card mt-2 -top-4 z-10 backdrop-blur border p-3 border-gray-200 dark:border-0 -mb-px rounded">
+    <div class="sticky card mt-2 -top-4 z-20 backdrop-blur border p-3 border-gray-200 dark:border-0 -mb-px rounded">
       <ul class="leading-8">
         <li class="flex items-center">
           <span>类型：</span>
@@ -143,9 +145,15 @@ onMounted(() => {
       class="sm:grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 min-h-60 -top-5 gap-4 mt-2 md:top-0 sm:top-2 relative md:mt-2.5"
     >
       <div
-          class="h-auto mt-8 sm:mt-0 border border-gray-150 dark:border-gray-600 hover:border-primary-500 dark:hover:border-gray-400 rounded-md top-0 hover:shadow-md hover:-top-1 dark:shadow-gray-600 transition-all duration-300 group overflow-hidden"
+          class="h-auto relative mt-8 sm:mt-0 border border-gray-150 dark:border-gray-600 hover:border-primary-500 dark:hover:border-gray-400 rounded-md top-0 hover:shadow-md hover:-top-1 dark:shadow-gray-600 transition-all duration-300 group overflow-hidden"
           v-for="(item, idx) in appList"
       >
+        <div
+          class="absolute z-10 w-auto bg-red-600 text-white px-5 origin-center rotate-45 -right-5 top-2.5"
+          v-if="myAppList.includes(item.identifier)"
+        >
+          已购买
+        </div>
         <a class="h-44 w-full" href="javascript:" @click="openDetailModal(item)">
           <div class="relative">
             <img
@@ -191,7 +199,7 @@ onMounted(() => {
       </div>
     </a-spin>
 
-    <appDetail ref="detailRef" />
+    <appDetail ref="detailRef" :myApp="myAppList" />
   </div>
 </template>
 
