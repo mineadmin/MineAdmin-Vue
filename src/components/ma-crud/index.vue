@@ -401,7 +401,11 @@ watch(
   vl => options.value.api = vl
 )
 
-watch( () => openPagination.value, () => options.value.pageLayout === 'fixed' && settingFixedPage() )
+watch([
+  () => openPagination.value,
+  () => total.value
+], () => options.value.pageLayout === 'fixed' && settingFixedPage() )
+
 
 watch(
     () => formStore.crudList[options.value.id],
@@ -574,7 +578,7 @@ const toggleSearch = async () => {
 
 const settingFixedPage = () => {
   const workAreaHeight = document.querySelector('.work-area').offsetHeight
-  const tableHeight = workAreaHeight - headerHeight.value - (openPagination.value ? 152 : 108)
+  const tableHeight = workAreaHeight - headerHeight.value - (openPagination.value ? 160 : 116) + (total.value === 0 && !loading.value ?  44: 0)
   crudContentRef.value.style.height = tableHeight + 'px'
 }
 
@@ -816,15 +820,15 @@ onMounted(async() => {
   if (! options.value.expandSearch && crudSearchRef.value) {
     crudSearchRef.value.setSearchHidden()
   }
-
+  if (options.value.pageLayout === 'fixed') {
+    await nextTick(() => {
+      window.addEventListener('resize', resizeHandler, false);
+      headerHeight.value = crudHeaderRef.value.offsetHeight
+      settingFixedPage()
+    })
+  }
   if (typeof options.value.autoRequest == 'undefined' || options.value.autoRequest) {
     await requestData()
-  }
-
-  if (options.value.pageLayout === 'fixed') {
-    window.addEventListener('resize', resizeHandler, false);
-    headerHeight.value = crudHeaderRef.value.offsetHeight
-    settingFixedPage()
   }
 })
 
