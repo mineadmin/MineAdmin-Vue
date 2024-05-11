@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import dayjs from "dayjs"
 import { discount } from "@/utils/common"
-import { getAppList } from "@/api/store.js"
+import {getAppList, getPayApp} from "@/api/store.js"
 import AppDetail from "@/views/appStore/components/appDetail.vue"
 
 const props = defineProps({
@@ -75,11 +75,9 @@ onMounted(() => {
     requestAppList()
   }
 
-  getAppList({ page:1, size: 9999, is_self: 1 }).then(res => {
+  getPayApp().then(res => {
     if (res.code === 200) {
-      res.data?.data?.list.map(item => {
-        myAppList.value.push(item.identifier)
-      })
+      myAppList.value = res.data
     }
   })
 })

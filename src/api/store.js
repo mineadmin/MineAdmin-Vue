@@ -15,9 +15,19 @@ export const hasAccessToken = () => {
  */
 export const getAppList = (params) => {
   return request({
-    url: 'plugin/store/index',
+    url: 'plugin/store/getMyApp',
     method: 'get',
     params
+  })
+}
+
+/**
+ * 已购买应用
+ */
+export const getPayApp = () => {
+  return request({
+    url: 'plugin/store/getPayApp',
+    method: 'get'
   })
 }
 
