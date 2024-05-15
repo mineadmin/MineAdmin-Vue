@@ -15,7 +15,7 @@ export const hasAccessToken = () => {
  */
 export const getAppList = (params) => {
   return request({
-    url: 'plugin/store/getMyApp',
+    url: 'plugin/store/index',
     method: 'get',
     params
   })
@@ -40,4 +40,16 @@ export const getDetail = (params) => {
         method: 'get',
         params
     })
+}
+
+/**
+ * 安装下载
+ */
+ export const downloadAndInstall = (data) => {
+  return request({
+    url: 'plugin/store/downloadAndInstall',
+    method: 'post',
+    timeout: 500000,
+    data,
+  })
 }

@@ -24,7 +24,6 @@ const open = (identifier) => {
   getDetail({ identifier }).then(res => {
     loading.value = false
     data.value = res.data.data
-    console.log(data.value)
   })
 }
 
@@ -33,7 +32,7 @@ const openPage = () => {
 }
 
 const installApp = () => {
-  
+  console.log('aaaa')
 }
 
 defineExpose({ open })
