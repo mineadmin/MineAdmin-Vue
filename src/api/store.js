@@ -32,6 +32,16 @@ export const getPayApp = () => {
 }
 
 /**
+ * 本地应用安装状态
+ */
+export const getLocalAppInstallList = () => {
+    return request({
+        url: 'plugin/store/getLocalAppInstallList',
+        method: 'get'
+    })
+}
+
+/**
  * 详情
  */
 export const getDetail = (params) => {
@@ -43,13 +53,24 @@ export const getDetail = (params) => {
 }
 
 /**
- * 安装下载
+ * 下载应用
  */
- export const downloadAndInstall = (data) => {
+export const download = (data) => {
   return request({
-    url: 'plugin/store/downloadAndInstall',
+    url: 'plugin/store/download',
     method: 'post',
     timeout: 500000,
     data,
   })
+}
+
+/**
+ * 安装应用
+ */
+export const install = (data) => {
+    return request({
+        url: 'plugin/store/install',
+        method: 'post',
+        data,
+    })
 }

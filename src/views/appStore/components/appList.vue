@@ -2,8 +2,9 @@
 import { ref, reactive, onMounted } from 'vue'
 import dayjs from "dayjs"
 import { discount } from "@/utils/common"
-import {getAppList, getPayApp} from "@/api/store.js"
+import {getAppList, getPayApp, getLocalAppInstallList} from "@/api/store.js"
 import AppDetail from "@/views/appStore/components/appDetail.vue"
+import {isUndefined} from "lodash"
 
 const props = defineProps({
   isHasAccessToken: {
@@ -17,6 +18,7 @@ const detailRef = ref()
 
 const appList = ref([])
 const myAppList = ref([])
+const localInstallList = ref([])
 const total = ref(0)
 const filterParams = reactive({
   page: 1,
@@ -70,6 +72,11 @@ const openDetailModal = async (item) => {
   await detailRef.value.open(item.identifier)
 }
 
+const checkInstallStatus = (space, identifier) => {
+  const name = `${space}/${identifier}`
+  return !isUndefined(localInstallList.value[name]) && localInstallList.value[name]
+}
+
 onMounted(() => {
   if (!!! props.isHasAccessToken) {
     requestAppList()
@@ -78,6 +85,12 @@ onMounted(() => {
   getPayApp().then(res => {
     if (res.code === 200) {
       myAppList.value = res.data
+    }
+  })
+
+  getLocalAppInstallList().then(res => {
+    if (res.code === 200) {
+      localInstallList.value = res.data
     }
   })
 })
@@ -151,6 +164,12 @@ onMounted(() => {
           v-if="myAppList.includes(item.identifier)"
         >
           已购买
+        </div>
+        <div
+            class="absolute z-10 w-32 text-center bg-lime-600 text-white px-5 origin-center rotate-45 -right-7 top-6"
+            v-if="checkInstallStatus(item.space, item.identifier)"
+        >
+          已安装
         </div>
         <a class="h-44 w-full" href="javascript:" @click="openDetailModal(item)">
           <div class="relative">
