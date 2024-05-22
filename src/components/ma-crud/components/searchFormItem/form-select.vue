@@ -72,7 +72,7 @@ if ( props.component.multiple === true ) {
 if (isObject(props.component.dict)) {
   props.component.dict.pageOption = {
     page: 1,
-    pageSize: props.component?.dict?.pageSize ?? 10
+    pageSize: props.component?.dict?.pageSize ?? 15
   }
 }
 
