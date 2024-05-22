@@ -74,7 +74,7 @@ const openDetailModal = async (item) => {
 
 const checkInstallStatus = (space, identifier) => {
   const name = `${space}/${identifier}`
-  return !isUndefined(localInstallList.value[name]) && localInstallList.value[name]
+  return !isUndefined(localInstallList.value[name]) && localInstallList.value[name].status
 }
 
 onMounted(() => {
@@ -91,6 +91,7 @@ onMounted(() => {
   getLocalAppInstallList().then(res => {
     if (res.code === 200) {
       localInstallList.value = res.data
+      console.log(localInstallList.value)
     }
   })
 })
@@ -216,7 +217,7 @@ onMounted(() => {
       </div>
     </a-spin>
 
-    <appDetail ref="detailRef" :myApp="myAppList" />
+    <appDetail ref="detailRef" :myApp="myAppList" :install-list="localInstallList" />
   </div>
 </template>
 

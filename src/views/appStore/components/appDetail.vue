@@ -9,7 +9,8 @@ import './style/preview.css'
 import { Message } from "@arco-design/web-vue"
 
 const props = defineProps({
-  myApp: Array
+  myApp: Array,
+  installList: Object,
 })
 
 const appStore = useAppStore()
@@ -18,6 +19,8 @@ const unInstallBtnDefaultText = '卸载此应用'
 
 const visible = ref(false)
 const loading = ref(false)
+const isInstall = ref(false)
+const isUpdated = ref(false)
 const installButtonText = ref(installBtnDefaultText)
 const buttonLoading = ref(false)
 const data = ref({
@@ -31,6 +34,8 @@ const open = (identifier) => {
     loading.value = false
     data.value = res.data.data
   })
+
+  console.log(props.installList)
 }
 
 const openPage = () => {
