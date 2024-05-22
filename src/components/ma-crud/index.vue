@@ -145,7 +145,7 @@
         </a-space>
       </div>
       <div ref="crudContentRef">
-        <slot name="content" v-bind="tableData">
+        <slot name="crudContent" v-bind="tableData">
           <a-table
             v-if="(! options.expandAllRows || tableData.length > 0) && tableIsShow"
             v-bind="$attrs"

@@ -37,7 +37,7 @@
           </a-tooltip>
         </template>
         <!-- 自定义内容 -->
-        <template #content="tableData">
+        <template #crudContent="tableData">
           <a-checkbox-group v-if="mode === 'window'" v-model="selecteds" @change="handlerChange">
             <a-image-preview-group infinite>
               <a-space class="window-list ">
