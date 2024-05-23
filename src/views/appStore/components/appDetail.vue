@@ -1,12 +1,13 @@
 <script setup>
 import { ref } from 'vue'
-import { download, install, getDetail } from "@/api/store"
-import { discount } from "@/utils/common"
+import { download, install, unInstall, getDetail } from "@/api/store"
+import { discount, versionCompare } from "@/utils/common"
 import dayjs from "dayjs"
 import { useAppStore } from "@/store"
 import { MdPreview } from 'md-editor-v3'
 import './style/preview.css'
 import { Message } from "@arco-design/web-vue"
+import {isUndefined} from "lodash";
 
 const props = defineProps({
   myApp: Array,
@@ -15,7 +16,8 @@ const props = defineProps({
 
 const appStore = useAppStore()
 const installBtnDefaultText = '下载并安装此应用'
-const unInstallBtnDefaultText = '卸载此应用'
+const unInstallBtnDefaultText = ref('卸载此应用')
+const updateBtnDefaultText = ref('更新应用')
 
 const visible = ref(false)
 const loading = ref(false)
@@ -33,9 +35,20 @@ const open = (identifier) => {
   getDetail({ identifier }).then(res => {
     loading.value = false
     data.value = res.data.data
+    const key = `${data.value.created_by.space}/${data.value.app.identifier}`
+    if (checkInstallStatus(key)) {
+      isInstall.value = true
+    }
+    if (props.installList[key]) {
+      if (versionCompare(props.installList[key].version, data.value.version[0].version) < 0) {
+        isUpdated.value = true
+      }
+    }
   })
+}
 
-  console.log(props.installList)
+const checkInstallStatus = (name) => {
+  return !isUndefined(props.installList[name]) && props.installList[name].status
 }
 
 const openPage = () => {
@@ -56,11 +69,12 @@ const downloadAndInstall = async () => {
 
   buttonLoading.value = true
   installButtonText.value = '应用下载中...'
-  const downloadRes = download(body).then(_ => {
+  const downloadRes = download(body).then(async _ => {
     Message.success('应用下载成功，现在开始安装...')
   }).catch(e => {
     return false
   })
+
   if (await downloadRes === false) {
     Message.error('应用下载失败')
     installButtonText.value = installBtnDefaultText
@@ -70,8 +84,9 @@ const downloadAndInstall = async () => {
 
   installButtonText.value = '安装应用中...'
   const installRes = install(body).then(_ => {
-    Message.success('应用安装成功，服务器会自动重启，若无法访问应用，请手动重启服务器')
+    Message.success('应用安装成功，请手动重启后端服务')
     buttonLoading.value = false
+    isInstall.value = true
   }).catch(e => {
     return false
   })
@@ -85,6 +100,36 @@ const downloadAndInstall = async () => {
 
 }
 
+const unInstallApp = () => {
+  if (! data.value) {
+    Message.error('获取应用信息失败，无法卸载，重新打开应用详情获取数据后再试')
+    return false
+  }
+
+  const body = {
+    space: data.value.created_by.space,
+    identifier: data.value.app.identifier,
+    version: data.value.version[0].version,
+  }
+
+  buttonLoading.value = true
+  unInstallBtnDefaultText.value = '应用卸载中...'
+  unInstall(body).then(_ => {
+    Message.success('应用卸载成功')
+    buttonLoading.value = false
+    isInstall.value = false
+  }).catch(e => {
+    return false
+  })
+
+}
+
+const updatedApp = () => {
+  if (! data.value) {
+    Message.error('获取应用信息失败，无法更新，重新打开应用详情获取数据后再试')
+    return false
+  }
+}
 defineExpose({ open })
 </script>
 
@@ -154,9 +199,10 @@ defineExpose({ open })
             </a-descriptions-item>
           </a-descriptions>
 
-          <a-button class="mt-4" type="primary" @click="downloadAndInstall" v-if="props.myApp.includes(data?.app?.identifier)" :loading="buttonLoading">{{ installButtonText }}</a-button>
-          <a-space v-else-if="props.myApp.includes(data?.app?.identifier)">
-            <a-button class="mt-4" type="primary" @click="downloadAndInstall" :loading="buttonLoading">{{ unInstallBtnDefaultText }}</a-button>
+          <a-button class="mt-4" type="primary" @click="downloadAndInstall" v-if="props.myApp.includes(data?.app?.identifier) && ! isInstall" :loading="buttonLoading">{{ installButtonText }}</a-button>
+          <a-space v-else-if="props.myApp.includes(data?.app?.identifier) && isInstall">
+            <a-button class="mt-4" type="primary" status="danger" @click="unInstallApp" :loading="buttonLoading">{{ unInstallBtnDefaultText }}</a-button>
+            <a-button class="mt-4" type="primary" status="success" v-if="isUpdated" @click="updatedApp" :loading="buttonLoading">{{ updateBtnDefaultText }}</a-button>
           </a-space>
           <a-button class="mt-4" type="primary" @click="openPage" status="success" v-else>购买此应用</a-button>
         </div>

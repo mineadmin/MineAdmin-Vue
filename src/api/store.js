@@ -74,3 +74,14 @@ export const install = (data) => {
         data,
     })
 }
+
+/**
+ * 安装应用
+ */
+export const unInstall = (data) => {
+  return request({
+    url: 'plugin/store/unInstall',
+    method: 'post',
+    data,
+  })
+}

@@ -150,7 +150,7 @@ const add = async () => {
   formOptions.value['disabled'] = false
   form.value = {}
   open()
-  await nextTick(() => maFormRef.value.updateOptions() )
+  await nextTick(() => maFormRef.value && maFormRef.value.updateOptions() )
 }
 const edit = async (data) => {
   actionTitle.value = options.edit.title ?? '编辑'
@@ -167,7 +167,7 @@ const edit = async (data) => {
     for (let i in data) form.value[i] = data[i]
     open(data)
   }
-  await nextTick(() => maFormRef.value.updateOptions() )
+  await nextTick(() => maFormRef.value && maFormRef.value.updateOptions() )
 }
 const see = async (data) => {
   actionTitle.value = options.see.title ?? '查看'
@@ -184,7 +184,7 @@ const see = async (data) => {
     for (let i in data) form.value[i] = data[i]
     open(data)
   }
-  await nextTick(() => maFormRef.value.updateOptions() )
+  await nextTick(() => maFormRef.value && maFormRef.value.updateOptions() )
 }
 
 const init = () => {
