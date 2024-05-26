@@ -1,10 +1,15 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import dayjs from "dayjs"
-import { discount } from "@/utils/common"
-import {getAppList, getPayApp, getLocalAppInstallList} from "@/api/store.js"
-import AppDetail from "@/views/appStore/components/appDetail.vue"
-import {isUndefined} from "lodash"
+import { getAppList, getPayApp, getLocalAppInstallList } from "@/api/store.js"
+import AppDetail from "./appDetail.vue"
+import AppComponent from './app.vue'
+import { isUndefined } from "lodash"
+import { useRoute } from 'vue-router'
+import { Message } from "@arco-design/web-vue"
+import tool from '@/utils/tool.js'
+import { refreshTag } from "@/utils/common.js"
+
+const route = useRoute()
 
 const props = defineProps({
   isHasAccessToken: {
@@ -13,10 +18,14 @@ const props = defineProps({
   }
 })
 
+const token = ref(tool.local.get(import.meta.env.VITE_APP_TOKEN_PREFIX))
+const uploadAction = ref(`${import.meta.env.VITE_APP_BASE_URL}/plugin/store/uploadLocalApp`)
 const loading = ref(false)
 const detailRef = ref()
-
+const isOnlyShowLocalApp = ref(false)
+const originalAppList = ref([])
 const appList = ref([])
+const onlyLocalAppList = ref([])
 const myAppList = ref([])
 const localInstallList = ref([])
 const total = ref(0)
@@ -37,11 +46,25 @@ const requestAppList = (params = { page: 1, size: 9999 }) => {
   getAppList(requestParams).then(res => {
     if (res.code === 200) {
       const { list, rowTotal } = res.data?.data
-      appList.value = list
+      originalAppList.value = list
+      onlyLocalAppList.value = originalAppList.value.map(item => {
+        if (! isUndefined(localInstallList.value[`${item.space}/${item.identifier}`]) ) {
+          return item
+        }
+      })
       total.value = rowTotal
       loading.value = false
+      setAppList()
     }
   })
+}
+
+const setAppList = () => {
+  if (isOnlyShowLocalApp.value) {
+    appList.value = onlyLocalAppList.value
+  } else {
+    appList.value = originalAppList.value
+  }
 }
 
 const paramsList = reactive({
@@ -72,9 +95,14 @@ const openDetailModal = async (item) => {
   await detailRef.value.open(item.identifier)
 }
 
-const checkInstallStatus = (space, identifier) => {
-  const name = `${space}/${identifier}`
-  return !isUndefined(localInstallList.value[name]) && localInstallList.value[name].status
+const localOnlyShow = () => {
+  isOnlyShowLocalApp.value = ! isOnlyShowLocalApp.value
+  setAppList()
+}
+
+const uploadAppAndInstall = () => {
+  Message.success('本地上传的应用已经安装成功');
+  refreshTag()
 }
 
 onMounted(() => {
@@ -91,9 +119,17 @@ onMounted(() => {
   getLocalAppInstallList().then(res => {
     if (res.code === 200) {
       localInstallList.value = res.data
-      console.log(localInstallList.value)
     }
   })
+
+  if (route.query?.install) {
+    const installQuery = route.query.install.split('/')[1] ?? undefined
+    if (installQuery) {
+      openDetailModal({ identifier: installQuery })
+    } else {
+      Message.error(`要安装插件：${route.query.install} 不存在`)
+    }
+  }
 })
 </script>
 
@@ -104,11 +140,21 @@ onMounted(() => {
       <div>
         <a-space>
           <a-button type="primary" status="danger" @click="requestAppList()"><template #icon><icon-refresh /></template></a-button>
-          <a-button-group>
-            <a-button type="primary" status="warning"><template #icon><icon-upload /></template>上传安装</a-button>
-            <a-button type="primary" status="warning"><template #icon><icon-desktop /></template>本地应用</a-button>
-          </a-button-group>
-          <a-button type="primary" @click="open('https://www.mineadmin.com/member/setting')"><template #icon><icon-user /></template>个人信息</a-button>
+          <a-upload
+            :action="uploadAction"
+            accept=".zip,.rar"
+            name="file"
+            :limit="1" :show-file-list="true"
+            :headers="{
+              Authorization: `Bearer ${token}`,
+              // 'Accept-Language': 'zh_CN',
+              // 'Content-Type': 'multipart/form-data'
+            }"
+            @success="uploadAppAndInstall"
+            @error="() => Message.error('上传失败')"
+          />
+          <a-button :type="isOnlyShowLocalApp ? 'outline' : 'primary'" @click="localOnlyShow" status="warning"><template #icon><icon-desktop /></template>本地应用</a-button>
+          <a-button status="success" @click="open('https://www.mineadmin.com/member/setting')"><template #icon><icon-user /></template>个人信息</a-button>
         </a-space>
       </div>
       <a-input-search
@@ -156,65 +202,13 @@ onMounted(() => {
       tip="加载应用列表中..."
       class="sm:grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 min-h-60 -top-5 gap-4 mt-2 md:top-0 sm:top-2 relative md:mt-2.5"
     >
-      <div
-          class="h-auto relative mt-8 sm:mt-0 border border-gray-150 dark:border-gray-600 hover:border-primary-500 dark:hover:border-gray-400 rounded-md top-0 hover:shadow-md hover:-top-1 dark:shadow-gray-600 transition-all duration-300 group overflow-hidden"
-          v-for="(item, idx) in appList"
-      >
-        <div
-          class="absolute z-10 w-auto bg-red-600 text-white px-5 origin-center rotate-45 -right-5 top-2.5"
-          v-if="myAppList.includes(item.identifier)"
-        >
-          已购买
-        </div>
-        <div
-            class="absolute z-10 w-32 text-center bg-lime-600 text-white px-5 origin-center rotate-45 -right-7 top-6"
-            v-if="checkInstallStatus(item.space, item.identifier)"
-        >
-          已安装
-        </div>
-        <a class="h-44 w-full" href="javascript:" @click="openDetailModal(item)">
-          <div class="relative">
-            <img
-                class="!rounded-b-none !rounded-t-md pointer-events-none w-full object-cover object-top sm:rounded-md h-60 lg:h-44 xl:h-48 transform transition-transform duration-200 group-hover:scale-105"
-                :src="item.homepage[0]"
-            />
-            <div class="absolute bottom-2 right-2 space-x-2">
-              <a-tag :color="tag.color === 'primary' ? 'arcoblue' : tag.color" v-for="tag in item.tags">{{ tag.name }}</a-tag>
-            </div>
-          </div>
-        </a>
-        <div class="p-3 pb-2">
-          <div class="grid-cols-2 grid">
-            <div class="text-sm">
-              <a class="hover:underline" href="javascript:" @click="openDetailModal(item)">{{ item.name }}</a>
-            </div>
-            <div class="text-xs leading-5 text-gray-500 dark:text-gray-400 text-right">
-              {{ `${dayjs(item.created_at).fromNow()}更新` }}
-            </div>
-          </div>
-          <div class="text-xs mt-1 text-gray-500 dark:text-gray-400">
-            {{ item.description }}
-          </div>
-          <div class="text-xs mt-5 grid grid-cols-2">
-            <div class="leading-6 text-gray-700 dark:text-gray-300"><span class="hover:underline">X.Mo</span></div>
-            <div class="text-right">
-              <a-tag v-if="item.auth.type === 0" color="green">免费</a-tag>
-              <div v-else-if="item.auth.type === 1">
-                <div class="flex items-center justify-end leading-6">
-                  <div class="line-through text-gray-400" v-if="item.auth.integral_discount !== '0.00'">{{ item.auth.integral_quota }} 积分</div>
-                  <div class="ml-2 text-emerald-700">{{ discount(item.auth.integral_discount, item.auth.integral_quota) }} 积分</div>
-                </div>
-              </div>
-              <div v-else-if="item.auth.type === 2">
-                <div class="flex items-center justify-end leading-6">
-                  <div class="line-through text-gray-400" v-if="item.auth.basic_discount !== '0.00'">￥{{ item.auth.basic_quota }}</div>
-                  <div class="ml-2 text-blue-600">￥{{ discount(item.auth.basic_discount, item.auth.basic_quota) }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <app-component
+        :myAppList="myAppList"
+        :appList="appList"
+        :localInstallList="localInstallList"
+        :isOnlyShowLocalApp="isOnlyShowLocalApp"
+        @onOpenDetail="openDetailModal"
+      />
     </a-spin>
 
     <appDetail ref="detailRef" :myApp="myAppList" :install-list="localInstallList" />
