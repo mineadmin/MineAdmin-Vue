@@ -44,6 +44,7 @@ const useAppStore = defineStore('app', {
 
     toggleMode(dark) {
       this.mode = dark
+      document.getElementsByTagName('html')[0].className = this.mode
       document.body.setAttribute('arco-theme', this.mode)
       defaultSetting.mode = this.mode
       this.changeColor(this.color)

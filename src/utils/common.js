@@ -230,3 +230,26 @@ export const loadCss = (href, callback) => {
   }
   document.body.appendChild(s)
 }
+
+export const discount = (discount, price) => {
+  return (price * ( (discount === '0.00' || discount === 0) ? 10 : discount ) / 10).toFixed(2)
+}
+
+
+export const versionCompare = (v1, v2) => {
+  // 将版本号转换成数字数组
+  v1 = v1.split('.');
+  v2 = v2.split('.');
+  // 对齐版本号的长度
+  while (v1.length < v2.length) v1.push('0');
+  while (v2.length < v1.length) v2.push('0');
+  // 转换成数字数组
+  v1 = v1.map(Number);
+  v2 = v2.map(Number);
+
+  for (let i = 0; i < v1.length; i++) {
+    if (v1[i] < v2[i]) return -1; // v1 < v2
+    if (v1[i] > v2[i]) return 1;  // v1 > v2
+  }
+  return 0; // v1 == v2
+}

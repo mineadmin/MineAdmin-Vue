@@ -3,6 +3,7 @@ export default {
   chinese: '简体中文',
   english: 'English',
   search: 'Search',
+  store: 'App Store',
   fullScreen: 'Full Screen',
   closeFullScreen: 'Close Full Screen',
   changeSkin: 'Change Skin',

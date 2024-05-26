@@ -8,6 +8,11 @@ import router from './router'
 import store from './store'
 import i18n from '@/i18n'
 import directives from './directives'
+import dayjs from 'dayjs'
+import zhCn from 'dayjs/locale/zh-cn'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.locale(zhCn)
+dayjs.extend(relativeTime)
 
 // 官方样式
 // import '@arco-design/web-vue/dist/arco.css'
