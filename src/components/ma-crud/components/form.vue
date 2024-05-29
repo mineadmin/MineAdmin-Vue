@@ -223,7 +223,6 @@ const columnItemHandle = async (item) => {
     return
   }
   layoutColumns.value.set(item.dataIndex, item)
-  formColumns.value.push(item)
 
   if (options.formOption.viewType !== 'tag') {
     // 针对带点的数据处理
@@ -248,6 +247,8 @@ const columnItemHandle = async (item) => {
       }
     }
   }
+
+  formColumns.value.push(item)
 
   // 其他处理
   item.display = formItemShow(item)
