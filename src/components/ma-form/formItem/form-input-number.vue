@@ -66,9 +66,13 @@ const props = defineProps({
 const formModel = inject('formModel')
 const getColumnService= inject('getColumnService')
 const columns = inject('columns')
-const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, getColumnService, columns }, value)
 const index = props.customField ?? props.component.dataIndex
 const value = ref(toNumber(get(formModel.value, index)))
+
+const rv = async (ev, value = undefined) => {
+  if(ev === 'onChange') set(formModel.value, index, value)
+  await runEvent(props.component, ev, { formModel, getColumnService, columns }, value)
+}
 
 watch( () => get(formModel.value, index), vl => value.value = toNumber(vl))
 watch( () => value.value, v => {
