@@ -58,7 +58,7 @@ const getColumnService= inject('getColumnService')
 const columns = inject('columns')
 
 const hasDisplayTrue = (list) => {
-  return list.some(item => item.display === true);
+  return list.some(item => item.display ?? true);
 }
 
 const rv = async (ev, value = undefined) => await runEvent(props.component, ev, { formModel, getColumnService, columns }, value)
