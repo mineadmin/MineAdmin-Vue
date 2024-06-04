@@ -336,10 +336,10 @@ const formItemShow = (item) => {
 }
 const formItemDisabled = (item) => {
   if (currentAction.value === 'add' && ! isUndefined(item.addDisabled)) {
-    return item.addDisabled
+    return isFunction(item.addDisabled) ? item.addDisabled() : item.addDisabled
   }
   if (currentAction.value === 'edit' && ! isUndefined(item.editDisabled)) {
-    return item.editDisabled
+    return isFunction(item.editDisabled) ? item.editDisabled(form.value) : item.editDisabled
   }
   if (currentAction.value === 'see') {
     return true

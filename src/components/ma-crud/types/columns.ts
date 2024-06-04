@@ -80,9 +80,9 @@ export interface BasicColumn {
   // 编辑|创建 通用是否禁用字段
   disabled?: boolean;
   // 添加弹窗是否禁用字段
-  addDisabled?: boolean;
+  addDisabled?: boolean | (() => boolean);
   // 编辑弹窗是否禁用字段
-  editDisabled?: boolean;
+  editDisabled?: boolean | ((record) => boolean);
   // 编辑|创建 通用是否只读字段
   readonly?: boolean;
   // 添加弹窗是否只读字段
