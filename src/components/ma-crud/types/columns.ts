@@ -74,9 +74,9 @@ export interface BasicColumn {
   // 编辑|创建 通用是否显示字段
   display?: boolean;
   // 添加弹窗是否显示字段
-  addDisplay?: boolean;
+  addDisplay?: boolean | (() => boolean);
   // 编辑弹窗是否显示字段
-  editDisplay?: boolean;
+  editDisplay?: boolean | ((record) => boolean);
   // 编辑|创建 通用是否禁用字段
   disabled?: boolean;
   // 添加弹窗是否禁用字段
@@ -86,9 +86,9 @@ export interface BasicColumn {
   // 编辑|创建 通用是否只读字段
   readonly?: boolean;
   // 添加弹窗是否只读字段
-  addReadonly?: boolean;
+  addReadonly?: boolean | (() => boolean);
   // 编辑弹窗是否只读字段
-  editReadonly?: boolean;
+  editReadonly?: boolean | ((record) => boolean);
   // 自定义渲染
   customRender?:
     | (({ record, column, rowIndex }) => VNodeChild | JSX.Element)
