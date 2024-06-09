@@ -69,6 +69,8 @@
                     v-auth="options.see.auth || []"
                     v-role="options.see.role || []"
                     type="primary"
+                    :status="options.see.status || 'success'"
+                    :style="{ color: options.see.color || '' }"
                     :disabled="(isFunction(options.see.disabled) ? options.see.disabled(record) : options.see.disabled)"
                     @click="seeAction(record)"
                   ><icon-eye /> {{ options.see.text || '查看' }}</a-link>
@@ -77,6 +79,8 @@
                       v-auth="options.edit.auth || []"
                       v-role="options.edit.role || []"
                       type="primary"
+                      :status="options.edit.status || 'normal'"
+                      :style="{ color: options.edit.color || '' }"
                       :disabled="(isFunction(options.edit.disabled) ? options.edit.disabled(record) : options.edit.disabled)"
                       @click="editAction(record)"
                   >
@@ -102,6 +106,8 @@
                   >
                     <a-link
                         type="primary"
+                        :status="options.delete.status || 'danger'"
+                        :style="{ color: options.delete.color || '' }"
                         v-auth="options.delete.auth || []"
                         v-role="options.delete.role || []"
                         :disabled="(isFunction(options.delete.disabled) ? options.delete.disabled(record) : options.delete.disabled)"
