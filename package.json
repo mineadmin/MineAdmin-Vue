@@ -9,7 +9,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "tailwind": "tailwind-config-viewer -o -c tailwind.config.cjs",
-    "generate:version": "generate-version-file dist public"
+    "generate:version": "generate-version-file dist public",
+    "postinstall": "node ./scripts/postinstall.js"
   },
   "dependencies": {
     "@arco-design/color": "^0.4.0",
