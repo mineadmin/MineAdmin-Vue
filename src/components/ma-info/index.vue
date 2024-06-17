@@ -79,13 +79,13 @@ watch(
   { deep: true, immediate: true }
 );
 
-const reset = (vl) => {
+const reset = async (vl) => {
   data.value = vl;
   descriptions.value = [];
   if (!columns.value) {
     return;
   }
-  columns.value.forEach(async (item) => {
+  for (let item of columns.value) {
     let value = null;
     if (isEmpty(item) || item.dataIndex === "__operation" || item.infoShow === false) {
       return;
@@ -105,7 +105,7 @@ const reset = (vl) => {
       label: item.title,
       value: value ?? get(data.value, item.dataIndex),
     });
-  });
+  };
 };
 
 watch(
