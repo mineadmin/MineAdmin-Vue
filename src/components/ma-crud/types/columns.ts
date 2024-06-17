@@ -5,7 +5,7 @@ import { VNodeChild } from "vue";
  */
 import { FieldRule } from "@arco-design/web-vue";
 
-export type FormDateType =
+export type FormDataType =
   | "radio"
   | "checkbox"
   | "select"
@@ -62,7 +62,7 @@ export interface BasicColumn {
   // 字段名称
   dataIndex: string;
   // 组件类型
-  formType?: FormDateType;
+  formType?: FormDataType;
   // 表格列对齐方式
   align?: "center" | "right" | "left";
   // 字段是否加入搜索
