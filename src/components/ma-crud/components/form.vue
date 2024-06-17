@@ -327,19 +327,19 @@ const settingFormLayout = (layout) => {
 
 const formItemShow = (item) => {
   if (currentAction.value === 'add') {
-    return item.addDisplay !== false
+    return isFunction(item.addDisplay) ? (item.addDisplay() !== false) : (item.addDisplay !== false)
   }
   if (currentAction.value === 'edit' || currentAction.value === 'see') {
-    return item.editDisplay !== false
+    return isFunction(item.editDisplay) ? (item.editDisplay(form.value) !== false) : (item.editDisplay !== false)
   }
   return item.display !== false
 }
 const formItemDisabled = (item) => {
   if (currentAction.value === 'add' && ! isUndefined(item.addDisabled)) {
-    return item.addDisabled
+    return isFunction(item.addDisabled) ? item.addDisabled() : item.addDisabled
   }
   if (currentAction.value === 'edit' && ! isUndefined(item.editDisabled)) {
-    return item.editDisabled
+    return isFunction(item.editDisabled) ? item.editDisabled(form.value) : item.editDisabled
   }
   if (currentAction.value === 'see') {
     return true
@@ -351,10 +351,10 @@ const formItemDisabled = (item) => {
 }
 const formItemReadonly = (item) => {
   if (currentAction.value === 'add' && ! isUndefined(item.addReadonly)) {
-    return item.addReadonly
+    return isFunction(item.addReadonly) ? item.addReadonly() : item.addReadonly
   }
   if (currentAction.value === 'edit' && ! isUndefined(item.editReadonly)) {
-    return item.editReadonly
+    return isFunction(item.editReadonly) ? item.editReadonly(form.value) : item.editReadonly
   }
   if (! isUndefined(item.readonly)) {
     return item.readonly
