@@ -45,7 +45,7 @@ const props = defineProps({
 const searchForm = inject('searchForm')
 const minData = ref(isArray(props.component?.searchDefaultValue) ? props.component?.searchDefaultValue[0] : undefined)
 const maxData = ref(isArray(props.component?.searchDefaultValue) ? props.component?.searchDefaultValue[1] : undefined)
-const value = ref(get(searchForm.value, props.component.dataIndex, props.component.searchDefaultValue ?? ''))
+const value = ref(get(searchForm.value, props.component.dataIndex, props.component.searchDefaultValue ?? props.component.formType === 'input-number' ? 0 : ''))
 
 if (props.component.formType === 'input-number' && (props.component?.rangeSearch ?? false)) {
   set(searchForm.value, `${props.component.dataIndex}Min`, minData.value)

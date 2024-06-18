@@ -225,7 +225,7 @@ defineExpose({ open })
             <div class="w-full lg:w-2/12 h-auto">
               <div class="text-xl font-semibold">{{ item.version }}</div>
               <div class="text-xs text-gray-500 dark:text-gray-300 space-y-0.5 mt-2">
-                <div>{{ data?.created_by?.username }}</div>
+                <div>{{ data?.created_by?.nickname ?? data?.created_by?.username }}</div>
                 <div>发布于 {{ `${dayjs(item.created_at).fromNow()}` }}</div>
               </div>
             </div>
@@ -260,7 +260,7 @@ defineExpose({ open })
               :src="data?.created_by?.avatar"
             >{{ data?.created_by?.username?.substring(0, 1).toUpperCase() }}</a-avatar>
             <div class="ml-3 text-sm leading-6 mt-0.5">
-              <div class="text-gray-800 dark:text-white">{{ data?.created_by?.username }}</div>
+              <div class="text-gray-800 dark:text-white">{{ data?.created_by?.nickname ?? data?.created_by?.username }}</div>
               <div class="text-gray-500 dark:text-gray-400 text-xs">应用开发者</div>
             </div>
           </div>

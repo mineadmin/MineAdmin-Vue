@@ -5,7 +5,7 @@ import { VNodeChild } from "vue";
  */
 import { FieldRule } from "@arco-design/web-vue";
 
-export type FormDateType =
+export type FormDataType =
   | "radio"
   | "checkbox"
   | "select"
@@ -62,7 +62,7 @@ export interface BasicColumn {
   // 字段名称
   dataIndex: string;
   // 组件类型
-  formType?: FormDateType;
+  formType?: FormDataType;
   // 表格列对齐方式
   align?: "center" | "right" | "left";
   // 字段是否加入搜索
@@ -74,21 +74,21 @@ export interface BasicColumn {
   // 编辑|创建 通用是否显示字段
   display?: boolean;
   // 添加弹窗是否显示字段
-  addDisplay?: boolean;
+  addDisplay?: boolean | (() => boolean);
   // 编辑弹窗是否显示字段
-  editDisplay?: boolean;
+  editDisplay?: boolean | ((record) => boolean);
   // 编辑|创建 通用是否禁用字段
   disabled?: boolean;
   // 添加弹窗是否禁用字段
-  addDisabled?: boolean;
+  addDisabled?: boolean | (() => boolean);
   // 编辑弹窗是否禁用字段
-  editDisabled?: boolean;
+  editDisabled?: boolean | ((record) => boolean);
   // 编辑|创建 通用是否只读字段
   readonly?: boolean;
   // 添加弹窗是否只读字段
-  addReadonly?: boolean;
+  addReadonly?: boolean | (() => boolean);
   // 编辑弹窗是否只读字段
-  editReadonly?: boolean;
+  editReadonly?: boolean | ((record) => boolean);
   // 自定义渲染
   customRender?:
     | (({ record, column, rowIndex }) => VNodeChild | JSX.Element)

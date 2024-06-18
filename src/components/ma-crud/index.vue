@@ -166,7 +166,7 @@
             :hide-expand-button-on-empty="options.hideExpandButtonOnEmpty"
             :default-expand-all-rows="options.expandAllRows"
             :summary="(options.customerSummary || options.showSummary) && __summary"
-            @selection-change="setSelecteds"
+            v-model:selectedKeys="selecteds"
             @sorter-change="handlerSort"
           >
               <template #tr="{ record }">
@@ -531,6 +531,7 @@ const refresh = async () => {
     : options.value.api
     await requestHandle()
   }
+  selecteds.value = []
   tableRef.value.selectAll(false)
 }
 
