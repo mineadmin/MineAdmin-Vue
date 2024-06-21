@@ -395,5 +395,5 @@ const getFormColumns = async (type = 'add') => {
   await init()
   return formColumns.value
 }
-defineExpose({ add, edit, see, currentAction, form, getFormColumns })
+defineExpose({ add, edit, see, currentAction, form, getFormColumns, maFormRef })
 </script>
