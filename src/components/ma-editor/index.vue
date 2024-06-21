@@ -22,6 +22,9 @@
 import {reactive, ref, watch, computed} from 'vue'
 import MaResource from '@cps/ma-resource/index.vue'
 import {useAppStore} from '@/store'
+import {uploadRequest} from "@cps/ma-upload/js/utils"
+import uploadConfig from '@/config/upload'
+import tool from '@/utils/tool'
 
 import Editor from '@tinymce/tinymce-vue'
 import tinymce from 'tinymce/tinymce'
@@ -109,6 +112,11 @@ const initConfig = reactive({
   content_css: `${appBaseUrl}tinymce/skins/content/default/content.css`,
   font_size_formats: '12px 14px 16px 18px 20px 22px 24px 26px 28px 30px 32px 34px 36px 38px 40px',
   font_size_input_default_unit: 'px',
+  images_upload_handler: async (blobInfo, success) => {
+    let res = await uploadRequest(blobInfo.blob(), 'image', 'uploadImage')
+    if (!res) throw ('上传错误');
+    return /image/g.test(res.mime_type) ? tool.attachUrl(res.url, getStoreMode(res.storage_mode)) : $url + 'not-image.png'
+  },
   setup: (editor) => {
     editor.on('init', () => {
       editor.getBody().style.fontSize = '14px';
@@ -119,6 +127,10 @@ const initConfig = reactive({
     })
   }
 })
+
+const getStoreMode = (mode) => {
+  return uploadConfig.storageMode[mode.toString()]
+}
 
 const editorKey = ref(new Date().getTime())
 
