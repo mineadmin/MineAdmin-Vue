@@ -8,6 +8,7 @@ import router from './router'
 import store from './store'
 import i18n from '@/i18n'
 import directives from './directives'
+import { request } from '@/utils/request'
 import dayjs from 'dayjs'
 import zhCn from 'dayjs/locale/zh-cn'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -48,6 +49,7 @@ app.config.globalProperties.$tool = tool
 app.config.globalProperties.$common = common
 app.config.globalProperties.$title = import.meta.env.VITE_APP_TITLE
 app.config.globalProperties.$url = import.meta.env.VITE_APP_BASE
+window.Request = request
 
 app.mount('#app')
 

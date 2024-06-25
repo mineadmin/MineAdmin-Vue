@@ -267,6 +267,7 @@ provide('dictList', dictList)
 provide('formModel', form)
 provide('formLoading', formLoading)
 provide('getColumnService', getColumnService)
+provide('maFormRef', maFormRef)
 
 defineExpose({
   init, getFormRef, getColumns, getDictList, getColumnService, getCascaderList, getFormData,
