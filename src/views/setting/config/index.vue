@@ -112,11 +112,11 @@
     isCreateNode.value = false
     const response = await config.getConfigGroupList()
     configGroupData.value = response.data
-    configGroupData.value.map(async item => {
+    await Promise.all(configGroupData.value.map(async item => {
       formArray.value[item.id] = {}
       optionsArray.value[item.id] = []
       await getConfigData(item.id)
-    })
+    }))
     isCreateNode.value = true
   }
 
