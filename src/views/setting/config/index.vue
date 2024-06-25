@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-  import { nextTick, ref } from 'vue'
+  import { nextTick, onMounted, ref } from 'vue'
   import config from '@/api/setting/config'
   import { Message } from '@arco-design/web-vue'
   import { auth } from '@/utils/common'
@@ -214,8 +214,10 @@
     }
   }
 
-  getConfigGroupList()
-  nextTick(() => maFormRef.value && maFormRef.value[0].init() )
+  onMounted(async () => {
+    await getConfigGroupList()
+    nextTick(() => maFormRef.value && maFormRef.value[0].init() )
+  })
 </script>
 <script>
 export default { name: 'setting:config' }
