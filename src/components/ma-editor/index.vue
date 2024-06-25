@@ -112,7 +112,7 @@ const initConfig = reactive({
   content_css: `${appBaseUrl}tinymce/skins/content/default/content.css`,
   font_size_formats: '12px 14px 16px 18px 20px 22px 24px 26px 28px 30px 32px 34px 36px 38px 40px',
   font_size_input_default_unit: 'px',
-  images_upload_handler: async (blobInfo, success) => {
+  images_upload_handler: async (blobInfo, progress) => {
     let res = await uploadRequest(blobInfo.blob(), 'image', 'uploadImage')
     if (!res) throw ('上传错误');
     return /image/g.test(res.mime_type) ? tool.attachUrl(res.url, getStoreMode(res.storage_mode)) : $url + 'not-image.png'

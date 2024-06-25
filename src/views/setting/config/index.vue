@@ -112,11 +112,14 @@
     isCreateNode.value = false
     const response = await config.getConfigGroupList()
     configGroupData.value = response.data
-    configGroupData.value.map(async item => {
-      formArray.value[item.id] = {}
-      optionsArray.value[item.id] = []
-      await getConfigData(item.id)
-    })
+
+    for (const item of configGroupData.value) {
+      formArray.value[item.id] = {};
+      optionsArray.value[item.id] = [];
+      await getConfigData(item.id);
+    }
+
+    nextTick(() => maFormRef.value && maFormRef.value[0].init() )
     isCreateNode.value = true
   }
 
@@ -215,7 +218,6 @@
   }
 
   getConfigGroupList()
-  nextTick(() => maFormRef.value && maFormRef.value[0].init() )
 </script>
 <script>
 export default { name: 'setting:config' }
