@@ -172,15 +172,15 @@ defineExpose({ open })
             <a-descriptions-item label="价格">
               <a-tag v-if="data.auth?.type === 0" color="green">免费</a-tag>
               <div v-else-if="data?.auth?.type === 1">
-                <div class="flex items-center justify-end leading-6">
+                <div class="flex items-center leading-6">
                   <div class="line-through text-gray-400" v-if="data?.auth.integral_discount !== '0.00'">{{ data?.auth.integral_quota }} 积分</div>
-                  <div class="ml-2 text-emerald-700">{{ discount(data?.auth.integral_discount, data.auth.integral_quota) }} 积分</div>
+                  <div class="text-emerald-700">{{ discount(data?.auth.integral_discount, data.auth.integral_quota) }} 积分</div>
                 </div>
               </div>
               <div v-else-if="data?.auth?.type === 2">
-                <div class="flex items-center justify-end leading-6">
+                <div class="flex items-center leading-6">
                   <div class="line-through text-gray-400" v-if="data?.auth.basic_discount !== '0.00'">￥{{ data?.auth.basic_quota }}</div>
-                  <div class="ml-2 text-blue-600">￥{{ discount(data?.auth.basic_discount, data?.auth.basic_quota) }}</div>
+                  <div class="text-blue-500">￥{{ discount(data?.auth.basic_discount, data?.auth.basic_quota) }}</div>
                 </div>
               </div>
             </a-descriptions-item>

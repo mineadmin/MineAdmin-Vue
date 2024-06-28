@@ -65,11 +65,11 @@ const checkInstallStatus = (space, identifier) => {
           {{ `${dayjs(item.created_at).fromNow()}更新` }}
         </div>
       </div>
-      <div class="text-xs mt-1 text-gray-500 dark:text-gray-400">
+      <div class="text-xs mt-1 text-gray-500 dark:text-gray-400 truncate">
         {{ item.description }}
       </div>
       <div class="text-xs mt-5 grid grid-cols-2">
-        <div class="leading-6 text-gray-700 dark:text-gray-300"><span class="hover:underline">X.Mo</span></div>
+        <div class="leading-6 text-gray-700 dark:text-gray-300"><span class="hover:underline">{{ item.created_by }}</span></div>
         <div class="text-right">
           <a-tag v-if="item.auth.type === 0" color="green">免费</a-tag>
           <div v-else-if="item.auth.type === 1">
