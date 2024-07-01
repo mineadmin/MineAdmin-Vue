@@ -147,7 +147,7 @@
       <div ref="crudContentRef">
         <slot name="crudContent" v-bind="tableData">
           <a-table
-            v-if="(! options.expandAllRows || tableData.length > 0) && tableIsShow"
+            v-if="tableIsShow"
             v-bind="$attrs"
             ref="tableRef"
             :key="options.pk"
