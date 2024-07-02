@@ -48,22 +48,31 @@
 </template>
 
 <script setup>
-  import { reactive, ref, onMounted } from 'vue'
+  import { reactive, ref, computed } from 'vue'
   import * as arcoIcons from '@arco-design/web-vue/es/icon'
 
   const mineadminIcons = reactive([])
   const arcodesignIcons = reactive([])
   const visible = ref(false)
-  const currentIcon = ref()
 
   const props = defineProps({
     modelValue: { type: String },
     preview: { type: Boolean, default: true },
   })
-  
+
   const emit = defineEmits(['update:modelValue'])
 
-  onMounted( () => currentIcon.value = props.modelValue )
+  const currentIcon = computed({
+    get() {
+      return props.modelValue;
+    },
+    set(value) {
+      // html标签名不能以数字开头
+      if ((/^[^\d].*/.test(value) && value) || !value) {
+        emit('update:modelValue', value);
+      }
+    }
+  });
 
   for (let icon in arcoIcons) {
     arcodesignIcons.push(icon)
@@ -79,7 +88,6 @@
 
   const selectIcon = (icon, className) => {
     currentIcon.value = icon
-    emit('update:modelValue', currentIcon.value)
     visible.value = false
   }
 
