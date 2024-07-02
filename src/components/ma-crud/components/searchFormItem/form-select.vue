@@ -72,7 +72,7 @@ if ( props.component.multiple === true ) {
 if (isObject(props.component.dict)) {
   props.component.dict.pageOption = {
     page: 1,
-    pageSize: props.component?.dict?.pageSize ?? 15
+    pageSize: props.component?.dict?.pageOption?.pageSize ?? props.component?.dict?.pageSize ?? 15
   }
 }
 
@@ -108,6 +108,9 @@ const handlePage = async (page) => {
 
 watch( () => get(searchForm.value, props.component.dataIndex), vl => value.value = vl )
 watch( () => value.value, v => set(searchForm.value, props.component.dataIndex, v) )
+watch( () => dicts.value[dictIndex] , async v => {
+  dataTotal.value = v?.pageInfo?.total || 0
+})
 
 const handlerChangeeEvent = (value) => {
   handlerCascader(
@@ -116,10 +119,5 @@ const handlerChangeeEvent = (value) => {
 }
 
 onMounted(() => {
-  setTimeout(() => {
-    if (isObject(dicts.value[dictIndex])) {
-      dataTotal.value = dicts.value[dictIndex]?.pageInfo?.total
-    }
-  }, 3000);
 })
 </script>

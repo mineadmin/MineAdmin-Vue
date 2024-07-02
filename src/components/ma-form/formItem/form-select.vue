@@ -95,7 +95,7 @@ const props = defineProps({
 if (isObject(props.component.dict)) {
   props.component.dict.pageOption = {
     page: 1,
-    pageSize: props.component?.dict?.pageSize ?? 15
+    pageSize: props.component?.dict?.pageOption?.pageSize ?? props.component?.dict?.pageSize ?? 15
   }
 }
 
@@ -116,6 +116,9 @@ watch( () => value.value, v => {
   set(formModel.value, index, v)
   index.indexOf('.') > -1 && delete formModel.value[index]
 } )
+watch( () => dictList.value[index] , async v => {
+  dataTotal.value = v?.pageInfo?.total || 0
+})
 
 if (value.value === '') {
   value.value = undefined
@@ -170,11 +173,5 @@ const handleCascaderChangeEvent = async (value) => {
 
 rv('onCreated')
 onMounted(() => {
-  setTimeout(() => {
-    if (isObject(dictList.value[index])) {
-      dataTotal.value = dictList.value[index]?.pageInfo?.total
-    }
-  }, 800);
-  rv('onMounted')
 })
 </script>
