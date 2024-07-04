@@ -12,7 +12,7 @@
     <a-modal v-model:visible="openNetworkModal" :ok-text="$t('sys.save')" :on-before-ok="saveNetworkImg" draggable>
       <template #title>{{ $t('maResource.saveNetworkImage') }}</template>
       <a-input v-model="networkImg" class="mb-3" :placeholder="$t('maResource.networkImageNotice')" allow-clear />
-      <a-image :src="networkImg" width="100%" style="min-height: 150px;" />
+      <a-image :src="networkImg ?? ''" width="100%" style="min-height: 150px;" />
     </a-modal>
     <div class="lg:w-1/5 w-full p-2 shadow">
       <ma-tree-slider
