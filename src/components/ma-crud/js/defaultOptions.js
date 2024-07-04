@@ -54,7 +54,8 @@ export default {
   // 页面布局方式，支持 normal（标准）和 fixed（固定）两种
   pageLayout: 'normal',
   // 默认统一设置列宽度
-  columnWidth: 100,
+  columnWidth: 0,// 列宽更新为最小列宽(此处设置为 0 时候,默认最小列宽生效)
+  columnMinWidth: 100,
   // 搜索标签对齐方式
   searchLabelAlign: 'right',
   // 全局搜索标签宽度
