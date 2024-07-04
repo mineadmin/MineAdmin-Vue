@@ -380,6 +380,7 @@ columns.value.map((item, index) => {
     item = columns.value[index]
   }
   !item.width && (item.width = options.value.columnWidth)
+  !item.minWidth && (item.minWidth = options.value.columnMinWidth)
 })
 
 provide('options', options.value)

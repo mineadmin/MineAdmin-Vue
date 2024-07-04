@@ -4,6 +4,7 @@
       <a-table-column
           :title="row.title"
           :width="row.width"
+          :min-width="row.minWidth"
           :ellipsis="row.ellipsis ?? true"
           :filterable="row.filterable"
           :cell-class="row.cellClass"
@@ -38,6 +39,7 @@
           :title="row.title"
           :data-index="row.dataIndex"
           :width="row.width"
+          :min-width="row.minWidth"
           :ellipsis="row.ellipsis ?? true"
           :filterable="row.filterable"
           :cell-class="row.cellClass"
