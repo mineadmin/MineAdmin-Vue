@@ -1,4 +1,4 @@
-import { VNodeChild } from "vue";
+import { VNodeChild,Ref } from "vue";
 
 /**
  * 表单组件类型
@@ -30,7 +30,9 @@ export type FormDataType =
   | "user-info"
   | "city-linkage"
   | "form-group"
-  | "select-resource";
+  | "select-resource"
+  | 'component';
+
 /**
  * 列字典
  */
@@ -120,6 +122,7 @@ export interface BasicColumn {
   searchPlaceholder?: string;
   // 表格是否快捷编辑，只支持 input date select
   quickEdit?: boolean;
+  component?:Ref;
   //编辑|创建 通用规则
   commonRules?: FieldRule | FieldRule[];
   // 创建时规则
