@@ -60,14 +60,14 @@
   const classStyle = ref('flex flex-col parent-menu items-center rounded mt-1 text-gray-200 hover:bg-gray-700 dark:hover:text-gray-50 dark:hover:bg-blackgray-1')
 
   onMounted(() => {
-    initMenu()
+    initMenu(true)
   })
 
   watch(() => route, v => {
-    initMenu()
+    initMenu(false)
   }, { deep: true })
 
-  const initMenu = () => {
+  const initMenu = (init = true) => {
     let current
     if (route.matched[1]?.meta?.breadcrumb) {
       current = route.matched[1].meta.breadcrumb[0].name
@@ -76,18 +76,18 @@
     }
     if (userStore.routers && userStore.routers.length > 0) {
       userStore.routers.map((item, index) => {
-        if (item.name == current) loadMenu(item, index)
+        if (item.name == current) loadMenu(item, index, init)
       })
     }
   }
 
-  const loadMenu = (bigMenu, index) => {
+  const loadMenu = (bigMenu, index, isInit = true) => {
     if (bigMenu.meta.type === 'L') {
       window.open(bigMenu.path)
       return
     }
     if (bigMenu.children.length > 0) {
-      if (bigMenu.redirect) {
+      if (bigMenu.redirect && isInit) {
         router.push(bigMenu.redirect)
       }
       MaMenuRef.value.loadChildMenu(bigMenu)

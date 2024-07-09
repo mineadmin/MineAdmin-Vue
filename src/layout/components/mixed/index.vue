@@ -62,14 +62,14 @@
   const active = ref()
 
   onMounted(() => {
-    initMenu()
+    initMenu(true)
   })
 
   watch(() => route, v => {
-    initMenu()
+    initMenu(false)
   }, { deep: true })
 
-  const initMenu = () => {
+  const initMenu = (init = true) => {
     if (route.matched[1]?.meta?.breadcrumb) {
       active.value = route.matched[1].meta.breadcrumb[0].name
     } else {
@@ -77,17 +77,20 @@
     }
     if (userStore.routers && userStore.routers.length > 0) {
       userStore.routers.map((item, index) => {
-        if (item.name == active.value) loadMenu(item)
+        if (item.name == active.value) loadMenu(item, init)
       })
     }
   }
 
-  const loadMenu = (bigMenu) => {
+  const loadMenu = (bigMenu, isInit = true) => {
     if (bigMenu.meta.type === 'L') {
       window.open(bigMenu.path)
       return
     }
     if (bigMenu.children.length > 0) {
+      if (bigMenu.redirect && isInit) {
+        router.push(bigMenu.redirect)
+      }
       MaMenuRef.value.loadChildMenu(bigMenu)
       showMenu.value = true
     } else {
