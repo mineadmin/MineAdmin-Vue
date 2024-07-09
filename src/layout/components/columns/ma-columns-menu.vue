@@ -86,6 +86,10 @@
       window.open(bigMenu.path)
       return
     }
+    if (bigMenu.redirect) {
+      router.push(bigMenu.redirect)
+      return
+    }
     if (bigMenu.children.length > 0) {
       MaMenuRef.value.loadChildMenu(bigMenu)
       showMenu.value = true
