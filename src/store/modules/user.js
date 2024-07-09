@@ -151,6 +151,7 @@ const filterAsyncRouter = (routerMap) => {
         path: item.path,
         name: item.name,
         hidden: item.hidden === 1,
+        redirect: item.redirect,
         meta: item.meta,
         children: item.children ? filterAsyncRouter(item.children) : null,
         component: views[`../../views/${item.component}.vue`]
