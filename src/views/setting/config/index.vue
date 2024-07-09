@@ -40,6 +40,7 @@
           :title="item.name"
         >
           <ma-form
+            v-if="isCreateNode"
             v-model="formArray[item.id]"
             :columns="optionsArray[item.id]"
             @submit="submit"
