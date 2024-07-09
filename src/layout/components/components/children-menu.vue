@@ -51,9 +51,11 @@
   const routerPush = (menu) => {
     if (menu.meta && menu.meta.type === 'L') {
       window.open(menu.path)
-    }else {
+    } else if (menu.path && menu.component) {
       router.push(menu.path)
       tagStore.addTag({ name: menu.name, title: menu.meta.title, path: menu.path })
+    } else {
+      console.warn('菜单未配置组件或者path')
     }
   }
 </script>

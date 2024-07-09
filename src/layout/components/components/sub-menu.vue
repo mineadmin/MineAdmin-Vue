@@ -16,7 +16,7 @@
       <component :is="menuInfo.meta.icon" :class="menuInfo.meta.icon.indexOf('ma') > 0 ? 'icon' : ''" />
     </template>
     <template v-for="item in menuInfo.children" :key="item.id">
-      <template v-if="!item.children|| item.children.length === 0">
+      <template v-if="!item.children || item.children.length === 0">
         <a-menu-item :key="item.name" @click="routerPush(item)">
           <template #icon v-if="item.meta.icon">
             <component :is="item.meta.icon" :class="menuInfo.meta.icon.indexOf('ma') > 0 ? 'icon' : ''" />
@@ -42,11 +42,11 @@
   const routerPush = (menu) => {
     if (menu.meta && menu.meta.type === 'L') {
       window.open(menu.path)
-    } else if (menu.redirect) {
-      router.push(menu.redirect)
-    } else {
+    } else if (menu.path && menu.component) {
       router.push(menu.path)
       tagStore.addTag({ name: menu.name, title: menu.meta.title, path: menu.path })
+    } else {
+      console.warn('菜单未配置组件或者path')
     }
   }
 </script>
