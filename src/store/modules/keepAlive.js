@@ -3,7 +3,8 @@ import { defineStore } from 'pinia'
 const useKeepAliveStore = defineStore('keepAlive', {
   state: () => ({
     keepAlives: [],
-    show: true
+    show: true,
+    menuLoader: false,
   }),
 
   getters: {

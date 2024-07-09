@@ -15,7 +15,10 @@
         <span class="ml-2 text-xl mt-2.5 hidden md:block">{{ $title }}</span>
       </div>
       <div class="flex justify-between w-full layout-banner">
-        <top-menu v-model="userStore.routers" :active="active" @go="loadMenu" ref="topMenuRef" />
+        <top-menu v-model="userStore.routers" :active="active" @go="(bigMenu, index) => {
+            keepAliveStore.menuLoader = false
+            loadMenu(bigMenu, index)
+          }" ref="topMenuRef" />
         <ma-operation />
       </div>
     </a-layout-header>
@@ -42,7 +45,7 @@
 
 <script setup>
   import { ref, watch, onMounted } from 'vue'
-  import { useAppStore, useUserStore } from '@/store'
+  import { useAppStore, useUserStore, useKeepAliveStore } from '@/store'
   import { useRoute, useRouter } from 'vue-router'
   import ResizeObserver from 'resize-observer-polyfill'
   import MaOperation from '../ma-operation.vue'
@@ -58,14 +61,17 @@
   const MaMenuRef = ref(null)
   const userStore = useUserStore()
   const appStore = useAppStore()
+  const keepAliveStore = useKeepAliveStore()
   const showMenu = ref(false)
   const active = ref()
 
   onMounted(() => {
+    keepAliveStore.menuLoader = true
     initMenu(true)
   })
 
   watch(() => route, v => {
+    keepAliveStore.menuLoader = false
     initMenu(false)
   }, { deep: true })
 
@@ -88,7 +94,7 @@
       return
     }
     if (bigMenu.children.length > 0) {
-      if (bigMenu.redirect && isInit) {
+      if (bigMenu.redirect && isInit && !keepAliveStore.menuLoader) {
         router.push(bigMenu.redirect)
       }
       MaMenuRef.value.loadChildMenu(bigMenu)
