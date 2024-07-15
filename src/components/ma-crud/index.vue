@@ -859,12 +859,12 @@ const initSearchColumns = () => crudSearchRef.value.initSearchColumns()
 const getColumnService = (strictMode = true) => {
   return new ColumnService({ columns: columns.value, cascaders: cascaders.value, dicts: dicts.value }, strictMode )
 }
-
+const setTableData = (data=[])=> tableData.value = data
 defineExpose({
   refresh, requestData, addAction, editAction, getTableData, setSelecteds,
   getCurrentAction, getFormData, getFormColumns, getColumnService, getCurrentPage, getPageSize, getTotal,
   requestParams, isRecovery, tableRef, initSearchColumns,
-  crudFormRef, crudSearchRef, crudImportRef, crudSettingRef
+  crudFormRef, crudSearchRef, crudImportRef, crudSettingRef, setTableData
 })
 
 </script>
