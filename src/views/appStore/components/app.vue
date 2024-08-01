@@ -16,8 +16,8 @@ const openDetailModal = (item) => {
   emit('onOpenDetail', item)
 }
 
-const checkInstallStatus = (space, identifier) => {
-  const name = `${space}/${identifier}`
+const checkInstallStatus = (identifier) => {
+  const name = `${identifier}`
   return !isUndefined(props.localInstallList[name]) && props.localInstallList[name].status
 }
 </script>
@@ -35,13 +35,13 @@ const checkInstallStatus = (space, identifier) => {
     </div>
     <div
         class="absolute z-10 w-32 text-center bg-lime-600 text-white px-5 origin-center rotate-45 -right-7 top-6"
-        v-if="checkInstallStatus(item.space, item.identifier) && ! props.isOnlyShowLocalApp"
+        v-if="checkInstallStatus(item.identifier) && ! props.isOnlyShowLocalApp"
     >
       已安装
     </div>
     <div
         class="absolute z-10 w-auto bg-green-600 text-white px-5 origin-center rotate-45 -right-6 top-3.5 text-sm"
-        v-if="props.isOnlyShowLocalApp && ! isUndefined(props.localInstallList[`${item.space}/${item.identifier}`])"
+        v-if="props.isOnlyShowLocalApp && ! isUndefined(props.localInstallList[`${item.identifier}`])"
     >
       本地应用
     </div>
