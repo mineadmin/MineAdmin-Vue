@@ -187,11 +187,11 @@ const see = async (data) => {
   await nextTick(() => maFormRef.value && maFormRef.value.updateOptions() )
 }
 
-const init = () => {
+const init = async () => {
   dataLoading.value = true
   const layout = JSON.parse(JSON.stringify(options?.formOption?.layout ?? []))
 
-  columns.value.map(async item => {
+  await Promise.all(columns.value.map(async item => {
     if (item.children && item.children.length > 0){
       await item.children.map(async (childItem) => {
         await columnItemHandle(childItem)
@@ -199,7 +199,7 @@ const init = () => {
     }else {
       await columnItemHandle(item)
     }
-  })
+  }))
   // 设置表单布局
   settingFormLayout(layout)
   if (isArray(layout) && layout.length > 0) {
@@ -225,31 +225,29 @@ const columnItemHandle = async (item) => {
   layoutColumns.value.set(item.dataIndex, item)
   formColumns.value.push(item)
 
-  await Promise.all(async () => {
-    if (options.formOption.viewType !== 'tag') {
-      // 针对带点的数据处理
-      if (item.dataIndex && item.dataIndex.indexOf('.') > -1) {
-        form.value[item.dataIndex] = get(form.value, item.dataIndex)
-      }
+  if (options.formOption.viewType !== 'tag') {
+    // 针对带点的数据处理
+    if (item.dataIndex && item.dataIndex.indexOf('.') > -1) {
+      form.value[item.dataIndex] = get(form.value, item.dataIndex)
+    }
 
-      // add 默认值处理
-      if (currentAction.value === 'add') {
-        if (item.addDefaultValue && isFunction(item.addDefaultValue)) {
-          form.value[item.dataIndex] = await item.addDefaultValue(form.value)
-        } else if (typeof item.addDefaultValue != 'undefined') {
-          form.value[item.dataIndex] = item.addDefaultValue
-        }
-      }
-      // edit 和 see 默认值处理
-      if (currentAction.value === 'edit' || currentAction.value === 'see') {
-        if (item.editDefaultValue && isFunction(item.editDefaultValue)) {
-          form.value[item.dataIndex] = await item.editDefaultValue(form.value)
-        } else if (typeof item.editDefaultValue != 'undefined') {
-          form.value[item.dataIndex] = item.editDefaultValue
-        }
+    // add 默认值处理
+    if (currentAction.value === 'add') {
+      if (item.addDefaultValue && isFunction(item.addDefaultValue)) {
+        form.value[item.dataIndex] = await item.addDefaultValue(form.value)
+      } else if (typeof item.addDefaultValue != 'undefined') {
+        form.value[item.dataIndex] = item.addDefaultValue
       }
     }
-  })
+    // edit 和 see 默认值处理
+    if (currentAction.value === 'edit' || currentAction.value === 'see') {
+      if (item.editDefaultValue && isFunction(item.editDefaultValue)) {
+        form.value[item.dataIndex] = await item.editDefaultValue(form.value)
+      } else if (typeof item.editDefaultValue != 'undefined') {
+        form.value[item.dataIndex] = item.editDefaultValue
+      }
+    }
+  }
 
   item.disabled = undefined
   item.readonly = undefined
