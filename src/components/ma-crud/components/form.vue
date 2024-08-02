@@ -225,30 +225,35 @@ const columnItemHandle = async (item) => {
   layoutColumns.value.set(item.dataIndex, item)
   formColumns.value.push(item)
 
-  if (options.formOption.viewType !== 'tag') {
-    // 针对带点的数据处理
-    if (item.dataIndex && item.dataIndex.indexOf('.') > -1) {
-      form.value[item.dataIndex] = get(form.value, item.dataIndex)
-    }
+  await Promise.all(async () => {
+    if (options.formOption.viewType !== 'tag') {
+      // 针对带点的数据处理
+      if (item.dataIndex && item.dataIndex.indexOf('.') > -1) {
+        form.value[item.dataIndex] = get(form.value, item.dataIndex)
+      }
 
-    // add 默认值处理
-    if (currentAction.value === 'add') {
-      if (item.addDefaultValue && isFunction(item.addDefaultValue)) {
-        form.value[item.dataIndex] = await item.addDefaultValue(form.value)
-      } else if (typeof item.addDefaultValue != 'undefined') {
-        form.value[item.dataIndex] = item.addDefaultValue
+      // add 默认值处理
+      if (currentAction.value === 'add') {
+        if (item.addDefaultValue && isFunction(item.addDefaultValue)) {
+          form.value[item.dataIndex] = await item.addDefaultValue(form.value)
+        } else if (typeof item.addDefaultValue != 'undefined') {
+          form.value[item.dataIndex] = item.addDefaultValue
+        }
+      }
+      // edit 和 see 默认值处理
+      if (currentAction.value === 'edit' || currentAction.value === 'see') {
+        if (item.editDefaultValue && isFunction(item.editDefaultValue)) {
+          form.value[item.dataIndex] = await item.editDefaultValue(form.value)
+        } else if (typeof item.editDefaultValue != 'undefined') {
+          form.value[item.dataIndex] = item.editDefaultValue
+        }
       }
     }
-    // edit 和 see 默认值处理
-    if (currentAction.value === 'edit' || currentAction.value === 'see') {
-      if (item.editDefaultValue && isFunction(item.editDefaultValue)) {
-        form.value[item.dataIndex] = await item.editDefaultValue(form.value)
-      } else if (typeof item.editDefaultValue != 'undefined') {
-        form.value[item.dataIndex] = item.editDefaultValue
-      }
-    }
-  }
+  })
 
+  item.disabled = undefined
+  item.readonly = undefined
+  await nextTick()
   // 其他处理
   item.display = formItemShow(item)
   item.disabled = formItemDisabled(item)
@@ -354,6 +359,9 @@ const formItemReadonly = (item) => {
   }
   if (currentAction.value === 'edit' && ! isUndefined(item.editReadonly)) {
     return isFunction(item.editReadonly) ? item.editReadonly(form.value) : item.editReadonly
+  }
+  if (currentAction.value === 'see') {
+    return true
   }
   if (! isUndefined(item.readonly)) {
     return item.readonly
