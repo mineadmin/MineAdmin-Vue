@@ -179,7 +179,7 @@ onMounted(() => {
         </li>
         <li class="flex items-center">
           <span>价格：</span>
-          <div class="space-x-3 ml-3">
+          <div class="space-x-3 yarnml-3">
             <a-tag
                 checkable color="arcoblue"
                 v-for="item in paramsList.types"
