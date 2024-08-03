@@ -47,11 +47,7 @@ const requestAppList = (params = { page: 1, size: 9999 }) => {
     if (res.code === 200) {
       const { list, rowTotal } = res.data?.data
       originalAppList.value = list
-      onlyLocalAppList.value = originalAppList.value.map(item => {
-        if (! isUndefined(localInstallList.value[`${item.space}/${item.identifier}`]) ) {
-          return item
-        }
-      })
+      onlyLocalAppList.value = originalAppList.value.filter(item => !isUndefined(localInstallList.value[`${item.space}/${item.identifier}`]));
       total.value = rowTotal
       loading.value = false
       setAppList()
