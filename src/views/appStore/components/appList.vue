@@ -47,11 +47,7 @@ const requestAppList = (params = { page: 1, size: 9999 }) => {
     if (res.code === 200) {
       const { list, rowTotal } = res.data?.data
       originalAppList.value = list
-      onlyLocalAppList.value = originalAppList.value.map(item => {
-        if (! isUndefined(localInstallList.value[`${item.space}/${item.identifier}`]) ) {
-          return item
-        }
-      })
+      onlyLocalAppList.value = originalAppList.value.filter(item => !isUndefined(localInstallList.value[`${item.identifier}`]));
       total.value = rowTotal
       loading.value = false
       setAppList()
@@ -179,7 +175,7 @@ onMounted(() => {
         </li>
         <li class="flex items-center">
           <span>价格：</span>
-          <div class="space-x-3 ml-3">
+          <div class="space-x-3 yarnml-3">
             <a-tag
                 checkable color="arcoblue"
                 v-for="item in paramsList.types"

@@ -35,7 +35,7 @@ const open = (identifier) => {
   getDetail({ identifier }).then(res => {
     loading.value = false
     data.value = res.data.data
-    const key = `${data.value.created_by.space}/${data.value.app.identifier}`
+    const key = `${data.value.app.identifier}`
     if (checkInstallStatus(key)) {
       isInstall.value = true
     }
@@ -62,7 +62,6 @@ const downloadAndInstall = async () => {
   }
 
   const body = {
-    space: data.value.created_by.space,
     identifier: data.value.app.identifier,
     version: data.value.version[0].version,
   }
@@ -107,7 +106,6 @@ const unInstallApp = () => {
   }
 
   const body = {
-    space: data.value.created_by.space,
     identifier: data.value.app.identifier,
     version: data.value.version[0].version,
   }
@@ -186,7 +184,7 @@ defineExpose({ open })
             </a-descriptions-item>
             <a-descriptions-item label="授权方式" v-if="data?.auth?.type === 2">一年 / 永久</a-descriptions-item>
             <a-descriptions-item label="应用标识">
-              {{ data?.created_by?.space }}/{{ data?.app?.identifier }}
+              {{ data?.app?.identifier }}
             </a-descriptions-item>
             <a-descriptions-item label="发布日期">
               {{ dayjs(data?.app?.created_at).format("YYYY-MM-DD") }}
