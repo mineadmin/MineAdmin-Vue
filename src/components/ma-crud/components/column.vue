@@ -269,8 +269,9 @@ const seeAction = record => {
 }
 
 const editAction = record => {
-  if (isFunction(options.beforeOpenEdit) && ! options.beforeOpenEdit(record)) {
-    return false
+  if (isFunction(options.beforeOpenEdit)) {
+    const isOpen = await options.beforeOpenEdit(record)
+    if (!isOpen) return false;
   }
   if (options.edit.action && isFunction(options.edit.action)) {
     options.edit.action(record)
