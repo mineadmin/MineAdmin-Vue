@@ -45,7 +45,7 @@
             <a-popover :content-style="{padding: '0px',width: '256px'}" position="rt" trigger="click" v-if="isBoolean(props.component.multipleTools) || props.component.multipleTools.showSelectAll">
               <a-button class="ml-2" size="mini">已选 {{ value.length }}</a-button>
               <template #title>
-                <a-space fill style="padding: 12px;"> 
+                <a-space fill style="padding: 12px 12px 8px 12px;"> 
                   <a-button
                   :disabled="loading || !value.length"
                   size="mini"
@@ -136,7 +136,6 @@ const handleSelectAll = (status) => {
     value.value = []
   }
   if (status) {
-    // 使用 Set 的 difference 来找出需要添加的值
     const currentSet = new Set(value.value)
     const newValues = dicts.value[dictIndex].filter(item => !currentSet.has(item.value)).map(item => item.value)
     value.value = [...value.value, ...newValues]
