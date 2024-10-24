@@ -6,6 +6,9 @@
   <img src="https://svg.hamm.cn/badge.svg?key=Version&value=2.0%20LTS" />
 </p>
 
+## 仓库说明
+此仓库是2.0前端的代码，3.0的前后端在一个仓库里
+
 ## 简介
 `MineAdmin Vue` 是一个开源免费专门适配于 `MineAdmin` 后台权限管理系统的前端中后台模板，使用了 `vue3`, `vite5`, `pinia`, `arco design`, `javascript` 等主流开发技术，未使用`Typescript`，我们选择了简单。
 
