@@ -167,6 +167,7 @@ const handlerFallback = (key) => {
 watch( () => get(searchForm.value, props.component.dataIndex), vl => value.value = vl )
 watch( () => value.value, v => {
   if (props.component.multiple) {
+    if (!isObject(v)) v = []
     v.forEach(k => {
       if ( !optionMap.value[k] ) {
         optionMap.value[k] = dicts.value[dictIndex].find(i => i.value === k)

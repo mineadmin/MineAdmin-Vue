@@ -161,6 +161,7 @@ const keyword = ref('')
 watch( () => get(formModel.value, index), vl => value.value = vl )
 watch( () => value.value, v => {
   if (props.component.multiple) {
+    if (!isObject(v)) v = []
     v.forEach(k => {
       if ( !optionMap.value[k] ) {
         optionMap.value[k] = dictList.value[dictIndex].find(i => i.value === k)
