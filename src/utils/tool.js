@@ -359,4 +359,16 @@ tool.arrSum = (arr) => {
   return sum
 }
 
+tool.uuid = () => {
+  const randomBytes = CryptoJS.lib.WordArray.random(16);
+  const randomHex = randomBytes.toString(CryptoJS.enc.Hex);
+  return [
+    randomHex.substr(0, 8),
+    randomHex.substr(8, 4),
+    randomHex.substr(12, 4),
+    randomHex.substr(16, 4),
+    randomHex.substr(20, 12)
+  ].join('-');
+}
+
 export default tool
