@@ -68,7 +68,7 @@ const appStore = useAppStore()
 const props = defineProps({
   modelValue: {type: String},
   height: {type: Number, default: 400},
-  id: {type: String, default: () => 'tinymce' + new Date().getTime().toString()},
+  id: {type: String, default: () => tool.uuid()},
   plugins: {
     type: [String, Array],
     default:
@@ -132,7 +132,7 @@ const getStoreMode = (mode) => {
   return uploadConfig.storageMode[mode.toString()]
 }
 
-const editorKey = ref(new Date().getTime())
+const editorKey = props.id
 
 watch(
     () => list.value,
