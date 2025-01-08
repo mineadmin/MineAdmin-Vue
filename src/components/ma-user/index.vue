@@ -13,11 +13,26 @@
       <a-button type="primary" @click="visible = true">
         <template #icon><icon-select-all /></template>{{ props.text }}
       </a-button>
-      <a-tag size="large" color="blue" v-if="props.isEcho">已选择 {{ isArray(selecteds) ? selecteds.length : 0 }} 位</a-tag>
-      <a-input-tag v-model="userList" v-if="props.isEcho" :style="{ width:'320px' }" :placeholder="'请点击前面按钮' + props.text" :max-tag-count="3" disabled/>
+      <a-tag size="large" color="blue" v-if="props.isEcho"
+        >已选择 {{ isArray(selecteds) ? selecteds.length : 0 }} 位</a-tag
+      >
+      <a-input-tag
+        v-model="userList"
+        v-if="props.isEcho"
+        :style="{ width: '320px' }"
+        :placeholder="'请点击前面按钮' + props.text"
+        :max-tag-count="3"
+        disabled
+      />
     </a-space>
 
-    <a-modal v-model:visible="visible" width="1000px" draggable :on-before-ok="close" unmountOnClose>
+    <a-modal
+      v-model:visible="visible"
+      width="1000px"
+      draggable
+      :on-before-ok="close"
+      unmountOnClose
+    >
       <template #title>{{ props.text }}</template>
 
       <ma-crud
@@ -32,98 +47,112 @@
 </template>
 
 <script setup>
-  import { onMounted, ref, watch } from 'vue'
-  import commonApi from '@/api/common'
-  import { Message } from '@arco-design/web-vue'
-  import { isArray, isEmpty } from 'lodash'
+import { onMounted, ref, watch } from "vue";
+import commonApi from "@/api/common";
+import { Message } from "@arco-design/web-vue";
+import { isArray, isEmpty } from "lodash";
 
-  const props = defineProps({
-    modelValue: { type: Array },
-    isEcho: { type: Boolean, default: false },
-    multiple: { type: Boolean, default: true },
-    onlyId: { type: Boolean, default: true },
-    text: { type: String, default: '选择用户' }
-  })
+const props = defineProps({
+  modelValue: { type: Array },
+  isEcho: { type: Boolean, default: false },
+  multiple: { type: Boolean, default: true },
+  onlyId: { type: Boolean, default: true },
+  text: { type: String, default: "选择用户" },
+});
 
-  const emit = defineEmits(['update:modelValue', 'success'])
+const emit = defineEmits(["update:modelValue", "success"]);
 
-  const visible = ref(false)
-  const selecteds = ref([])
-  const userList = ref([])
+const visible = ref(false);
+const selecteds = ref([]);
+const userList = ref([]);
 
-  onMounted(() => {
-    if (props.isEcho && props.onlyId) selecteds.value = props.modelValue
-  })
+onMounted(() => {
+  if (props.isEcho && props.onlyId) selecteds.value = props.modelValue;
+});
 
-  watch(
-    ()  => props.modelValue,
-    val => {
-      if (props.isEcho && props.onlyId) selecteds.value = val
-    }
-  )
-
-  const selectHandler = (rows) => {
-    selecteds.value = rows
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (props.isEcho && props.onlyId) selecteds.value = val;
   }
+);
 
-  const close = async (done) => {
+const selectHandler = (rows) => {
+  selecteds.value = rows;
+};
+
+const close = async (done) => {
+  try {
     if (isArray(selecteds.value) && selecteds.value.length > 0) {
-      const response = await commonApi.getUserInfoByIds({ ids: selecteds.value })
-      if (! isEmpty(response) && isArray(response.data)) {
-        userList.value = response.data.map( item => {
-          return `${item.username}(${item.id})`
-        })
-        if (props.onlyId) {
-          emit('update:modelValue', selecteds.value)
-        } else {
-          emit('update:modelValue', response.data)
-        }
-        emit('success', true)
-        Message.success('选择成功')
+      const response = await commonApi.getUserInfoByIds({
+        ids: selecteds.value,
+      });
+      if (!isEmpty(response) && isArray(response.data)) {
+        userList.value = response.data.map((item) => {
+          return `${item.username}(${item.id})`;
+        });
+
+        const updateValue = props.onlyId ? selecteds.value : response.data;
+        emit("update:modelValue", updateValue);
+        emit("success", true);
+        Message.success("选择成功");
       }
     } else {
-      emit('update:modelValue', [])
-      userList.value = []
+      emit("update:modelValue", []);
+      userList.value = [];
     }
-    done(true)
+  } catch (e) {
+    // 处理网络请求错误
+    console.error("funtion close:", error);
+  } finally {
+    done(true);
   }
+};
 
-  const crud = ref({
-    showIndex: false,
-    api: commonApi.getUserList,
-    rowSelection: props.multiple ? { type: 'checkbox', showCheckedAll: true } : { type: 'radio' }
-  })
+const crud = ref({
+  showIndex: false,
+  api: commonApi.getUserList,
+  rowSelection: props.multiple
+    ? { type: "checkbox", showCheckedAll: true }
+    : { type: "radio" },
+});
 
-  const columns = ref([
-    { title: '账户', dataIndex: 'username', search: true },
-    { title: '昵称', dataIndex: 'nickname', search: true },
-    { title: '手机', dataIndex: 'phone', search: true },
-    { title: '邮箱', dataIndex: 'email', search: true },
-    {
-      title: '部门',
-      dataIndex: 'dept_id',
-      search: true,
-      formType: 'tree-select',
-      hide: true,
-      dict: { url: 'system/common/getDeptTreeList' }
+const columns = ref([
+  { title: "账户", dataIndex: "username", search: true },
+  { title: "昵称", dataIndex: "nickname", search: true },
+  { title: "手机", dataIndex: "phone", search: true },
+  { title: "邮箱", dataIndex: "email", search: true },
+  {
+    title: "部门",
+    dataIndex: "dept_id",
+    search: true,
+    formType: "tree-select",
+    hide: true,
+    dict: { url: "system/common/getDeptTreeList" },
+  },
+  {
+    title: "角色",
+    dataIndex: "role_id",
+    search: true,
+    formType: "select",
+    hide: true,
+    dict: {
+      url: "system/common/getRoleList",
+      props: { label: "name", value: "code" },
     },
-    {
-      title: '角色',
-      dataIndex: 'role_id',
-      search: true,
-      formType: 'select',
-      hide: true,
-      dict: { url: 'system/common/getRoleList', props: { label: 'name', value: 'code' } }
+  },
+  {
+    title: "岗位",
+    dataIndex: "post_id",
+    search: true,
+    formType: "select",
+    hide: true,
+    dict: {
+      url: "system/common/getPostList",
+      props: { label: "name", value: "code" },
     },
-    {
-      title: '岗位',
-      dataIndex: 'post_id',
-      search: true,
-      formType: 'select',
-      hide: true,
-      dict: { url: 'system/common/getPostList', props: { label: 'name', value: 'code' } }
-    },
-  ])
+  },
+]);
 </script>
 
 <style scoped>
