@@ -13,43 +13,35 @@ import type { Ref } from 'vue'
 import type { TransType } from '@/hooks/auto-imports/useTrans.ts'
 import type { UseDialogExpose } from '@/hooks/useDialog.ts'
 
-import { deleteByIds, page } from '~/base/api/user'
-import { page as departmentList } from '~/base/api/department'
+import { deleteByIds, page } from '~/base/api/department.ts'
 import getSearchItems from './data/getSearchItems.tsx'
 import getTableColumns from './data/getTableColumns.tsx'
 import useDialog from '@/hooks/useDialog.ts'
 import { useMessage } from '@/hooks/useMessage.ts'
 import { ResultCode } from '@/utils/ResultCode.ts'
 
-import UserForm from './form.vue'
-import SetRoleForm from './setRoleForm.vue'
+import DepartmentForm from './form.vue'
+import Position from './position.vue'
+import SetLeader from './setLeader.vue'
+import ViewUser from './viewUser.vue'
 
-defineOptions({ name: 'permission:user' })
+defineOptions({ name: 'permission:department' })
 
 const proTableRef = ref<MaProTableExpose>() as Ref<MaProTableExpose>
 const formRef = ref()
-const setFormRef = ref()
+const setLeaderRef = ref()
+const positionRef = ref()
 const selections = ref<any[]>([])
 const i18n = useTrans() as TransType
 const t = i18n.globalTrans
 const msg = useMessage()
-const deptData = ref<any[]>([])
-
-provide('deptData', deptData)
-
-// 请求部门数据
-function getDepartment() {
-  departmentList().then((res) => {
-    deptData.value = res.data.list as any[]
-    deptData.value.unshift({ id: undefined, name: '所有部门' })
-  })
-}
-
-getDepartment()
+const states = ref<Record<string, boolean>>({
+  isExpand: false,
+})
 
 // 弹窗配置
 const maDialog: UseDialogExpose = useDialog({
-  lgWidth: '750px',
+  lgWidth: '550px',
   // 保存数据
   ok: ({ formType }, okLoadingState: (state: boolean) => void) => {
     okLoadingState(true)
@@ -81,18 +73,13 @@ const maDialog: UseDialogExpose = useDialog({
         }
       }).catch()
     }
+    else if (formType === 'position' || formType === 'viewUser') {
+      proTableRef.value.refresh()
+      maDialog.close()
+    }
     else {
-      const elForm = setFormRef.value.maForm.getElFormRef()
-      // 验证通过后
-      elForm.validate().then(() => {
-        // 设置角色
-        setFormRef.value.saveUserRole().then((res: any) => {
-          res.code === ResultCode.SUCCESS ? msg.success(t('baseUserManage.setRoleSuccess')) : msg.error(res.message)
-          maDialog.close()
-        }).catch((err: any) => {
-          msg.alertError(err)
-        })
-      })
+      proTableRef.value.refresh()
+      maDialog.close()
     }
     okLoadingState(false)
   },
@@ -103,11 +90,12 @@ const options = ref<MaProTableOptions>({
   // 表格距离底部的像素偏移适配
   adaptionOffsetBottom: 161,
   header: {
-    mainTitle: () => t('baseUserManage.mainTitle'),
-    subTitle: () => t('baseUserManage.subTitle'),
+    mainTitle: () => t('baseDepartment.page.mainTitle'),
+    subTitle: () => t('baseDepartment.page.subTitle'),
   },
   // 表格参数
   tableOptions: {
+    rowKey: 'id',
     on: {
       // 表格选择事件
       onSelectionChange: (selection: any[]) => selections.value = selection,
@@ -129,16 +117,13 @@ const options = ref<MaProTableOptions>({
   requestOptions: {
     api: page,
   },
-  onSearchReset: () => {
-    proTableRef.value.setRequestParams({ department_id: undefined }, false)
-  },
 })
 // 架构配置
 const schema = ref<MaProTableSchema>({
   // 搜索项
   searchItems: getSearchItems(t),
   // 表格列
-  tableColumns: getTableColumns(maDialog, formRef, t),
+  tableColumns: getTableColumns(maDialog, formRef, t, msg),
 })
 
 // 批量删除
@@ -153,82 +138,76 @@ function handleDelete() {
   })
 }
 
-// 请求某部门的用户列表
-function requestUserByDept(node: any) {
-  proTableRef.value.setRequestParams({ department_id: node.id }, true)
+function expandToggle() {
+  states.value.isExpand = !states.value.isExpand
+  const tableStates = proTableRef.value?.getElTableStates?.()
+  Object.keys(tableStates.treeData.value).map((key: string) => {
+    tableStates.treeData.value[key]!.expanded = states.value.isExpand
+  })
 }
 </script>
 
 <template>
-  <div class="mine-layout flex justify-between pb-0 pl-3 pt-3">
-    <div class="w-full rounded bg-[#fff] p-2 md:w-2/12 dark-bg-dark-8">
-      <ma-tree
-        :data="deptData"
-        tree-key="name"
-        node-key="id"
-        :props="{ label: 'name' }"
-        :expand-on-click-node="false"
-        @node-click="requestUserByDept"
-      >
-        <template #default="{ data }">
-          <div class="mine-tree-node">
-            <div class="label">
-              {{ data.name }}
-            </div>
-          </div>
-        </template>
-      </ma-tree>
-    </div>
-    <div class="w-full md:w-10/12">
-      <MaProTable ref="proTableRef" :options="options" :schema="schema">
-        <template #actions>
+  <div class="mine-layout pt-3">
+    <MaProTable ref="proTableRef" :options="options" :schema="schema">
+      <template #actions>
+        <el-button
+          v-auth="['permission:department:save']"
+          type="primary"
+          @click="() => {
+            maDialog.setTitle(t('crud.add'))
+            maDialog.setAttr({ width: '550px' })
+            maDialog.open({ formType: 'add' })
+          }"
+        >
+          {{ t('crud.add') }}
+        </el-button>
+      </template>
+
+      <template #toolbarLeft>
+        <el-button
+          v-auth="['permission:department:delete']"
+          type="danger"
+          plain
+          :disabled="selections.length < 1"
+          @click="handleDelete"
+        >
+          {{ t('crud.delete') }}
+        </el-button>
+        <div>
+          <el-button @click="expandToggle">
+            {{ t('crud.searchUnFold') }}
+          </el-button>
+        </div>
+      </template>
+      <!-- 数据为空时 -->
+      <template #empty>
+        <el-empty>
           <el-button
-            v-auth="['permission:user:save']"
+            v-auth="['permission:department:save']"
             type="primary"
             @click="() => {
               maDialog.setTitle(t('crud.add'))
+              maDialog.setAttr({ width: '550px' })
               maDialog.open({ formType: 'add' })
             }"
           >
             {{ t('crud.add') }}
           </el-button>
-        </template>
-
-        <template #toolbarLeft>
-          <el-button
-            v-auth="['permission:user:delete']"
-            type="danger"
-            plain
-            :disabled="selections.length < 1"
-            @click="handleDelete"
-          >
-            {{ t('crud.delete') }}
-          </el-button>
-        </template>
-        <!-- 数据为空时 -->
-        <template #empty>
-          <el-empty>
-            <el-button
-              v-auth="['permission:user:save']"
-              type="primary"
-              @click="() => {
-                maDialog.setTitle(t('crud.add'))
-                maDialog.open({ formType: 'add' })
-              }"
-            >
-              {{ t('crud.add') }}
-            </el-button>
-          </el-empty>
-        </template>
-      </MaProTable>
-    </div>
+        </el-empty>
+      </template>
+    </MaProTable>
 
     <component :is="maDialog.Dialog">
       <template #default="{ formType, data }">
         <!-- 新增、编辑表单 -->
-        <UserForm v-if="formType !== 'setRole'" ref="formRef" :form-type="formType" :data="data" />
-        <!-- 赋予角色表单 -->
-        <SetRoleForm v-else ref="setFormRef" :data="data" />
+        <DepartmentForm v-if="['add', 'edit'].includes(formType)" ref="formRef" :form-type="formType" :data="data" />
+        <!-- 设置部门领导 -->
+        <SetLeader v-if="formType === 'setLeader'" ref="setLeaderRef" :data="data" />
+        <!-- 管理部门岗位 -->
+        <Position v-if="formType === 'position'" ref="positionRef" :data="data" />
+        <!-- 查看用户 -->
+        <ViewUser v-if="formType === 'viewUser'" :data="data" />
       </template>
     </component>
   </div>
