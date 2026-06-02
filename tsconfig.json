@@ -1,36 +1,51 @@
 {
   "compilerOptions": {
-    "composite": false,
-    "declaration": true,
-    "declarationMap": true,
-    "esModuleInterop": true,
+    "target": "ESNext",
     "jsx": "preserve",
-    "allowJs": true,
-    "strictFunctionTypes": false,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "inlineSources": false,
-    "isolatedModules": true,
-    "moduleResolution": "node",
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "preserveWatchOutput": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "resolveJsonModule": true,
-    "removeComments": true,
-    "noImplicitAny": false,
-    "experimentalDecorators": true,
-    "target": "esnext",
-    "module": "esnext",
-    "baseUrl": ".",
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "useDefineForClassFields": true,
+    "baseUrl": "./",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "paths": {
       "@/*": ["src/*"],
-      "@cps/*": ["src/components/*"],
-      "vue-i18n": ["vue-i18n/dist/vue-i18n.cjs.js"]
+      "#/*": ["types/*"],
+      "$/*": ["src/plugins/*"],
+      "~/*": ["src/modules/*"]
     },
-    "lib": ["dom", "esnext"],
-    "types": ["vite/client"]
+    "resolveJsonModule": true,
+    "types": [
+      "vite/client",
+      "@intlify/unplugin-vue-i18n/messages",
+      "element-plus/global"
+    ],
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "noEmit": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "skipLibCheck": true
   },
-  "include": ["src", "mock", "vite.config.ts","node_modules", "dist", "build"]
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "include": [
+    "mock/*.ts",
+    "types/*.ts",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/**/*.mjs"
+  ],
+  "exclude": ["node_modules", "dist"]
 }

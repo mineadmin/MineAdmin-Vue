@@ -1,32 +1,20 @@
 #FROM node:18.16.0-alpine3.16 AS build
-FROM node:lts-alpine AS build
+FROM node:20-alpine3.20 AS build
 
 WORKDIR /opt/www
 COPY . /opt/www/
 
-ARG MINE_NODE_ENV=production
+RUN npm install -g pnpm
 
-ENV MINE_NODE_ENV $MINE_NODE_ENV
+ARG MINE_NODE_ENV=production
 
 RUN echo "MINE_NODE_ENV=$MINE_NODE_ENV"
 
-#RUN yarn install --network-timeout 100000
-
-# RUN yarn config set registry http://mirrors.cloud.tencent.com/npm/
-
-# RUN npm config set registry http://mirrors.cloud.tencent.com/npm/
+RUN pnpm install
+RUN if [ "$MINE_NODE_ENV" = "development" ]; then pnpm build --mode development; fi && \
+    if [ "$MINE_NODE_ENV" = "production" ]; then pnpm build --mode production; fi
 
 
-RUN yarn config list
-
-
-RUN yarn install && \
-    if [ "$MINE_NODE_ENV" = "development" ]; then yarn build --mode development; fi && \
-    if [ "$MINE_NODE_ENV" = "production" ]; then yarn build --mode production; fi && \
-    yarn cache clean
-
-RUN yarn generate:version
-
-FROM nginx:alpine
+FROM nginx:alpine AS production
 
 COPY --from=build /opt/www/dist /usr/share/nginx/html
