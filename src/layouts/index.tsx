@@ -109,16 +109,13 @@ export default defineComponent({
         )}
         { route.meta?.useDefaultLayout === false && (
           <div class="no-default-layout-container">
-            <RouterView class="router-view" v-else>
+            <RouterView class="router-view">
               {({ Component }) => (
                 <Transition name={appSetting.pageAnimate} mode="out-in">
                   <Component key={route.fullPath} />
                 </Transition>
               )}
             </RouterView>
-            <div class="mine-iframe-area" v-show={route.meta?.type === 'I'}>
-              <MineIframe />
-            </div>
           </div>
         )}
       </>
