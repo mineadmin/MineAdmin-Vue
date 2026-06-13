@@ -123,7 +123,7 @@ const schema = ref<MaProTableSchema>({
   // 搜索项
   searchItems: getSearchItems(t),
   // 表格列
-  tableColumns: getTableColumns(maDialog, formRef, t, msg),
+  tableColumns: getTableColumns(maDialog, formRef, t),
 })
 
 // 批量删除

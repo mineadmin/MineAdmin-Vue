@@ -33,38 +33,45 @@ const { mode = 'name', showLevel = 3 } = defineProps<{
 }>()
 
 const { localTrans: t } = useTrans()
-const model = defineModel<ModelType>({ province: undefined, city: undefined, area: undefined})
-const province = ref<Area>([])
-const city = ref<Area>([])
-const area = ref<Area>([])
+const model = defineModel<ModelType>({
+  default: () => ({
+    province: undefined,
+    city: undefined,
+    area: undefined,
+  }),
+})
+const areaList = jsonData as Area[]
+const province = ref<Area[]>([])
+const city = ref<Area[]>([])
+const area = ref<Area[]>([])
 
-function provinceChange(val, clear = true) {
+function provinceChange(val: string | undefined, clear = true) {
   if (clear) {
     model.value.city = undefined
     model.value.area = undefined
     city.value = []
     area.value = []
   }
-  city.value = jsonData.find((item: Area) => mode === 'name' ? item.name === val : item.code === val)?.children ?? []
+  city.value = areaList.find(item => mode === 'name' ? item.name === val : item.code === val)?.children ?? []
 }
 
-function cityChange(val, clear = true) {
+function cityChange(val: string | undefined, clear = true) {
   if (clear) {
     model.value.area = undefined
     area.value = []
   }
-  area.value = city.value.find((item: Area) => mode === 'name' ? item.name === val : item.code === val)?.children ?? []
+  area.value = city.value.find(item => mode === 'name' ? item.name === val : item.code === val)?.children ?? []
 }
 
 onMounted(() => {
-  jsonData.map((item: Area) => province.value.push(item))
+  province.value = [...areaList]
 
-  city.value = jsonData.find(
-    (item: Area) => mode === 'name' ? item.name === model.value.province : item.code === model.value.province,
+  city.value = areaList.find(
+    item => mode === 'name' ? item.name === model.value.province : item.code === model.value.province,
   )?.children ?? []
 
   area.value = city.value.find(
-    (item: Area) => mode === 'name' ? item.name === model.value.city : item.code === model.value.city,
+    item => mode === 'name' ? item.name === model.value.city : item.code === model.value.city,
   )?.children ?? []
 })
 </script>
@@ -85,7 +92,7 @@ onMounted(() => {
         }
       "
     >
-      <el-option v-for="item in province" :key="item" :label="item.name" :value="mode === 'name' ? item.name : item.code" />
+      <el-option v-for="item in province" :key="item.code" :label="item.name" :value="mode === 'name' ? item.name : item.code" />
     </el-select>
     <el-select
       v-if="showLevel >= 2"
@@ -101,7 +108,7 @@ onMounted(() => {
         }
       "
     >
-      <el-option v-for="item in city" :key="item" :label="item.name" :value="mode === 'name' ? item.name : item.code" />
+      <el-option v-for="item in city" :key="item.code" :label="item.name" :value="mode === 'name' ? item.name : item.code" />
     </el-select>
     <el-select
       v-if="showLevel >= 3"
@@ -115,7 +122,7 @@ onMounted(() => {
         }
       "
     >
-      <el-option v-for="item in area" :key="item" :label="item.name" :value="mode === 'name' ? item.name : item.code" />
+      <el-option v-for="item in area" :key="item.code" :label="item.name" :value="mode === 'name' ? item.name : item.code" />
     </el-select>
   </div>
 </template>

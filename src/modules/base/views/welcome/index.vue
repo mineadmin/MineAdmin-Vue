@@ -39,8 +39,8 @@ useTable('table').then((table: MaTableExpose) => {
   <div class="mine-layout">
     <div class="flex justify-between bg-white p-3 dark-bg-dark-8">
       <div class="flex gap-x-5">
-        <el-avatar :src="userinfo?.avatar" :size="80">
-          <span v-if="!userinfo?.avatar" class="text-5xl">{{ userinfo.username[0].toUpperCase() }}</span>
+        <el-avatar :src="userinfo?.avatar ?? undefined" :size="80">
+          <span v-if="!userinfo?.avatar" class="text-5xl">{{ userinfo?.username?.[0]?.toUpperCase() ?? '' }}</span>
         </el-avatar>
         <div class="flex flex-col justify-center gap-y-2">
           <span class="text-xl">早安，天青色等烟雨，而我在等你！</span>

@@ -80,7 +80,7 @@ router.afterEach(async (to) => {
     }
   }
 
-  if (to.meta.type === 'I') {
+  if (to.meta.type === 'I' && typeof to.name === 'string') {
     iframeKeepAliveStore.add(to.name)
   }
 })

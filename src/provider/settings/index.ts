@@ -47,6 +47,7 @@ const defaultGlobalConfigSettings: RecursiveRequired<SystemSettings.all> = {
     enable: true,
     mode: 'rectangle',
   },
+  toolBars: [],
   copyright: {
     enable: true,
     dates: useDayjs().format('YYYY'),

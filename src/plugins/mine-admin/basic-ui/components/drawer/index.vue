@@ -31,7 +31,7 @@ const props = withDefaults(
 )
 const emits = defineEmits<DialogRootEmits>()
 
-interface MDrawerProps extends DrawerRootProps {
+type MDrawerProps = DrawerRootProps & {
   clickModalClose?: boolean
   contentClass?: string
   title?: string
@@ -78,9 +78,7 @@ const isOpen = defineModel<boolean>()
           />
         </Transition>
         <DrawerContent
-          class="drawer-content" :class="{
-            [props?.contentClass]: true,
-          }"
+          class="drawer-content" :class="props?.contentClass"
         >
           <DrawerTitle as="div">
             <div class="h-50px flex items-center justify-between px-3">
@@ -108,7 +106,7 @@ const isOpen = defineModel<boolean>()
             </div>
           </DrawerClose>
         </DrawerContent>
-      </drawerportal>
+      </DrawerPortal>
     </DrawerRoot>
   </div>
 </template>
