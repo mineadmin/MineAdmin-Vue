@@ -9,19 +9,19 @@
 -->
 <script setup lang="ts">
 import type { AppVo } from '../api/app.ts'
-import { getDetail, unInstall } from '../api/app.ts'
+import { getDetail } from '../api/app.ts'
+import type { TerminalAction } from '../api/terminal.ts'
 import versionCompare from '../utils/versionCompare.ts'
 import discount from '../utils/discount.ts'
 import { isUndefined } from 'lodash-es'
 import { useMessage } from '@/hooks/useMessage.ts'
 import { MdPreview } from 'md-editor-v3'
-import { ElMessageBox } from 'element-plus'
 import '../style/preview.css'
 
 const settingStore = useSettingStore()
-const pluginStore = usePluginStore()
 const dayjs = useDayjs(null, true) as any
 const dataList = inject('dataList') as Record<string, any>
+const openTerminal = inject('openTerminal') as (payload: { action: TerminalAction, identifier?: string, version?: string, title?: string }) => Promise<void>
 const msg = useMessage()
 const dataState = ref<Record<string, boolean>>({
   visible: false,
@@ -47,6 +47,8 @@ function open(identifier: string) {
   dataState.value.visible = true
   dataState.value.loading = true
   dataState.value.buttonLoading = false
+  dataState.value.isInstall = false
+  dataState.value.isUpdated = false
   getDetail({ identifier }).then((res: any) => {
     dataState.value.loading = false
     data.value = res.data.data
@@ -66,6 +68,14 @@ function checkInstallStatus(name: string) {
   return !isUndefined(dataList.value.local[name]) && dataList.value.local[name].status
 }
 
+watch(() => dataList.value.local, () => {
+  const key = `${data.value?.app?.identifier ?? ''}`
+  if (!key) {
+    return
+  }
+  dataState.value.isInstall = checkInstallStatus(key)
+}, { deep: true })
+
 function openPage() {
   window.open(`https://www.mineadmin.com/store/${data.value?.app?.identifier.replace('/', '~')}`)
 }
@@ -76,26 +86,16 @@ function downloadAndInstall() {
     return false
   }
 
-  const md = [
-    '```bash',
-    '# 进入到后端根目录，第一步下载应用',
-    `php bin/hyperf.php mine-extension:download ${data.value?.app?.identifier}`,
-    '',
-    '# 第二步安装应用',
-    `php bin/hyperf.php mine-extension:install ${data.value?.app?.identifier}`,
-    '```',
-  ].join('\n')
-
-  ElMessageBox({
-    title: '⚠️ 温馨提示',
-    showConfirmButton: false,
-    message: () =>
-      h(MdPreview, {
-        modelValue: md,
-        codeFoldable: false,
-        theme: settingStore.colorMode === 'dark' ? 'dark' : 'light',
-        previewTheme: 'github',
-      }),
+  dataState.value.buttonLoading = true
+  textState.value.installButtonText = '安装任务启动中...'
+  openTerminal({
+    action: 'install',
+    identifier: data.value.app?.identifier,
+    version: data.value?.version?.[0]!.version,
+    title: `安装 ${data.value?.app?.name ?? data.value.app?.identifier}`,
+  }).finally(() => {
+    dataState.value.buttonLoading = false
+    textState.value.installButtonText = textState.value.installBtnDefaultText
   })
 }
 
@@ -112,13 +112,16 @@ function unInstallApp() {
 
   dataState.value.buttonLoading = true
   textState.value.unInstallBtnText = '应用卸载中...'
-  unInstall(body).then((_) => {
-    msg.success('应用卸载成功')
-    pluginStore.disabled(data.value.app?.identifier)
-    dataState.value.buttonLoading = false
-    dataState.value.isInstall = true
+  openTerminal({
+    action: 'uninstall',
+    identifier: body.identifier,
+    version: body.version,
+    title: `卸载 ${data.value?.app?.name ?? data.value.app?.identifier}`,
   }).catch((e) => {
     msg.alertError(e)
+  }).finally(() => {
+    dataState.value.buttonLoading = false
+    textState.value.unInstallBtnText = '卸载此应用'
   })
 }
 
@@ -127,6 +130,31 @@ function updatedApp() {
     msg.error('获取应用信息失败，无法更新，重新打开应用详情获取数据后再试')
     return false
   }
+  downloadAndInstall()
+}
+
+async function installFrontendDeps() {
+  if (!data.value?.app?.identifier) {
+    return
+  }
+  await openTerminal({
+    action: 'frontend_deps',
+    identifier: data.value.app.identifier,
+    version: data.value?.version?.[0]!.version,
+    title: `安装前端依赖 ${data.value.app.identifier}`,
+  })
+}
+
+async function installBackendDeps() {
+  if (!data.value?.app?.identifier) {
+    return
+  }
+  await openTerminal({
+    action: 'backend_deps',
+    identifier: data.value.app.identifier,
+    version: data.value?.version?.[0]!.version,
+    title: `安装后端依赖 ${data.value.app.identifier}`,
+  })
 }
 
 defineExpose({ open })
@@ -210,6 +238,7 @@ defineExpose({ open })
 
           <el-button
             v-if="dataList.my.includes(data?.app?.identifier) && !dataState.isInstall"
+            v-auth="['plugin:store:terminal:install']"
             :loading="dataState.buttonLoading"
             class="mt-4"
             type="primary"
@@ -221,6 +250,7 @@ defineExpose({ open })
             v-else-if="dataList.my.includes(data?.app?.identifier) && dataState.isInstall"
           >
             <el-button
+              v-auth="['plugin:store:terminal:uninstall']"
               class="mt-4"
               type="primary"
               status="danger"
@@ -231,6 +261,7 @@ defineExpose({ open })
             </el-button>
             <el-button
               v-if="dataState.isUpdated"
+              v-auth="['plugin:store:terminal:install']"
               class="mt-4"
               type="primary"
               status="success"
@@ -239,6 +270,22 @@ defineExpose({ open })
             >
               {{ textState.updateBtnText }}
             </el-button>
+            <el-dropdown class="mt-4">
+              <el-button>
+                依赖
+                <ma-svg-icon name="i-lucide:chevron-down" :size="14" class="ml-1" />
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item v-auth="['plugin:store:terminal:frontend-deps']" @click="installFrontendDeps">
+                    安装前端依赖
+                  </el-dropdown-item>
+                  <el-dropdown-item v-auth="['plugin:store:terminal:backend-deps']" @click="installBackendDeps">
+                    安装后端依赖
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </el-space>
           <el-button
             v-else
@@ -372,13 +419,17 @@ defineExpose({ open })
 :deep(.el-descriptions__cell) {
   @apply flex;
 }
+
 :deep(.md-editor-code-head) {
-  width: 100%; display: flex;
+  display: flex;
+  width: 100%;
 }
+
 :deep(.md-editor-code-lang) {
   @apply hidden;
 }
+
 :deep(.md-editor-code-action) {
-  @apply w-full flex gap-x-3;
+  @apply flex w-full gap-x-3;
 }
 </style>
