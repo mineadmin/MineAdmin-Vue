@@ -35,7 +35,7 @@ const { contentPublishRadio } = getAnalysisData()
 
 const chartData = contentPublishRadio()
 xAxis.value = chartData[0].x
-chartData.forEach((el: ContentPublishRecord) => {
+chartData.forEach((el) => {
   if (el.name === '纯文本') {
     textChartsData.value = el.y
   }

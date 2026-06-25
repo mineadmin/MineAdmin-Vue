@@ -57,7 +57,7 @@ const { localTrans: t } = useTrans()
 const uploadBtnRef = ref<HTMLElement>()
 const isOpenResource = ref<boolean>(false)
 const previewList = ref<string[]>([])
-const ElImageRefs = ref([])
+const elImageRef = ref<{ $el?: HTMLElement }>()
 
 const getSize = computed(() => {
   return {
@@ -124,6 +124,10 @@ function handleExceed() {
 
 function handleError() {
   msg.error(`图片上传失败，请您重新上传！`)
+}
+
+function openPreview() {
+  elImageRef.value?.$el?.querySelector('img')?.click()
 }
 
 watch(
@@ -199,7 +203,7 @@ watch(
             name="weui:eyes-on-filled"
             class="icon"
             :size="20"
-            @click="() => ElImageRefs?.$el?.children[0]?.click?.()"
+            @click="openPreview"
           />
           <ma-svg-icon
             name="material-symbols:delete"
@@ -212,7 +216,7 @@ watch(
           />
         </div>
         <el-image
-          ref="ElImageRefs"
+          ref="elImageRef"
           :src="file?.url"
           class="absolute rounded-md"
           :style="getSize"

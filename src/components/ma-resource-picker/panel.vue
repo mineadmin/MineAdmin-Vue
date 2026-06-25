@@ -180,6 +180,23 @@ function onfileTypesChange(value: any) {
   getResourceList(queryParams.value)
 }
 
+function getFileTypeIcon(item: unknown): string {
+  return typeof item === 'object' && item !== null && 'icon' in item
+    ? String((item as FileType).icon ?? '')
+    : ''
+}
+
+function getFileTypeLabel(item: unknown): string {
+  if (typeof item === 'string') {
+    return item
+  }
+  if (typeof item === 'object' && item !== null && 'label' in item) {
+    const label = (item as FileType).label
+    return typeof label === 'function' ? label() : String(label ?? '')
+  }
+  return ''
+}
+
 /**
  * 获取封面
  * @param resource
@@ -365,8 +382,11 @@ function executeContextmenu(e: MouseEvent, resource: Resource) {
   })
 }
 
-function handleFile(ev: InputEvent, btn: Resources.Button) {
-  btn.upload?.((ev?.target!.files) as FileList, { btn, getResourceList })
+function handleFile(ev: Event, btn: Resources.Button) {
+  const input = ev.target as HTMLInputElement | null
+  if (input?.files) {
+    btn.upload?.(input.files, { btn, getResourceList })
+  }
 }
 
 onMounted(async () => {
@@ -457,10 +477,10 @@ onUnmounted(() => {
           <template #default="{ item }">
             <div class="flex items-center justify-center">
               <ma-svg-icon
-                v-if="item?.icon" :name="item!.icon" :size="17"
+                v-if="getFileTypeIcon(item)" :name="getFileTypeIcon(item)" :size="17"
                 class="mr-1 flex items-center justify-center"
               />
-              <span>{{ typeof item.label === 'function' ? item.label() : item.label }}</span>
+              <span>{{ getFileTypeLabel(item) }}</span>
             </div>
           </template>
         </el-segmented>

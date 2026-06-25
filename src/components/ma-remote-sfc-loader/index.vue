@@ -3,7 +3,7 @@ import type { Component } from 'vue'
 import type { SFCModule } from '#/global'
 
 import * as Vue from 'vue'
-import { loadModule } from 'vue3-sfc-loader/dist/vue3-sfc-loader'
+import { loadModule } from 'vue3-sfc-loader'
 import { useMessage } from '@/hooks/useMessage.ts'
 import { uid } from 'radash'
 
@@ -52,7 +52,9 @@ const remoteOptions = ref({
   },
 })
 
-remoteComponent.value = markRaw(defineAsyncComponent(() => loadModule(name.value, remoteOptions.value)))
+remoteComponent.value = markRaw(defineAsyncComponent(async () => {
+  return await loadModule(name.value, remoteOptions.value) as Component
+}))
 </script>
 
 <template>

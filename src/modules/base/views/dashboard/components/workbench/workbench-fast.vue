@@ -11,6 +11,8 @@
 const t = useTrans().globalTrans
 const router = useRouter()
 
+const carouselItems = Array.from({ length: 5 }, (_, index) => index + 1)
+
 const visibleRoutes = computed(() =>
   router.getRoutes()
     .filter((v: any) => /^(?!\/$)(?!.*\/uc)(?!.*\/login)(?!.*\/:pathMatch\([^)]*\)).*$/.test(v.path) && v.components)
@@ -37,8 +39,8 @@ const visibleRoutes = computed(() =>
     </div>
     <div class="mine-card w-auto !ml-3 lg:w-4/12 !lg:ml-0">
       <el-carousel height="230px" class="w-full rounded">
-        <el-carousel-item v-for="(item, index) in Array.from({ length: 5 })" :key="item">
-          <img :src="`https://picsum.photos/600/240?random=${index + 1}`" :alt="index" class="h-full w-full rounded object-cover">
+        <el-carousel-item v-for="item in carouselItems" :key="item">
+          <img :src="`https://picsum.photos/600/240?random=${item}`" :alt="`carousel-${item}`" class="h-full w-full rounded object-cover">
         </el-carousel-item>
       </el-carousel>
     </div>

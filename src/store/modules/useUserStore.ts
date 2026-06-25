@@ -131,7 +131,7 @@ const useUserStore = defineStore(
         setPermissions(codes)
         await usePluginStore().callHooks('getUserInfo', data)
       }
-        // eslint-disable-next-line unused-imports/no-unused-vars
+      // eslint-disable-next-line unused-imports/no-unused-vars
       catch (e) {
         await logout()
       }

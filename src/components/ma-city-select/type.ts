@@ -7,5 +7,5 @@ export interface ModelType {
 export interface Area {
   code: string
   name: string
-  children?: Area
+  children?: Area[]
 }
