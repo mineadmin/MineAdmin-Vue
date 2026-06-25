@@ -75,20 +75,20 @@ export default defineComponent({
               popper: () => (
                 <div>
                   {links.map((item: any) => (
-                      <div>
-                        {item.label !== 'divider' && (
-                          <m-dropdown-item
-                            type="default"
-                            handle={item.handle}
-                            v-slots={{
-                              'default': () => <span>{ useTrans(item.label) }</span>,
-                              'prefix-icon': () => <ma-svg-icon name={item.icon} size={18} />,
-                            }}
-                          />
-                        )}
-                        {item.label === 'divider' && <m-dropdown-divider />}
-                      </div>
-                    ),
+                    <div>
+                      {item.label !== 'divider' && (
+                        <m-dropdown-item
+                          type="default"
+                          handle={item.handle}
+                          v-slots={{
+                            'default': () => <span>{ useTrans(item.label) }</span>,
+                            'prefix-icon': () => <ma-svg-icon name={item.icon} size={18} />,
+                          }}
+                        />
+                      )}
+                      {item.label === 'divider' && <m-dropdown-divider />}
+                    </div>
+                  ),
                   )}
                 </div>
               ),

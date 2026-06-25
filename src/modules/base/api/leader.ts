@@ -8,11 +8,14 @@
  * @Link   https://github.com/mineadmin
  */
 import type { PageList, ResponseStruct } from '#/global'
+import type { UserVo } from '~/base/api/user.ts'
 
 export interface LeaderVo {
-  user_id?: number | null
+  id?: number
+  user_id?: number | number[] | null
   dept_id?: number
   dept_name?: string
+  users?: UserVo[]
 }
 
 export interface LeaderSearchVo {

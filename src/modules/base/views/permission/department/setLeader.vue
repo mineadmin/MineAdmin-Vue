@@ -55,7 +55,9 @@ const maDialog: UseDialogExpose = useDialog({
       const elForm = leaderForm.value?.getElFormRef()
       // 验证通过后
       elForm?.validate?.().then(() => {
-        leaderModel.value.user_id = leaderModel.value.users.map((item: any) => item.id)
+        leaderModel.value.user_id = (leaderModel.value.users ?? [])
+          .map(item => item.id)
+          .filter((id): id is number => typeof id === 'number')
         delete leaderModel.value.users
         switch (formType) {
           // 新增

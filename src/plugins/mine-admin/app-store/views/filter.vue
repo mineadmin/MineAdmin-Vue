@@ -16,6 +16,8 @@ zh_CN:
   uploadFail: 应用上传失败
   uploadSuccess: 上传成功，是否刷新网页?
   personalInfo: 个人信息
+  installPnpm: 安装 pnpm
+  checkEnvironment: 检查环境
   filterType: 类型
   filterPrice: 价格
   searchPlaceholder: 搜索应用
@@ -38,6 +40,8 @@ zh_TW:
   uploadFail: 應用程式上傳失敗
   uploadSuccess: 上傳成功，是否刷新網頁?
   personalInfo: 個人資訊
+  installPnpm: 安裝 pnpm
+  checkEnvironment: 檢查環境
   filterType: 類型篩選
   filterPrice: 價格篩選
   searchPlaceholder: 搜尋應用
@@ -60,6 +64,8 @@ en:
   uploadFail: Application upload failed
   uploadSuccess: Upload successful, do you want to refresh the page?
   personalInfo: Personal Information
+  installPnpm: Install pnpm
+  checkEnvironment: Check Environment
   filterType: Type Filter
   filterPrice: Price Filter
   searchPlaceholder: Search for Apps
@@ -78,6 +84,7 @@ en:
 
 <script setup lang="ts">
 import type { UploadRequestOptions } from 'element-plus'
+import type { TerminalAction } from '../api/terminal.ts'
 import { uploadLocalApp } from '../api/app.ts'
 import { useThrottleFn } from '@vueuse/core'
 import { useMessage } from '@/hooks/useMessage.ts'
@@ -93,6 +100,8 @@ const msg = useMessage()
 const storeMeta = inject('storeMeta') as Record<string, any>
 const filterParams = inject('filterParams') as Record<string, any>
 const requestAppList = inject('requestAppList') as () => void
+const refreshLocalApps = inject('refreshLocalApps') as () => Promise<void>
+const openTerminal = inject('openTerminal') as (payload: { action: TerminalAction, identifier?: string, version?: string, title?: string }) => Promise<void>
 const { localTrans: t } = useTrans()
 const params = reactive({
   add_type: 'all',
@@ -157,7 +166,8 @@ function handleUpload(options: UploadRequestOptions): any {
 function handleSuccess(res: any) {
   if (res.code === 200) {
     msg.confirm(t('uploadSuccess')).then(() => {
-      window.location.reload()
+      void refreshLocalApps?.()
+      requestAppList()
     })
   }
 }
@@ -174,6 +184,20 @@ const execSearchKeywords = useThrottleFn(() => {
 function filterRequest(name: string, value: string) {
   filterParams.value[name] = value === 'all' ? undefined : value
   requestAppList()
+}
+
+function installPnpm() {
+  void openTerminal({
+    action: 'install_pnpm',
+    title: t('installPnpm'),
+  })
+}
+
+function checkEnvironment() {
+  void openTerminal({
+    action: 'check_environment',
+    title: t('checkEnvironment'),
+  })
 }
 </script>
 
@@ -217,6 +241,14 @@ function filterRequest(name: string, value: string) {
             <ma-svg-icon name="i-material-symbols:account-circle-outline" :size="18" class="mr-1" />
             {{ t('personalInfo') }}
           </el-button>
+          <el-button v-auth="['plugin:store:terminal:pnpm']" @click="installPnpm">
+            <ma-svg-icon name="i-lucide:package-plus" :size="16" class="mr-1" />
+            {{ t('installPnpm') }}
+          </el-button>
+          <el-button v-auth="['plugin:store:terminal']" @click="checkEnvironment">
+            <ma-svg-icon name="i-lucide:square-terminal" :size="16" class="mr-1" />
+            {{ t('checkEnvironment') }}
+          </el-button>
         </el-space>
       </div>
       <div v-if="storeMeta.allStore" class="mt-2 flex items-center gap-x-3 md:mt-0">
@@ -250,7 +282,3 @@ function filterRequest(name: string, value: string) {
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-
-</style>
